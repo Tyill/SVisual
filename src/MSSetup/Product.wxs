@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="windows-1251"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  
+  <?define ProductName="SVisual" ?>
+  <?define ProductVersion="1.0.0.1" ?>
+  <?define ProductCode="a29c5479-14fd-40bc-bced-15ec9d3dd1cf"?>
+  <?define UpgradeCode="faffd2e2-43cf-4b61-8617-fe18ce48797b"?>
+  <?define Manufacturer="SVisual"?>
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1049" Version="1.0.0.1" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<!--<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />-->
+		<!--<MediaTemplate />-->
+    
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' />
+<Property Id='DiskPrompt' Value="Acme's Foobar 1.0 Installation [1]" />
+
+   	<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="$(var.Manufacturer)">
+          <Directory Id="pluqins" Name="plugins">
+            <Directory Id="platforms" Name="platforms"/>
+          </Directory>
+          </Directory>
+      </Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.Manufacturer)">
+          <Component Id="ApplicationShortcutSVMon" Guid="f57ed072-199c-4e9b-9337-0462fc56137b">
+            <Shortcut Id="ShortcutSVMon"
+                 Name="SVMonitor"
+                 Description="SVMonitor"
+                 Target="[INSTALLFOLDER]SVMonitor.exe"
+                 WorkingDirectory="INSTALLFOLDER"/>
+            <Shortcut Id="ShortcutManual"
+                 Name="Manual"
+                 Description="Manual"
+                 Target="[INSTALLFOLDER]SVManualRU.pdf"
+                 WorkingDirectory="INSTALLFOLDER"/>
+             <Shortcut Id="ShortcutSViewer"
+                 Name="SViewer"
+                 Description="SViewer"
+                 Target="[INSTALLFOLDER]SVViewer.exe"
+                 WorkingDirectory="INSTALLFOLDER"/>
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+		</Directory>
+   
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="ProductComponent" Guid="de4ac647-1f98-44a4-bf52-6a496155ced2">
+        <File Id='QtCore' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5Core.dll'/>
+        <File Id='QtGui' DiskId='1'      Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5Gui.dll'/>
+        <File Id='QtWidgets' DiskId='1'  Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5Widgets.dll'/>
+        <File Id='QtSerial' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5SerialPort.dll'/>
+        <File Id='SVGraph' DiskId='1'    Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVGraphPanel.dll'/>
+        <File Id='SVStat' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVStatPanel.dll'/>
+        <File Id='SVServer' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVServer.dll'/>
+        <File Id='sqlite' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\sqlite3.dll'/> 
+        <File Id='zlibwapi' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\zlibwapi.dll'/>
+        <File Id='SVMon' DiskId='1'      Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVMonitor.exe'/>
+        <File Id='SView' DiskId='1'      Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVViewer.exe'/>
+        <File Id='ClientC' DiskId='1'    Source='c:\C++\SVisual\mssrc\Builds\Release\x64\cpp_client.rar'/>
+        <File Id='ClientARD' DiskId='1'  Source='c:\C++\SVisual\mssrc\Builds\Release\x64\arduino_client.rar'/>
+        <File Id='License' DiskId='1'    Source='c:\C++\SVisual\mssrc\Builds\Release\x64\License.rtf'/>
+        <File Id='Manual' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVManualRU.pdf'/>
+       </Component>
+		</ComponentGroup>
+
+    <ComponentGroup Id="ProductAuxComponents" Directory="platforms">
+      <Component Id="ProductAuxComponent" Guid="a0fdbf64-1607-42d9-a297-bbe902264f79">
+        <File Id='winDll' DiskId='1' Source='c:\C++\SVisual\mssrc\Builds\Release\x64\qwindows.dll'/>
+      </Component>
+    </ComponentGroup>
+
+     <Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ProductAuxComponents" />
+      <ComponentRef Id="ApplicationShortcutSVMon" />
+    </Feature>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" ></Property>
+    <WixVariable Id="WixUILicenseRtf" Overridable="yes" Value="c:\C++\SVisual\mssrc\Builds\Release\x64\License.rtf"/>
+    <UIRef Id="WixUI_InstallDir"/>
+
+  </Product>
+</Wix>

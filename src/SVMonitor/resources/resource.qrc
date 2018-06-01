@@ -1,0 +1,43 @@
+<RCC>
+    <qresource prefix="/SVMonitor">
+        <file>images/add.png</file>
+        <file>images/bw.png</file>
+        <file>images/copy.png</file>
+        <file>images/cut.png</file>
+        <file>images/document-preview.png</file>
+        <file>images/filter.png</file>
+        <file>images/find.png</file>
+        <file>images/fontDn.png</file>
+        <file>images/fontUp.png</file>
+        <file>images/fw.png</file>
+        <file>images/gotocell.png</file>
+        <file>images/Graph.png</file>
+        <file>images/icon.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/paste.png</file>
+        <file>images/player_endLeft.png</file>
+        <file>images/player_endRight.png</file>
+        <file>images/player_pause.png</file>
+        <file>images/player_play.png</file>
+        <file>images/player_playRev.png</file>
+        <file>images/player_stop.png</file>
+        <file>images/save.png</file>
+        <file>images/sort.png</file>
+        <file>images/iconSin.png</file>
+        <file>images/iconImpuls.png</file>
+        <file>images/iconResByValue.png</file>
+        <file>images/color_wheel.png</file>
+        <file>images/flag-red.png</file>
+        <file>images/SVLabel.png</file>
+        <file>images/trafficlight-green.png</file>
+        <file>images/trafficlight-red.png</file>
+        <file>images/trafficlight-yel.png</file>
+        <file>images/logo.png</file>
+        <file>images/scaleNeg.png</file>
+        <file>images/scalePos.png</file>
+        <file>images/arrowDn.png</file>
+        <file>images/arrowUp.png</file>
+        <file>svmonitor_en.qm</file>
+    </qresource>
+</RCC>
