@@ -317,7 +317,7 @@ void wdgGraph::paintObjects(){
 		selLeftMark_ = false;
 		QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
 
-		QToolTip::showText(this->cursor().pos(), dtm.toString("yy.MM.dd hh:mm:ss:zzz"), this);
+		QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
 	}
 	auto sValuePnt = getSignalValueByMarkerPos(mLeftPosX);
 
@@ -336,7 +336,7 @@ void wdgGraph::paintObjects(){
 		selRigthMark_ = false;
 		QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
 
-		QToolTip::showText(this->cursor().pos(), dtm.toString("yy.MM.dd hh:mm:ss:zzz"), this);
+		QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
 	}
 
 	sValuePnt = getSignalValueByMarkerPos(mRightPosX);
@@ -349,7 +349,6 @@ void wdgGraph::paintObjects(){
 			signals_[s.sign].lbRightMarkVal->show();
 		}
 	}
-		
 }
 
 void wdgGraph::paintObjectsAlter(){
@@ -368,7 +367,7 @@ void wdgGraph::paintObjectsAlter(){
 
 		QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
 
-		QToolTip::showText(this->cursor().pos(), dtm.toString("yy.MM.dd hh:mm:ss:zzz"), this);
+		QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
 	}
 	auto sValuePnt = getSignalAlterValueByMarkerPos(mLeftPosX);
 	for (auto s : sValuePnt){
@@ -386,7 +385,7 @@ void wdgGraph::paintObjectsAlter(){
 
 		QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
 
-		QToolTip::showText(this->cursor().pos(), dtm.toString("yy.MM.dd hh:mm:ss:zzz"), this);
+		QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
 	}
 
 	sValuePnt = getSignalAlterValueByMarkerPos(mRightPosX);
@@ -458,6 +457,7 @@ void wdgGraph::addSignal(QString sign){
 		
 		// ��� ��������
 		if (sd->type != valueType::tBool){
+
 			if (sd->buffMinValue < sd->buffMaxValue)
 				ui.wAxisValue->setValInterval(sd->buffMinValue - 1, sd->buffMaxValue + 1);
 			else
@@ -601,7 +601,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 
 	QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
 	QPair<double, double> valInterval = ui.wAxisValue->getValInterval();
-
+	
 	double valMinInterval = valInterval.first, valMaxInterval = valInterval.second;
 
 	if (isAlter){
@@ -739,7 +739,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 QPair<double, double> wdgGraph::getSignMaxMinValue(graphSignData* sign){
 
 	QVector<QVector<QPair<int, int>>>& grPnts = sign->pnts;
-
+		
 	int gSz = grPnts.size(); double minVal = INT32_MAX, maxVal = -INT32_MAX;
 	for (int g = 0; g < gSz; ++g){
 
@@ -751,6 +751,10 @@ QPair<double, double> wdgGraph::getSignMaxMinValue(graphSignData* sign){
 		}
 	}
 
+	if ((minVal == INT32_MAX) || (maxVal == -INT32_MAX)) {
+		minVal = 0;
+		maxVal = 1;
+	}
 	return QPair<double, double> (minVal, maxVal);
 }
 
@@ -761,7 +765,7 @@ QPair<double, double> wdgGraph::getSignMaxMinValue(signalData* sign, QPair<qint6
 		tmMinInterval = tmInterval.first,
 		tmMaxInterval = tmInterval.second;
 
-	if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QPair<double, double >();
+	if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QPair<double, double >(0,1);
 
 	auto rdata = sign->buffData;
 		
@@ -981,9 +985,10 @@ void wdgGraph::resizeByValue(){
 	if (isFloatSign){
 
 		QPair<double, double> intl = ui.wAxisValue->getValInterval();
-
+	
 		double scale = ui.wAxisValue->getValScale();
 		ui.wAxisValue->setValInterval(intl.first + minVal * scale - 1, intl.first + maxVal * scale + 1);
+	
 		axisValueChange();
 	}
 }

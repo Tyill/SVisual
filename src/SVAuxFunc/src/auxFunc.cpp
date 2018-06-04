@@ -47,7 +47,7 @@ namespace SV_Aux {
         tm* lct = localtime(&ct);
 
         char curDate[32];
-        strftime(curDate, 32, "%Y-%m-%d %H:%M:%S", lct);
+        strftime(curDate, 32, "%d-%m-%y %H:%M:%S", lct);
 
         return curDate;
     }

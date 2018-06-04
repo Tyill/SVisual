@@ -205,21 +205,21 @@
      <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menuMain">
     <property name="title">
      <string>Файл</string>
     </property>
     <addaction name="actionSettings"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuGjvjom">
+   <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Помощь</string>
     </property>
     <addaction name="actionProgram"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menuGjvjom"/>
+   <addaction name="menuMain"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -230,10 +230,11 @@
    </attribute>
    <addaction name="actionTrgPanel"/>
    <addaction name="actionEventOrder"/>
+   <addaction name="actionPrint"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../resources/resource.qrc">
+    <iconset>
      <normaloff>:/SVMonitor/images/open.png</normaloff>:/SVMonitor/images/open.png</iconset>
    </property>
    <property name="text">
@@ -294,6 +295,15 @@
   <action name="actionCheckUpdate">
    <property name="text">
     <string>Проверить обновления</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVMonitor/images/print.png</normaloff>:/SVMonitor/images/print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Печать</string>
    </property>
   </action>
  </widget>

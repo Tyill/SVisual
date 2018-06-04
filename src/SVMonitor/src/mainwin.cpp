@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include <QSettings>
 #include <QSystemTrayIcon>
+#include <QPrinter>
+#include <QPrintDialog>
 #include "forms/mainwin.h"
 #include "forms/eventOrderWin.h"
 #include "forms/settingsPanel.h"
@@ -14,7 +16,7 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.0.1";
+const QString VERSION = "1.0.0.2";
 
 MainWin* mainWin = nullptr;
 SV_Aux::Logger* lg = nullptr;
@@ -85,6 +87,27 @@ void MainWin::Connect(){
 
 	connect(ui.actionExit, &QAction::triggered, [this]() { 
 		this->close();
+	});
+
+	connect(ui.actionPrint, &QAction::triggered, [this]() {
+		
+		QPrinter printer(QPrinter::HighResolution);
+		printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
+		printer.setFullPage(false);
+		
+		QPrintDialog printDialog(&printer, this);
+		if (printDialog.exec() == QDialog::Accepted) {
+			
+			QPainter painter(&printer);
+
+			double xscale = printer.pageRect().width() / double(graphPanel_->width());
+			double yscale = printer.pageRect().height() / double(graphPanel_->height());
+			double scale = qMin(xscale, yscale);
+			painter.translate(printer.paperRect().x(), printer.paperRect().y());
+			painter.scale(scale, scale);
+		
+			graphPanel_->render(&painter);
+		}
 	});
 
 	connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
@@ -278,11 +301,11 @@ MainWin::~MainWin(){
 
 	if (db){
 		if (!db->saveSignals(SV_Srv::getCopySignalRef()))
-			statusMess("Ошибка сохранения сигналов в БД");
+			statusMess(tr("Ошибка сохранения сигналов в БД"));
 		if (!db->saveTriggers(SV_Srv::getCopyTriggerRef()))
-			statusMess("Ошибка сохранения триггеров в БД");
+			statusMess(tr("Ошибка сохранения триггеров в БД"));
 		if (!db->saveUserEventData(userEvents_))
-			statusMess("Ошибка сохранения евентов в БД");
+			statusMess(tr("Ошибка сохранения евентов в БД"));
 	}
 
 	writeSettings(cng.initPath);

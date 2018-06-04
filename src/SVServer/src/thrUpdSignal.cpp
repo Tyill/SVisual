@@ -64,6 +64,8 @@ void thrUpdSignal::addSignal(const string& sign, const bufferData::inputData& bp
 
     sd->buffMinTime = sd->lastData.beginTime - 5000;
     sd->buffMaxTime = sd->lastData.beginTime + 5000;
+	sd->buffMaxValue = 1;
+	sd->buffMinValue = 0;
 
     auto md = pServ_->getModuleData(bp.module);
     if (!md){

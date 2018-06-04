@@ -138,10 +138,7 @@ void wdgAxisValue::paintEvent(QPaintEvent *event){
 }
 
 void wdgAxisValue::setValInterval(double minv, double maxv){
-	
-	//minv = max(INT32_MIN, (int)minv); minv = min(INT32_MAX, (int)minv);
-	//maxv = max(INT32_MIN, (int)maxv); maxv = min(INT32_MAX, (int)maxv);
-
+		
 	valInterval_.first = minv;
 	valInterval_.second = maxv;
 

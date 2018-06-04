@@ -44,6 +44,7 @@ public:
     QAction *actionEventOrder;
     QAction *actionProgram;
     QAction *actionCheckUpdate;
+    QAction *actionPrint;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_2;
     QSplitter *splitter;
@@ -63,8 +64,8 @@ public:
     QLabel *lbSignCnt;
     QSpacerItem *horizontalSpacer_2;
     QMenuBar *menuBar;
-    QMenu *menu;
-    QMenu *menuGjvjom;
+    QMenu *menuMain;
+    QMenu *menuHelp;
     QToolBar *mainToolBar;
 
     void setupUi(QMainWindow *MainWin)
@@ -108,6 +109,11 @@ public:
         actionProgram->setObjectName(QStringLiteral("actionProgram"));
         actionCheckUpdate = new QAction(MainWin);
         actionCheckUpdate->setObjectName(QStringLiteral("actionCheckUpdate"));
+        actionPrint = new QAction(MainWin);
+        actionPrint->setObjectName(QStringLiteral("actionPrint"));
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/SVMonitor/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPrint->setIcon(icon6);
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout_2 = new QVBoxLayout(centralWidget);
@@ -203,22 +209,23 @@ public:
         menuBar = new QMenuBar(MainWin);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 879, 26));
-        menu = new QMenu(menuBar);
-        menu->setObjectName(QStringLiteral("menu"));
-        menuGjvjom = new QMenu(menuBar);
-        menuGjvjom->setObjectName(QStringLiteral("menuGjvjom"));
+        menuMain = new QMenu(menuBar);
+        menuMain->setObjectName(QStringLiteral("menuMain"));
+        menuHelp = new QMenu(menuBar);
+        menuHelp->setObjectName(QStringLiteral("menuHelp"));
         MainWin->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWin);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
         MainWin->addToolBar(Qt::TopToolBarArea, mainToolBar);
 
-        menuBar->addAction(menu->menuAction());
-        menuBar->addAction(menuGjvjom->menuAction());
-        menu->addAction(actionSettings);
-        menu->addAction(actionExit);
-        menuGjvjom->addAction(actionProgram);
+        menuBar->addAction(menuMain->menuAction());
+        menuBar->addAction(menuHelp->menuAction());
+        menuMain->addAction(actionSettings);
+        menuMain->addAction(actionExit);
+        menuHelp->addAction(actionProgram);
         mainToolBar->addAction(actionTrgPanel);
         mainToolBar->addAction(actionEventOrder);
+        mainToolBar->addAction(actionPrint);
 
         retranslateUi(MainWin);
 
@@ -237,6 +244,7 @@ public:
         actionEventOrder->setText(QApplication::translate("MainWin", "\320\236\321\202\321\207\320\265\321\202 \321\201\320\276\320\261\321\213\321\202\320\270\320\271", 0));
         actionProgram->setText(QApplication::translate("MainWin", "\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265", 0));
         actionCheckUpdate->setText(QApplication::translate("MainWin", "\320\237\321\200\320\276\320\262\320\265\321\200\320\270\321\202\321\214 \320\276\320\261\320\275\320\276\320\262\320\273\320\265\320\275\320\270\321\217", 0));
+        actionPrint->setText(QApplication::translate("MainWin", "\320\237\320\265\321\207\320\260\321\202\321\214", 0));
         groupBox->setTitle(QString());
         label->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSlowPlay->setText(QApplication::translate("MainWin", "\320\242\320\270\321\205\320\270\320\271 \321\200\320\265\320\266\320\270\320\274", 0));
@@ -248,8 +256,8 @@ public:
         groupBox_2->setTitle(QString());
         lbAllSignCnt->setText(QString());
         lbSignCnt->setText(QString());
-        menu->setTitle(QApplication::translate("MainWin", "\320\244\320\260\320\271\320\273", 0));
-        menuGjvjom->setTitle(QApplication::translate("MainWin", "\320\237\320\276\320\274\320\276\321\211\321\214", 0));
+        menuMain->setTitle(QApplication::translate("MainWin", "\320\244\320\260\320\271\320\273", 0));
+        menuHelp->setTitle(QApplication::translate("MainWin", "\320\237\320\276\320\274\320\276\321\211\321\214", 0));
     } // retranslateUi
 
 };

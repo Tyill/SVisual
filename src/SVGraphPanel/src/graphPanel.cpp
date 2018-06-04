@@ -39,6 +39,8 @@ void graphPanel::load(){
 			ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
 	});
 
+	ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
+	ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
 	ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
 	ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
 }
@@ -233,8 +235,8 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 	QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
 	QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
 
-	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("yy.MM.dd hh:mm:ss:zzz");
-	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("yy.MM.dd hh:mm:ss:zzz");
+	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
 	QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 	if (leftMarkP > rightMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 
@@ -281,8 +283,8 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
 	QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
 	QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
 
-	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("yy.MM.dd hh:mm:ss:zzz");
-	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("yy.MM.dd hh:mm:ss:zzz");
+	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
 	QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 	if (rightMarkP < leftMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 
