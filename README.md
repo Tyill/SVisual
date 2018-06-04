@@ -56,7 +56,7 @@ void loop() {
 [As a result](docs/example.png)
 
 ## License
-Licensed under an [MIT-2.0]-(https://github.com/Tyill/SVisual/LICENSE) license.
+Licensed under an [MIT-2.0]-[license](LICENSE).
 
 
 
