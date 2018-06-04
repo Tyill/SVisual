@@ -20,14 +20,14 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * adds a signal to write only the client, that is, no additional instructions are required
 
-## DEMO
+## Demo
 
 https://www.youtube.com/watch?v=LR0Rb964DLA&feature=youtu.be
 
 https://www.youtube.com/watch?v=wlvArf7h6lE
 
 
-## ARDUINO EXAMPLE 
+## Arduino example
 
 ```cpp
 #include <SVClient.h>
