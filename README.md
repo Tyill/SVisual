@@ -1,4 +1,5 @@
 SVisual
+--------
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
@@ -7,9 +8,9 @@ Features
 
 * connection to the MK via COM port (usb for arduino), over Ethernet or Wi-Fi protocol TCP;
 
-* Interrogation of values ??of signals in real time with frequency from 100 Hz, the number of devices and signals is selected by the user;
+* Interrogation of values of signals in real time with frequency from 100 Hz, the number of devices and signals is selected by the user;
 
-* output of the values ??of the selected signals to the monitor screen in real time;
+* output of the values of the selected signals to the monitor screen in real time;
 
 * record the archive of signals to the PC hard disk;
 
@@ -53,7 +54,7 @@ void loop() {
 	delay(200);
 }
 
-
+[As a result](docs/example.png)
 
 License
 --------
