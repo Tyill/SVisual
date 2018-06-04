@@ -1,10 +1,8 @@
 ## SVisual
---------
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
 ## Features
---------
 
 * connection to the MK via COM port (usb for arduino), over Ethernet or Wi-Fi protocol TCP;
 
@@ -14,6 +12,8 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * record the archive of signals to the PC hard disk;
 
+* allowable number of signals 2048, number of modules 8
+
 * viewing the archive using additional SVViewer software;
 
 * ability to set alerts for an event (triggers) that have occurred, start a custom process when the trigger is triggered;
@@ -21,7 +21,6 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 * adds a signal to write only the client, that is, no additional instructions are required
 
 ## DEMO
---------
 
 https://www.youtube.com/watch?v=LR0Rb964DLA&feature=youtu.be
 
@@ -29,7 +28,6 @@ https://www.youtube.com/watch?v=wlvArf7h6lE
 
 
 ## ARDUINO EXAMPLE 
---------
 
 ```cpp
 #include <SVClient.h>
@@ -58,7 +56,6 @@ void loop() {
 [As a result](docs/example.png)
 
 ## License
---------
 Licensed under an [MIT-2.0]-(https://github.com/Tyill/SVisual/LICENSE) license.
 
 
