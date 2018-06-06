@@ -6,7 +6,9 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * connection to the MK via COM port (usb for arduino), over Ethernet or Wi-Fi protocol TCP;
 
-* Interrogation of values of signals in real time with frequency from 100 Hz, the number of devices and signals is selected by the user;
+* Interrogation of values of signals in real time with frequency from 100 Hz(below, those 100 Hz maximum, default 10 Hz), the number of devices and signals is selected by the user;
+
+* the permissible number of signals for recording 2048, the number of modules 8 (if there is nothing wrong, there will be only a warning, the stock is provided);
 
 * output of the values of the selected signals to the monitor screen in real time;
 
@@ -18,7 +20,7 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * ability to set alerts for an event (triggers) that have occurred, start a custom process when the trigger is triggered;
 
-* adds a signal to write only the client, that is, no additional instructions are required
+* adding a signal for viewing / recording only by the client, no additional movements are required
 
 ## Demo
 
@@ -39,16 +41,14 @@ void setup() {
 int cnt = 0;
 void loop() {
 
-	svisual::addValue("dfv", cnt);
+	svisual::addIntValue("dfv", cnt);
 
 	++cnt;
 	if (cnt > 10) cnt = 0;
 
-	if (cnt % 2)  svisual::addValue("bFW", true);
-	else  svisual::addValue("bFW ", false);
-
-	if (!(cnt % 2))  svisual::addValue("bBW", true);
-	else  svisual::addValue("bBW ", false);
+	svisual::addBoolValue("bFW", cnt % 2);
+	
+	svisual::addBoolValue("bBW", !(cnt % 2));
 
 	delay(200);
 }
