@@ -46,9 +46,11 @@ void loop() {
 	++cnt;
 	if (cnt > 10) cnt = 0;
 
-	svisual::addBoolValue("bFW", cnt % 2);
-	
-	svisual::addBoolValue("bBW", !(cnt % 2));
+	bool odd_cnt = cnt % 2;
+
+    svisual::addBoolValue("bFW", odd_cnt);
+
+    svisual::addBoolValue("bBW", !odd_cnt);
 
 	delay(200);
 }
