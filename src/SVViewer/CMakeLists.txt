@@ -34,4 +34,4 @@ else()
    target_link_libraries(SVViewer z)
 endif(WIN32)
 
-qt5_use_modules(SVViewer Core Widgets Gui )
+qt5_use_modules(SVViewer Core Widgets Gui PrintSupport)

@@ -21,15 +21,19 @@ int main(int argc, char* argv[]){
     SV_Srv::config scng;
     scng.outArchiveEna = true;
 
-	if (!SV_Srv::startServer(scng) || !SV_TcpSrv::runServer("127.0.0.1", 2144)){
-		statusMess("No run 127.0.0.1 2144");
-		cin.get();
+	string addr = argc > 1 ? argv[1] : "127.0.0.1";
+	int port = argc > 2 ? atoi(argv[2]) : 2144;
+
+	if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer(addr, port)){
+		statusMess("Run " + addr + " " + to_string(port));
+		while (true)
+			SV_Aux::SleepMs(1000);
 	}
 	else
 	{
-		statusMess("Run 127.0.0.1 2144");
-		while (true)
-			SV_Aux::SleepMs(1000);
+		statusMess("No run " + addr + " " + to_string(port));
+		cin.get();
+		
 	}
     return 0;
 }

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#define SV_EN                         ///< eng интерфейс
+//#define SV_EN                         ///< eng интерфейс
 #define SV_MODULE_MAX_CNT 8           ///< макс кол-во модулей
 #define SV_VALUE_MAX_CNT 2048         ///< макс кол-во сигналов (на все модули)
 #define SV_TRIGGER_MAX_CNT 256        ///< макс кол-во триггеров (на все модули)

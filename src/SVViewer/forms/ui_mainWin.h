@@ -39,6 +39,7 @@ public:
     QAction *actionExit;
     QAction *actionStat;
     QAction *actionProgram;
+    QAction *actionPrint;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -84,6 +85,11 @@ public:
         actionStat->setIcon(icon2);
         actionProgram = new QAction(MainWin);
         actionProgram->setObjectName(QStringLiteral("actionProgram"));
+        actionPrint = new QAction(MainWin);
+        actionPrint->setObjectName(QStringLiteral("actionPrint"));
+        QIcon icon3;
+        icon3.addFile(QStringLiteral(":/SVViewer/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPrint->setIcon(icon3);
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -120,10 +126,6 @@ public:
         verticalLayout_2->addLayout(horizontalLayout_2);
 
         treeSignals = new treeWidgetExt(groupBox);
-        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
-        __qtreewidgetitem->setText(3, QString::fromUtf8("\320\232\320\276\320\274\320\274\320\265\320\275\321\202\320\260\321\200\320\270\320\271"));
-        __qtreewidgetitem->setText(2, QString::fromUtf8("\320\223\321\200\321\203\320\277\320\277\320\260"));
-        treeSignals->setHeaderItem(__qtreewidgetitem);
         treeSignals->setObjectName(QStringLiteral("treeSignals"));
         treeSignals->setEditTriggers(QAbstractItemView::NoEditTriggers);
         treeSignals->setSortingEnabled(true);
@@ -216,6 +218,7 @@ public:
         menu_2->addAction(actionProgram);
         mainToolBar->addAction(actionOpen);
         mainToolBar->addAction(actionStat);
+        mainToolBar->addAction(actionPrint);
 
         retranslateUi(MainWin);
 
@@ -233,10 +236,13 @@ public:
         actionExit->setText(QApplication::translate("MainWin", "\320\222\321\213\321\205\320\276\320\264", 0));
         actionStat->setText(QApplication::translate("MainWin", "\320\241\321\202\320\260\321\202\320\270\321\201\321\202\320\270\320\272\320\260", 0));
         actionProgram->setText(QApplication::translate("MainWin", "\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265", 0));
+        actionPrint->setText(QApplication::translate("MainWin", "\320\237\320\265\321\207\320\260\321\202\321\214", 0));
         groupBox->setTitle(QString());
         btnSortByModule->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSortByGroup->setText(QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\321\213", 0));
         QTreeWidgetItem *___qtreewidgetitem = treeSignals->headerItem();
+        ___qtreewidgetitem->setText(3, QApplication::translate("MainWin", "\320\232\320\276\320\274\320\274\320\265\320\275\321\202\320\260\321\200\320\270\320\271", 0));
+        ___qtreewidgetitem->setText(2, QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\320\260", 0));
         ___qtreewidgetitem->setText(1, QApplication::translate("MainWin", "\320\242\320\270\320\277", 0));
         ___qtreewidgetitem->setText(0, QApplication::translate("MainWin", "\320\230\320\274\321\217", 0));
         groupBox_2->setTitle(QString());

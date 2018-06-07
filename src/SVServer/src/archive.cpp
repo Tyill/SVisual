@@ -48,8 +48,9 @@ bool archive::isCopyTimeHour(){
 	bool req = false;
 
 	bool isCheck = cng.outArchiveHourCnt % 2 == 0;    // кратно 2м часам?
-	bool isHourCheck = lct->tm_hour % 2 == 0;           
-	if (((crtFileHour_ >= cng.outArchiveHourCnt) || (lct->tm_hour == 0)) && (!isCheck || isHourCheck)){
+	bool isHourCheck = lct->tm_hour % 2 == 0; 
+	bool isNDay = front_.PosFront(lct->tm_hour == 0, 1);
+	if (((crtFileHour_ >= cng.outArchiveHourCnt) || isNDay) && (!isCheck || isHourCheck)){
 		crtFileHour_ = 0;
 		req = true;
 	}

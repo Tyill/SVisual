@@ -13,7 +13,6 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -37,14 +36,14 @@ public:
     QRadioButton *rbtnConnectByEthernet;
     QSpacerItem *horizontalSpacer;
     QLabel *label;
-    QLineEdit *txtAddr;
+    QLineEdit *txtIPAddr;
     QLabel *label_5;
-    QLineEdit *txtPort;
+    QLineEdit *txtTCPPort;
     QHBoxLayout *horizontalLayout;
     QRadioButton *rbtnConnectByCom;
     QSpacerItem *horizontalSpacer_2;
     QLabel *label_2;
-    QComboBox *cmbComPort;
+    QLineEdit *txtComPort;
     QLabel *label_6;
     QLineEdit *txtComSpeed;
     QGroupBox *grbSaveData;
@@ -88,11 +87,12 @@ public:
 
         horizontalLayout_3->addWidget(label);
 
-        txtAddr = new QLineEdit(groupBox);
-        txtAddr->setObjectName(QStringLiteral("txtAddr"));
-        txtAddr->setMinimumSize(QSize(100, 0));
+        txtIPAddr = new QLineEdit(groupBox);
+        txtIPAddr->setObjectName(QStringLiteral("txtIPAddr"));
+        txtIPAddr->setMinimumSize(QSize(100, 0));
+        txtIPAddr->setMaximumSize(QSize(100, 16777215));
 
-        horizontalLayout_3->addWidget(txtAddr);
+        horizontalLayout_3->addWidget(txtIPAddr);
 
         label_5 = new QLabel(groupBox);
         label_5->setObjectName(QStringLiteral("label_5"));
@@ -100,11 +100,11 @@ public:
 
         horizontalLayout_3->addWidget(label_5);
 
-        txtPort = new QLineEdit(groupBox);
-        txtPort->setObjectName(QStringLiteral("txtPort"));
-        txtPort->setMaximumSize(QSize(70, 16777215));
+        txtTCPPort = new QLineEdit(groupBox);
+        txtTCPPort->setObjectName(QStringLiteral("txtTCPPort"));
+        txtTCPPort->setMaximumSize(QSize(70, 16777215));
 
-        horizontalLayout_3->addWidget(txtPort);
+        horizontalLayout_3->addWidget(txtTCPPort);
 
 
         verticalLayout->addLayout(horizontalLayout_3);
@@ -128,11 +128,12 @@ public:
 
         horizontalLayout->addWidget(label_2);
 
-        cmbComPort = new QComboBox(groupBox);
-        cmbComPort->setObjectName(QStringLiteral("cmbComPort"));
-        cmbComPort->setMinimumSize(QSize(100, 0));
+        txtComPort = new QLineEdit(groupBox);
+        txtComPort->setObjectName(QStringLiteral("txtComPort"));
+        txtComPort->setMinimumSize(QSize(100, 0));
+        txtComPort->setMaximumSize(QSize(100, 16777215));
 
-        horizontalLayout->addWidget(cmbComPort);
+        horizontalLayout->addWidget(txtComPort);
 
         label_6 = new QLabel(groupBox);
         label_6->setObjectName(QStringLiteral("label_6"));
@@ -229,20 +230,6 @@ public:
         label_5->setText(QApplication::translate("settingsPanelClass", "\320\277\320\276\321\200\321\202", 0));
         rbtnConnectByCom->setText(QApplication::translate("settingsPanelClass", "\321\201\320\276\320\265\320\264\320\270\320\275\320\265\320\275\320\270\320\265 \320\277\320\276 COM", 0));
         label_2->setText(QApplication::translate("settingsPanelClass", "\320\277\320\276\321\200\321\202", 0));
-        cmbComPort->clear();
-        cmbComPort->insertItems(0, QStringList()
-         << QApplication::translate("settingsPanelClass", "COM0", 0)
-         << QApplication::translate("settingsPanelClass", "COM1", 0)
-         << QApplication::translate("settingsPanelClass", "COM2", 0)
-         << QApplication::translate("settingsPanelClass", "COM3", 0)
-         << QApplication::translate("settingsPanelClass", "COM4", 0)
-         << QApplication::translate("settingsPanelClass", "COM5", 0)
-         << QApplication::translate("settingsPanelClass", "COM6", 0)
-         << QApplication::translate("settingsPanelClass", "COM7", 0)
-         << QApplication::translate("settingsPanelClass", "COM8", 0)
-         << QApplication::translate("settingsPanelClass", "COM9", 0)
-         << QApplication::translate("settingsPanelClass", "COM10", 0)
-        );
         label_6->setText(QApplication::translate("settingsPanelClass", "\321\201\320\272\320\276\321\200\320\276\321\201\321\202\321\214", 0));
         grbSaveData->setTitle(QApplication::translate("settingsPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\265\320\275\320\270\320\265 \320\264\320\260\320\275\320\275\321\213\321\205", 0));
 #ifndef QT_NO_TOOLTIP

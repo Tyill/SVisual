@@ -106,12 +106,12 @@
           </column>
           <column>
            <property name="text">
-            <string notr="true">Группа</string>
+            <string>Группа</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string notr="true">Комментарий</string>
+            <string>Комментарий</string>
            </property>
           </column>
          </widget>
@@ -255,6 +255,7 @@
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionStat"/>
+   <addaction name="actionPrint"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -288,6 +289,15 @@
   <action name="actionProgram">
    <property name="text">
     <string>О программе</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVViewer/images/print.png</normaloff>:/SVViewer/images/print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Печать</string>
    </property>
   </action>
  </widget>

@@ -1,11 +1,11 @@
 <RCC>
     <qresource prefix="/SVViewer">
-        <file>images/add.png</file>       
         <file>images/Graph.png</file>        
         <file>images/open.png</file>
         <file>images/iconImpuls.png</file>
         <file>images/iconSin.png</file>
         <file>images/logo.png</file>
-        <file>svviewer_en.qm</file>
+		<file>images/print.png</file>
+		<file>svviewer_en.qm</file>
     </qresource>
 </RCC>

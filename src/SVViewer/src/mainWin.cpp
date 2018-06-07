@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include <QPrinter>
+#include <QPrintDialog>
 #include "forms/mainWin.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVStatPanel/SVStatPanel.h"
@@ -6,7 +8,7 @@
 #include "SVConfig/SVConfigData.h"
 
 
-const QString VERSION = "1.0.0.1";
+const QString VERSION = "1.0.0.2";
 MainWin* mainWin = nullptr;
 
 using namespace SV_Cng;
@@ -52,7 +54,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << endl;
     txtStream << "sortByMod = " << (cng.sortByMod ? 1 : 0) << endl;
     txtStream << endl;
-    file.close();
+	file.close();
 
     return true;
 }
@@ -200,7 +202,7 @@ void MainWin::Connect(){
 	connect(ui.actionExit, &QAction::triggered, [this]() { 
 		this->close();
 	});
-
+		
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
 		this->ui.btnSortByGroup->setChecked(true);
 		this->ui.btnSortByModule->setChecked(false);
@@ -214,6 +216,28 @@ void MainWin::Connect(){
 		cng.sortByMod = true;
 		sortSignalByGroupOrModule(true);
 	});
+
+	connect(ui.actionPrint, &QAction::triggered, [this]() {
+
+		QPrinter printer(QPrinter::HighResolution);
+		printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
+		printer.setFullPage(false);
+
+		QPrintDialog printDialog(&printer, this);
+		if (printDialog.exec() == QDialog::Accepted) {
+
+			QPainter painter(&printer);
+
+			double xscale = printer.pageRect().width() / double(graphPanel_->width());
+			double yscale = printer.pageRect().height() / double(graphPanel_->height());
+			double scale = qMin(xscale, yscale);
+			painter.translate(printer.paperRect().x(), printer.paperRect().y());
+			painter.scale(scale, scale);
+
+			graphPanel_->render(&painter);
+		}
+	});
+
 
 	connect(ui.actionProgram, &QAction::triggered, [this]() {
 	QMessageBox::about(this, tr("About SVisual"),
@@ -237,7 +261,7 @@ bool MainWin::init(QString initPath){
 
 	cng.selOpenDir = settings.value("selOpenDir", "").toString();
 	cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
-
+		
 	if (!QFile(initPath).exists())
 		writeSettings(initPath);
 
@@ -279,7 +303,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 	if (byModule){
 
-		ui.treeSignals->headerItem()->setText(2, "Группа");
+		ui.treeSignals->headerItem()->setText(2, tr("Группа"));
 		
 		for (auto itMod : moduleRef_){
 
@@ -311,7 +335,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 	}
 	else {
 
-		ui.treeSignals->headerItem()->setText(2, "Модуль");
+		ui.treeSignals->headerItem()->setText(2, tr("Модуль"));
 
 		for (auto itGrp : groupRef_){
 
@@ -359,7 +383,7 @@ void MainWin::loadDataFinished(bool ok){
 		sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
 	}
 	else
-		ui.lbStatusMess->setText("Файл не удалось прочитать");
+		ui.lbStatusMess->setText(tr("Файл не удалось прочитать"));
 			
 	ui.progressBar->setVisible(false);
 
