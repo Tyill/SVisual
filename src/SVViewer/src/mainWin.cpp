@@ -301,6 +301,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 	QIcon iconImpuls(":/SVViewer/images/iconImpuls.png");
 	QIcon iconSin(":/SVViewer/images/iconSin.png");
 
+	int scnt = 0;
 	if (byModule){
 
 		ui.treeSignals->headerItem()->setText(2, tr("Группа"));
@@ -317,7 +318,8 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 				QString sname = s.c_str();
 
 				if (!sref[sname]->isActive) continue;
-
+				++scnt;
+				
 				QTreeWidgetItem* item = new QTreeWidgetItem(root);
 				item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
 				item->setText(0, sref[sname]->name.c_str());
@@ -352,6 +354,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 				QString sname = s.c_str();
 
 				if (!sref[sname]->isActive) continue;
+				++scnt;
 
 				QTreeWidgetItem* item = new QTreeWidgetItem(root);
 				item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
@@ -371,7 +374,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 	ui.treeSignals->sortByColumn(1);
 
-	ui.lbAllSignCnt->setText(QString::number(sref.size()));
+	ui.lbAllSignCnt->setText(QString::number(scnt));
 	
 }
 
@@ -413,8 +416,14 @@ void MainWin::actionOpenStat(){
 void MainWin::selSignalClick(QTreeWidgetItem* item, int column){
 
 	if (moduleRef_.contains(item->text(0))){
-
-		ui.lbSignCnt->setText(QString::number(moduleRef_[item->text(0)]->signls.size()));
+				
+		auto sref = getCopySignalRef();
+		std::string module = item->text(0).toUtf8().data();
+		int scnt = 0;
+		for (auto s : sref)						
+			if ((s->module == module) && s->isActive) ++scnt;
+		
+		ui.lbSignCnt->setText(QString::number(scnt));
 	}
 	
 }

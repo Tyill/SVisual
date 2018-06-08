@@ -215,8 +215,16 @@ bool server::delTrigger(const string& trg){
 
 	std::unique_lock<std::mutex> lck (mtx_);
 
-	// память не очищается специально!!
-	return (triggerData_.find(trg) != triggerData_.end()) ? triggerData_.erase(trg) : false;
+	bool ok = true;
+	if (triggerData_.find(trg) != triggerData_.end()){
+		triggerData_[trg]->isActive = false;
+	
+		// память не очищается специально!!
+		triggerData_.erase(trg);
+	}
+	else ok = false;
+
+	return ok;
 }
 
 
