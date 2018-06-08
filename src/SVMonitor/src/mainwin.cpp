@@ -259,7 +259,7 @@ MainWin::MainWin(QWidget *parent)
 	// запуск получения данных
 	if (cng.com_ena){
 
-		pComReader_ = new SerialPortReader(SerialPortReader::config(cng.com_name, cng.com_speed));
+		pComReader_ = new SerialPortReader(SerialPortReader::config(cng.com_name, cng.com_speed, cng.cycleRecMs, cng.packetSz));
 
 		if (pComReader_->startServer()) {
 
@@ -619,6 +619,7 @@ void MainWin::moduleConnect(QString module){
 void MainWin::moduleDisconnect(QString module){
 
     statusMess(tr("Отключен модуль: ") + module);
+		
     sortSignalByModule();
 }
 

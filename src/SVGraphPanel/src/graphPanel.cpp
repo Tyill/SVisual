@@ -80,6 +80,7 @@ graphPanel::graphPanel(QWidget *parent, SV_Graph::config cng_){
 			ui.dTimeEnd->setVisible(false);
 			ui.lbDTime->setVisible(false);
 		}
+		tm->stop();	tm->deleteLater();
 	});
 	tm->start(100);	
 	////////////

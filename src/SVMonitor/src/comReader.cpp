@@ -4,6 +4,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include "stdafx.h"
 #include "comReader.h"
+#include "SVConfig/SVConfigLimits.h"
 
 
 void statusMess(QString mess);
@@ -15,9 +16,12 @@ SerialPortReader::SerialPortReader(SerialPortReader::config cng_) : cng(cng_)
 
 SerialPortReader::~SerialPortReader()
 {
+	
 }
 
 bool SerialPortReader::startServer(){
+
+	if (isConnect_ ) return true;
 
 	pSerialPort_ = new QSerialPort(cng.name);
 
@@ -27,8 +31,6 @@ bool SerialPortReader::startServer(){
 	pSerialPort_->setParity(QSerialPort::Parity::NoParity);
 	pSerialPort_->setStopBits(QSerialPort::StopBits::OneStop);
 
-	bool ok = false;
-
 	if (pSerialPort_->open(QIODevice::ReadOnly))
 	{
 		connect(pSerialPort_, &QSerialPort::readyRead, this, &SerialPortReader::hReadData);
@@ -36,14 +38,29 @@ bool SerialPortReader::startServer(){
 		connect(pSerialPort_, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
 			this, &SerialPortReader::hError);
 		
-		ok = true;
+		isConnect_ = true;
 	}
 	else
 	   statusMess(pSerialPort_->errorString());
 
-	return ok;
-}
+	if (isConnect_ && !tmCheckConnect_){
+		// проверка соединения
+		tmCheckConnect_ = new QTimer(this);
+		connect(tmCheckConnect_, &QTimer::timeout, [=]() {
 
+			if (!pSerialPort_->isOpen())
+				isConnect_ = pSerialPort_->open(QIODevice::ReadOnly);
+			else{
+				if (!isConnect_) pSerialPort_->close();
+				else isConnect_ = false;
+			}
+		});
+
+		tmCheckConnect_->start(SV_CYCLESAVE_MS * checkConnTOut);
+	}
+
+	return isConnect_;
+}
 
 void SerialPortReader::stopServer(){
 
@@ -72,6 +89,8 @@ void SerialPortReader::hReadData()
 	std::string out;
 	if (ufReceiveData_)
 		ufReceiveData_(readData_, out);
+
+	isConnect_ = true;
 }
 
 void SerialPortReader::hError(QSerialPort::SerialPortError serialPortError)

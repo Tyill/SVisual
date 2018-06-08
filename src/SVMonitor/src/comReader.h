@@ -14,8 +14,11 @@ public:
 
 		QString name;
 		int speed = 9600;
+		int cycleRecMs;           ///< период записи - задает пользователь
+		int packetSz;             ///< размер пакета - задает пользователь
 
-		config(QString name_, int speed_) : name(name_), speed(speed_){}
+		config(QString name_, int speed_, int cycleRecMs_, int packetSz_) :
+			name(name_), speed(speed_), cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
 	};
 
 	SerialPortReader(config);
@@ -42,6 +45,11 @@ private:
 	QSerialPort* pSerialPort_ = nullptr;
 	std::string readData_;
 
+	QTimer* tmCheckConnect_ = nullptr;
+	const int checkConnTOut = 5;  // циклов для проверки
+
+	bool isConnect_ = false;
+	
 	config cng;
 		
 };

@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>b00a477c-6963-4d8b-94f3-1f8f35705f25</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>SVisual_1.0.0.1</OutputName>
+    <OutputName>SVisual_1.0.0.2</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
@@ -19,7 +19,7 @@
     <Cultures>ru-RU</Cultures>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>c:\C++\vs2013\BIN2013\Win32\$(Configuration)\</OutputPath>
+    <OutputPath>c:\C++\SVisual\mssrc\Builds\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <Cultures>ru-RU</Cultures>
   </PropertyGroup>

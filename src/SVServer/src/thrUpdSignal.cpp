@@ -124,11 +124,9 @@ void thrUpdSignal::modConnect(const string& module){
     auto tref = pServ_->getCopyTriggerRef();
     for (auto& tr : tref){
 
-        if (tr.second->isActive && (tr.second->module == module) &&
-			(tr.second->condType == SV_Cng::eventType::connectModule)){
-
+        if (tr.second->isActive && (tr.second->module == module) && 
+			((tr.second->condType == SV_Cng::eventType::connectModule) || (tr.second->condType == SV_Cng::eventType::disconnectModule)))
 			tr.second->condValue = 1;
-        }
     }
 }
 
@@ -140,11 +138,10 @@ void thrUpdSignal::modDisconnect(const string& module){
     auto tref = pServ_->getCopyTriggerRef();
     for (auto& tr : tref){
 
-		if (tr.second->isActive && (tr.second->module == module) &&
-			(tr.second->condType == SV_Cng::eventType::disconnectModule)){
-
+		if (tr.second->isActive && (tr.second->module == module) && 
+			((tr.second->condType == SV_Cng::eventType::connectModule) || (tr.second->condType == SV_Cng::eventType::disconnectModule)))
 			tr.second->condValue = 0;
-		}
+		
 	}
 }
 
