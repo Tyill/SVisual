@@ -31,19 +31,14 @@ bool SerialPortReader::startServer(){
 	pSerialPort_->setParity(QSerialPort::Parity::NoParity);
 	pSerialPort_->setStopBits(QSerialPort::StopBits::OneStop);
 
-	if (pSerialPort_->open(QIODevice::ReadOnly))
-	{
-		connect(pSerialPort_, &QSerialPort::readyRead, this, &SerialPortReader::hReadData);
+	isConnect_ = pSerialPort_->open(QIODevice::ReadOnly);
+	
+	connect(pSerialPort_, &QSerialPort::readyRead, this, &SerialPortReader::hReadData);
 
-		connect(pSerialPort_, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
-			this, &SerialPortReader::hError);
-		
-		isConnect_ = true;
-	}
-	else
-	   statusMess(pSerialPort_->errorString());
-
-	if (isConnect_ && !tmCheckConnect_){
+	connect(pSerialPort_, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
+		this, &SerialPortReader::hError);
+			
+	if (!tmCheckConnect_){
 		// проверка соединения
 		tmCheckConnect_ = new QTimer(this);
 		connect(tmCheckConnect_, &QTimer::timeout, [=]() {
@@ -59,7 +54,7 @@ bool SerialPortReader::startServer(){
 		tmCheckConnect_->start(SV_CYCLESAVE_MS * checkConnTOut);
 	}
 
-	return isConnect_;
+	return true;
 }
 
 void SerialPortReader::stopServer(){
