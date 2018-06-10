@@ -57,6 +57,9 @@ void loop() {
 ```
 [As a result](docs/example.png)
 
+## Use in Linux
+Should be installed: qt, libz 
+ 
 ## License
 Licensed under an [MIT-2.0]-[license](LICENSE).
 
