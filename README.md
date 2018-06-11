@@ -1,4 +1,6 @@
-## SVisual
+<div align="left">
+  <a><img src="docs/SVLabel.png" width = 150 height = 50 ></a><br>
+</div>
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
@@ -55,7 +57,10 @@ void loop() {
 	delay(200);
 }
 ```
-[As a result](docs/example.png)
+### As a result
+<div align="left">
+  <a><img src="docs/example.png"></a><br>
+</div>
 
 ## Use in Linux
 Should be installed: qt, libz 
