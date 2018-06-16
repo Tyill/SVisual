@@ -40,6 +40,7 @@ public:
     QAction *actionStat;
     QAction *actionProgram;
     QAction *actionPrint;
+    QAction *actionExport;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -90,6 +91,11 @@ public:
         QIcon icon3;
         icon3.addFile(QStringLiteral(":/SVViewer/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPrint->setIcon(icon3);
+        actionExport = new QAction(MainWin);
+        actionExport->setObjectName(QStringLiteral("actionExport"));
+        QIcon icon4;
+        icon4.addFile(QStringLiteral(":/SVViewer/images/export.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionExport->setIcon(icon4);
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -219,6 +225,7 @@ public:
         mainToolBar->addAction(actionOpen);
         mainToolBar->addAction(actionStat);
         mainToolBar->addAction(actionPrint);
+        mainToolBar->addAction(actionExport);
 
         retranslateUi(MainWin);
 
@@ -237,6 +244,7 @@ public:
         actionStat->setText(QApplication::translate("MainWin", "\320\241\321\202\320\260\321\202\320\270\321\201\321\202\320\270\320\272\320\260", 0));
         actionProgram->setText(QApplication::translate("MainWin", "\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265", 0));
         actionPrint->setText(QApplication::translate("MainWin", "\320\237\320\265\321\207\320\260\321\202\321\214", 0));
+        actionExport->setText(QApplication::translate("MainWin", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202 \320\262 JSON", 0));
         groupBox->setTitle(QString());
         btnSortByModule->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSortByGroup->setText(QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\321\213", 0));

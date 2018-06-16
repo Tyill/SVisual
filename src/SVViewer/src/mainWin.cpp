@@ -8,7 +8,7 @@
 #include "SVConfig/SVConfigData.h"
 
 
-const QString VERSION = "1.0.0.2";
+const QString VERSION = "1.0.0.3";
 MainWin* mainWin = nullptr;
 
 using namespace SV_Cng;
@@ -162,6 +162,7 @@ void MainWin::load(){
 	ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.treeSignals->setIconSize(QSize(40, 20));
 
+	exportWin_ = new exportWin(this); exportWin_->setWindowFlags(Qt::Window);
 
 	graphPanel_ = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
 
@@ -201,6 +202,10 @@ void MainWin::Connect(){
 
 	connect(ui.actionExit, &QAction::triggered, [this]() { 
 		this->close();
+	});
+
+	connect(ui.actionExport, &QAction::triggered, [this]() {
+		if (exportWin_) exportWin_->show();
 	});
 		
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {

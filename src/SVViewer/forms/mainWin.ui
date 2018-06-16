@@ -256,6 +256,7 @@
    <addaction name="actionOpen"/>
    <addaction name="actionStat"/>
    <addaction name="actionPrint"/>
+   <addaction name="actionExport"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -298,6 +299,15 @@
    </property>
    <property name="text">
     <string>Печать</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVViewer/images/export.png</normaloff>:/SVViewer/images/export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Экспорт в JSON</string>
    </property>
   </action>
  </widget>
