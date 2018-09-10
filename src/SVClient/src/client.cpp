@@ -1,4 +1,27 @@
-
+//
+// SVisual Project
+// Copyright (C) 2018 by Contributors <https://github.com/Tyill/SVisual>
+//
+// This code is licensed under the MIT License.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
 #include "stdafx.h"
 #include "client.h"
 #include "SVAuxFunc/clientTCP.h"
@@ -10,7 +33,7 @@ using namespace std;
 
 client::~client(){
 
-	if (isConnect_) SV_TcpClnt::disconnect();
+	if (isConnect_) SV_TcpCln::disconnect();
 
 	thrStop_ = true;
 	if (thr_.joinable()) thr_.join();
@@ -39,7 +62,7 @@ bool client::connect(const char* moduleName, const char* ipAddr, int port){
 	addrServ_ = ipAddr;
 	portServ_ = port;
 
-	isConnect_ = SV_TcpClnt::connect(ipAddr, port);
+	isConnect_ = SV_TcpCln::connect(ipAddr, port);
 			
 	if (isConnect_){
         thr_ = std::thread([](client *lp) { lp->sendCyc(); }, this);
@@ -50,7 +73,7 @@ bool client::connect(const char* moduleName, const char* ipAddr, int port){
 
 void client::disconnect(){
 
-	if (isConnect_) SV_TcpClnt::disconnect();
+	if (isConnect_) SV_TcpCln::disconnect();
 
 	thrStop_ = true;
 
@@ -136,7 +159,7 @@ bool client::sendData(){
 	memcpy(arr + offs + vlSz*cnt, "=end=", endSz);
 
     string out;
-	bool ok = SV_TcpClnt::sendData(string(arr, arrSz), out, false, true);
+	bool ok = SV_TcpCln::sendData(string(arr, arrSz), out, false, true);
 
 	delete[] arr;
 
@@ -152,7 +175,7 @@ void client::sendCyc(){
 	while (!thrStop_ ){
 		
 		if (!isConnect_)
-			isConnect_ = SV_TcpClnt::connect(addrServ_, portServ_);
+			isConnect_ = SV_TcpCln::connect(addrServ_, portServ_);
 
 		cTm = SV_Aux::CurrDateTimeSinceEpochMs();
 		tmDiff = cTm - prevTm - (SV_CYCLEREC_MS - tmDiff); prevTm = cTm;

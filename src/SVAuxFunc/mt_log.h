@@ -1,4 +1,27 @@
-
+//
+// SVisual Project
+// Copyright (C) 2018 by Contributors <https://github.com/Tyill/SVisual>
+//
+// This code is licensed under the MIT License.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
 #pragma once
 
 #include <fstream>
@@ -48,8 +71,8 @@ namespace SV_Aux {
 		void destroy() {
 
 			fStop_ = true;
-			cval_->notify_one();
-			if (thrWriteMess_ && thrWriteMess_->joinable()) thrWriteMess_->join();
+			cval_.notify_one();
+			if (thrWriteMess_.joinable()) thrWriteMess_.join();
 		}
 
 		void SetName(const std::string &nameFile) {
@@ -65,12 +88,12 @@ namespace SV_Aux {
 			mtxWr_.lock();
 
 			deqMess_[writeMessCnt_] = Message(true, CurrDateTimeMs(), mess);
-			writeMessCnt_++;
+			++writeMessCnt_;
 			if (writeMessCnt_ >= MAX_CNT_MESS) writeMessCnt_ = 0;
 
 			mtxWr_.unlock();
 
-			cval_->notify_one();
+			cval_.notify_one();
 
 			return true;
 		}
@@ -95,8 +118,8 @@ namespace SV_Aux {
 		std::vector<Message> deqMess_;
 
 		std::mutex mtxWr_, mtxRd_;
-		std::thread *thrWriteMess_ = nullptr;
-		std::condition_variable *cval_ = nullptr;
+		std::thread thrWriteMess_;
+		std::condition_variable cval_;
 		bool fStop_ = false;
 
 
@@ -105,7 +128,7 @@ namespace SV_Aux {
 			while (!fStop_) {
 
 				std::unique_lock<std::mutex> lck(mtxRd_);
-				cval_->wait(lck);
+				cval_.wait(lck);
 
 				CreateSubDirectory(pathSave_);
 
@@ -131,10 +154,8 @@ namespace SV_Aux {
 
 			readMessCnt_ = 0;
 			writeMessCnt_ = 0;
-
-			cval_ = new std::condition_variable();
-
-			thrWriteMess_ = new std::thread([](Logger *lg) { lg->WriteCyc(); }, this);
+            			
+			thrWriteMess_ = std::thread([](Logger *lg) { lg->WriteCyc(); }, this);
 		}
 	};
 }

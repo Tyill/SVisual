@@ -1,3 +1,27 @@
+//
+// SVisual Project
+// Copyright (C) 2018 by Contributors <https://github.com/Tyill/SVisual>
+//
+// This code is licensed under the MIT License.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
 #pragma once
 
 #include <string>
@@ -10,21 +34,21 @@
 
 namespace SV_Cng {
 
-/// тип польз переменной
+    /// тип польз переменной
 	enum class valueType {
 		tBool = 0,
 		tInt = 1,
 		tFloat = 2,
 	};
 
-/// значение польз переменной
+    /// значение польз переменной
 	union value {
 		bool tBool;
 		int tInt;
 		float tFloat;
 	};
 
-/// пакет записи
+    /// пакет записи
 	struct recData {
 		uint64_t beginTime;  ///< нач время, мс
 		value *vals;         ///< данные
@@ -72,14 +96,14 @@ namespace SV_Cng {
 		}
 	};
 
-/// модуль
+    /// модуль
 	struct moduleData {
 
-		bool isActive;                ///< активен
-		bool isEnable;                ///< разрешен
-		bool isDelete;                ///< удален
-		std::string module;             ///< название
-		std::vector<std::string> signls;         ///< список сигналов
+		bool isActive;                   ///< активен
+		bool isEnable;                   ///< разрешен
+		bool isDelete;                   ///< удален
+		std::string module;              ///< название
+		std::vector<std::string> signls; ///< список сигналов
 
 		/// модуль
 		/// \param modul название модуля
@@ -92,7 +116,7 @@ namespace SV_Cng {
 		}
 	};
 
-/// группа сигналов
+    /// группа сигналов
 	struct groupData {
 
 		bool isActive;                     ///< активна
@@ -109,7 +133,7 @@ namespace SV_Cng {
 		}
 	};
 
-/// тип события
+    /// тип события
 	enum class eventType {
 		none = -1,            ///< нет
 		connectModule = 0,    ///< модуль подключен
@@ -121,7 +145,7 @@ namespace SV_Cng {
 		negFront = 6,         ///< отрицательный фронт
 	};
 
-/// триггер
+    /// триггер
 	struct triggerData {
 		bool isActive;               ///< активен
 
@@ -140,25 +164,25 @@ namespace SV_Cng {
 		}
 	};
 
-/// вернуть тип сигнала как значение
-/// \param str
-/// \return
+    /// вернуть тип сигнала как значение
+    /// \param str
+    /// \return
 	valueType getSVType(std::string str);
 
-/// вернуть тип сигнала как строку
-/// \param type
-/// \return
+    /// вернуть тип сигнала как строку
+    /// \param type
+    /// \return
 	std::string getSVTypeStr(valueType type);
 
-/// вернуть значение как строку
-/// \param vt
-/// \param value
-/// \return
+    /// вернуть значение как строку
+    /// \param vt
+    /// \param value
+    /// \return
 	std::string getSValue(valueType vt, double value);
 
-/// вернуть тип события как строку
-/// \param type
-/// \return
+    /// вернуть тип события как строку
+    /// \param type
+    /// \return
 	std::string getEventTypeStr(eventType type);
 
 }
