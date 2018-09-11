@@ -23,6 +23,7 @@ add_subdirectory(SVClientExample)
 # gui
 add_subdirectory(SVGraphPanel)
 add_subdirectory(SVStatPanel)
+add_subdirectory(SVExportPanel)
 add_subdirectory(SVMonitor)
 add_subdirectory(SVViewer)
 
