@@ -36,14 +36,13 @@
 #include "SVAuxFunc/mt_log.h"
 #include "SVAuxFunc/serverTCP.h"
 #include "SVGraphPanel/SVGraphPanel.h"
+#include "SVExportPanel/SVExportPanel.h"
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
 const QString VERSION = "1.0.0.2";
 
 MainWin* mainWin = nullptr;
-SV_Aux::Logger* lg = nullptr;
-
 
 using namespace SV_Cng;
 
@@ -51,7 +50,7 @@ void statusMess(QString mess){
 
 	QMetaObject::invokeMethod(mainWin, "StatusTxtMess", Qt::AutoConnection, Q_ARG(QString, mess));
 
-	lg->WriteLine(qPrintable(mess));
+    mainWin->lg.WriteLine(qPrintable(mess));
 }
 
 void MainWin::load(){
@@ -61,13 +60,22 @@ void MainWin::load(){
 
 	orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
 	settPanel_ = new settingsPanel(this); settPanel_->setWindowFlags(Qt::Window);
-    trgPanel_ = new triggerPanel(this); trgPanel_->setWindowFlags(Qt::Window);
-
+    trgPanel_ = new triggerPanel(this); trgPanel_->setWindowFlags(Qt::Window);   
+    exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
+    exportPanel_->setWindowFlags(Qt::Window);
+       
 	SV_Graph::setLoadSignalData(graphPanel_, [](const QString& sign){
 		return SV_Srv::signalBufferEna(sign.toUtf8().data());
 	});
 	SV_Graph::setGetCopySignalRef(graphPanel_, getCopySignalRefSrv);
 	SV_Graph::setGetSignalData(graphPanel_, getSignalDataSrv);
+
+    SV_Exp::setLoadSignalData(exportPanel_, [](const QString& sign){
+        return SV_Srv::signalBufferEna(sign.toUtf8().data());
+    });
+    SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRefSrv);
+    SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRefSrv);
+    SV_Exp::setGetSignalData(exportPanel_, getSignalDataSrv);
 
 	SV_Srv::setStatusCBack([](const std::string& mess){
 	    statusMess(mess.c_str());
@@ -141,6 +149,10 @@ void MainWin::Connect(){
         if (orderWin_) orderWin_->show();
 	});
 
+    connect(ui.actionExport, &QAction::triggered, [this]() {
+        if (trgPanel_) exportPanel_->show();
+    });
+
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
         if (settPanel_) settPanel_->show();
 	});
@@ -196,7 +208,8 @@ bool MainWin::writeSettings(QString pathIni){
 bool MainWin::init(QString initPath){
 
     QString logPath = cng.dirPath + "/log/";
-    lg = new SV_Aux::Logger("svm", qPrintable(logPath));
+    lg.SetPath(qPrintable(logPath));
+    lg.SetName("svm");
 
     QSettings settings(initPath, QSettings::IniFormat);
     settings.beginGroup("Param");
@@ -312,11 +325,8 @@ MainWin::MainWin(QWidget *parent)
 
 MainWin::~MainWin(){
 
-	if (!initOk_) {
-		if (lg) lg->destroy();
-		return;
-	}
-
+	if (!initOk_) return;
+	
     SV_Srv::stopServer();
 
 	if (pComReader_ && pComReader_->isRunning())
@@ -333,7 +343,6 @@ MainWin::~MainWin(){
 
 	writeSettings(cng.initPath);
 
-	if (lg) lg->destroy();
 }
 
 void MainWin::sortSignalByModule(){

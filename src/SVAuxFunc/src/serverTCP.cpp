@@ -33,8 +33,8 @@
 
 namespace SV_TcpSrv {
     	
-#define SRVCheck(func, mess){ int sts = func; \
- if (sts != 0){ if (server.errCBack) server.errCBack(std::string(mess) + " " + std::to_string(sts)); return; }}
+#define SRVCheck(func, mess){ int fsts = func; \
+ if (fsts != 0){ if (server.errCBack) server.errCBack(std::string(mess) + " " + std::to_string(fsts)); return; }}
 
      /// клиент
 	struct client_t {

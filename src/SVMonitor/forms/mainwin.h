@@ -27,6 +27,7 @@
 #include "forms/ui_mainwin.h"
 #include "SVConfig/SVConfigData.h"
 #include "SVServer/SVServer.h"
+#include "SVAuxFunc/mt_log.h"
 #include "src/sql.h"
 #include "src/structurs.h"
 #include "src/comReader.h"
@@ -64,6 +65,8 @@ public:
 		int tcp_port;              ///< port
 	};
 
+    SV_Aux::Logger lg;
+
 	MainWin(QWidget *parent = 0);
 	~MainWin();
 
@@ -78,9 +81,10 @@ public:
 
 private:
 
+   
 	Ui::MainWin ui;
 	bool isSlowMode_ = false;
-
+    
 	SerialPortReader* pComReader_ = nullptr;
 
 	config cng;
@@ -89,6 +93,7 @@ private:
 	bool initOk_ = false;
 
 	QWidget* graphPanel_ = nullptr;
+    QDialog* exportPanel_ = nullptr;
 	eventOrderWin* orderWin_ = nullptr;
 	QWidget* trgPanel_ = nullptr;
 	settingsPanel* settPanel_ = nullptr;

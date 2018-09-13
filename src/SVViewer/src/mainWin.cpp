@@ -186,7 +186,7 @@ void MainWin::load(){
 	ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.treeSignals->setIconSize(QSize(40, 20));
 
-	exportWin_ = new exportWin(this); exportWin_->setWindowFlags(Qt::Window);
+	//exportWin_ = new exportWin(this); exportWin_->setWindowFlags(Qt::Window);
 
 	graphPanel_ = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
 

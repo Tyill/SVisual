@@ -38,6 +38,12 @@ namespace SV_Exp {
             ((exportPanel *)exp)->pfGetCopySignalRef = f;
 	}
 
+    void setGetCopyModuleRef(QDialog *exp, pf_getCopyModuleRef f) {
+
+        if (exp)
+            ((exportPanel *)exp)->pfGetCopyModuleRef = f;
+    }
+
 	void setGetSignalData(QDialog *exp, pf_getSignalData f) {
 
 		if (exp)

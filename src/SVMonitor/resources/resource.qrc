@@ -14,5 +14,6 @@
         <file>images/print.png</file>
         <file>images/open.png</file>
         <file>svmonitor_en.qm</file>
+        <file>images/export.png</file>
     </qresource>
 </RCC>

@@ -231,10 +231,11 @@
    <addaction name="actionTrgPanel"/>
    <addaction name="actionEventOrder"/>
    <addaction name="actionPrint"/>
+   <addaction name="actionExport"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources/resource.qrc">
      <normaloff>:/SVMonitor/images/open.png</normaloff>:/SVMonitor/images/open.png</iconset>
    </property>
    <property name="text">
@@ -304,6 +305,15 @@
    </property>
    <property name="text">
     <string>Печать</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVMonitor/images/export.png</normaloff>:/SVMonitor/images/export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Экспорт</string>
    </property>
   </action>
  </widget>

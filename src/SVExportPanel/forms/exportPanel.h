@@ -36,6 +36,7 @@ class exportPanel : public QDialog
 public:
 
 	SV_Exp::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+    SV_Exp::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
 	SV_Exp::pf_getSignalData pfGetSignalData = nullptr;
 	SV_Exp::pf_loadSignalData pfLoadSignalData= nullptr;
 	SV_Exp::pf_setTimeInterval pfSetTimeInterval = nullptr;
@@ -47,42 +48,23 @@ public:
 private:
 	Ui::ExportPanelClass ui;
 	
+    QString selModule_, selSignal_, selDirProc_;
+
+private:
+    void showEvent(QShowEvent * event);
+
     SV_Exp::config cng;
+    	    		
+    void updateTableSignal();
+    void updateTableExport();
 
-	struct valSData{
-		int changeCnt;
-		int duration;
-		int durationMean;
-	};
+    QSet<QString> expSignals_;
 
-	struct graphSignData{
-		QString sign;
-		QString name;	
-		QMap<int, valSData> valData;
-		QVector<QPair<int, int>> hist;
-	};
-
-			
-	bool diapEna_ = false;
-
-	QMap<QString, graphSignData> sign_;
-	QVector<SV_Cng::recData> vars_;
-
-	QVector<SV_Cng::recData> getSignData(QString sign);
-	void listTimeUpdate(QString sname, int val);
-	QVector<QPair<int, int>> calcHist(QString sname);
-
-	// Mx Hist
-	int Mx(QVector<QPair<int, int>>& hist);
-	
-private slots:
-	void dragEnterEvent(QDragEnterEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
-	void dropEvent(QDropEvent *event);
-	void graphValueChange();
-	void selectSignalChange();
-	void selectSignalTime(int row);
-	
+private slots:	
+    void selModule(QListWidgetItem* item);
+	void selectSignalChange();	
+    void addSignalOnExport();
+    void delSignalFromExport();
 };
 
 

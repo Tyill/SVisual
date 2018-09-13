@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/SVExp">
-        <file>svstatpanel_en.qm</file>
+        <file>images/arrow-left.png</file>
+        <file>images/arrow-right.png</file>
     </qresource>
 </RCC>

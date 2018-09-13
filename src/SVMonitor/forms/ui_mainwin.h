@@ -45,6 +45,7 @@ public:
     QAction *actionProgram;
     QAction *actionCheckUpdate;
     QAction *actionPrint;
+    QAction *actionExport;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_2;
     QSplitter *splitter;
@@ -114,6 +115,11 @@ public:
         QIcon icon6;
         icon6.addFile(QStringLiteral(":/SVMonitor/images/print.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPrint->setIcon(icon6);
+        actionExport = new QAction(MainWin);
+        actionExport->setObjectName(QStringLiteral("actionExport"));
+        QIcon icon7;
+        icon7.addFile(QStringLiteral(":/SVMonitor/images/export.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionExport->setIcon(icon7);
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout_2 = new QVBoxLayout(centralWidget);
@@ -226,6 +232,7 @@ public:
         mainToolBar->addAction(actionTrgPanel);
         mainToolBar->addAction(actionEventOrder);
         mainToolBar->addAction(actionPrint);
+        mainToolBar->addAction(actionExport);
 
         retranslateUi(MainWin);
 
@@ -245,6 +252,7 @@ public:
         actionProgram->setText(QApplication::translate("MainWin", "\320\236 \320\277\321\200\320\276\320\263\321\200\320\260\320\274\320\274\320\265", 0));
         actionCheckUpdate->setText(QApplication::translate("MainWin", "\320\237\321\200\320\276\320\262\320\265\321\200\320\270\321\202\321\214 \320\276\320\261\320\275\320\276\320\262\320\273\320\265\320\275\320\270\321\217", 0));
         actionPrint->setText(QApplication::translate("MainWin", "\320\237\320\265\321\207\320\260\321\202\321\214", 0));
+        actionExport->setText(QApplication::translate("MainWin", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202", 0));
         groupBox->setTitle(QString());
         label->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSlowPlay->setText(QApplication::translate("MainWin", "\320\242\320\270\321\205\320\270\320\271 \321\200\320\265\320\266\320\270\320\274", 0));

@@ -54,6 +54,9 @@ namespace SV_Exp {
 	typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
     SVEXPPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
 
+    typedef QMap<QString, SV_Cng::moduleData*>(*pf_getCopyModuleRef)();
+    SVEXPPANEL_API void setGetCopyModuleRef(QDialog* stPanel, pf_getCopyModuleRef f);
+
 	typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
     SVEXPPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
