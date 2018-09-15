@@ -229,7 +229,7 @@ void MainWin::Connect(){
 	});
 
 	connect(ui.actionExport, &QAction::triggered, [this]() {
-		if (exportWin_) exportWin_->show();
+//		if (exportWin_) exportWin_->show();
 	});
 		
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {

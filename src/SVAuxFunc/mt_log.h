@@ -141,7 +141,7 @@ namespace SV_Aux {
 					slg << "[" << deqMess_[readMessCnt_].cTime << "] " << deqMess_[readMessCnt_].mess << std::endl;
 
 					deqMess_[readMessCnt_].activ = false;
-					readMessCnt_++;
+					++readMessCnt_;
 					if (readMessCnt_ >= MAX_CNT_MESS) readMessCnt_ = 0;
 				}
 				slg.close();

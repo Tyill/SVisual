@@ -28,7 +28,7 @@
 #include "src/stdafx.h"
 #include "mainWin.h"
 #include "ui_mainWin.h"
-#include "exportWin.h"
+//#include "exportWin.h"
 #include "src/treeWidgetExt.h"
 #include "src/thrLoadData.h"
 #include "SVConfig/SVConfigData.h"
@@ -68,7 +68,7 @@ private:
 
     config cng;
 
-	exportWin* exportWin_ = nullptr;
+//	exportWin* exportWin_ = nullptr;
     QWidget* graphPanel_ = nullptr;
 	QDialog* statPanel_ = nullptr;
 

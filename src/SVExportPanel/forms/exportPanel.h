@@ -54,16 +54,19 @@ private:
     void showEvent(QShowEvent * event);
 
     SV_Exp::config cng;
-    	    		
+    	
+    QSet<QString> expSignals_;
+
     void updateTableSignal();
     void updateTableExport();
 
-    QSet<QString> expSignals_;
+    void exportToXLSX(QString fileName);
+    void exportToTXT(QString fileName);
+    void exportToJSON(QString fileName);
 
 private slots:	
     void selModule(QListWidgetItem* item);
-	void selectSignalChange();	
-    void addSignalOnExport();
+	void addSignalOnExport();
     void delSignalFromExport();
 };
 
