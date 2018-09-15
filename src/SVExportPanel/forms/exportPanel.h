@@ -48,7 +48,7 @@ public:
 private:
 	Ui::ExportPanelClass ui;
 	
-    QString selModule_, selSignal_, selDirProc_;
+    QString selModule_, selSignal_, selDirMem_;
 
 private:
     void showEvent(QShowEvent * event);

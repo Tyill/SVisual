@@ -40,21 +40,21 @@ int main(int argc, char *argv[]){
 
 		std::cout << "connect " << nm.c_str() << " ok" << std::endl;
 
-		for (int i = 0; i < 100; ++i){
+		/*for (int i = 0; i < 100; ++i){
 
 			std::string val = "абрвал" + std::to_string(i);
 			SV_Cln::svAddIntValue(val.c_str(), 0);
 
 			val = "front" + std::to_string(i);
 			SV_Cln::svAddBoolValue(val.c_str(), true);
-		}
+		}*/
 	}
 	else std::cout << "connect no" << std::endl;
 
 	int cp = 0;
 	while (true){
 
-		for (int i = 0; i < 100; i++){
+		for (int i = 0; i < 10; i++){
 				
 			std::string val = "dde" + std::to_string(i);
 			SV_Cln::svAddIntValue(val.c_str(), cp);

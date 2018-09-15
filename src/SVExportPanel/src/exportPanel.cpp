@@ -26,7 +26,9 @@
 #include "forms/exportPanel.h"
 #include "SVConfig/SVConfigLimits.h"
 #include "Lib/xlsx/xlsxdocument.h"
-
+#include "Lib/rapidjson/writer.h"
+#include "Lib/rapidjson/stringbuffer.h"
+#include "Lib/rapidjson/document.h"
 
 using namespace SV_Cng;
 
@@ -61,17 +63,16 @@ exportPanel::exportPanel(QWidget *parent, SV_Exp::config cng_){
 
         QString selectedFilter;
         QString fileName = dialog.getSaveFileName(this,
-            tr("Открытие файла параметров"), ".",
-            tr("txt file (*.txt);; xlsx file (*.xlsx);; json file (*.jsn)"), &selectedFilter);
+            tr("Открытие файла параметров"), selDirMem_,
+            tr("json file (*.jsn);; xlsx file (*.xlsx);; txt file (*.txt)"), &selectedFilter);
 
-        if (!fileName.isEmpty()){
-                                  
-            if (selectedFilter == "txt file (*.txt)")
-                exportToTXT(fileName);
+        if (!fileName.isEmpty()){                  
+            if (selectedFilter == "json file (*.jsn)")
+                exportToJSON(fileName);
             else if (selectedFilter == "xlsx file (*.xlsx)")
                 exportToXLSX(fileName);
-            else if (selectedFilter == "json file (*.jsn)")
-                exportToJSON(fileName);
+            else
+                exportToTXT(fileName);
         }
     });
 }
@@ -199,7 +200,7 @@ void exportPanel::exportToXLSX(QString fileName){
     uint64_t endTime = ui.dTimeEnd->dateTime().toMSecsSinceEpoch();
 
     QString module = "";
-    int row = 1, col = 1;
+    int row = 1, col = 1; 
     for (auto& s : expSignals_){
 
         auto sd = pfGetSignalData(s);
@@ -212,22 +213,21 @@ void exportPanel::exportToXLSX(QString fileName){
         xlsx.write(1, col, sd->name.c_str()); ++col;
 
         row = 2;
-        auto bsz = sd->buffData.size();
-        for (int i = 0; i < bsz; ++i){
-                       
-            uint64_t dt = sd->buffData[i].beginTime;
-            if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()){
+        auto bsz = sd->buffData.size(); int cp = sd->buffBeginPos;
+        while (cp != sd->buffValuePos){
 
-                // время                
-                xlsx.write(row, 1, QDateTime::fromMSecsSinceEpoch(dt));
+            uint64_t dt = sd->buffData[cp].beginTime;
+            if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()){
                 
-                // значения
                 if (ui.rbtnEveryVal->isChecked()){
+
+                    xlsx.write(row, 1, QDateTime::fromMSecsSinceEpoch(dt));
+
                     for (int j = 0; j < SV_PACKETSZ; ++j){
                         switch (sd->type){
-                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[i].vals[j].tBool ? 1 : 0); break;
-                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[i].vals[j].tInt); break;
-                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[i].vals[j].tFloat); break;
+                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[cp].vals[j].tBool ? 1 : 0); break;
+                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[cp].vals[j].tInt); break;
+                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[cp].vals[j].tFloat); break;
                         }
                         ++row;
                      }
@@ -235,11 +235,14 @@ void exportPanel::exportToXLSX(QString fileName){
                 else if (ui.rbtnEveryMin->isChecked()){
                     int evr = 60000 / SV_CYCLESAVE_MS;
 
-                    if ((i % evr) == 0){
+                    if ((cp % evr) == 0){
+
+                        xlsx.write(row, 1, QDateTime::fromMSecsSinceEpoch(dt));
+
                         switch (sd->type){
-                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[i].vals[0].tBool ? 1 : 0); break;
-                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[i].vals[0].tInt); break;
-                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[i].vals[0].tFloat); break;
+                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tBool ? 1 : 0); break;
+                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tInt); break;
+                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tFloat); break;
                         }
                         ++row;
                     }                    
@@ -247,16 +250,21 @@ void exportPanel::exportToXLSX(QString fileName){
                 else if (ui.rbtnEverySec->isChecked()){
                     int evr = 1000 / SV_CYCLESAVE_MS;
 
-                    if ((i % evr) == 0){
+                    if ((cp % evr) == 0){
+
+                        xlsx.write(row, 1, QDateTime::fromMSecsSinceEpoch(dt));
+
                         switch (sd->type){
-                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[i].vals[0].tBool ? 1 : 0); break;
-                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[i].vals[0].tInt); break;
-                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[i].vals[0].tFloat); break;
+                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tBool ? 1 : 0); break;
+                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tInt); break;
+                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tFloat); break;
                         }
                         ++row;
                     }
                 }
-            }            
+            }
+            ++cp;
+            if (cp >= bsz) cp = 0;
         }
     }   
       
@@ -291,63 +299,61 @@ void exportPanel::exportToTXT(QString fileName){
 
             out << "module = " << sd->module.c_str() << '\n';
             out << "signal = " << sd->name.c_str() << '\n';
+                       
+            auto bsz = sd->buffData.size(); int cp = sd->buffBeginPos;
+            QString value, time;
+            while (cp != sd->buffValuePos){
 
-            // время 
-            out << "time = ";
-            auto bsz = sd->buffData.size();
-            for (int i = 0; i < bsz; ++i){
-
-                uint64_t dt = sd->buffData[i].beginTime;
+                uint64_t dt = sd->buffData[cp].beginTime;
                 if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()){
 
-                    // время                
-                    out << QDateTime::fromMSecsSinceEpoch(dt).toString("dd-MM-yy HH:mm:ss") << "  ";
-                    break;
-                }
-            }
-            out << '\n';
-
-            out << "value = ";
-            for (int i = 0; i < bsz; ++i){
-
-                uint64_t dt = sd->buffData[i].beginTime;
-                if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()){
-
-                    // значения
                     if (ui.rbtnEveryVal->isChecked()){
+
+                        time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
+
                         for (int j = 0; j < SV_PACKETSZ; ++j){
                             switch (sd->type){
-                            case valueType::tBool:  out << QString::number(sd->buffData[i].vals[j].tBool ? 1 : 0) << ' '; break;
-                            case valueType::tInt:   out << QString::number(sd->buffData[i].vals[j].tInt) << ' '; break;
-                            case valueType::tFloat: out << QString::number(sd->buffData[i].vals[j].tFloat) << ' '; break;
+                            case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[j].tBool ? 1 : 0) + ' '; break;
+                            case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[j].tInt) + ' '; break;
+                            case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[j].tFloat) + ' '; break;
                             }
                         }
                     }
                     else if (ui.rbtnEveryMin->isChecked()){
                         int evr = 60000 / SV_CYCLESAVE_MS;
 
-                        if ((i % evr) == 0){
+                        if ((cp % evr) == 0){
+
+                            time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
+
                             switch (sd->type){
-                            case valueType::tBool:  out << QString::number(sd->buffData[i].vals[0].tBool ? 1 : 0) << ' '; break;
-                            case valueType::tInt:   out << QString::number(sd->buffData[i].vals[0].tInt) << ' '; break;
-                            case valueType::tFloat: out << QString::number(sd->buffData[i].vals[0].tFloat) << ' '; break;
+                            case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
+                            case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
+                            case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
                             }
                         }
                     }
                     else if (ui.rbtnEverySec->isChecked()){
                         int evr = 1000 / SV_CYCLESAVE_MS;
 
-                        if ((i % evr) == 0){
+                        if ((cp % evr) == 0){
+
+                            time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
+
                             switch (sd->type){
-                            case valueType::tBool:  out << QString::number(sd->buffData[i].vals[0].tBool ? 1 : 0) << ' '; break;
-                            case valueType::tInt:   out << QString::number(sd->buffData[i].vals[0].tInt) << ' '; break;
-                            case valueType::tFloat: out << QString::number(sd->buffData[i].vals[0].tFloat) << ' '; break;
+                            case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
+                            case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
+                            case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
                             }
                         }
                     }
                 }
+
+                ++cp;
+                if (cp >= bsz) cp = 0;
             }
-            out << '\n';
+            out << "time = " << qPrintable(time) << '\n';
+            out << "value = " << qPrintable(value) << '\n';
         }
 
         data.close();
@@ -367,8 +373,117 @@ void exportPanel::exportToTXT(QString fileName){
 }
 
 void exportPanel::exportToJSON(QString fileName){
+    
+    namespace rj = rapidjson;
 
+    rj::StringBuffer sb;
+    rj::Writer<rj::StringBuffer> writer(sb);
 
+    writer.StartObject();
+      
+    writer.Key("Signals");
+    writer.StartArray();
+  
+    uint64_t beginTime = ui.dTimeBegin->dateTime().toMSecsSinceEpoch();
+    uint64_t endTime = ui.dTimeEnd->dateTime().toMSecsSinceEpoch();
+
+    for (auto& s : expSignals_){
+
+        auto sd = pfGetSignalData(s);
+        
+        writer.StartObject();
+
+        writer.Key("Module");
+        writer.String(sd->module.c_str());
+
+        writer.Key("Signal");
+        writer.String(sd->name.c_str());
+        
+        auto bsz = sd->buffData.size(); int cp = sd->buffBeginPos;
+        QString time, value;
+        while(cp != sd->buffValuePos){
+                       
+            uint64_t dt = sd->buffData[cp].beginTime;
+
+            if ((dt < sd->buffMinTime) || (dt > sd->buffMaxTime)) break;
+
+            if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()){
+
+                if (ui.rbtnEveryVal->isChecked()){
+
+                   time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
+
+                   for (int j = 0; j < SV_PACKETSZ; ++j){
+                        switch (sd->type){
+                        case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[j].tBool ? 1 : 0) + ' '; break;
+                        case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[j].tInt) + ' '; break;
+                        case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[j].tFloat) + ' '; break;
+                        }
+                    }
+                }
+                else if (ui.rbtnEveryMin->isChecked()){
+                    int evr = 60000 / SV_CYCLESAVE_MS;
+
+                    if ((cp % evr) == 0){
+
+                        time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
+
+                        switch (sd->type){
+                        case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
+                        case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
+                        case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
+                        }
+                    }
+                }
+                else if (ui.rbtnEverySec->isChecked()){
+                    int evr = 1000 / SV_CYCLESAVE_MS;
+
+                    if ((cp % evr) == 0){
+
+                        time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
+
+                        switch (sd->type){
+                        case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
+                        case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
+                        case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
+                        }
+                    }
+                }
+            }
+
+            ++cp;
+            if (cp >= bsz) cp = 0;
+        }
+        writer.Key("Time");
+        writer.String(qPrintable(time));
+
+        writer.Key("Value");
+        writer.String(qPrintable(value));
+
+        writer.EndObject();
+    }
+
+    writer.EndArray();
+    writer.EndObject();
+   
+    QFile data(fileName);
+  
+    if (data.open(QFile::WriteOnly)){
+        data.write(sb.GetString());
+        data.close();
+        ui.lbMessage->setText(tr("Успешно сохранен: ") + fileName);
+    }
+    else
+        ui.lbMessage->setText(tr("Не удалось сохранить: ") + fileName);
+
+    QTimer* tmr = new QTimer(this);
+    connect(tmr, &QTimer::timeout, [=]() {
+        ui.lbMessage->setText("");
+        tmr->stop();
+        tmr->deleteLater();
+    });
+    tmr->setInterval(5000);
+    tmr->start();
 }
 
 
