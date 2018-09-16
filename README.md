@@ -24,6 +24,8 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * adding a signal for viewing / recording only by the client, no additional movements are required
 
+* export data to xlsx, json or txt
+
 ## Demo
 
 https://www.youtube.com/watch?v=LR0Rb964DLA&feature=youtu.be
