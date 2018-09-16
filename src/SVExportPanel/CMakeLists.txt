@@ -12,6 +12,6 @@ FILE(GLOB_RECURSE SRC_ExPn "*.cpp" "*.h" "*.ui" "*.qrc")
 
 add_library(SVExportPanel SHARED ${SRC_ExPn})
 
-target_link_libraries(SVExportPanel SVConfig QtXlsxWriterd)
+target_link_libraries(SVExportPanel SVConfig QtXlsxWriter)
 
 qt5_use_modules(SVExportPanel Core Widgets Gui )

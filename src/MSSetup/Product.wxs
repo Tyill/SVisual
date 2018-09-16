@@ -8,7 +8,7 @@
   <?define ProductCode="a29c5479-14fd-40bc-bced-15ec9d3dd1cf"?>
   <?define UpgradeCode="faffd2e2-43cf-4b61-8617-fe18ce48797b"?>
   <?define Manufacturer="SVisual"?>
-  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1049" Version="1.0.0.2" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1049" Version="1.0.0.3" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<!--<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />-->
@@ -57,10 +57,12 @@
         <File Id='QtCore' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5Core.dll'/>
         <File Id='QtGui' DiskId='1'      Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5Gui.dll'/>
         <File Id='QtWidgets' DiskId='1'  Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5Widgets.dll'/>
+        <File Id='QtXLSX' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\QtXlsxWriter.dll'/>
         <File Id='QtSerial' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5SerialPort.dll'/>
         <File Id='QtPrint' DiskId='1'    Source='c:\C++\SVisual\mssrc\Builds\Release\x64\Qt5PrintSupport.dll'/>
         <File Id='SVGraph' DiskId='1'    Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVGraphPanel.dll'/>
         <File Id='SVStat' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVStatPanel.dll'/>
+        <File Id='SVExport' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVExportPanel.dll'/>
         <File Id='SVServer' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\SVServer.dll'/>
         <File Id='sqlite' DiskId='1'     Source='c:\C++\SVisual\mssrc\Builds\Release\x64\sqlite3.dll'/> 
         <File Id='zlibwapi' DiskId='1'   Source='c:\C++\SVisual\mssrc\Builds\Release\x64\zlibwapi.dll'/>

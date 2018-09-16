@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
 	int cp = 0;
 	while (true){
 
-		for (int i = 0; i < 10; i++){
+		for (int i = 0; i < 100; i++){
 				
 			std::string val = "dde" + std::to_string(i);
 			SV_Cln::svAddIntValue(val.c_str(), cp);

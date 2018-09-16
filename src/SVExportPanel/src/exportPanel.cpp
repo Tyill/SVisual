@@ -38,7 +38,7 @@ exportPanel::exportPanel(QWidget *parent, SV_Exp::config cng_){
 	
 #ifdef SV_EN
 	QTranslator translator;
-	translator.load(":/SVExp/svexppanel_en.qm");
+	translator.load(":/SVExp/svexportpanel_en.qm");
 	QCoreApplication::installTranslator(&translator);
 #endif
     
@@ -63,7 +63,7 @@ exportPanel::exportPanel(QWidget *parent, SV_Exp::config cng_){
 
         QString selectedFilter;
         QString fileName = dialog.getSaveFileName(this,
-            tr("Открытие файла параметров"), selDirMem_,
+            tr("Создание файла данных"), selDirMem_,
             tr("json file (*.jsn);; xlsx file (*.xlsx);; txt file (*.txt)"), &selectedFilter);
 
         if (!fileName.isEmpty()){                  
@@ -83,13 +83,12 @@ exportPanel::~exportPanel(){
 }
 
 void exportPanel::showEvent(QShowEvent * event){
-        
-  
+          
     auto mref = pfGetCopyModuleRef();
 
     ui.tableModule->clear(); 
     for (auto mod : mref){
-        if (!mod->isDelete) ui.tableModule->addItem(mod->module.c_str());
+        if (!mod->isDelete && mod->isActive) ui.tableModule->addItem(mod->module.c_str());
     }
     ui.tableSignal->clearContents();
      
@@ -97,15 +96,12 @@ void exportPanel::showEvent(QShowEvent * event){
         selModule(ui.tableModule->item(0));
 }
 
-
 void exportPanel::selModule(QListWidgetItem* item){
 
     selModule_ = item->text();
 
     updateTableSignal();
 }
-
-
 
 void exportPanel::addSignalOnExport(){
 
@@ -118,8 +114,11 @@ void exportPanel::addSignalOnExport(){
         if (item->isSelected()){
 
             QString nm = item->text() + selModule_;
-            if (!expSignals_.contains(nm))
+            if (!expSignals_.contains(nm)){
                 expSignals_.insert(nm);
+
+                pfLoadSignalData(nm);
+            }
         }
     }   
 

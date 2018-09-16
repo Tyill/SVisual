@@ -307,7 +307,7 @@
      <normaloff>:/SVViewer/images/export.png</normaloff>:/SVViewer/images/export.png</iconset>
    </property>
    <property name="text">
-    <string>Экспорт в JSON</string>
+    <string>Экспорт</string>
    </property>
   </action>
  </widget>

@@ -40,9 +40,8 @@ class MainWin : public QMainWindow
 
 
     friend QMap<QString, SV_Cng::signalData*> getCopySignalRef();
-
-    friend SV_Cng::signalData* getSignalData(const QString& sign);
-	
+    friend QMap<QString, SV_Cng::moduleData*> getCopyModuleRef();
+    friend SV_Cng::signalData* getSignalData(const QString& sign);	
     friend bool loadSignalData(const QString& sign);
 
 public:
@@ -67,9 +66,9 @@ public:
 private:
 
     config cng;
-
-//	exportWin* exportWin_ = nullptr;
-    QWidget* graphPanel_ = nullptr;
+   
+    QDialog* exportPanel_ = nullptr;
+	QWidget* graphPanel_ = nullptr;
 	QDialog* statPanel_ = nullptr;
 
 	thrLoadData* thrLoadData_ = nullptr;

@@ -28,6 +28,7 @@
 #include "forms/mainWin.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVStatPanel/SVStatPanel.h"
+#include "SVExportPanel/SVExportPanel.h" 
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
@@ -41,23 +42,23 @@ using namespace SV_Cng;
 bool loadSignalData(const QString& sign);
 
 QMap<QString, signalData*> getCopySignalRef(){
-
- //   mainWin->mtx_.lock();
-
+    
     auto sref = mainWin->signalRef_;
-
- //   mainWin->mtx_.unlock();
 
     return sref;
 }
 
+QMap<QString, moduleData*> getCopyModuleRef(){
+
+    auto mref = mainWin->moduleRef_;
+
+    return mref;
+}
+
+
 signalData* getSignalData(const QString& sign){
 
-   // mainWin->mtx_.lock();
-
     signalData* sd = mainWin->signalRef_.contains(sign) ? mainWin->signalRef_[sign] : nullptr;
-
-  //  mainWin->mtx_.unlock();
 
     return sd;
 }
@@ -185,14 +186,18 @@ void MainWin::load(){
 
 	ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.treeSignals->setIconSize(QSize(40, 20));
-
-	//exportWin_ = new exportWin(this); exportWin_->setWindowFlags(Qt::Window);
-
+   
 	graphPanel_ = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
-
     SV_Graph::setGetCopySignalRef(graphPanel_, getCopySignalRef);
     SV_Graph::setGetSignalData(graphPanel_, getSignalData);
     SV_Graph::setLoadSignalData(graphPanel_, loadSignalData);
+
+    exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
+    exportPanel_->setWindowFlags(Qt::Window);
+    SV_Exp::setLoadSignalData(exportPanel_, loadSignalData);
+    SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRef);
+    SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRef);
+    SV_Exp::setGetSignalData(exportPanel_, getSignalData);
 
 	statPanel_ = SV_Stat::createStatPanel(this, SV_Stat::config(cng.cycleRecMs,cng.packetSz));
 	statPanel_->setWindowFlags(Qt::Window);
@@ -229,7 +234,7 @@ void MainWin::Connect(){
 	});
 
 	connect(ui.actionExport, &QAction::triggered, [this]() {
-//		if (exportWin_) exportWin_->show();
+        if (exportPanel_) exportPanel_->show();
 	});
 		
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {

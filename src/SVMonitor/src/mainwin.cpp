@@ -40,7 +40,7 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.0.2";
+const QString VERSION = "1.0.0.3";
 
 MainWin* mainWin = nullptr;
 
@@ -150,7 +150,7 @@ void MainWin::Connect(){
 	});
 
     connect(ui.actionExport, &QAction::triggered, [this]() {
-        if (trgPanel_) exportPanel_->show();
+        if (exportPanel_) exportPanel_->show();
     });
 
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
