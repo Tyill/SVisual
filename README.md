@@ -66,7 +66,9 @@ void loop() {
 
 ## Use in Linux
 Should be installed: qt, libz 
- 
+
+## [Manual](https://github.com/Tyill/SVisual/tree/master/man) 
+
 ## License
 Licensed under an [MIT-2.0]-[license](LICENSE).
 
