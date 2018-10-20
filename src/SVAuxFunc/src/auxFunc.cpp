@@ -28,6 +28,7 @@
 #include <thread>
 #include <chrono>
 #include <cstring>
+#include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -168,5 +169,5 @@ namespace SV_Aux {
 
     void SleepMs(int ms){
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-    }
+    }    
 }

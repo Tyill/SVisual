@@ -429,7 +429,7 @@ bool wdgGraph::eventFilter(QObject *target, QEvent *event){
 	if ((target->objectName() == "wPlot") && (event->type() == QEvent::Paint)){
 		
 		if (repaintEna_){
-			paintSignals();
+            paintSignals();
 			if (!signalListAlter_.isEmpty()) paintSignalsAlter();
 		}
 		
@@ -907,7 +907,7 @@ void wdgGraph::axisValueChange(){
 		}
 		
 		repaintEna_ = true;
-
+       
 		ui.wAxisValue->update();
 		ui.wPlot->update();
 		

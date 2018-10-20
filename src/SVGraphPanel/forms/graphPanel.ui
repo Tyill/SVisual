@@ -242,6 +242,41 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="btnAScale">
+            <property name="maximumSize">
+             <size>
+              <width>28</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>автошкала [CTRL+G]</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/gpresource.qrc">
+              <normaloff>:/SVGp/images/ascale.png</normaloff>:/SVGp/images/ascale.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+G</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="btnPlay">
             <property name="maximumSize">
              <size>

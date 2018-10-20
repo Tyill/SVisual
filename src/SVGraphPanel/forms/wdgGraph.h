@@ -58,7 +58,8 @@ private:
 
 	QImage imSign_;
 
-	bool repaintEna_ = false, selLeftMark_ = false, selRigthMark_ = false;
+	bool repaintEna_ = false,
+        selLeftMark_ = false, selRigthMark_ = false;
 
 	int colorCnt_ = 0;
 		
@@ -116,7 +117,7 @@ public:
 	QStringList getAllSignals();
 	QStringList getAllAlterSignals();
 	QSize sizeHint();
-	void scale(bool posNeg);
+	void scale(bool posNeg);   
 
 protected:
 	void dragEnterEvent(QDragEnterEvent *event);

@@ -29,6 +29,14 @@
 
 int main(int argc, char *argv[]){
 
+    int diap = 9; double vl = 134.6656;
+
+    if (diap > 100) vl = int(vl + 0.5);
+    else if (diap > 10) vl = int(vl * 10 + 0.5) / 10.;
+    else if (diap > 1) vl = int(vl * 100 + 0.5) / 100.;
+    else vl = int(vl * 1000 + 0.5) / 1000.;
+
+
 	std::string nm = argc >= 2 ? argv[1] : "client";
 
 	int cyc = argc >= 3 ? atoi(argv[2]) : 100;
@@ -57,7 +65,7 @@ int main(int argc, char *argv[]){
 		for (int i = 0; i < 100; i++){
 				
 			std::string val = "dde" + std::to_string(i);
-			SV_Cln::svAddIntValue(val.c_str(), cp);
+			SV_Cln::svAddIntValue(val.c_str(), rand() % 10000);
 
 			val = "front" + std::to_string(i);
 			SV_Cln::svAddBoolValue(val.c_str(), cp%2);

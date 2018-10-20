@@ -95,6 +95,7 @@ graphPanel::graphPanel(QWidget *parent, SV_Graph::config cng_){
 
 		if (cng.mode == SV_Graph::modeGr::viewer){
 			ui.btnPlay->setVisible(false);
+            ui.btnAScale->setVisible(false);
 			ui.dTimeBegin->setVisible(true);
 			ui.dTimeEnd->setVisible(true);
 			ui.lbDTime->setVisible(true);
@@ -435,7 +436,9 @@ void graphPanel::resizeByTime(){
 
 void graphPanel::resizeByValue(){
 
-	if (selGraph_)  selGraph_->resizeByValue();
+    if (selGraph_){
+        selGraph_->resizeByValue();
+    }
 }
 
 void graphPanel::scaleGraph(){
@@ -463,7 +466,7 @@ void graphPanel::updateSignals(){
 	
 	if (graphObj_.isEmpty() || !isPlay_) return;
 
-	if (selGraph_) selGraph_->resizeByValue();
+    if (selGraph_ && ui.btnAScale->isChecked()) selGraph_->resizeByValue();
 
 	qint64 bTm = QDateTime::currentDateTime().toMSecsSinceEpoch() - SV_CYCLESAVE_MS;
 	

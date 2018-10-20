@@ -129,8 +129,19 @@ void wdgAxisValue::drawDashLines(QPainter& painter){
 QString wdgAxisValue::getValMark(int offs){
 		
 	double vl = valInterval_.second - scale_ * offs;
-			
-	return QString::number(vl);
+
+    int sign = vl > 0 ? 1 : -1;
+
+    vl *= sign;
+
+    int diap = abs(valInterval_.second - valInterval_.first);
+
+    if (diap > 100) vl = int(vl + 0.5);
+    else if (diap > 10) vl = int(vl * 10 + 0.5) / 10.;
+    else if (diap > 1) vl = int(vl * 100 + 0.5) / 100.;
+    else vl = int(vl * 1000 + 0.5) / 1000.;
+
+    return QString::number(vl * sign);
 }
 
 void wdgAxisValue::drawValMark(QPainter& painter){
@@ -143,7 +154,10 @@ void wdgAxisValue::drawValMark(QPainter& painter){
 
 		QString valMark = getValMark(cHeight);
 			
-		painter.drawText(QPoint(0, cHeight), valMark);
+        int fontMetr = this->fontMetrics().width(valMark), 
+            xp = std::max(0, w - fontMetr - 15);
+
+        painter.drawText(QPoint(xp, cHeight), valMark);
 				
 		cHeight += curDashStep_;
 				

@@ -54,5 +54,5 @@ namespace SV_Aux {
     // автосоздание субдиректорий
     bool CreateSubDirectory(std::string strDirs);
 
-    void SleepMs(int ms);
+    void SleepMs(int ms);      
 }

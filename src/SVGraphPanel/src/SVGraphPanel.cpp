@@ -69,20 +69,20 @@ namespace SV_Graph {
 	QPair<qint64, qint64> getTimeInterval(QWidget *gp) {
 
 		if (gp)
-			return ((graphPanel *) gp)->getTimeInterval();
+			return ((graphPanel*) gp)->getTimeInterval();
 
 		return QPair<qint64, qint64>();
 	}
 
-	void setTimeInterval(QWidget *gp, qint64 stTime, qint64 enTime) {
+	void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime) {
 
 		if (gp) {
 
-			((graphPanel *)gp)->setTimeInterval(stTime, enTime);
+			((graphPanel*)gp)->setTimeInterval(stTime, enTime);
 
-			((graphPanel *) gp)->ui.axisTime->update();
+			((graphPanel*)gp)->ui.axisTime->update();
 
-			((graphPanel *) gp)->resizeByValue();
+			((graphPanel*)gp)->resizeByValue();
 		}
 	}
 }

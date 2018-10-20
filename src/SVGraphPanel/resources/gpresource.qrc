@@ -1,16 +1,17 @@
 <RCC>
-  <qresource prefix="/SVGp">
-    <file>images/bw.png</file>
-    <file>images/color_wheel.png</file>
-    <file>images/iconResByValue.png</file>
-    <file>images/player_stop.png</file>
-    <file>images/scaleNeg.png</file>
-    <file>images/scalePos.png</file>
-    <file>images/SVLabel.png</file>
-    <file>images/player_play.png</file>
-    <file>images/arrowDn.png</file>
-    <file>images/arrowUp.png</file>
-    <file>images/iconResAuto.png</file>
-    <file>svgraphpanel_en.qm</file>
-  </qresource>
+    <qresource prefix="/SVGp">
+        <file>images/bw.png</file>
+        <file>images/color_wheel.png</file>
+        <file>images/iconResByValue.png</file>
+        <file>images/player_stop.png</file>
+        <file>images/scaleNeg.png</file>
+        <file>images/scalePos.png</file>
+        <file>images/SVLabel.png</file>
+        <file>images/player_play.png</file>
+        <file>images/arrowDn.png</file>
+        <file>images/arrowUp.png</file>
+        <file>images/iconResAuto.png</file>
+        <file>svgraphpanel_en.qm</file>
+        <file>images/ascale.png</file>
+    </qresource>
 </RCC>
