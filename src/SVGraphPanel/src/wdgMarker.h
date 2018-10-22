@@ -24,7 +24,7 @@
 //
 #pragma once
 
-
+#include "stdafx.h"
 class wdgMarker : public QWidget
 {
 	Q_OBJECT

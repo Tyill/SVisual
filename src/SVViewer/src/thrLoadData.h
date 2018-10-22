@@ -24,6 +24,8 @@
 //
 #pragma once
 
+#include "stdafx.h"
+
 class thrLoadData : public QObject {
 	Q_OBJECT
 

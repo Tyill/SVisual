@@ -8,6 +8,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_VS_PLATFORM_NAME})
 
 if(MSVC)   
+   add_definitions(-DWIN32_LEAN_AND_MEAN)
+   add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
    link_directories(";$(OutDir)")
 endif(MSVC)
 

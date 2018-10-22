@@ -33,7 +33,7 @@
 #include "SVConfig/SVConfigData.h"
 
 
-const QString VERSION = "1.0.0.3";
+const QString VERSION = "1.0.4";
 MainWin* mainWin = nullptr;
 
 using namespace SV_Cng;

@@ -24,6 +24,7 @@
 //
 #pragma once
 
+#include "stdafx.h"
 
 class wdgGraphHist : public QWidget
 {

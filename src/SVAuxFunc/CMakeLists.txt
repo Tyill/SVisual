@@ -7,7 +7,7 @@ include(../cmake/mswin.cmake)
 FILE(GLOB_RECURSE SRC_SVAux "*.cpp" "*.h")
 
 if (UNIX)
-   add_compile_options(-fPIC)
+   add_compile_options(-fPIC -pthread)
 endif(UNIX)
 
 add_library(SVAuxFunc STATIC ${SRC_SVAux})
