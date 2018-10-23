@@ -7,7 +7,7 @@ include(../cmake/mswin.cmake)
 FILE(GLOB_RECURSE SRC_SVAux "*.cpp" "*.h")
 
 if (UNIX)
-   add_compile_options(-fPIC -pthread)
+   add_compile_options(-fPIC )
 endif(UNIX)
 
 add_library(SVAuxFunc STATIC ${SRC_SVAux})
@@ -15,7 +15,7 @@ add_library(SVAuxFunc STATIC ${SRC_SVAux})
 if(WIN32)
    target_link_libraries(SVAuxFunc libuv ws2_32 Iphlpapi psapi Userenv Mswsock AdvApi32)
 else()
-   target_link_libraries(SVAuxFunc uv)
+   target_link_libraries(SVAuxFunc uv  pthread)
 endif()
 
 
