@@ -48,7 +48,7 @@ settingsPanel::settingsPanel(QWidget *parent){
 		ui.txtIPAddr->setEnabled(!isSel);
 		ui.txtTCPPort->setEnabled(!isSel);
 
-		selParamLoad_ = true;		
+		selParamLoad_ = true;
 		paramChange();
 	});
 	connect(ui.rbtnConnectByEthernet, &QRadioButton::clicked, this, [this](){
@@ -64,7 +64,7 @@ settingsPanel::settingsPanel(QWidget *parent){
 		selParamLoad_ = true;
 		paramChange();
 	});
-	connect(ui.cbxComSpeed, SIGNAL(currentTextEdited(QString)), this, SLOT(paramChange()));
+	connect(ui.cbxComSpeed, SIGNAL(currentTextChanged(QString)), this, SLOT(paramChange()));
 	connect(ui.rbtnCopyEna, &QRadioButton::clicked, this, [this](){
 
 		bool isSel = ui.rbtnCopyEna->isChecked();
