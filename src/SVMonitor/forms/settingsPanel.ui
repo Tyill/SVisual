@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
-    <height>260</height>
+    <width>536</width>
+    <height>258</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>512</width>
+    <width>536</width>
     <height>260</height>
    </size>
   </property>
@@ -27,41 +27,25 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
          <widget class="QRadioButton" name="rbtnConnectByEthernet">
           <property name="text">
            <string>соединение по Ethernet</string>
           </property>
          </widget>
         </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        <item row="0" column="5">
+         <widget class="QLineEdit" name="txtTCPPort">
+          <property name="maximumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>70</width>
+            <height>16777215</height>
            </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>ip адрес</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="3">
          <widget class="QLineEdit" name="txtIPAddr">
           <property name="minimumSize">
            <size>
@@ -77,7 +61,20 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="4">
          <widget class="QLabel" name="label_5">
           <property name="minimumSize">
            <size>
@@ -90,50 +87,20 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QLineEdit" name="txtTCPPort">
-          <property name="maximumSize">
-           <size>
-            <width>70</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QRadioButton" name="rbtnConnectByCom">
+        <item row="0" column="2">
+         <widget class="QLabel" name="label">
           <property name="minimumSize">
            <size>
-            <width>166</width>
+            <width>50</width>
             <height>0</height>
            </size>
           </property>
           <property name="text">
-           <string>соединение по COM</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
+           <string>ip адрес</string>
           </property>
          </widget>
         </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
+        <item row="1" column="2">
          <widget class="QLabel" name="label_2">
           <property name="minimumSize">
            <size>
@@ -146,7 +113,23 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="rbtnConnectByCom">
+          <property name="minimumSize">
+           <size>
+            <width>166</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>соединение по COM/UART</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
          <widget class="QLineEdit" name="txtComPort">
           <property name="minimumSize">
            <size>
@@ -162,7 +145,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="4">
          <widget class="QLabel" name="label_6">
           <property name="minimumSize">
            <size>
@@ -175,14 +158,54 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QLineEdit" name="txtComSpeed">
-          <property name="maximumSize">
-           <size>
-            <width>70</width>
-            <height>16777215</height>
-           </size>
+        <item row="1" column="5">
+         <widget class="QComboBox" name="cbxComSpeed">
+          <property name="editable">
+           <bool>true</bool>
           </property>
+          <property name="currentText">
+           <string>9600</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>1200</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2400</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4800</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>9600</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>19200</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>38400</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>57600</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>115200</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

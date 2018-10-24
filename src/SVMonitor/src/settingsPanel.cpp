@@ -42,7 +42,7 @@ settingsPanel::settingsPanel(QWidget *parent){
 		
 		bool isSel = ui.rbtnConnectByCom->isChecked();
 
-		ui.txtComSpeed->setEnabled(isSel);
+		ui.cbxComSpeed->setEnabled(isSel);
 		ui.txtComPort->setEnabled(isSel);
 
 		ui.txtIPAddr->setEnabled(!isSel);
@@ -58,13 +58,13 @@ settingsPanel::settingsPanel(QWidget *parent){
 		ui.txtIPAddr->setEnabled(isSel);
 		ui.txtTCPPort->setEnabled(isSel);
 
-		ui.txtComSpeed->setEnabled(!isSel);
+		ui.cbxComSpeed->setEnabled(!isSel);
 		ui.txtComPort->setEnabled(!isSel);
 
 		selParamLoad_ = true;
 		paramChange();
 	});
-	connect(ui.txtComSpeed, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+	connect(ui.cbxComSpeed, SIGNAL(currentTextEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.rbtnCopyEna, &QRadioButton::clicked, this, [this](){
 
 		bool isSel = ui.rbtnCopyEna->isChecked();
@@ -91,7 +91,7 @@ void settingsPanel::showEvent(QShowEvent * event){
 	ui.rbtnConnectByCom->setChecked(cng.com_ena);
 	ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
 	ui.txtComPort->setText(cng.com_name);
-	ui.txtComSpeed->setText(QString::number(cng.com_speed));
+	ui.cbxComSpeed->setCurrentText(QString::number(cng.com_speed));
 
 	ui.rbtnCopyEna->setChecked(cng.outArchiveEna);
 	ui.txtCopyPath->setText(cng.outArchivePath);
@@ -101,7 +101,7 @@ void settingsPanel::showEvent(QShowEvent * event){
 	ui.txtIPAddr->setEnabled(isSel);
 	ui.txtTCPPort->setEnabled(isSel);
 
-	ui.txtComSpeed->setEnabled(!isSel);
+	ui.cbxComSpeed->setEnabled(!isSel);
 	ui.txtComPort->setEnabled(!isSel);
 
 	isSel = ui.rbtnCopyEna->isChecked();
@@ -136,7 +136,7 @@ void settingsPanel::saveChange(){
 
 	cng.com_ena = ui.rbtnConnectByCom->isChecked();
 	cng.com_name = ui.txtComPort->text();
-	cng.com_speed = ui.txtComSpeed->text().toInt();
+	cng.com_speed = ui.cbxComSpeed->currentText().toInt();
 
 	mainWin_->updateConfig(cng);
 
@@ -150,7 +150,7 @@ void settingsPanel::saveChange(){
 void settingsPanel::paramChange(){
 
 	QString name = sender()->objectName();
-	if ((name == "txtComSpeed") || (name == "txtIPAddr") || (name == "txtTCPPort") || (name == "txtComPort"))
+	if ((name == "cbxComSpeed") || (name == "txtIPAddr") || (name == "txtTCPPort") || (name == "txtComPort"))
 		selParamLoad_ = true;
 	ui.lbChange->setText("*");
 
