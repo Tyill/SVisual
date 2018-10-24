@@ -142,11 +142,18 @@ void wdgPlot::mouseMoveEvent(QMouseEvent *event){
 }
 
 void wdgPlot::wheelEvent(QWheelEvent * event){
+	auto keys = event->modifiers();
 
 	if (axisTime_ && axisValue_){
 
-		axisTime_->wheelEvent(event);
-		axisValue_->wheelEvent(event);
+		if (keys.testFlag(Qt::ControlModifier)) {
+			axisValue_->wheelEvent(event);
+		} else if (keys.testFlag(Qt::ShiftModifier)) {
+			axisTime_->wheelEvent(event);
+		} else {
+			axisTime_->wheelEvent(event);
+			axisValue_->wheelEvent(event);
+		}
 	}
 }
 
