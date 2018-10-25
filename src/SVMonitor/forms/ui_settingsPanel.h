@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
@@ -24,7 +25,9 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
@@ -46,13 +49,22 @@ public:
     QLineEdit *txtComPort;
     QLabel *label_6;
     QComboBox *cbxComSpeed;
+    QSpacerItem *horizontalSpacer_4;
     QGroupBox *grbSaveData;
     QVBoxLayout *verticalLayout_2;
-    QRadioButton *rbtnCopyEna;
+    QCheckBox *rbtnCopyEna;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_3;
     QPushButton *btnCopyPath;
     QLineEdit *txtCopyPath;
+    QGroupBox *groupBox_2;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout_4;
+    QLabel *label_4;
+    QSpinBox *spinCycleRecMs;
+    QSpacerItem *horizontalSpacer_2;
+    QLabel *label_7;
+    QSpinBox *spinPacketSz;
     QHBoxLayout *horizontalLayout_6;
     QSpacerItem *horizontalSpacer_3;
     QLabel *lbChange;
@@ -62,8 +74,7 @@ public:
     {
         if (settingsPanelClass->objectName().isEmpty())
             settingsPanelClass->setObjectName(QStringLiteral("settingsPanelClass"));
-        settingsPanelClass->resize(536, 258);
-        settingsPanelClass->setMaximumSize(QSize(536, 260));
+        settingsPanelClass->setMaximumSize(QSize(550, 350));
         verticalLayout_3 = new QVBoxLayout(settingsPanelClass);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         groupBox = new QGroupBox(settingsPanelClass);
@@ -79,18 +90,20 @@ public:
 
         txtTCPPort = new QLineEdit(groupBox);
         txtTCPPort->setObjectName(QStringLiteral("txtTCPPort"));
+        txtTCPPort->setEnabled(false);
         txtTCPPort->setMaximumSize(QSize(70, 16777215));
 
-        gridLayout->addWidget(txtTCPPort, 0, 5, 1, 1);
+        gridLayout->addWidget(txtTCPPort, 0, 6, 1, 1);
 
         txtIPAddr = new QLineEdit(groupBox);
         txtIPAddr->setObjectName(QStringLiteral("txtIPAddr"));
+        txtIPAddr->setEnabled(false);
         txtIPAddr->setMinimumSize(QSize(100, 0));
         txtIPAddr->setMaximumSize(QSize(100, 16777215));
 
         gridLayout->addWidget(txtIPAddr, 0, 3, 1, 1);
 
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        horizontalSpacer = new QSpacerItem(10, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
         gridLayout->addItem(horizontalSpacer, 0, 1, 1, 1);
 
@@ -98,7 +111,7 @@ public:
         label_5->setObjectName(QStringLiteral("label_5"));
         label_5->setMinimumSize(QSize(55, 0));
 
-        gridLayout->addWidget(label_5, 0, 4, 1, 1);
+        gridLayout->addWidget(label_5, 0, 5, 1, 1);
 
         label = new QLabel(groupBox);
         label->setObjectName(QStringLiteral("label"));
@@ -114,13 +127,14 @@ public:
 
         rbtnConnectByCom = new QRadioButton(groupBox);
         rbtnConnectByCom->setObjectName(QStringLiteral("rbtnConnectByCom"));
-        rbtnConnectByCom->setMinimumSize(QSize(166, 0));
+        rbtnConnectByCom->setMinimumSize(QSize(0, 0));
         rbtnConnectByCom->setChecked(true);
 
         gridLayout->addWidget(rbtnConnectByCom, 1, 0, 1, 1);
 
         txtComPort = new QLineEdit(groupBox);
         txtComPort->setObjectName(QStringLiteral("txtComPort"));
+        txtComPort->setEnabled(true);
         txtComPort->setMinimumSize(QSize(100, 0));
         txtComPort->setMaximumSize(QSize(100, 16777215));
 
@@ -130,13 +144,18 @@ public:
         label_6->setObjectName(QStringLiteral("label_6"));
         label_6->setMinimumSize(QSize(55, 0));
 
-        gridLayout->addWidget(label_6, 1, 4, 1, 1);
+        gridLayout->addWidget(label_6, 1, 5, 1, 1);
 
         cbxComSpeed = new QComboBox(groupBox);
         cbxComSpeed->setObjectName(QStringLiteral("cbxComSpeed"));
+        cbxComSpeed->setEnabled(true);
         cbxComSpeed->setEditable(true);
 
-        gridLayout->addWidget(cbxComSpeed, 1, 5, 1, 1);
+        gridLayout->addWidget(cbxComSpeed, 1, 6, 1, 1);
+
+        horizontalSpacer_4 = new QSpacerItem(10, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+        gridLayout->addItem(horizontalSpacer_4, 0, 4, 1, 1);
 
 
         verticalLayout->addLayout(gridLayout);
@@ -148,7 +167,7 @@ public:
         grbSaveData->setObjectName(QStringLiteral("grbSaveData"));
         verticalLayout_2 = new QVBoxLayout(grbSaveData);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        rbtnCopyEna = new QRadioButton(grbSaveData);
+        rbtnCopyEna = new QCheckBox(grbSaveData);
         rbtnCopyEna->setObjectName(QStringLiteral("rbtnCopyEna"));
         rbtnCopyEna->setEnabled(true);
         rbtnCopyEna->setLayoutDirection(Qt::LeftToRight);
@@ -165,7 +184,7 @@ public:
 
         btnCopyPath = new QPushButton(grbSaveData);
         btnCopyPath->setObjectName(QStringLiteral("btnCopyPath"));
-        btnCopyPath->setEnabled(true);
+        btnCopyPath->setEnabled(false);
         btnCopyPath->setMinimumSize(QSize(30, 30));
         btnCopyPath->setMaximumSize(QSize(30, 30));
         QIcon icon;
@@ -176,7 +195,7 @@ public:
 
         txtCopyPath = new QLineEdit(grbSaveData);
         txtCopyPath->setObjectName(QStringLiteral("txtCopyPath"));
-        txtCopyPath->setEnabled(true);
+        txtCopyPath->setEnabled(false);
         txtCopyPath->setMinimumSize(QSize(200, 0));
 
         horizontalLayout_2->addWidget(txtCopyPath);
@@ -186,6 +205,52 @@ public:
 
 
         verticalLayout_3->addWidget(grbSaveData);
+
+        groupBox_2 = new QGroupBox(settingsPanelClass);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
+        groupBox_2->setSizePolicy(sizePolicy);
+        groupBox_2->setMinimumSize(QSize(0, 50));
+        widget = new QWidget(groupBox_2);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(10, 20, 362, 27));
+        horizontalLayout_4 = new QHBoxLayout(widget);
+        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
+        horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
+        label_4 = new QLabel(widget);
+        label_4->setObjectName(QStringLiteral("label_4"));
+
+        horizontalLayout_4->addWidget(label_4);
+
+        spinCycleRecMs = new QSpinBox(widget);
+        spinCycleRecMs->setObjectName(QStringLiteral("spinCycleRecMs"));
+        spinCycleRecMs->setMinimum(5);
+        spinCycleRecMs->setMaximum(5000);
+        spinCycleRecMs->setValue(100);
+
+        horizontalLayout_4->addWidget(spinCycleRecMs);
+
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_4->addItem(horizontalSpacer_2);
+
+        label_7 = new QLabel(widget);
+        label_7->setObjectName(QStringLiteral("label_7"));
+
+        horizontalLayout_4->addWidget(label_7);
+
+        spinPacketSz = new QSpinBox(widget);
+        spinPacketSz->setObjectName(QStringLiteral("spinPacketSz"));
+        spinPacketSz->setMinimum(1);
+        spinPacketSz->setValue(10);
+
+        horizontalLayout_4->addWidget(spinPacketSz);
+
+
+        verticalLayout_3->addWidget(groupBox_2);
 
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
@@ -233,7 +298,7 @@ public:
          << QApplication::translate("settingsPanelClass", "57600", Q_NULLPTR)
          << QApplication::translate("settingsPanelClass", "115200", Q_NULLPTR)
         );
-        cbxComSpeed->setCurrentText(QApplication::translate("settingsPanelClass", "9600", Q_NULLPTR));
+        cbxComSpeed->setCurrentText(QApplication::translate("settingsPanelClass", "1200", Q_NULLPTR));
         grbSaveData->setTitle(QApplication::translate("settingsPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\265\320\275\320\270\320\265 \320\264\320\260\320\275\320\275\321\213\321\205", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
         rbtnCopyEna->setToolTip(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", Q_NULLPTR));
@@ -241,6 +306,10 @@ public:
         rbtnCopyEna->setText(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", Q_NULLPTR));
         label_3->setText(QApplication::translate("settingsPanelClass", "\320\277\321\203\321\202\321\214", Q_NULLPTR));
         btnCopyPath->setText(QString());
+        groupBox_2->setTitle(QApplication::translate("settingsPanelClass", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \320\270\320\267\320\274\320\265\321\200\320\265\320\275\320\270\320\271", Q_NULLPTR));
+        label_4->setText(QApplication::translate("settingsPanelClass", "\320\237\320\265\321\200\320\270\320\276\320\264 \320\267\320\260\320\277\320\270\321\201\320\270", Q_NULLPTR));
+        spinCycleRecMs->setSuffix(QApplication::translate("settingsPanelClass", " \320\274\321\201", Q_NULLPTR));
+        label_7->setText(QApplication::translate("settingsPanelClass", "\320\240\320\260\320\267\320\274\320\265\321\200 \320\277\320\260\320\272\320\265\321\202\320\260", Q_NULLPTR));
         lbChange->setText(QApplication::translate("settingsPanelClass", "*", Q_NULLPTR));
         btnSave->setText(QApplication::translate("settingsPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214", Q_NULLPTR));
     } // retranslateUi

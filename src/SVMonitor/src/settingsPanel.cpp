@@ -34,48 +34,45 @@ settingsPanel::settingsPanel(QWidget *parent){
 	mainWin_ = (MainWin*)parent;
 
 	ui.setupUi(this);
-		
+	
 	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveChange()));
 	connect(ui.btnCopyPath, SIGNAL(clicked()), this, SLOT(selDirCopy()));
 	connect(ui.txtComPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-	connect(ui.rbtnConnectByCom, &QRadioButton::clicked, this, [this] (){
+	connect(ui.rbtnConnectByCom, &QRadioButton::toggled, this, [this] (){
 		
 		bool isSel = ui.rbtnConnectByCom->isChecked();
 
 		ui.cbxComSpeed->setEnabled(isSel);
 		ui.txtComPort->setEnabled(isSel);
 
-		ui.txtIPAddr->setEnabled(!isSel);
-		ui.txtTCPPort->setEnabled(!isSel);
-
 		selParamLoad_ = true;
 		paramChange();
 	});
-	connect(ui.rbtnConnectByEthernet, &QRadioButton::clicked, this, [this](){
+	connect(ui.rbtnConnectByEthernet, &QRadioButton::toggled, this, [this](){
 
 		bool isSel = ui.rbtnConnectByEthernet->isChecked();
 
 		ui.txtIPAddr->setEnabled(isSel);
 		ui.txtTCPPort->setEnabled(isSel);
 
-		ui.cbxComSpeed->setEnabled(!isSel);
-		ui.txtComPort->setEnabled(!isSel);
-
 		selParamLoad_ = true;
 		paramChange();
 	});
 	connect(ui.cbxComSpeed, SIGNAL(currentTextChanged(QString)), this, SLOT(paramChange()));
-	connect(ui.rbtnCopyEna, &QRadioButton::clicked, this, [this](){
+	connect(ui.rbtnCopyEna, &QCheckBox::toggled, this, [this](){
 
 		bool isSel = ui.rbtnCopyEna->isChecked();
 
 		ui.txtCopyPath->setEnabled(isSel);
+		ui.btnCopyPath->setEnabled(isSel);
 		paramChange();
 	});
 
 	connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.txtCopyPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+	connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
+	connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	
 }
 
@@ -87,26 +84,16 @@ void settingsPanel::showEvent(QShowEvent * event){
 
 	ui.txtIPAddr->setText(cng.tcp_addr);
 	ui.txtTCPPort->setText(QString::number(cng.tcp_port));
-
-	ui.rbtnConnectByCom->setChecked(cng.com_ena);
+	
 	ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
 	ui.txtComPort->setText(cng.com_name);
 	ui.cbxComSpeed->setCurrentText(QString::number(cng.com_speed));
 
 	ui.rbtnCopyEna->setChecked(cng.outArchiveEna);
 	ui.txtCopyPath->setText(cng.outArchivePath);
-		
-	bool isSel = ui.rbtnConnectByEthernet->isChecked();
-
-	ui.txtIPAddr->setEnabled(isSel);
-	ui.txtTCPPort->setEnabled(isSel);
-
-	ui.cbxComSpeed->setEnabled(!isSel);
-	ui.txtComPort->setEnabled(!isSel);
-
-	isSel = ui.rbtnCopyEna->isChecked();
-
-	ui.txtCopyPath->setEnabled(isSel);
+	
+	ui.spinCycleRecMs->setValue(cng.cycleRecMs);
+	ui.spinPacketSz->setValue(cng.packetSz);
 	
 	selParamLoad_ = false;
 	ui.lbChange->setText("");
@@ -137,6 +124,9 @@ void settingsPanel::saveChange(){
 	cng.com_ena = ui.rbtnConnectByCom->isChecked();
 	cng.com_name = ui.txtComPort->text();
 	cng.com_speed = ui.cbxComSpeed->currentText().toInt();
+	
+	cng.cycleRecMs = ui.spinCycleRecMs->value();
+	cng.packetSz = ui.spinPacketSz->value();
 
 	mainWin_->updateConfig(cng);
 
@@ -150,7 +140,13 @@ void settingsPanel::saveChange(){
 void settingsPanel::paramChange(){
 
 	QString name = sender()->objectName();
-	if ((name == "cbxComSpeed") || (name == "txtIPAddr") || (name == "txtTCPPort") || (name == "txtComPort"))
+	if ((name == "cbxComSpeed") ||
+		(name == "txtIPAddr") ||
+		(name == "txtTCPPort") ||
+		(name == "txtComPort") ||
+		(name == "spinCycleRecMs") ||
+		(name == "spinPacketSz")
+		)
 		selParamLoad_ = true;
 	ui.lbChange->setText("*");
 

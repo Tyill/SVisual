@@ -2,18 +2,10 @@
 <ui version="4.0">
  <class>settingsPanelClass</class>
  <widget class="QDialog" name="settingsPanelClass">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>536</width>
-    <height>258</height>
-   </rect>
-  </property>
   <property name="maximumSize">
    <size>
-    <width>536</width>
-    <height>260</height>
+    <width>550</width>
+    <height>350</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -35,8 +27,11 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="5">
+        <item row="0" column="6">
          <widget class="QLineEdit" name="txtTCPPort">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="maximumSize">
            <size>
             <width>70</width>
@@ -47,6 +42,9 @@
         </item>
         <item row="0" column="3">
          <widget class="QLineEdit" name="txtIPAddr">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -66,15 +64,18 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>10</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
-        <item row="0" column="4">
+        <item row="0" column="5">
          <widget class="QLabel" name="label_5">
           <property name="minimumSize">
            <size>
@@ -117,7 +118,7 @@
          <widget class="QRadioButton" name="rbtnConnectByCom">
           <property name="minimumSize">
            <size>
-            <width>166</width>
+            <width>0</width>
             <height>0</height>
            </size>
           </property>
@@ -131,6 +132,9 @@
         </item>
         <item row="1" column="3">
          <widget class="QLineEdit" name="txtComPort">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -145,7 +149,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="4">
+        <item row="1" column="5">
          <widget class="QLabel" name="label_6">
           <property name="minimumSize">
            <size>
@@ -158,13 +162,16 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="5">
+        <item row="1" column="6">
          <widget class="QComboBox" name="cbxComSpeed">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="editable">
            <bool>true</bool>
           </property>
           <property name="currentText">
-           <string>9600</string>
+           <string>1200</string>
           </property>
           <item>
            <property name="text">
@@ -208,6 +215,22 @@
           </item>
          </widget>
         </item>
+        <item row="0" column="4">
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
      </layout>
@@ -220,7 +243,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QRadioButton" name="rbtnCopyEna">
+       <widget class="QCheckBox" name="rbtnCopyEna">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -250,7 +273,7 @@
         <item>
          <widget class="QPushButton" name="btnCopyPath">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="minimumSize">
            <size>
@@ -276,7 +299,7 @@
         <item>
          <widget class="QLineEdit" name="txtCopyPath">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="minimumSize">
            <size>
@@ -289,6 +312,90 @@
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Настройка измерений</string>
+     </property>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>362</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Период записи</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinCycleRecMs">
+         <property name="suffix">
+          <string> мс</string>
+         </property>
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>5000</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Размер пакета</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinPacketSz">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>10</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
