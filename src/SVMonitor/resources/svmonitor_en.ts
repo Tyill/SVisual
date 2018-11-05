@@ -209,7 +209,7 @@
     <message>
         <location filename="../src/mainwin.cpp" line="598"/>
         <source>Подключен модуль: </source>
-        <translation>Module is connected</translation>
+        <translation>Module is connected: </translation>
     </message>
     <message>
         <location filename="../src/mainwin.cpp" line="603"/>
