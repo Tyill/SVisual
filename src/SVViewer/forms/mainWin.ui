@@ -257,6 +257,7 @@
    <addaction name="actionStat"/>
    <addaction name="actionPrint"/>
    <addaction name="actionExport"/>
+   <addaction name="actionNewWin"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -308,6 +309,15 @@
    </property>
    <property name="text">
     <string>Экспорт</string>
+   </property>
+  </action>
+  <action name="actionNewWin">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVViewer/images/add.png</normaloff>:/SVViewer/images/add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Новое окно</string>
    </property>
   </action>
  </widget>

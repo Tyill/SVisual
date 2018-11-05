@@ -32,8 +32,8 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
+const QString VERSION = "1.0.5";
 
-const QString VERSION = "1.0.4";
 MainWin* mainWin = nullptr;
 
 using namespace SV_Cng;
@@ -187,10 +187,11 @@ void MainWin::load(){
 	ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.treeSignals->setIconSize(QSize(40, 20));
    
-	graphPanel_ = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
-    SV_Graph::setGetCopySignalRef(graphPanel_, getCopySignalRef);
-    SV_Graph::setGetSignalData(graphPanel_, getSignalData);
-    SV_Graph::setLoadSignalData(graphPanel_, loadSignalData);
+	auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
+    SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
+    SV_Graph::setGetSignalData(gp, getSignalData);
+    SV_Graph::setLoadSignalData(gp, loadSignalData);
+    graphPanels_.push_back(gp);
 
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
@@ -205,13 +206,13 @@ void MainWin::load(){
 	SV_Stat::setGetSignalData(statPanel_, getSignalData);
 	SV_Stat::setLoadSignalData(statPanel_, loadSignalData);
 	SV_Stat::setSetTimeInterval(statPanel_, [](qint64 st, qint64 en){
-		SV_Graph::setTimeInterval(mainWin->graphPanel_, st,en);
+		SV_Graph::setTimeInterval(mainWin->graphPanels_[0], st,en);
 	});
 	SV_Stat::setGetTimeInterval(statPanel_, [](){
-		return SV_Graph::getTimeInterval(mainWin->graphPanel_);
+		return SV_Graph::getTimeInterval(mainWin->graphPanels_[0]);
 	});
 
-	ui.splitter->addWidget(graphPanel_);
+	ui.splitter->addWidget(gp);
 	ui.progressBar->setVisible(false);
 
 	ui.btnSortByModule->setChecked(cng.sortByMod);
@@ -236,6 +237,25 @@ void MainWin::Connect(){
 	connect(ui.actionExport, &QAction::triggered, [this]() {
         if (exportPanel_) exportPanel_->show();
 	});
+
+    connect(ui.actionNewWin, &QAction::triggered, [this]() {
+
+        QDialog* graphWin = new QDialog(this, Qt::Window);
+
+        QVBoxLayout* vertLayout = new QVBoxLayout(graphWin);
+        vertLayout->setSpacing(0);
+        vertLayout->setContentsMargins(5, 5, 5, 5);
+
+        auto gp = SV_Graph::createGraphPanel(graphWin, SV_Graph::config(cng.cycleRecMs, cng.packetSz, SV_Graph::modeGr::viewer));
+        SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
+        SV_Graph::setGetSignalData(gp, getSignalData);
+        SV_Graph::setLoadSignalData(gp, loadSignalData);
+
+        graphPanels_.push_back(gp);
+        vertLayout->addWidget(gp);
+
+        graphWin->show();
+    });
 		
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
 		this->ui.btnSortByGroup->setChecked(true);
@@ -262,13 +282,13 @@ void MainWin::Connect(){
 
 			QPainter painter(&printer);
 
-			double xscale = printer.pageRect().width() / double(graphPanel_->width());
-			double yscale = printer.pageRect().height() / double(graphPanel_->height());
+			double xscale = printer.pageRect().width() / double(graphPanels_[0]->width());
+            double yscale = printer.pageRect().height() / double(graphPanels_[0]->height());
 			double scale = qMin(xscale, yscale);
 			painter.translate(printer.paperRect().x(), printer.paperRect().y());
 			painter.scale(scale, scale);
 
-			graphPanel_->render(&painter);
+            graphPanels_[0]->render(&painter);
 		}
 	});
 
@@ -469,7 +489,7 @@ void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
 	if ((column > 1) && (cng.sortByMod || (column != 2)))
 		ui.treeSignals->editItem(item, column);
 	else
-		SV_Graph::addSignal(graphPanel_, item->text(4));
+		SV_Graph::addSignal(graphPanels_[0], item->text(4));
 }
 
 void MainWin::selSignalChange(QTreeWidgetItem * item, int column){

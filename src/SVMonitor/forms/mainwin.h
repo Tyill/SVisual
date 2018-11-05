@@ -92,7 +92,7 @@ private:
 
 	bool initOk_ = false;
 
-	QWidget* graphPanel_ = nullptr;
+	QVector<QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
 	eventOrderWin* orderWin_ = nullptr;
 	QWidget* trgPanel_ = nullptr;

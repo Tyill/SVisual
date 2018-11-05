@@ -68,7 +68,7 @@ private:
     config cng;
    
     QDialog* exportPanel_ = nullptr;
-	QWidget* graphPanel_ = nullptr;
+	QVector<QWidget*> graphPanels_;
 	QDialog* statPanel_ = nullptr;
 
 	thrLoadData* thrLoadData_ = nullptr;

@@ -40,7 +40,7 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.4";
+const QString VERSION = "1.0.5";
 
 MainWin* mainWin = nullptr;
 
@@ -64,11 +64,11 @@ void MainWin::load(){
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
        
-	SV_Graph::setLoadSignalData(graphPanel_, [](const QString& sign){
+	SV_Graph::setLoadSignalData(graphPanels_[0], [](const QString& sign){
 		return SV_Srv::signalBufferEna(sign.toUtf8().data());
 	});
-	SV_Graph::setGetCopySignalRef(graphPanel_, getCopySignalRefSrv);
-	SV_Graph::setGetSignalData(graphPanel_, getSignalDataSrv);
+    SV_Graph::setGetCopySignalRef(graphPanels_[0], getCopySignalRefSrv);
+    SV_Graph::setGetSignalData(graphPanels_[0], getSignalDataSrv);
 
     SV_Exp::setLoadSignalData(exportPanel_, [](const QString& sign){
         return SV_Srv::signalBufferEna(sign.toUtf8().data());
@@ -131,13 +131,13 @@ void MainWin::Connect(){
 			
 			QPainter painter(&printer);
 
-			double xscale = printer.pageRect().width() / double(graphPanel_->width());
-			double yscale = printer.pageRect().height() / double(graphPanel_->height());
+            double xscale = printer.pageRect().width() / double(graphPanels_[0]->width());
+            double yscale = printer.pageRect().height() / double(graphPanels_[0]->height());
 			double scale = qMin(xscale, yscale);
 			painter.translate(printer.paperRect().x(), printer.paperRect().y());
 			painter.scale(scale, scale);
 		
-			graphPanel_->render(&painter);
+            graphPanels_[0]->render(&painter);
 		}
 	});
 
@@ -151,6 +151,27 @@ void MainWin::Connect(){
 
     connect(ui.actionExport, &QAction::triggered, [this]() {
         if (exportPanel_) exportPanel_->show();
+    });
+
+    connect(ui.actionNewWin, &QAction::triggered, [this]() {
+        
+        QDialog* graphWin = new QDialog(this, Qt::Window);
+               
+        QVBoxLayout* vertLayout = new QVBoxLayout(graphWin);
+        vertLayout->setSpacing(0);
+        vertLayout->setContentsMargins(5, 5, 5, 5);
+
+        auto gp = SV_Graph::createGraphPanel(graphWin, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
+        SV_Graph::setLoadSignalData(gp, [](const QString& sign){
+            return SV_Srv::signalBufferEna(sign.toUtf8().data());
+        });
+        SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
+        SV_Graph::setGetSignalData(gp, getSignalDataSrv);
+        
+        graphPanels_.push_back(gp);
+        vertLayout->addWidget(gp);        
+
+        graphWin->show();
     });
 
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
@@ -280,9 +301,9 @@ MainWin::MainWin(QWidget *parent)
 	else
 	    statusMess(QString(tr("Не найден файл инициализации %1")).arg(cng.initPath));
 
-
-    graphPanel_ = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
-    ui.splitter->addWidget(graphPanel_);
+    auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
+    graphPanels_.push_back(gp);
+    ui.splitter->addWidget(gp);
 
     if (!initOk_) return;
 
@@ -416,7 +437,7 @@ void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
 	if (column > 1)
 		ui.treeSignals->editItem(item, column);		
 	else{
-		SV_Graph::addSignal(graphPanel_, item->text(4));
+		SV_Graph::addSignal(graphPanels_[0], item->text(4));
 	}
 
 }
@@ -568,7 +589,8 @@ void MainWin::updateTblSignal(){
 
 void MainWin::updateSignals(){
 
-	SV_Graph::update(graphPanel_);
+    for (auto gp : graphPanels_)
+        SV_Graph::update(gp);
 }
 
 void MainWin::moduleConnect(QString module){
