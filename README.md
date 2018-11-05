@@ -4,6 +4,8 @@
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
+![GUI](SVisual/docs/sv-video.gif)
+
 ## Features
 
 * connection to the MK via COM port (usb for arduino), over Ethernet or Wi-Fi protocol TCP;
