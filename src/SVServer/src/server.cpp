@@ -80,14 +80,14 @@ void server::setConfig(SV_Srv::config cng_){
 /// получение данных
 void server::receiveData(std::string& inout, std::string& out){
 		
-    vector<pair<int, int>> bePos;
-    int stPos = inout.find("=begin="), endPos = inout.find("=end=");
+    vector<pair<size_t, size_t>> bePos;
+    size_t stPos = inout.find("=begin="), endPos = inout.find("=end=");
     while ((stPos != std::string::npos) && (endPos != std::string::npos)){
 
 		int allSz = *(int*)(inout.c_str() + stPos + 7);
 
         if (allSz == (endPos - stPos - 11))
-            bePos.push_back(pair<int,int>(stPos + 11, endPos));
+            bePos.push_back(pair<size_t, size_t>(stPos + 11, endPos));
 
         stPos = inout.find("=begin=", endPos + 5);
         if (stPos != std::string::npos){
@@ -96,8 +96,8 @@ void server::receiveData(std::string& inout, std::string& out){
     };
 
     uint64_t bTm = SV_Aux::CurrDateTimeSinceEpochMs();
-    int sz = bePos.size();
-    for (int i = 0; i < sz; ++i){
+    auto sz = bePos.size();
+    for (size_t i = 0; i < sz; ++i){
 
         stPos = bePos[i].first;
         endPos = bePos[i].second;

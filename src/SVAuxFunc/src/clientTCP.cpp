@@ -138,7 +138,7 @@ namespace SV_TcpCln {
 		bool sendMess(std::string& in, std::string &out, bool disconn, bool onlySend) {
 
 			// Send an initial buffer
-			int iResult = sendall(in.c_str(), in.size(), 0);
+			int iResult = sendall(in.c_str(), int(in.size()), 0);
 			if (iResult == SOCKET_ERROR) {
 				mdisconnect();
 				return false;
@@ -154,7 +154,7 @@ namespace SV_TcpCln {
 					iResult = recv(socket_, recvbuf, recvbuflen, 0);
 					if (iResult > 0) {
 
-						int sz = out.size();
+						int sz = int(out.size());
 						out.resize(sz + iResult);
 						memcpy((char *) out.data() + sz, recvbuf, iResult);
 

@@ -130,16 +130,15 @@ bool client::sendData(){
 		
 	if (values_.empty()) return true;
 
-	int SINT = sizeof(int), vlSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ;
-
-	int dataSz = SV_NAMESZ + vlSz * values_.size();
-
-	int startSz = 7, endSz = 5;
-	int arrSz = startSz + SINT + dataSz + endSz;
-	char* arr = new char[arrSz];
+	size_t SINT = sizeof(int), vlSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ,
+           dataSz = SV_NAMESZ + vlSz * values_.size(),
+           startSz = 7, endSz = 5,
+           arrSz = startSz + SINT + dataSz + endSz,
+           offs = 0;
+	
+    char* arr = new char[arrSz];
     memset(arr, 0, arrSz);
 
-	int offs = 0;
 	memcpy(arr, "=begin=", startSz); offs += startSz;
 
 	memcpy(arr + offs, &dataSz, SINT); offs += SINT;

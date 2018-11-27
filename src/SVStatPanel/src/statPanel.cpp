@@ -199,7 +199,8 @@ QVector<QPair<int,int>> statPanel::calcHist(QString sname){
 		
 	vars_ = getSignData(sname);
 
-	QMap<int, int> hist; int bDuration = 0;
+    QMap<int, int> hist; 
+    int bDuration = 0, prevVal = 0;
 
 	if (diapEna_){
 
@@ -207,8 +208,7 @@ QVector<QPair<int,int>> statPanel::calcHist(QString sname){
 		int maxVal = ui.txtDiapMax->text().toInt();
 		int sz = vars_.size();
 		bool isOnlyFront = ui.chbFront->isChecked();
-		int prevVal = 0;
-		
+				
 		signalData* sdata = pfGetSignalData(sname);
 
 		switch (sdata->type)
@@ -222,8 +222,8 @@ QVector<QPair<int,int>> statPanel::calcHist(QString sname){
 					bool val = vars_[i].vals[j].tBool;
 
 					if (val){
-						if (!isOnlyFront || (val != prevVal)) hist[0]++;
-						if (val != prevVal) sign_[sname].valData[0].changeCnt++;
+						if (!isOnlyFront || (val != prev)) hist[0]++;
+                        if (val != prev) sign_[sname].valData[0].changeCnt++;
 
 						if (val) sign_[sname].valData[0].duration++;
 					}
@@ -233,30 +233,31 @@ QVector<QPair<int,int>> statPanel::calcHist(QString sname){
 		}
 			break;
 
-		case valueType::tInt:
-			
-			for (int i = 0; i < sz; ++i){
+        case valueType::tInt:
+           
+            for (int i = 0; i < sz; ++i){
 
-				for (int j = 0; j < SV_PACKETSZ; ++j){
+                for (int j = 0; j < SV_PACKETSZ; ++j){
 
-					int val = vars_[i].vals[j].tInt;
+                    int val = vars_[i].vals[j].tInt;
 
-					if ((minVal <= val) && (val <= maxVal)){
-																	
-						if (!hist.contains(val)){
-							hist.insert(val, 1);
-							sign_[sname].valData.insert(val, valSData{ 1, 1 });
-						}
-						else{
-							if (!isOnlyFront || (val != prevVal)) hist[val]++;
-							if (val != prevVal) sign_[sname].valData[val].changeCnt++;
-							sign_[sname].valData[val].duration++;
-						}
+                    if ((minVal <= val) && (val <= maxVal)){
 
-						prevVal = val;
-					}
-				}
-			}
+                        if (!hist.contains(val)){
+                            hist.insert(val, 1);
+                            sign_[sname].valData.insert(val, valSData{ 1, 1 });
+                        }
+                        else{
+                            if (!isOnlyFront || (val != prevVal)) hist[val]++;
+                            if (val != prevVal) sign_[sname].valData[val].changeCnt++;
+                            sign_[sname].valData[val].duration++;
+                        }
+
+                        prevVal = val;
+                    }
+                }
+            }
+        
 			break;
 		case valueType::tFloat:
 			
@@ -306,8 +307,8 @@ QVector<QPair<int,int>> statPanel::calcHist(QString sname){
 						bool val = vars_[i].vals[j].tBool;
 						
 						if (val){
-							if (!isOnlyFront || (val != prevVal)) hist[0]++;
-							if (val != prevVal) sign_[sname].valData[0].changeCnt++;
+							if (!isOnlyFront || (val != prev)) hist[0]++;
+							if (val != prev) sign_[sname].valData[0].changeCnt++;
 
 							if (val) sign_[sname].valData[0].duration++;
 						}

@@ -82,7 +82,7 @@ namespace SV_TcpSrv {
     /// \param suggested_size
     /// \param buf
 	void alloc_cb(uv_handle_t * /*handle*/, size_t suggested_size, uv_buf_t *buf) {
-		*buf = uv_buf_init((char *) malloc(suggested_size), suggested_size);
+		*buf = uv_buf_init((char *) malloc(suggested_size), int(suggested_size));
 	}
 
     /// чтение данные
@@ -96,7 +96,7 @@ namespace SV_TcpSrv {
 		if (nread > 0) {
 
 			// копим данные
-			int clSz = client->inMess.size();
+			auto clSz = client->inMess.size();
 			client->inMess.resize(clSz + nread);
 			memcpy((char *) client->inMess.data() + clSz, buf->base, nread);
 
@@ -109,7 +109,7 @@ namespace SV_TcpSrv {
 
 				uv_buf_t resbuf;
 				resbuf.base = (char *) client->outMess.c_str();
-				resbuf.len = client->outMess.size() + 1;
+				resbuf.len = ULONG(client->outMess.size() + 1);
 
 				int r = uv_write(&client->write_req,
 								 (uv_stream_t *) &client->handle,

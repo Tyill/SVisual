@@ -113,11 +113,11 @@ bool archive::compressData(uint8_t* arr, size_t sz, size_t& outsz, uint8_t** out
 
     FUNC_BEGIN
 
-    uLongf compress_buff_size = compressBound(sz);
+    uLong compress_buff_size = compressBound(uLong(sz));
     Bytef *compress_buff = new Bytef[compress_buff_size];
 
-    uLongf compressed_size = compress_buff_size;
-    int res = compress(compress_buff, &compressed_size, arr, sz);
+    uLong compressed_size = compress_buff_size;
+    int res = compress(compress_buff, &compressed_size, arr, uLong(sz));
 
     outsz = compressed_size;
     *outArr = compress_buff;

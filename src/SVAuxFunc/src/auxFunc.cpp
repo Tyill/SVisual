@@ -122,7 +122,7 @@ namespace SV_Aux {
         time_t gmt = mktime(ptm);
         ptm = localtime(&rawtime);
 
-        return (rawtime - gmt + (ptm->tm_isdst ? 3600 : 0)) / 3600;
+        return int((rawtime - gmt + (ptm->tm_isdst ? 3600 : 0)) / 3600);
     }
 
     vector<string> split(string str, const char *sep) {
@@ -149,7 +149,7 @@ namespace SV_Aux {
     bool CreateSubDirectory(string strDirs) {
         if (is_fileExist(strDirs)) return true;
 
-        int sz = strDirs.size(), ret = 0;
+        int sz = int(strDirs.size()), ret = 0;
         string strTmp = "";
         for (int i = 0; i < sz; ++i) {
             char ch = strDirs[i];
@@ -167,7 +167,7 @@ namespace SV_Aux {
         return ret == 0;
     }
 
-    void SleepMs(int ms){
+    void SleepMs(uint64_t ms){
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
     }    
 }
