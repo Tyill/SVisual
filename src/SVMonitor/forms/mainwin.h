@@ -83,6 +83,8 @@ private:
 
    
 	Ui::MainWin ui;
+	QLabel *lbAllSignCnt;
+	QLabel *lbSignCnt;
 	bool isSlowMode_ = false;
     
 	SerialPortReader* pComReader_ = nullptr;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>879</width>
-    <height>613</height>
+    <width>289</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,180 +18,93 @@
     <normaloff>:/SVMonitor/images/logo.png</normaloff>:/SVMonitor/images/logo.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <property name="leftMargin">
-     <number>5</number>
-    </property>
-    <property name="topMargin">
-     <number>5</number>
-    </property>
-    <property name="rightMargin">
-     <number>5</number>
-    </property>
-    <property name="bottomMargin">
-     <number>5</number>
-    </property>
+   <property name="maximumSize">
+    <size>
+     <width>350</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Модули</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnSlowPlay">
-            <property name="text">
-             <string>Тихий режим</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QSplitter" name="splitter_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <widget class="treeWidgetExt" name="treeSignals">
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <property name="tabKeyNavigation">
-            <bool>true</bool>
-           </property>
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="columnCount">
-            <number>4</number>
-           </property>
-           <attribute name="headerDefaultSectionSize">
-            <number>125</number>
-           </attribute>
-           <attribute name="headerShowSortIndicator" stdset="0">
-            <bool>true</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Имя</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Тип</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Комментарий</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Группа</string>
-            </property>
-           </column>
-          </widget>
-          <widget class="QTextEdit" name="txtStatusMess"/>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Модули</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnSlowPlay">
+        <property name="text">
+         <string>Тихий режим</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
+     <widget class="QSplitter" name="splitter_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>3</number>
+      <widget class="treeWidgetExt" name="treeSignals">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
        </property>
-       <property name="leftMargin">
-        <number>3</number>
+       <property name="tabKeyNavigation">
+        <bool>true</bool>
        </property>
-       <property name="topMargin">
-        <number>0</number>
+       <property name="sortingEnabled">
+        <bool>true</bool>
        </property>
-       <property name="rightMargin">
-        <number>0</number>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
-       <property name="bottomMargin">
-        <number>0</number>
+       <property name="columnCount">
+        <number>4</number>
        </property>
-       <item>
-        <widget class="QLabel" name="lbAllSignCnt">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lbSignCnt">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+       <attribute name="headerDefaultSectionSize">
+        <number>125</number>
+       </attribute>
+       <attribute name="headerShowSortIndicator" stdset="0">
+        <bool>true</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Имя</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Тип</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Комментарий</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Группа</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QTextEdit" name="txtStatusMess"/>
      </widget>
     </item>
    </layout>
@@ -201,8 +114,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>879</width>
-     <height>26</height>
+     <width>289</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMain">

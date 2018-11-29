@@ -154,14 +154,11 @@ void MainWin::Connect(){
     });
 
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
-        
-        QDialog* graphWin = new QDialog(this, Qt::Window);
-               
-        QVBoxLayout* vertLayout = new QVBoxLayout(graphWin);
-        vertLayout->setSpacing(0);
-        vertLayout->setContentsMargins(5, 5, 5, 5);
 
-        auto gp = SV_Graph::createGraphPanel(graphWin, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
+        auto *dock = new QDockWidget(tr("Панель ")+QString::number(graphPanels_.length()+1), this);
+        dock->setAllowedAreas(Qt::AllDockWidgetAreas);
+
+        auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
         SV_Graph::setLoadSignalData(gp, [](const QString& sign){
             return SV_Srv::signalBufferEna(sign.toUtf8().data());
         });
@@ -169,9 +166,13 @@ void MainWin::Connect(){
         SV_Graph::setGetSignalData(gp, getSignalDataSrv);
         
         graphPanels_.push_back(gp);
-        vertLayout->addWidget(gp);        
 
-        graphWin->show();
+        dock->setWidget(gp);
+        addDockWidget(Qt::RightDockWidgetArea, dock);
+        dock->setFeatures(QDockWidget::DockWidgetFloatable | 
+            QDockWidget::DockWidgetMovable);
+        dock->setFloating(true);
+
     });
 
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
@@ -300,10 +301,25 @@ MainWin::MainWin(QWidget *parent)
 		statusMess(tr("Инициализация параметров успешно"));
 	else
 	    statusMess(QString(tr("Не найден файл инициализации %1")).arg(cng.initPath));
+    
+    lbAllSignCnt = new QLabel;
+    statusBar()->addWidget(lbAllSignCnt);
+        auto *line = new QFrame;
+        line->setFrameShape(QFrame::VLine);
+        line->setFrameShadow(QFrame::Sunken);
+    lbSignCnt = new QLabel;
+    statusBar()->addWidget(line);
+    statusBar()->addWidget(lbSignCnt);
 
+    auto *dock = new QDockWidget(tr("Панель ")+QString::number(graphPanels_.length()+1), this);
+    dock->setAllowedAreas(Qt::AllDockWidgetAreas);
     auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
     graphPanels_.push_back(gp);
-    ui.splitter->addWidget(gp);
+    
+    dock->setWidget(gp);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+    dock->setFeatures(QDockWidget::DockWidgetFloatable | 
+        QDockWidget::DockWidgetMovable);
 
     if (!initOk_) return;
 
@@ -413,7 +429,7 @@ void MainWin::sortSignalByModule(){
 	
 	ui.treeSignals->sortByColumn(1);
 
-	ui.lbAllSignCnt->setText(QString::number(SV_Srv::getCopySignalRef().size()));
+	lbAllSignCnt->setText(QString::number(SV_Srv::getCopySignalRef().size()));
 
 }
 
@@ -423,7 +439,7 @@ void MainWin::selSignalClick(QTreeWidgetItem* item, int column){
 
 	if (mref.find(item->text(0).toStdString()) != mref.end()){
 
-		ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
+		lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
 	}
 
 }
