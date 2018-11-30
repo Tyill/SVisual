@@ -389,16 +389,19 @@ void graphPanel::markerChange(QString obj){
 
 void graphPanel::selectGraph(QString obj){
 	
-	for (auto ob : graphObj_){
+    for (auto ob : graphObj_){
 
-		if (ob->objectName() != obj){
-			ob->setStyleSheet("");			
-		}
-		else {
-			selGraph_ = ob;
-			ob->setStyleSheet("QGroupBox{ border: 2px solid yellow; }");
-		}
-	}
+        if (ob->objectName() != obj){
+            ob->setStyleSheet("");
+        }
+        else {
+            selGraph_ = ob;
+            if (graphObj_.size() > 1)
+               ob->setStyleSheet("QGroupBox{ border: 2px solid yellow; }");
+            else
+               ob->setStyleSheet("");
+        }
+    }
 
 	markerChange(obj);
 }
