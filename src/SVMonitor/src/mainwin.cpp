@@ -169,6 +169,7 @@ void MainWin::Connect(){
             "ini files (*.ini)");
 
         if (fname.isEmpty()) return;
+        cng.selOpenDir = fname;
 
         QFile file(fname);
 
@@ -218,6 +219,7 @@ void MainWin::Connect(){
             "ini files (*.ini)");
 
         if (fname.isEmpty()) return;
+        cng.selOpenDir = fname;
 
         QSettings settings(fname, QSettings::IniFormat);
 
@@ -246,7 +248,7 @@ void MainWin::Connect(){
 
                  ++sect;
              }
-             QString tmDiap = settings.value("tmDiap").toString();
+             QString tmDiap = settings.value("tmDiap", "10000").toString();
 
              auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
              ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
@@ -301,6 +303,8 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "outArchivePath = " << cng.outArchivePath << endl;
     txtStream << "outArchiveName = " << cng.outArchiveName << endl;
     txtStream << endl;
+    txtStream << "selOpenDir = " << cng.selOpenDir << endl;
+
 
     file.close();
 
@@ -320,6 +324,8 @@ bool MainWin::init(QString initPath){
     cng.cycleRecMs = qMax(cng.cycleRecMs, 10);
     cng.packetSz = settings.value("packetSz", 10).toInt();
     cng.packetSz = qMax(cng.packetSz, 1);
+
+    cng.selOpenDir = settings.value("selOpenDir", "").toString();
 
     // связь по usb
     cng.com_ena = settings.value("com_ena", 0).toInt() == 1;

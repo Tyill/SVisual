@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'wdgGraph.ui'
 **
-** Created by: Qt User Interface Compiler version 5.6.2
+** Created by: Qt User Interface Compiler version 5.5.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -54,7 +54,7 @@ public:
         if (wdgGraphClass->objectName().isEmpty())
             wdgGraphClass->setObjectName(QStringLiteral("wdgGraphClass"));
         wdgGraphClass->resize(442, 400);
-        wdgGraphClass->setStyleSheet(QStringLiteral("QGroupBox{ border: 2px solid yellow; }"));
+        wdgGraphClass->setStyleSheet(QStringLiteral(""));
         verticalLayout_2 = new QVBoxLayout(wdgGraphClass);
         verticalLayout_2->setSpacing(0);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));

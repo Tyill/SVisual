@@ -54,7 +54,7 @@ public:
         if (wdgGraphClass->objectName().isEmpty())
             wdgGraphClass->setObjectName(QStringLiteral("wdgGraphClass"));
         wdgGraphClass->resize(442, 400);
-        wdgGraphClass->setStyleSheet(QStringLiteral("QGroupBox{ border: 2px solid yellow; }"));
+        wdgGraphClass->setStyleSheet(QStringLiteral(""));
         verticalLayout_2 = new QVBoxLayout(wdgGraphClass);
         verticalLayout_2->setSpacing(0);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));

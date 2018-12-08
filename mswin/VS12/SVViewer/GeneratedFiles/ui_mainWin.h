@@ -42,6 +42,8 @@ public:
     QAction *actionPrint;
     QAction *actionExport;
     QAction *actionNewWin;
+    QAction *actionSaveWinState;
+    QAction *actionLoadWinState;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -102,6 +104,10 @@ public:
         QIcon icon5;
         icon5.addFile(QStringLiteral(":/SVViewer/images/add.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionNewWin->setIcon(icon5);
+        actionSaveWinState = new QAction(MainWin);
+        actionSaveWinState->setObjectName(QStringLiteral("actionSaveWinState"));
+        actionLoadWinState = new QAction(MainWin);
+        actionLoadWinState->setObjectName(QStringLiteral("actionLoadWinState"));
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -226,6 +232,8 @@ public:
 
         menuBar->addAction(menu->menuAction());
         menuBar->addAction(menu_2->menuAction());
+        menu->addAction(actionSaveWinState);
+        menu->addAction(actionLoadWinState);
         menu->addAction(actionExit);
         menu_2->addAction(actionProgram);
         mainToolBar->addAction(actionOpen);
@@ -253,6 +261,8 @@ public:
         actionPrint->setText(QApplication::translate("MainWin", "\320\237\320\265\321\207\320\260\321\202\321\214", 0));
         actionExport->setText(QApplication::translate("MainWin", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202", 0));
         actionNewWin->setText(QApplication::translate("MainWin", "\320\235\320\276\320\262\320\276\320\265 \320\276\320\272\320\275\320\276", 0));
+        actionSaveWinState->setText(QApplication::translate("MainWin", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \321\202\320\265\320\272\321\203\321\211\320\265\320\265 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265", 0));
+        actionLoadWinState->setText(QApplication::translate("MainWin", "\320\227\320\260\320\263\321\200\321\203\320\267\320\270\321\202\321\214 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265 \320\276\320\272\320\276\320\275", 0));
         groupBox->setTitle(QString());
         btnSortByModule->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSortByGroup->setText(QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\321\213", 0));

@@ -68,7 +68,7 @@ private:
     config cng;
    
     QDialog* exportPanel_ = nullptr;
-	QVector<QWidget*> graphPanels_;
+    QMap<QObject*, QWidget*> graphPanels_;
 	QDialog* statPanel_ = nullptr;
 
 	thrLoadData* thrLoadData_ = nullptr;
@@ -84,6 +84,9 @@ private:
     bool writeSettings(QString pathIni);
     bool readSignals(QString path);
     bool writeSignals(QString path);
+    QDialog* addNewWindow(const QRect& pos);
+
+    bool eventFilter(QObject *target, QEvent *event);
 
     void updateGroup(QString group, QString sign);
 

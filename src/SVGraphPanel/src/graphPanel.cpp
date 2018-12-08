@@ -123,25 +123,30 @@ void graphPanel::addSignalOnGraph(QString sign, int section){
 	if (sd && !sd->isBuffEnable && pfLoadSignalData)
 		pfLoadSignalData(sign);
 
-    if (!graphObj_.isEmpty() && (graphObj_.size() > section)){
+    if (graphObj_.size() <= section){
+        while (graphObj_.size() <= section)
+            addGraph("");
 
-		if (selGraph_){
-			selGraph_->addSignal(sign);
+        ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
+        if (sd->buffMinTime == sd->buffMaxTime)
+            ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMinTime + 1000);
 
-			tableUpdate(selGraph_);
-			tableUpdateAlter(selGraph_);
-		}
+        ui.axisTime->req_axisChange();
+    }
+        
+	if (selGraph_){
+		selGraph_->addSignal(sign);
+
+		tableUpdate(selGraph_);
+		tableUpdateAlter(selGraph_);
 	}
-	else{
-				
-		ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
-		if (sd->buffMinTime == sd->buffMaxTime)
-			ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMinTime + 1000);
-
-		addGraph(sign);
-
-		ui.axisTime->req_axisChange();
-	}
+    else{
+        graphObj_[section]->addSignal(sign);
+        
+        tableUpdate(graphObj_[section]);
+        tableUpdateAlter(graphObj_[section]);
+    }
+	
 }
 
 void graphPanel::addGraph(QString sign){
@@ -152,9 +157,7 @@ void graphPanel::addGraph(QString sign){
 	++graphCnt_;
 		
 	graphObj_.append(graph);
-
-	selectGraph(graph->objectName());
-
+	
 	splitterGraph_->addWidget(graph);
 
 	ui.scrollAreaWidgetContents->setMinimumHeight(graphObj_.size() * MIN_HEIGHT_GRAPH);
@@ -164,7 +167,8 @@ void graphPanel::addGraph(QString sign){
 
 	graph->setAxisTime(ui.axisTime);
 
-	graph->addSignal(sign);
+    if (!sign.isEmpty())
+	    graph->addSignal(sign);
 
 	connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
 	connect(ui.axisTime, SIGNAL(req_axisChange()), graph, SLOT(axisTimeChange()));
