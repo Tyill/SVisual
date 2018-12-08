@@ -45,7 +45,7 @@ namespace SV_Graph {
     };
 
     struct config {
-
+        bool isShowTable = true;
         int cycleRecMs;
         int packetSz;
         modeGr mode;
@@ -67,12 +67,14 @@ namespace SV_Graph {
     typedef bool (*pf_loadSignalData)(const QString& sign);
     SVGRAPHPANEL_API void setLoadSignalData(QWidget *gp, pf_loadSignalData f);
 
-    SVGRAPHPANEL_API void addSignal(QWidget *gp, QString sname);
+    SVGRAPHPANEL_API void addSignal(QWidget *gp, QString sname, int section = 0);
 
     SVGRAPHPANEL_API void update(QWidget *gp);
 
     SVGRAPHPANEL_API QPair<qint64, qint64> getTimeInterval(QWidget *gp);
 
 	SVGRAPHPANEL_API void setTimeInterval(QWidget *gp, qint64 stTime, qint64 enTime);
+
+    SVGRAPHPANEL_API QVector<QVector<QString>> getLocateSignals(QWidget *gp);
 
 }

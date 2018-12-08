@@ -54,10 +54,10 @@ namespace SV_Graph {
 			((graphPanel*) gp)->pfLoadSignalData = f;
 	}
 	
-	void addSignal(QWidget *gp, QString sname) {
+    void addSignal(QWidget *gp, QString sname, int section) {
 
 		if (gp)
-			((graphPanel*) gp)->addSignalOnGraph(sname);
+            ((graphPanel*)gp)->addSignalOnGraph(sname, section);
 	}
 
 	void update(QWidget *gp) {
@@ -85,4 +85,10 @@ namespace SV_Graph {
 			((graphPanel*)gp)->resizeByValue();
 		}
 	}
+
+    QVector<QVector<QString>> getLocateSignals(QWidget *gp){
+
+        return gp ? ((graphPanel*)gp)->getLocateSignals() : QVector<QVector<QString>>();
+
+    }
 }

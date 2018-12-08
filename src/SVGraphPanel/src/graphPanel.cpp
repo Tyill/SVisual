@@ -35,7 +35,7 @@ void graphPanel::load(){
 
 	setAcceptDrops(true);
 
-	QList<int> ss; ss.append(90); ss.append(1);
+	QList<int> ss; ss.append(90); ss.append(cng.isShowTable ? 1 : 0);
 	ui.splitter_2->setSizes(ss);
 
 	connect(ui.btnResizeByAuto, &QPushButton::clicked, [this](){
@@ -114,14 +114,16 @@ graphPanel::graphPanel(QWidget *parent, SV_Graph::config cng_){
 
 graphPanel::~graphPanel(){}
 
-void graphPanel::addSignalOnGraph(QString sign){
+void graphPanel::addSignalOnGraph(QString sign, int section){
 
 	SV_Cng::signalData* sd = pfGetSignalData(sign);
+
+    if (!sd) return;
 
 	if (sd && !sd->isBuffEnable && pfLoadSignalData)
 		pfLoadSignalData(sign);
 
-	if (!graphObj_.isEmpty()){
+    if (!graphObj_.isEmpty() && (graphObj_.size() > section)){
 
 		if (selGraph_){
 			selGraph_->addSignal(sign);
@@ -469,21 +471,21 @@ void graphPanel::updateSignals(){
 	
 	if (graphObj_.isEmpty() || !isPlay_) return;
 
-    if (selGraph_ && ui.btnAScale->isChecked()) selGraph_->resizeByValue();
+    if (ui.btnAScale->isChecked()){
+        for (auto ob : graphObj_)
+            ob->resizeByValue();
+    }
 
 	qint64 bTm = QDateTime::currentDateTime().toMSecsSinceEpoch() - SV_CYCLESAVE_MS;
 	
 	QPair<qint64, qint64> tmIntl = ui.axisTime->getTimeInterval();
 		
-	ui.axisTime->setTimeInterval(tmIntl.first + bTm - tmIntl.second, bTm);
+    ui.axisTime->setTimeInterval(bTm - (tmIntl.second - tmIntl.first), bTm);
 	
 	ui.axisTime->update();
 
-	for (auto ob : graphObj_){
-			
-		ob->plotUpdate();
-	}	
-    
+	for (auto ob : graphObj_)			
+		ob->plotUpdate();    
 }
 
 void graphPanel::graphToUp(QString obj){
@@ -540,4 +542,24 @@ void graphPanel::setTimeInterval(qint64 stTime, qint64 enTime){
 
 	ui.axisTime->setTimeInterval(stTime, enTime);
 
+}
+
+QVector<QVector<QString>> graphPanel::getLocateSignals(){
+
+    QVector<QVector<QString>> res;
+    for (auto ob : graphObj_){
+
+        int ind = splitterGraph_->indexOf(ob);
+
+        if (ind >= res.size())
+           res.resize(ind + 1);
+
+        QStringList signs = ob->getAllSignals();
+        signs.append(ob->getAllAlterSignals());
+
+        for (auto& s : signs)
+            res[ind].append(s);
+    }
+
+    return res;
 }

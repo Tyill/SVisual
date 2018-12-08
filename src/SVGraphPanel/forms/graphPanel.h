@@ -48,7 +48,7 @@ private:
 
 	bool isPlay_ = true;
 		
-	void load();
+    void load();
 	void tableUpdate(wdgGraph* graph);
 	void tableUpdateAlter(wdgGraph* graph);
 
@@ -62,10 +62,11 @@ public:
 	SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
 	SV_Graph::pf_loadSignalData pfLoadSignalData= nullptr;
 
-	void addSignalOnGraph(QString name);
+    void addSignalOnGraph(QString name, int section);
 	QPair<qint64, qint64> getTimeInterval();
 	void setTimeInterval(qint64 stTime, qint64 enTime);
-	
+    QVector<QVector<QString>> getLocateSignals();
+
 public slots:
 	void updateSignals();
 	void resizeByValue();

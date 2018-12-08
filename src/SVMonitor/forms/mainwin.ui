@@ -210,6 +210,8 @@
      <string>Файл</string>
     </property>
     <addaction name="actionSettings"/>
+    <addaction name="actionSaveWinState"/>
+    <addaction name="actionLoadWinState"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -324,6 +326,16 @@
    </property>
    <property name="text">
     <string>Новое окно</string>
+   </property>
+  </action>
+  <action name="actionSaveWinState">
+   <property name="text">
+    <string>Сохранить текущее состояние</string>
+   </property>
+  </action>
+  <action name="actionLoadWinState">
+   <property name="text">
+    <string>Загрузить состояние окон</string>
    </property>
   </action>
  </widget>

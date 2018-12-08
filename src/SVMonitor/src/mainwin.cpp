@@ -40,7 +40,7 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.5";
+const QString VERSION = "1.0.6";
 
 MainWin* mainWin = nullptr;
 
@@ -64,11 +64,11 @@ void MainWin::load(){
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
        
-	SV_Graph::setLoadSignalData(graphPanels_[0], [](const QString& sign){
+	SV_Graph::setLoadSignalData(graphPanels_[this], [](const QString& sign){
 		return SV_Srv::signalBufferEna(sign.toUtf8().data());
 	});
-    SV_Graph::setGetCopySignalRef(graphPanels_[0], getCopySignalRefSrv);
-    SV_Graph::setGetSignalData(graphPanels_[0], getSignalDataSrv);
+    SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
+    SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
 
     SV_Exp::setLoadSignalData(exportPanel_, [](const QString& sign){
         return SV_Srv::signalBufferEna(sign.toUtf8().data());
@@ -131,13 +131,13 @@ void MainWin::Connect(){
 			
 			QPainter painter(&printer);
 
-            double xscale = printer.pageRect().width() / double(graphPanels_[0]->width());
-            double yscale = printer.pageRect().height() / double(graphPanels_[0]->height());
+            double xscale = printer.pageRect().width() / double(graphPanels_[this]->width());
+            double yscale = printer.pageRect().height() / double(graphPanels_[this]->height());
 			double scale = qMin(xscale, yscale);
 			painter.translate(printer.paperRect().x(), printer.paperRect().y());
 			painter.scale(scale, scale);
 		
-            graphPanels_[0]->render(&painter);
+            graphPanels_[this]->render(&painter);
 		}
 	});
 
@@ -155,28 +155,109 @@ void MainWin::Connect(){
 
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
         
-        QDialog* graphWin = new QDialog(this, Qt::Window);
-               
-        QVBoxLayout* vertLayout = new QVBoxLayout(graphWin);
-        vertLayout->setSpacing(0);
-        vertLayout->setContentsMargins(5, 5, 5, 5);
-
-        auto gp = SV_Graph::createGraphPanel(graphWin, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
-        SV_Graph::setLoadSignalData(gp, [](const QString& sign){
-            return SV_Srv::signalBufferEna(sign.toUtf8().data());
-        });
-        SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
-        SV_Graph::setGetSignalData(gp, getSignalDataSrv);
-        
-        graphPanels_.push_back(gp);
-        vertLayout->addWidget(gp);        
-
-        graphWin->show();
+        addNewWindow(QRect());
     });
 
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
         if (settPanel_) settPanel_->show();
 	});
+
+    connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
+       
+        QString fname = QFileDialog::getSaveFileName(this,
+            tr("Сохранение состояния окон"), cng.selOpenDir,
+            "ini files (*.ini)");
+
+        if (fname.isEmpty()) return;
+
+        QFile file(fname);
+
+        QTextStream txtStream(&file);
+            
+        auto wins = graphPanels_.keys();
+
+        int cnt = 0;
+        for (auto w : wins){
+
+            file.open(QIODevice::WriteOnly);
+            txtStream << "[graphWin" << cnt << "]" << endl;    
+
+            if (w == this)
+                txtStream << "locate = 0" << endl;
+            else{        
+                auto geom = ((QDialog*)w)->geometry();
+                txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << endl;
+            }
+
+            auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
+            txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << endl;
+
+            QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
+            for (int i = 0; i < signs.size(); ++i){
+
+                txtStream << "section" << i << " = ";
+                for (int j = signs[i].size() - 1; j >= 0; --j)
+                    txtStream << signs[i][j] << " ";
+               
+                txtStream << endl;
+            }            
+
+            txtStream << endl;
+            ++cnt;
+        }
+
+        file.close();
+
+        StatusTxtMess(tr("Состояние успешно сохранено"));
+    });
+
+    connect(ui.actionLoadWinState, &QAction::triggered, [this]() {
+
+        QString fname = QFileDialog::getOpenFileName(this,
+            tr("Загрузка состояния окон"), cng.selOpenDir,
+            "ini files (*.ini)");
+
+        if (fname.isEmpty()) return;
+
+        QSettings settings(fname, QSettings::IniFormat);
+
+        auto grps = settings.childGroups();
+        for (auto& g : grps){
+            settings.beginGroup(g);
+                      
+             QString locate = settings.value("locate").toString();
+             QObject* win = this;
+             if (locate != "0"){
+    
+                 auto lt = locate.split(' ');
+
+                 win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));                 
+             }
+                                     
+             int sect = 0;
+             while (true){
+
+                 QString str = settings.value("section" + QString::number(sect), "").toString();
+                 if (str.isEmpty()) break;
+
+                 QStringList signs = str.split(' ');
+                 for (auto& s : signs)
+                     SV_Graph::addSignal(graphPanels_[win], s, sect);
+
+                 ++sect;
+             }
+             QString tmDiap = settings.value("tmDiap").toString();
+
+             auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
+             ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
+
+             SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
+
+            settings.endGroup();
+        }
+        
+        StatusTxtMess(tr("Состояние успешно загружено"));
+    });
 
 	connect(ui.actionProgram, &QAction::triggered, [this]() {
 
@@ -302,7 +383,7 @@ MainWin::MainWin(QWidget *parent)
 	    statusMess(QString(tr("Не найден файл инициализации %1")).arg(cng.initPath));
 
     auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
-    graphPanels_.push_back(gp);
+    graphPanels_[this] = gp;
     ui.splitter->addWidget(gp);
 
     if (!initOk_) return;
@@ -364,6 +445,17 @@ MainWin::~MainWin(){
 
 	writeSettings(cng.initPath);
 
+}
+
+bool MainWin::eventFilter(QObject *target, QEvent *event){
+
+    if ((event->type() == QEvent::Close) && (target->objectName() == "graphWin")){
+             
+        graphPanels_.remove(target);
+        target->deleteLater();
+    }
+
+    return QMainWindow::eventFilter(target, event);
 }
 
 void MainWin::sortSignalByModule(){
@@ -437,7 +529,7 @@ void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
 	if (column > 1)
 		ui.treeSignals->editItem(item, column);		
 	else{
-		SV_Graph::addSignal(graphPanels_[0], item->text(4));
+        SV_Graph::addSignal(graphPanels_[this], item->text(4));
 	}
 
 }
@@ -786,3 +878,35 @@ QVector<uEvent> MainWin::getEvents(QDateTime bg, QDateTime en){
 	return db ? db->getEvents(bg, en) : QVector<uEvent>();
 }
 
+QDialog* MainWin::addNewWindow(const QRect& pos){
+
+    QDialog* graphWin = new QDialog(this, Qt::Window);
+    graphWin->setObjectName("graphWin");
+    graphWin->installEventFilter(this);
+
+    QVBoxLayout* vertLayout = new QVBoxLayout(graphWin);
+    vertLayout->setSpacing(0);
+    vertLayout->setContentsMargins(5, 5, 5, 5);
+
+    SV_Graph::config config(cng.cycleRecMs, cng.packetSz);
+    config.isShowTable = false;
+
+    auto gp = SV_Graph::createGraphPanel(graphWin, config);
+    SV_Graph::setLoadSignalData(gp, [](const QString& sign){
+        return SV_Srv::signalBufferEna(sign.toUtf8().data());
+    });
+    SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
+    SV_Graph::setGetSignalData(gp, getSignalDataSrv);
+
+    graphPanels_[graphWin] = gp;
+    vertLayout->addWidget(gp);
+         
+    graphWin->show();  
+
+    if (!pos.isNull()){
+        graphWin->setGeometry(pos);
+        graphWin->resize(QSize(pos.width(), pos.height()));
+    }
+
+    return graphWin;
+}

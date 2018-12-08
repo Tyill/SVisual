@@ -45,6 +45,7 @@ public:
 
 		QString dirPath;
 		QString initPath;
+        QString selOpenDir;
 
 		bool outArchiveEna;        ///< запись архива активна
 		QString outArchivePath;    ///< запись архива путь
@@ -92,7 +93,7 @@ private:
 
 	bool initOk_ = false;
 
-	QVector<QWidget*> graphPanels_;
+    QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
 	eventOrderWin* orderWin_ = nullptr;
 	QWidget* trgPanel_ = nullptr;
@@ -105,6 +106,8 @@ private:
 	QSet<QString> signExist_;
 	QMap<QString, userEventData> userEvents_;
 
+    bool eventFilter(QObject *target, QEvent *event);
+
 	bool writeSettings(QString pathIni);
 	bool init(QString initPath);
 	void Connect();
@@ -114,7 +117,8 @@ private:
 	
 	void sortSignalByModule();
 	void contextMenuEvent(QContextMenuEvent * event);
-	
+    QDialog* addNewWindow(const QRect& pos);
+
 public slots:
 	void slowMode();
 	void selSignalClick(QTreeWidgetItem*, int);
@@ -127,4 +131,5 @@ public slots:
 	void moduleConnect(QString module);
 	void moduleDisconnect(QString module);
 	void onTrigger(QString trigger);
+    
 };
