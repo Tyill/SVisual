@@ -4,9 +4,9 @@
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
-| **`Windows`** |
-|------------------|
-|[![Build Status](https://travis-ci.com/Tyill/svisual.svg?branch=master)](https://travis-ci.com/Tyill/svisual)|
+#| **`Windows`** |
+#|------------------|
+#|[![Build Status](https://travis-ci.com/Tyill/svisual.svg?branch=master)](https://travis-ci.com/Tyill/svisual)|
 
 ![GUI](https://github.com/Tyill/SVisual/blob/master/docs/sv-video.gif)
 
