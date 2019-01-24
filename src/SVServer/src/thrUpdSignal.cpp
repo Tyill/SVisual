@@ -270,8 +270,10 @@ void thrUpdSignal::updCycle(){
 				m.second = false;
 			}
 		}
-
-		SleepMs(min(SV_CYCLESAVE_MS, 10000));
+                
+        int ms = SV_CYCLESAVE_MS - (int)tmDelay.GetCTime();
+		if (ms > 0)
+           SleepMs(min(ms, 10000));
 	}
 
 	if (cng.outArchiveEna) pArchive_->copyToDisk(true);

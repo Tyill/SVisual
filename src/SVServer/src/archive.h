@@ -70,8 +70,7 @@ private:
 	const int archCycleMs = 600000;     // 10мин
 	int cpySz_ = 0;
 	std::map<std::string, int> valPos_;
-
-	SV_Aux::TimerDelay  tm_;
+    	
     SV_Aux::Front front_;
 
     std::map<std::string, std::vector<SV_Cng::recData>> archiveData_;

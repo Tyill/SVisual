@@ -68,6 +68,11 @@ namespace SV_Aux {
             prevTm = *lct;
         }
 
+        uint64_t GetCTime(){
+
+            return CurrDateTimeSinceEpochMs() - prevCycTm;
+        }
+
         // таймер ondelay сек
         bool OnDelTmSec(bool start, int delay, int id) {
 
