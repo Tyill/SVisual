@@ -487,7 +487,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>70</width>
+             <width>65</width>
              <height>50</height>
             </size>
            </property>

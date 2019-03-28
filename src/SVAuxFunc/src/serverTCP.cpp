@@ -109,7 +109,7 @@ namespace SV_TcpSrv {
 
 				uv_buf_t resbuf;
 				resbuf.base = (char *) client->outMess.c_str();
-				resbuf.len = client->outMess.size() + 1;
+				resbuf.len = ULONG(client->outMess.size()) + 1;
 
 				uv_write(&client->write_req,
 								 (uv_stream_t *) &client->handle,

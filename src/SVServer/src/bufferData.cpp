@@ -55,7 +55,9 @@ void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 	mtx_.lock();
 
 	int buffWr = buffWritePos_;
-	buffWritePos_ += valCnt; if (buffWritePos_ >= buffSz_) buffWritePos_ -= buffSz_;
+	buffWritePos_ += valCnt; 
+    
+    if (buffWritePos_ >= buffSz_) buffWritePos_ -= buffSz_;
 
 	mtx_.unlock();
 
@@ -83,7 +85,9 @@ void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 void bufferData::incReadPos(){
 
 	buffer_[buffReadPos_].isActive = false;
-	++buffReadPos_; if (buffReadPos_ >= buffSz_) buffReadPos_ = 0;
+	++buffReadPos_; 
+    
+    if (buffReadPos_ >= buffSz_) buffReadPos_ = 0;
 }
 
 int bufferData::getBuffSize(){

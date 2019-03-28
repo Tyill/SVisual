@@ -117,8 +117,8 @@ public:
         horizontalLayout_2->setContentsMargins(-1, 0, -1, -1);
         wAxisValue = new wdgAxisValue(groupBox);
         wAxisValue->setObjectName(QStringLiteral("wAxisValue"));
-        wAxisValue->setMinimumSize(QSize(65, 0));
-        wAxisValue->setMaximumSize(QSize(65, 16777215));
+        wAxisValue->setMinimumSize(QSize(60, 0));
+        wAxisValue->setMaximumSize(QSize(60, 16777215));
 
         horizontalLayout_2->addWidget(wAxisValue);
 
