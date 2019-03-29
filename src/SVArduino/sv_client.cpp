@@ -5,11 +5,12 @@
 #include <WiFi.h>
 
 #include "MsTimer2.h"
+#include "SVClient.h"
 #include "sv_auxFunc.h"
 #include "sv_structurs.h"
 #include "sv_binTree.h"
 #include "sv_objClient.h"
-#include "SVClient.h"
+
 
 namespace svisual{
 
@@ -65,7 +66,6 @@ namespace svisual{
 	return objCln.addValue(name, valueType::tInt, val);	
   }
   
-  #ifdef SV_FLOAT_ENA
   // add value for rec
   bool addFloatValue(const char* name, float value_in){
 
@@ -73,7 +73,6 @@ namespace svisual{
 
 	return objCln.addValue(name, valueType::tFloat, val);	
   }
-  #endif
   
   bool sv_client::tcpConnect(){
 	   	 
@@ -109,7 +108,8 @@ namespace svisual{
 
 	Ethernet.begin(macModule, ipModule);
 		
-	if (!ethClient_) ethClient_ = new EthernetClient();	
+	if (!ethClient_) 
+		ethClient_ = new EthernetClient();	
 		
 	for (int i = 0; i < 10; ++i){
 	
@@ -143,7 +143,7 @@ namespace svisual{
 	
     for (int i = 0; i < 3; ++i){
 	
-		if (WiFi.begin(ssid, pass) == WL_CONNECTED){
+		if (WiFi.begin((char*)ssid, pass) == WL_CONNECTED){
 			isConnect_ = true;
 			break;
 		}
@@ -155,10 +155,14 @@ namespace svisual{
 
 	isWiFi_ = true;	
 		
-    ssid_ = realloc(ssid_, strlen(ssid) + 1); strcpy(ssid_, ssid);
-	pass_ = realloc(pass_, strlen(pass) + 1); strcpy(pass_, pass);
+    ssid_ = (char*)realloc((void*)ssid_, strlen(ssid) + 1); 
+	strcpy(ssid_, ssid);
+	
+	pass_ = (char*)realloc((void*)pass_, strlen(pass) + 1);
+	strcpy(pass_, pass);
 		
-	if (!ethClient_) ethClient_ = new WiFiClient();
+	if (!ethClient_)
+		ethClient_ = new WiFiClient();
 		
 	for (int i = 0; i < 10; ++i){
 	
@@ -203,7 +207,7 @@ namespace svisual{
 
 		if (!isConnect_) return false;
 				
-		valueRec* vr = values_.find(name);
+		valueRec* vr = (valueRec*)values_.find(name);
 		if (!vr){
 					
 			int sz = values_.size();
@@ -215,7 +219,9 @@ namespace svisual{
 			if (strstr(name, "=end=") || strstr(name, "=begin=")) return false; 
 			
 			vr = new valueRec();
-			vr->name = malloc(len + 1); strcpy(vr->name, name);
+			vr->name = (char*)malloc(len + 1); 
+			strcpy(vr->name, name);
+			
 			vr->type = type;
 			memset(vr->vals, 0, sizeof(value) * SV_PACKETSZ);
 
@@ -241,13 +247,13 @@ namespace svisual{
 		
 		if (sz == 0) return ok;
 		
-        char* start = "=begin=";
-		ethClient_->write(start, strlen(start));
+        const char* start = "=begin=";
+		ethClient_->write((const uint8_t*)start, strlen(start));
 		
 		int vlSz = sizeof(dataRef); long int allSz = SV_NAMESZ + vlSz * sz;
-		ethClient_->write((char*)&allSz, 4);
+		ethClient_->write((const uint8_t*)&allSz, 4);
 		
-		ethClient_->write(module_, SV_NAMESZ);
+		ethClient_->write((const uint8_t*)module_, SV_NAMESZ);
 		
 		valueRec* data; dataRef auxSD; memset(auxSD.vals, 0, 4 * SV_PACKETSZ);
 		for (int i = 0; i < sz; ++i){
@@ -256,13 +262,18 @@ namespace svisual{
 			strcpy(auxSD.name, data->name);
 			auxSD.type = (long int)data->type;
 			for (int j = 0; j < SV_PACKETSZ; ++j){
-			   auxSD.vals[j] = data->vals[j].tInt;
+
+              if ((data->type == valueType::tInt) || (data->type == valueType::tBool))
+                auxSD.vals[j].tInt = data->vals[j].tInt;
+              else
+		        auxSD.vals[j].tFloat = data->vals[j].tFloat;
 			}
-			ethClient_->write((char*)&auxSD, vlSz);  							
+			
+			ethClient_->write((const uint8_t*)&auxSD, vlSz);  							
 		}
 		
-		char* end = "=end=";
-		ethClient_->write(end, strlen(end));	
+		const char* end = "=end=";
+		ethClient_->write((const uint8_t*)end, strlen(end));	
 				
 	 }
 	 else {
@@ -282,7 +293,7 @@ namespace svisual{
 	
 	Serial.flush();
 		
-	char* start = "=begin=";
+	const char* start = "=begin=";
 	Serial.write(start, strlen(start));
 	
 	int vlSz = sizeof(dataRef); long int allSz = SV_NAMESZ + vlSz * sz;
@@ -297,19 +308,17 @@ namespace svisual{
 		strcpy(auxSD.name, data->name);
 		auxSD.type = (long int)data->type;
 		for (int j = 0; j < SV_PACKETSZ; ++j){
-#ifdef SV_FLOAT_ENA
+
            if ((data->type == valueType::tInt) || (data->type == valueType::tBool))
-              auxSD.vals[j] = data->vals[j].tInt;
+              auxSD.vals[j].tInt = data->vals[j].tInt;
            else
-		      auxSD.vals[j] = data->vals[j].tFloat;
-#else
-           auxSD.vals[j] = data->vals[j].tInt;
-#endif
+		      auxSD.vals[j].tFloat = data->vals[j].tFloat;          
 		}
+		
 		Serial.write((char*)&auxSD, vlSz);  							
 	}
 	
-	char* end = "=end=";
+	const char* end = "=end=";
 	Serial.write(end, strlen(end));	
 			 	 
 	 return true;
@@ -356,10 +365,9 @@ namespace svisual{
 
 		  curCycCnt_ = 0;
 	  }
-	  else ++curCycCnt_;
-	 
+	  else 
+		  ++curCycCnt_; 
 	 
 	}
-
 }
 

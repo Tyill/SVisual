@@ -10,7 +10,7 @@ void parseBytes(const char* str, char sep, byte* bytes, int maxBytes, int base) 
 		if (str == NULL || *str == '\0') {
 			break;                            
 		}
-		str++;                                
+		++str;                                
 	}
 }
 }

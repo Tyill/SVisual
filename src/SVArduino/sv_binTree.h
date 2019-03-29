@@ -7,8 +7,8 @@ namespace svisual{
     private:
      
 	  struct node {
-        char* key;
-        void* data;
+        const char* key;
+        const void* data;
         node* lchild,* rchild;
       };
 	 
@@ -17,7 +17,7 @@ namespace svisual{
 	  
 	  int sz_ = 0;
     
-	  node* create(const char* key, void* data){
+	  node* create(const char* key, const void* data){
 			node* nd = (node*)malloc(sizeof(node));
 			nd->key = key;
 			nd->data = data;			
@@ -50,10 +50,10 @@ namespace svisual{
 	      
 		 if ((0 > it) || (it >= sz_)) return NULL;
 		 
-		 return nods_[it]->data;
+		 return (void*)nods_[it]->data;
       }
     			
-      void insert(const char* key, void* data){
+      void insert(const char* key, const void* data){
 	  	      
 		 node* new_node = create(key, data);
 			
@@ -68,7 +68,7 @@ namespace svisual{
       
           int res = strcmp(key, nd->key);
       
-          if (res == 0) return nd->data;
+          if (res == 0) return (void*)nd->data;
       
           else if (res < 0) nd = nd->lchild;
       

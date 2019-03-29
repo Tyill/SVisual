@@ -2,7 +2,7 @@
 // SVisual client for MK Arduino
 //
 // v1.0.2 a.medvedev
-// -add method "addFloatValue" (by condition)
+// -add method "addFloatValue"
 //=============================================================================
 
 #pragma once
@@ -10,7 +10,6 @@
 #define SV_CYCLEREC_MS 100 
 #define SV_PACKETSZ 10
 #define SV_VALS_MAX_CNT 128
-//#define SV_FLOAT_ENA           if you want to write "float" values
 
 namespace svisual{
   
@@ -42,10 +41,8 @@ namespace svisual{
     // add int value for rec
 	// name - value name (leng max 24)
     bool addIntValue(const char* name, int value);
-		
-	#ifdef SV_FLOAT_ENA
+	
 	// add float value for rec
 	// name - value name (leng max 24)
-    bool addFloatValue(const char* name, float value);	
-	#endif
+    bool addFloatValue(const char* name, float value);
 };
