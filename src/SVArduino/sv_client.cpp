@@ -62,9 +62,18 @@ namespace svisual{
 
     value val; val.tInt = value_in;
 
-	return objCln.addValue(name, valueType::tInt, val);
-	
+	return objCln.addValue(name, valueType::tInt, val);	
   }
+  
+  #ifdef SV_FLOAT_ENA
+  // add value for rec
+  bool addFloatValue(const char* name, float value_in){
+
+    value val; val.tFloat = value_in;
+
+	return objCln.addValue(name, valueType::tFloat, val);	
+  }
+  #endif
   
   bool sv_client::tcpConnect(){
 	   	 
@@ -189,8 +198,8 @@ namespace svisual{
 				
 		return isConnect_;
    }
-   
-  bool sv_client::addValue(const char* name, valueType type, value val, bool onlyPosFront){
+      
+   bool sv_client::addValue(const char* name, valueType type, value val, bool onlyPosFront){
 
 		if (!isConnect_) return false;
 				
@@ -288,7 +297,14 @@ namespace svisual{
 		strcpy(auxSD.name, data->name);
 		auxSD.type = (long int)data->type;
 		for (int j = 0; j < SV_PACKETSZ; ++j){
-		   auxSD.vals[j] = data->vals[j].tInt;
+#ifdef SV_FLOAT_ENA
+           if ((data->type == valueType::tInt) || (data->type == valueType::tBool))
+              auxSD.vals[j] = data->vals[j].tInt;
+           else
+		      auxSD.vals[j] = data->vals[j].tFloat;
+#else
+           auxSD.vals[j] = data->vals[j].tInt;
+#endif
 		}
 		Serial.write((char*)&auxSD, vlSz);  							
 	}

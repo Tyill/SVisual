@@ -4,22 +4,25 @@
 
 #pragma once
 
-#define SV_CYCLEREC_MS 100 
+#include SVClient.h
+
 #define SV_NAMESZ 24
-#define SV_PACKETSZ 10
-#define SV_VALS_MAX_CNT 128
 
 namespace svisual{
 
 enum class valueType{
 	tBool = 0,
 	tInt = 1,	
+	tFloat = 2,
 };
 
 union value
 {
 	bool tBool;
-	int tInt;	
+	int tInt;
+#ifdef SV_FLOAT_ENA
+    float tFloat;	
+#endif
 };
 
 struct valueRec{
