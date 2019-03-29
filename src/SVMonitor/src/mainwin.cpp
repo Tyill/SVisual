@@ -40,7 +40,7 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.6";
+const QString VERSION = "1.0.7";
 
 MainWin* mainWin = nullptr;
 
@@ -161,6 +161,24 @@ void MainWin::Connect(){
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
         if (settPanel_) settPanel_->show();
 	});
+
+    connect(ui.actionUpFont, &QAction::triggered, [this]() {
+       
+        QFont ft = this->font();
+        
+        ft.setPointSize(ft.pointSize() + 1);
+
+        setFont(ft);
+    });
+
+    connect(ui.actionDnFont, &QAction::triggered, [this]() {
+
+        QFont ft = this->font();
+
+        ft.setPointSize(ft.pointSize() - 1);
+
+        setFont(ft);
+    });
 
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
        
@@ -304,6 +322,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "outArchiveName = " << cng.outArchiveName << endl;
     txtStream << endl;
     txtStream << "selOpenDir = " << cng.selOpenDir << endl;
+    txtStream << "fontSz = " << this->font().pointSize() << endl;
 
 
     file.close();
@@ -325,8 +344,14 @@ bool MainWin::init(QString initPath){
     cng.packetSz = settings.value("packetSz", 10).toInt();
     cng.packetSz = qMax(cng.packetSz, 1);
 
+  
     cng.selOpenDir = settings.value("selOpenDir", "").toString();
 
+    QFont ft = this->font();
+    int fsz = settings.value("fontSz", ft.pointSize()).toInt();
+    ft.setPointSize(fsz);
+    this->setFont(ft);
+    
     // связь по usb
     cng.com_ena = settings.value("com_ena", 0).toInt() == 1;
     cng.com_name = settings.value("com_name", "COM4").toString();

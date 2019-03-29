@@ -100,42 +100,46 @@ public:
         btnResizeByTime = new QPushButton(groupBox);
         btnResizeByTime->setObjectName(QStringLiteral("btnResizeByTime"));
         btnResizeByTime->setMaximumSize(QSize(28, 28));
+        QIcon icon1;
+        icon1.addFile(QStringLiteral(":/SVGp/images/iconResByTime.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnResizeByTime->setIcon(icon1);
+        btnResizeByTime->setIconSize(QSize(23, 25));
 
         horizontalLayout->addWidget(btnResizeByTime);
 
         btnResizeByValue = new QPushButton(groupBox);
         btnResizeByValue->setObjectName(QStringLiteral("btnResizeByValue"));
         btnResizeByValue->setMaximumSize(QSize(28, 28));
-        QIcon icon1;
-        icon1.addFile(QStringLiteral(":/SVGp/images/iconResByValue.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnResizeByValue->setIcon(icon1);
+        QIcon icon2;
+        icon2.addFile(QStringLiteral(":/SVGp/images/iconResByValue.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnResizeByValue->setIcon(icon2);
 
         horizontalLayout->addWidget(btnResizeByValue);
 
         btnUndo = new QPushButton(groupBox);
         btnUndo->setObjectName(QStringLiteral("btnUndo"));
         btnUndo->setMaximumSize(QSize(28, 28));
-        QIcon icon2;
-        icon2.addFile(QStringLiteral(":/SVGp/images/bw.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnUndo->setIcon(icon2);
+        QIcon icon3;
+        icon3.addFile(QStringLiteral(":/SVGp/images/bw.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnUndo->setIcon(icon3);
 
         horizontalLayout->addWidget(btnUndo);
 
         btnColorUpdate = new QPushButton(groupBox);
         btnColorUpdate->setObjectName(QStringLiteral("btnColorUpdate"));
         btnColorUpdate->setMaximumSize(QSize(28, 28));
-        QIcon icon3;
-        icon3.addFile(QStringLiteral(":/SVGp/images/color_wheel.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnColorUpdate->setIcon(icon3);
+        QIcon icon4;
+        icon4.addFile(QStringLiteral(":/SVGp/images/color_wheel.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnColorUpdate->setIcon(icon4);
 
         horizontalLayout->addWidget(btnColorUpdate);
 
         btnScalePos = new QPushButton(groupBox);
         btnScalePos->setObjectName(QStringLiteral("btnScalePos"));
         btnScalePos->setMaximumSize(QSize(28, 28));
-        QIcon icon4;
-        icon4.addFile(QStringLiteral(":/SVGp/images/scalePos.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnScalePos->setIcon(icon4);
+        QIcon icon5;
+        icon5.addFile(QStringLiteral(":/SVGp/images/scalePos.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnScalePos->setIcon(icon5);
         btnScalePos->setIconSize(QSize(25, 25));
         btnScalePos->setAutoRepeat(true);
 
@@ -144,9 +148,9 @@ public:
         btnScaleNeg = new QPushButton(groupBox);
         btnScaleNeg->setObjectName(QStringLiteral("btnScaleNeg"));
         btnScaleNeg->setMaximumSize(QSize(28, 28));
-        QIcon icon5;
-        icon5.addFile(QStringLiteral(":/SVGp/images/scaleNeg.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnScaleNeg->setIcon(icon5);
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/SVGp/images/scaleNeg.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnScaleNeg->setIcon(icon6);
         btnScaleNeg->setIconSize(QSize(25, 25));
         btnScaleNeg->setAutoRepeat(true);
 
@@ -155,9 +159,9 @@ public:
         btnAScale = new QPushButton(groupBox);
         btnAScale->setObjectName(QStringLiteral("btnAScale"));
         btnAScale->setMaximumSize(QSize(28, 28));
-        QIcon icon6;
-        icon6.addFile(QStringLiteral(":/SVGp/images/ascale.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnAScale->setIcon(icon6);
+        QIcon icon7;
+        icon7.addFile(QStringLiteral(":/SVGp/images/ascale.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnAScale->setIcon(icon7);
         btnAScale->setIconSize(QSize(30, 30));
         btnAScale->setCheckable(true);
         btnAScale->setChecked(true);
@@ -167,9 +171,9 @@ public:
         btnPlay = new QPushButton(groupBox);
         btnPlay->setObjectName(QStringLiteral("btnPlay"));
         btnPlay->setMaximumSize(QSize(28, 28));
-        QIcon icon7;
-        icon7.addFile(QStringLiteral(":/SVGp/images/player_stop.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnPlay->setIcon(icon7);
+        QIcon icon8;
+        icon8.addFile(QStringLiteral(":/SVGp/images/player_stop.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnPlay->setIcon(icon8);
         btnPlay->setIconSize(QSize(30, 30));
 
         horizontalLayout->addWidget(btnPlay);
@@ -315,7 +319,7 @@ public:
 #ifndef QT_NO_TOOLTIP
         btnResizeByTime->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 \320\277\320\276 \320\262\321\200\320\265\320\274\320\265\320\275\320\270  [CNTR+S]", 0));
 #endif // QT_NO_TOOLTIP
-        btnResizeByTime->setText(QApplication::translate("graphPanelClass", "[--]", 0));
+        btnResizeByTime->setText(QString());
         btnResizeByTime->setShortcut(QApplication::translate("graphPanelClass", "Ctrl+S", 0));
 #ifndef QT_NO_TOOLTIP
         btnResizeByValue->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 \320\277\320\276 \320\260\320\274\320\277\320\273\320\270\321\202\321\203\320\264\320\265 [CNTR+D]", 0));

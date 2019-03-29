@@ -32,7 +32,7 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
-const QString VERSION = "1.0.6";
+const QString VERSION = "1.0.7";
 
 MainWin* mainWin = nullptr;
 
@@ -78,6 +78,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "packetSz = " << cng.packetSz << endl;
     txtStream << endl;
     txtStream << "sortByMod = " << (cng.sortByMod ? 1 : 0) << endl;
+    txtStream << "fontSz = " << this->font().pointSize() << endl;
     txtStream << endl;
 	file.close();
 
@@ -243,6 +244,24 @@ void MainWin::Connect(){
         addNewWindow(QRect());
     });
 		
+    connect(ui.actionUpFont, &QAction::triggered, [this]() {
+
+        QFont ft = this->font();
+
+        ft.setPointSize(ft.pointSize() + 1);
+
+        setFont(ft);
+    });
+
+    connect(ui.actionDnFont, &QAction::triggered, [this]() {
+
+        QFont ft = this->font();
+
+        ft.setPointSize(ft.pointSize() - 1);
+
+        setFont(ft);
+    });
+
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
 		this->ui.btnSortByGroup->setChecked(true);
 		this->ui.btnSortByModule->setChecked(false);
@@ -391,6 +410,11 @@ bool MainWin::init(QString initPath){
 	cng.selOpenDir = settings.value("selOpenDir", "").toString();
 	cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
 		
+    QFont ft = this->font();
+    int fsz = settings.value("fontSz", ft.pointSize()).toInt();
+    ft.setPointSize(fsz);
+    this->setFont(ft);
+
 	if (!QFile(initPath).exists())
 		writeSettings(initPath);
 

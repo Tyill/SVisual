@@ -245,7 +245,15 @@
     </property>
     <addaction name="actionProgram"/>
    </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>Вид</string>
+    </property>
+    <addaction name="actionUpFont"/>
+    <addaction name="actionDnFont"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menu_3"/>
    <addaction name="menu_2"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -330,6 +338,22 @@
   <action name="actionLoadWinState">
    <property name="text">
     <string>Загрузить состояние окон</string>
+   </property>
+  </action>
+  <action name="actionUpFont">
+   <property name="text">
+    <string>Увеличить размер шрифта</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
+  </action>
+  <action name="actionDnFont">
+   <property name="text">
+    <string>Уменьшить размер шрифта</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
    </property>
   </action>
  </widget>

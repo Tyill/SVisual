@@ -44,6 +44,8 @@ public:
     QAction *actionNewWin;
     QAction *actionSaveWinState;
     QAction *actionLoadWinState;
+    QAction *actionUpFont;
+    QAction *actionDnFont;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -65,6 +67,7 @@ public:
     QMenuBar *menuBar;
     QMenu *menu;
     QMenu *menu_2;
+    QMenu *menu_3;
     QToolBar *mainToolBar;
 
     void setupUi(QMainWindow *MainWin)
@@ -108,6 +111,10 @@ public:
         actionSaveWinState->setObjectName(QStringLiteral("actionSaveWinState"));
         actionLoadWinState = new QAction(MainWin);
         actionLoadWinState->setObjectName(QStringLiteral("actionLoadWinState"));
+        actionUpFont = new QAction(MainWin);
+        actionUpFont->setObjectName(QStringLiteral("actionUpFont"));
+        actionDnFont = new QAction(MainWin);
+        actionDnFont->setObjectName(QStringLiteral("actionDnFont"));
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -225,17 +232,22 @@ public:
         menu->setObjectName(QStringLiteral("menu"));
         menu_2 = new QMenu(menuBar);
         menu_2->setObjectName(QStringLiteral("menu_2"));
+        menu_3 = new QMenu(menuBar);
+        menu_3->setObjectName(QStringLiteral("menu_3"));
         MainWin->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWin);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
         MainWin->addToolBar(Qt::TopToolBarArea, mainToolBar);
 
         menuBar->addAction(menu->menuAction());
+        menuBar->addAction(menu_3->menuAction());
         menuBar->addAction(menu_2->menuAction());
         menu->addAction(actionSaveWinState);
         menu->addAction(actionLoadWinState);
         menu->addAction(actionExit);
         menu_2->addAction(actionProgram);
+        menu_3->addAction(actionUpFont);
+        menu_3->addAction(actionDnFont);
         mainToolBar->addAction(actionOpen);
         mainToolBar->addAction(actionStat);
         mainToolBar->addAction(actionPrint);
@@ -263,6 +275,10 @@ public:
         actionNewWin->setText(QApplication::translate("MainWin", "\320\235\320\276\320\262\320\276\320\265 \320\276\320\272\320\275\320\276", 0));
         actionSaveWinState->setText(QApplication::translate("MainWin", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \321\202\320\265\320\272\321\203\321\211\320\265\320\265 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265", 0));
         actionLoadWinState->setText(QApplication::translate("MainWin", "\320\227\320\260\320\263\321\200\321\203\320\267\320\270\321\202\321\214 \321\201\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265 \320\276\320\272\320\276\320\275", 0));
+        actionUpFont->setText(QApplication::translate("MainWin", "\320\243\320\262\320\265\320\273\320\270\321\207\320\270\321\202\321\214 \321\200\320\260\320\267\320\274\320\265\321\200 \321\210\321\200\320\270\321\204\321\202\320\260", 0));
+        actionUpFont->setShortcut(QApplication::translate("MainWin", "Ctrl+1", 0));
+        actionDnFont->setText(QApplication::translate("MainWin", "\320\243\320\274\320\265\320\275\321\214\321\210\320\270\321\202\321\214 \321\200\320\260\320\267\320\274\320\265\321\200 \321\210\321\200\320\270\321\204\321\202\320\260", 0));
+        actionDnFont->setShortcut(QApplication::translate("MainWin", "Ctrl+2", 0));
         groupBox->setTitle(QString());
         btnSortByModule->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSortByGroup->setText(QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\321\213", 0));
@@ -277,6 +293,7 @@ public:
         lbStatusMess->setText(QString());
         menu->setTitle(QApplication::translate("MainWin", "\320\244\320\260\320\271\320\273", 0));
         menu_2->setTitle(QApplication::translate("MainWin", "\320\237\320\276\320\274\320\276\321\211\321\214", 0));
+        menu_3->setTitle(QApplication::translate("MainWin", "\320\222\320\270\320\264", 0));
     } // retranslateUi
 
 };
