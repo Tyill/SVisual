@@ -168,7 +168,10 @@ void MainWin::Connect(){
         
         ft.setPointSize(ft.pointSize() + 1);
 
-        setFont(ft);
+        this->setFont(ft);
+
+        for (auto p : this->graphPanels_)
+            p->setFont(ft);
     });
 
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
@@ -177,7 +180,10 @@ void MainWin::Connect(){
 
         ft.setPointSize(ft.pointSize() - 1);
 
-        setFont(ft);
+        this->setFont(ft);
+
+        for (auto p : this->graphPanels_)
+            p->setFont(ft);
     });
 
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
@@ -932,6 +938,8 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     graphPanels_[graphWin] = gp;
     vertLayout->addWidget(gp);
          
+    graphWin->setFont(this->font());
+
     graphWin->show();  
 
     if (!pos.isNull()){
