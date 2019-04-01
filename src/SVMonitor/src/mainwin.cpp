@@ -170,8 +170,7 @@ void MainWin::Connect(){
 
         this->setFont(ft);
 
-        for (auto p : this->graphPanels_)
-            p->setFont(ft);
+        QApplication::setFont(ft);
     });
 
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
@@ -182,8 +181,7 @@ void MainWin::Connect(){
 
         this->setFont(ft);
 
-        for (auto p : this->graphPanels_)
-            p->setFont(ft);
+        QApplication::setFont(ft);
     });
 
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
@@ -496,7 +494,7 @@ bool MainWin::eventFilter(QObject *target, QEvent *event){
 }
 
 void MainWin::sortSignalByModule(){
-	
+	   
 	ui.treeSignals->clear();
 
 	auto mref = SV_Srv::getCopyModuleRef();
@@ -543,7 +541,7 @@ void MainWin::sortSignalByModule(){
 	ui.treeSignals->sortByColumn(1);
 
 	ui.lbAllSignCnt->setText(QString::number(SV_Srv::getCopySignalRef().size()));
-
+        
 }
 
 void MainWin::selSignalClick(QTreeWidgetItem* item, int column){

@@ -545,7 +545,7 @@
     <message>
         <location filename="../forms/settingsPanel.ui" line="126"/>
         <source>соединение по COM/UART</source>
-        <translation>Connect of COM/UART</translation>
+        <translation>connect of COM/UART</translation>
     </message>
     <message>
         <location filename="../forms/settingsPanel.ui" line="174"/>

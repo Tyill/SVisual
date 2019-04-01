@@ -23,8 +23,11 @@
 // THE SOFTWARE.
 //
 #include <string>
+#include <iomanip>
+#include <sstream>
 #include "SVConfig/SVConfigData.h"
 
+using namespace std;
 
 namespace SV_Cng {
 
@@ -69,8 +72,11 @@ namespace SV_Cng {
             case valueType::tInt:
                 res = value > 0 ? std::to_string((int) (value + 0.5)) : std::to_string((int) (value - 0.5));
                 break;
-            case valueType::tFloat:
-                res = std::to_string(value);
+            case valueType::tFloat:{
+                stringstream stream;
+                stream << fixed << setprecision(1) << value;
+                res = stream.str();
+            }
                 break;
             default:
                 break;

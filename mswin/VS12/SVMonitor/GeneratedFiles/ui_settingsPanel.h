@@ -27,7 +27,6 @@
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
@@ -58,13 +57,13 @@ public:
     QPushButton *btnCopyPath;
     QLineEdit *txtCopyPath;
     QGroupBox *groupBox_2;
-    QWidget *widget;
+    QVBoxLayout *verticalLayout_4;
     QHBoxLayout *horizontalLayout_4;
     QLabel *label_4;
     QSpinBox *spinCycleRecMs;
-    QSpacerItem *horizontalSpacer_2;
     QLabel *label_7;
     QSpinBox *spinPacketSz;
+    QSpacerItem *horizontalSpacer_2;
     QHBoxLayout *horizontalLayout_6;
     QSpacerItem *horizontalSpacer_3;
     QLabel *lbChange;
@@ -74,6 +73,8 @@ public:
     {
         if (settingsPanelClass->objectName().isEmpty())
             settingsPanelClass->setObjectName(QStringLiteral("settingsPanelClass"));
+        settingsPanelClass->resize(550, 350);
+        settingsPanelClass->setMinimumSize(QSize(550, 350));
         settingsPanelClass->setMaximumSize(QSize(550, 350));
         verticalLayout_3 = new QVBoxLayout(settingsPanelClass);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
@@ -214,18 +215,16 @@ public:
         sizePolicy.setHeightForWidth(groupBox_2->sizePolicy().hasHeightForWidth());
         groupBox_2->setSizePolicy(sizePolicy);
         groupBox_2->setMinimumSize(QSize(0, 50));
-        widget = new QWidget(groupBox_2);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 20, 362, 27));
-        horizontalLayout_4 = new QHBoxLayout(widget);
+        verticalLayout_4 = new QVBoxLayout(groupBox_2);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
-        label_4 = new QLabel(widget);
+        label_4 = new QLabel(groupBox_2);
         label_4->setObjectName(QStringLiteral("label_4"));
 
         horizontalLayout_4->addWidget(label_4);
 
-        spinCycleRecMs = new QSpinBox(widget);
+        spinCycleRecMs = new QSpinBox(groupBox_2);
         spinCycleRecMs->setObjectName(QStringLiteral("spinCycleRecMs"));
         spinCycleRecMs->setMinimum(5);
         spinCycleRecMs->setMaximum(5000);
@@ -233,21 +232,24 @@ public:
 
         horizontalLayout_4->addWidget(spinCycleRecMs);
 
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_4->addItem(horizontalSpacer_2);
-
-        label_7 = new QLabel(widget);
+        label_7 = new QLabel(groupBox_2);
         label_7->setObjectName(QStringLiteral("label_7"));
 
         horizontalLayout_4->addWidget(label_7);
 
-        spinPacketSz = new QSpinBox(widget);
+        spinPacketSz = new QSpinBox(groupBox_2);
         spinPacketSz->setObjectName(QStringLiteral("spinPacketSz"));
         spinPacketSz->setMinimum(1);
         spinPacketSz->setValue(10);
 
         horizontalLayout_4->addWidget(spinPacketSz);
+
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_4->addItem(horizontalSpacer_2);
+
+
+        verticalLayout_4->addLayout(horizontalLayout_4);
 
 
         verticalLayout_3->addWidget(groupBox_2);

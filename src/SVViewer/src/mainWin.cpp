@@ -251,9 +251,8 @@ void MainWin::Connect(){
         ft.setPointSize(ft.pointSize() + 1);
 
         this->setFont(ft);
-
-        for (auto p : this->graphPanels_)
-            p->setFont(ft);
+                
+        QApplication::setFont(ft);
     });
 
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
@@ -261,11 +260,10 @@ void MainWin::Connect(){
         QFont ft = this->font();
 
         ft.setPointSize(ft.pointSize() - 1);
-
+        
         this->setFont(ft);
 
-        for (auto p : this->graphPanels_)
-            p->setFont(ft);
+        QApplication::setFont(ft);
     });
 
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
