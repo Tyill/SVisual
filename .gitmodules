@@ -1,0 +1,3 @@
+[submodule "src/QtXlsxWriter"]
+	path = src/QtXlsxWriter
+	url = https://github.com/VSRonin/QtXlsxWriter
