@@ -25,7 +25,9 @@
 #include "stdafx.h"
 #include "forms/exportPanel.h"
 #include "SVConfig/SVConfigLimits.h"
+#ifdef USE_QtXlsxWriter
 #include "Lib/xlsx/xlsxdocument.h"
+#endif
 #include "Lib/rapidjson/writer.h"
 #include "Lib/rapidjson/stringbuffer.h"
 #include "Lib/rapidjson/document.h"
@@ -64,13 +66,19 @@ exportPanel::exportPanel(QWidget *parent, SV_Exp::config cng_){
         QString selectedFilter;
         QString fileName = dialog.getSaveFileName(this,
             tr("Создание файла данных"), selDirMem_,
+#ifdef USE_QtXlsxWriter
             tr("json file (*.jsn);; xlsx file (*.xlsx);; txt file (*.txt)"), &selectedFilter);
+#else
+            tr("json file (*.jsn);; txt file (*.txt)"), &selectedFilter);
+#endif
 
         if (!fileName.isEmpty()){                  
             if (selectedFilter == "json file (*.jsn)")
                 exportToJSON(fileName);
+#ifdef USE_QtXlsxWriter
             else if (selectedFilter == "xlsx file (*.xlsx)")
                 exportToXLSX(fileName);
+#endif
             else
                 exportToTXT(fileName);
         }
@@ -190,7 +198,7 @@ void exportPanel::updateTableExport(){
     }
     ui.tableExport->update();
 }
-
+#ifdef USE_QtXlsxWriter
 void exportPanel::exportToXLSX(QString fileName){
 
     QXlsx::Document xlsx;
@@ -281,7 +289,7 @@ void exportPanel::exportToXLSX(QString fileName){
     tmr->setInterval(5000);
     tmr->start();
 }
-
+#endif
 void exportPanel::exportToTXT(QString fileName){
     
     QFile data(fileName);

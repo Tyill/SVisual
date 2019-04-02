@@ -59,8 +59,9 @@ private:
 
     void updateTableSignal();
     void updateTableExport();
-
+#ifdef USE_QtXlsxWriter
     void exportToXLSX(QString fileName);
+#endif
     void exportToTXT(QString fileName);
     void exportToJSON(QString fileName);
 
