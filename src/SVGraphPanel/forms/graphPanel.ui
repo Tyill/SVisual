@@ -69,7 +69,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>автошкала [CNTR+A]</string>
+             <string>автошкала [CTRL+A]</string>
             </property>
             <property name="text">
              <string/>
@@ -98,7 +98,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>автошкала по времени  [CNTR+S]</string>
+             <string>автошкала по времени  [CTRL+S]</string>
             </property>
             <property name="text">
              <string/>
@@ -127,7 +127,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>автошкала по амплитуде [CNTR+D]</string>
+             <string>автошкала по амплитуде [CTRL+D]</string>
             </property>
             <property name="text">
              <string/>
@@ -150,7 +150,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>вернуться [CNTR+Z]</string>
+             <string>вернуться [CTRL+Z]</string>
             </property>
             <property name="text">
              <string/>
@@ -173,7 +173,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>сменить цвета  [CNTR+F]</string>
+             <string>сменить цвета  [CTRL+F]</string>
             </property>
             <property name="text">
              <string/>
