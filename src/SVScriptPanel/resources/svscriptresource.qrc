@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/SVScript">
+        <file>svscriptpanel_en.qm</file>
+        <file>images/arrow-dn.png</file>
+        <file>images/arrow-up.png</file>
+        <file>images/add.png</file>
+        <file>images/open.png</file>
+    </qresource>
+</RCC>
