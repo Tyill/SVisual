@@ -243,6 +243,7 @@
    <addaction name="actionPrint"/>
    <addaction name="actionExport"/>
    <addaction name="actionNewWin"/>
+   <addaction name="actionScript"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -360,6 +361,15 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="actionScript">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVMonitor/images/script.png</normaloff>:/SVMonitor/images/script.png</iconset>
+   </property>
+   <property name="text">
+    <string>Скрипт</string>
    </property>
   </action>
  </widget>

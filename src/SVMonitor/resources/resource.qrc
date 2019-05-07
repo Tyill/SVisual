@@ -16,5 +16,6 @@
         <file>svmonitor_en.qm</file>
         <file>images/export.png</file>
         <file>images/add.png</file>
+        <file>images/script.png</file>
     </qresource>
 </RCC>

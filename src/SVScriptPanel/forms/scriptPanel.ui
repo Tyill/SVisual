@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Статистика</string>
+   <string>Скрипты</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <property name="spacing">
@@ -91,7 +91,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QGroupBox" name="groupBox_2">
@@ -100,7 +100,18 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QListWidget" name="listWidget"/>
+           <widget class="QTableWidget" name="tableWidget">
+            <column>
+             <property name="text">
+              <string>Имя</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Путь</string>
+             </property>
+            </column>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -176,19 +187,42 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QListWidget" name="listWidget_2"/>
+           <widget class="QTableWidget" name="tableWidget_2">
+            <column>
+             <property name="text">
+              <string>Имя</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Путь</string>
+             </property>
+            </column>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
           <number>0</number>
+         </property>
+         <property name="documentMode">
+          <bool>false</bool>
+         </property>
+         <property name="tabsClosable">
+          <bool>true</bool>
+         </property>
+         <property name="movable">
+          <bool>false</bool>
+         </property>
+         <property name="tabBarAutoHide">
+          <bool>false</bool>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">

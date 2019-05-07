@@ -37,6 +37,7 @@
 #include "SVAuxFunc/serverTCP.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVExportPanel/SVExportPanel.h"
+#include "SVScriptPanel/SVScriptPanel.h"
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
@@ -63,12 +64,20 @@ void MainWin::load(){
     trgPanel_ = new triggerPanel(this); trgPanel_->setWindowFlags(Qt::Window);   
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
+    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz));
+    scriptPanel_->setWindowFlags(Qt::Window);
        
 	SV_Graph::setLoadSignalData(graphPanels_[this], [](const QString& sign){
 		return SV_Srv::signalBufferEna(sign.toUtf8().data());
 	});
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
+
+    SV_Script::setLoadSignalData(scriptPanel_, [](const QString& sign){
+        return SV_Srv::signalBufferEna(sign.toUtf8().data());
+    });
+    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
+    SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
 
     SV_Exp::setLoadSignalData(exportPanel_, [](const QString& sign){
         return SV_Srv::signalBufferEna(sign.toUtf8().data());
@@ -156,6 +165,11 @@ void MainWin::Connect(){
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
         
         addNewWindow(QRect());
+    });
+
+    connect(ui.actionScript, &QAction::triggered, [this]() {
+
+        if (scriptPanel_) scriptPanel_->show();
     });
 
 	connect(ui.actionSettings, &QAction::triggered, [this]() {

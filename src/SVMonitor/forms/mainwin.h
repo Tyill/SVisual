@@ -95,6 +95,7 @@ private:
 
     QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
+    QDialog* scriptPanel_ = nullptr;
 	eventOrderWin* orderWin_ = nullptr;
 	QWidget* trgPanel_ = nullptr;
 	settingsPanel* settPanel_ = nullptr;
