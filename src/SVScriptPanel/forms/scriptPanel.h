@@ -45,10 +45,30 @@ public:
 private:
     Ui::ScriptPanelClass ui;
 	
+    QString selDir_;
+
     SV_Script::config cng;
     
+    struct scriptState{
+        bool isChange = true;
+        QString name;
+        QString path;
+        QString text;
+        int tabInx = 0;
+
+        scriptState(QString name_ = "", QString path_ = "", QString text_ = "", int tabInx_ = -1, bool isChange_ = false) :
+            name(name_), path(path_), text(text_), tabInx(tabInx_), isChange(isChange_){}
+    };
+
+    QVector<scriptState> scrState_;
+    
+    QString exlName(QString);
+
 private slots:
-	
+    void addScript(QString name = "", QString path = "");
+    void saveScript();
+    void nameScriptChange(int row, int col);
+
 };
 
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Скрипты</string>
+   <string>Пользовательские скрипты</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <property name="spacing">
@@ -52,10 +52,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnOpenScript">
-       <property name="toolTip">
-        <string>Открыть скрипт</string>
-       </property>
+      <widget class="QPushButton" name="btnOpen">
        <property name="text">
         <string/>
        </property>
@@ -100,7 +97,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QTableWidget" name="tableWidget">
+           <widget class="QTableWidget" name="tblScripts">
             <column>
              <property name="text">
               <string>Имя</string>
@@ -187,7 +184,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QTableWidget" name="tableWidget_2">
+           <widget class="QTableWidget" name="tblActiveScripts">
             <column>
              <property name="text">
               <string>Имя</string>
@@ -239,6 +236,13 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
+          <widget class="QLabel" name="lbStatusMess">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -259,9 +263,19 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_4">
+          <widget class="QPushButton" name="btnCheck">
+           <property name="text">
+            <string>Проверить</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnSave">
            <property name="text">
             <string>Сохранить</string>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+S</string>
            </property>
           </widget>
          </item>
