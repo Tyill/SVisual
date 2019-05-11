@@ -25,9 +25,42 @@
 #include "stdafx.h"
 #include "forms/scriptPanel.h"
 #include "SVConfig/SVConfigLimits.h"
+#include "Lua/lua.hpp"
+#include "LuaBridge/LuaBridge.h"
 
 
 using namespace SV_Cng;
+namespace lub = luabridge;
+
+bool getBoolValue(const std::string& name){
+
+    return false;
+}
+
+int getIntValue(const std::string& name){
+
+    return 0;
+}
+
+float getFloatValue(const std::string& name){
+
+    return 0;
+}
+
+void setBoolValue(const std::string& name, bool value){
+
+    bool ok = true;
+}
+     
+void setIntValue(const std::string& name, int value){
+
+    bool ok = true;
+}
+     
+void setFloatValue(const std::string& name, float value){
+
+    bool ok = true;
+}
 
 scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
 		
@@ -42,39 +75,9 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
 	cng = cng_;
 
 	ui.setupUi(this);
-    
-    for (int i = ui.tabWidget->count() - 1; i >= 0; --i)
-        ui.tabWidget->removeTab(i);
-        
+               
     connect(ui.btnNewScript, SIGNAL(clicked()), SLOT(addScript()));
-    connect(ui.btnSave, SIGNAL(clicked()), SLOT(saveScript()));
-    connect(ui.btnOpen, &QPushButton::clicked, [this](){
-
-        QStringList files = QFileDialog::getOpenFileNames(this,
-            tr("Добавление файлов скриптов"), selDir_,
-            "script files (*.txt *.LUA)");
-
-        if (files.isEmpty()) return;
-      
-        selDir_ = files[0].left(files[0].lastIndexOf('/'));
-
-        for (auto& f : files){
-
-            QString path = f.left(f.lastIndexOf('/') + 1),
-                    name = f.right(f.size() - f.lastIndexOf('/') - 1);
-
-            if (std::find_if(scrState_.begin(), scrState_.end(),
-
-                [name](const scriptState& st) {
-
-                   return (st.name == name);
-
-                }) != scrState_.end())                
-                    continue;
-
-            addScript(name, path);
-        }
-    });
+    connect(ui.btnSave, SIGNAL(clicked()), SLOT(saveScript()));  
     connect(ui.tblScripts, SIGNAL(cellChanged(int, int)), SLOT(nameScriptChange(int,int)));
     connect(ui.tabWidget, &QTabWidget::tabCloseRequested, [this](int inx){
         
@@ -88,7 +91,7 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
 
         if (it->isChange){
             QMessageBox msgBox;
-            msgBox.setText(tr("Скрипт изменен."));
+            msgBox.setText(sname + tr(" изменен."));
             msgBox.setInformativeText(tr("Сохранить изменения?"));
             msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
             msgBox.setDefaultButton(QMessageBox::Save);
@@ -162,16 +165,35 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
 
         ui.lbChange->setText(scrState_[row].isChange ? "*" : "");
     });
-
+        
     QDir dir(QApplication::applicationDirPath() + "/scripts/");
+
+    if (!dir.exists())
+        dir.mkdir(dir.absolutePath());
+
     for (auto& f : dir.entryList(QDir::Files)){
 
-        QString path = f.left(f.lastIndexOf('/') + 1),
-                name = f.right(f.size() - f.lastIndexOf('/') - 1);
+        QString name = f.right(f.size() - f.lastIndexOf('/') - 1);
              
-        addScript(name, path);
+        addScript(name);
     }
 
+    QList<int> ss; ss.append(150); ss.append(500);
+    ui.splitter->setSizes(ss);   
+
+    luaState_ = luaL_newstate();
+    luaL_openlibs(luaState_);
+
+    lub::getGlobalNamespace(luaState_)                
+                .addFunction("getBoolValue", getBoolValue)
+                .addFunction("getIntValue", getIntValue)
+                .addFunction("getFloatValue", getFloatValue)
+                .addFunction("setBoolValue", setBoolValue)
+                .addFunction("setIntValue", setIntValue)
+                .addFunction("setFloatValue", setFloatValue);
+       
+    luaL_dofile(luaState_, (QApplication::applicationDirPath() + "/scripts/load.lua").toStdString().c_str());    
+    lua_pcall(luaState_, 0, 0, 0);   
 }
 
 scriptPanel::~scriptPanel(){
@@ -179,11 +201,11 @@ scriptPanel::~scriptPanel(){
 
 }
 
-void scriptPanel::addScript(QString name, QString path){
+void scriptPanel::addScript(QString name){
       
     bool isNew = name.isEmpty();
     if (isNew)
-        name = "NewScript.LUA";
+        name = "NewScript.lua";
     
     name = exlName(name);
 
@@ -191,27 +213,17 @@ void scriptPanel::addScript(QString name, QString path){
     ui.tblScripts->insertRow(rowCnt);
 
     ui.tblScripts->setItem(rowCnt, 0, new QTableWidgetItem(name));
-
-    if (path.isEmpty())
-        path = QApplication::applicationDirPath() + "/scripts/";
-
-    auto pathItem = new QTableWidgetItem(path);
-    pathItem->setFlags(pathItem->flags() ^ Qt::ItemFlag::ItemIsEditable);
-    ui.tblScripts->setItem(rowCnt, 1, pathItem);
-  
-    int nameMaxWidth = 0, pathMaxWidth = 0;
+       
+    int nameMaxWidth = 0;
     for (int i = 0; i < (rowCnt + 1); ++i){
        
         int nameFontMetr = int(this->fontMetrics().width(ui.tblScripts->item(i, 0)->text()) * 1.5);
-        int pathFontMetr = int(this->fontMetrics().width(ui.tblScripts->item(i, 1)->text()) * 1.5);
         
-        nameMaxWidth = qMax(nameFontMetr, nameMaxWidth);
-        pathMaxWidth = qMax(pathFontMetr, pathMaxWidth);
+        nameMaxWidth = qMax(nameFontMetr, nameMaxWidth);       
     }
 
     ui.tblScripts->setColumnWidth(0, nameMaxWidth);
-    ui.tblScripts->setColumnWidth(1, pathMaxWidth);
-
+  
     if (isNew){
 
         auto te = new QTextEdit();
@@ -224,12 +236,12 @@ void scriptPanel::addScript(QString name, QString path){
             ui.lbChange->setText("*");
         });
 
-        scrState_.push_back(scriptState(name, path, "", tinx));
+        scrState_.push_back(scriptState(name, "", tinx));
 
     }
     else{
 
-        QFile file(path + name);
+        QFile file(QApplication::applicationDirPath() + "/scripts/" + name);
 
         QTextStream txtStream(&file);
 
@@ -239,7 +251,7 @@ void scriptPanel::addScript(QString name, QString path){
 
         file.close();
 
-        scrState_.push_back(scriptState(name, path, text));
+        scrState_.push_back(scriptState(name, text));
     }
 }
 
@@ -268,10 +280,8 @@ void scriptPanel::saveScript(){
     it->text = script;
     it->isChange = false;
 
-    if (!QDir(it->path).exists())
-        QDir().mkdir(it->path);
-
-    QFile file(it->path + sname);
+  
+    QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
 
     QTextStream txtStream(&file);
     

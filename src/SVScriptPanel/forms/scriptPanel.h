@@ -28,6 +28,7 @@
 #include "ui_scriptPanel.h"
 #include "SVConfig/SVConfigData.h"
 #include "SVScriptPanel.h"
+#include "Lua/lua.hpp"
 
 class scriptPanel : public QDialog
 {
@@ -48,16 +49,17 @@ private:
     QString selDir_;
 
     SV_Script::config cng;
+
+    lua_State* luaState_ = nullptr; 
     
     struct scriptState{
         bool isChange = true;
-        QString name;
-        QString path;
+        QString name;       
         QString text;
         int tabInx = 0;
 
-        scriptState(QString name_ = "", QString path_ = "", QString text_ = "", int tabInx_ = -1, bool isChange_ = false) :
-            name(name_), path(path_), text(text_), tabInx(tabInx_), isChange(isChange_){}
+        scriptState(QString name_ = "", QString text_ = "", int tabInx_ = -1, bool isChange_ = false) :
+            name(name_), text(text_), tabInx(tabInx_), isChange(isChange_){}
     };
 
     QVector<scriptState> scrState_;
@@ -65,7 +67,7 @@ private:
     QString exlName(QString);
 
 private slots:
-    void addScript(QString name = "", QString path = "");
+    void addScript(QString name = "");
     void saveScript();
     void nameScriptChange(int row, int col);
 

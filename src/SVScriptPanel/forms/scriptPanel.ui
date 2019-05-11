@@ -52,23 +52,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnOpen">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../resources/svscriptresource.qrc">
-         <normaloff>:/SVScript/images/open.png</normaloff>:/SVScript/images/open.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer_4">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -101,11 +84,6 @@
             <column>
              <property name="text">
               <string>Имя</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Путь</string>
              </property>
             </column>
            </widget>
@@ -190,11 +168,6 @@
               <string>Имя</string>
              </property>
             </column>
-            <column>
-             <property name="text">
-              <string>Путь</string>
-             </property>
-            </column>
            </widget>
           </item>
          </layout>
@@ -207,7 +180,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>-1</number>
          </property>
          <property name="documentMode">
           <bool>false</bool>
@@ -221,16 +194,6 @@
          <property name="tabBarAutoHide">
           <bool>false</bool>
          </property>
-         <widget class="QWidget" name="tab">
-          <attribute name="title">
-           <string>Tab 1</string>
-          </attribute>
-         </widget>
-         <widget class="QWidget" name="tab_2">
-          <attribute name="title">
-           <string>Tab 2</string>
-          </attribute>
-         </widget>
         </widget>
        </item>
        <item>
