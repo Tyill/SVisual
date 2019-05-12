@@ -59,6 +59,8 @@ public:
 	
     scriptPanel(QWidget *parent, SV_Script::config, SV_Script::modeGr mode);
     ~scriptPanel();
+
+    void startUpdateThread();
 	
 private:
     Ui::ScriptPanelClass ui;
@@ -82,6 +84,7 @@ private:
 
     struct scriptState{
         bool isChange = true;
+        bool isActive = false;
         QString name;       
         QString text;
         int tabInx = 0;

@@ -61,16 +61,10 @@ int main(int argc, char *argv[]){
 
 	int cp = 0;
 	while (true){
-
-		for (int i = 0; i < 100; i++){
 				
-			std::string val = "dde" + std::to_string(i);
-			SV_Cln::svAddIntValue(val.c_str(), rand() % 10000);
-
-			val = "front" + std::to_string(i);
-			SV_Cln::svAddBoolValue(val.c_str(), cp%2);
-		}
-		
+		std::string val = "dde";
+        SV_Cln::svAddIntValue(val.c_str(), cp);
+        		
 		cp += 1; if (cp > 100) cp = -100;
 			
 		SV_Aux::SleepMs(cyc);

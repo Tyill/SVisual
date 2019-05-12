@@ -50,8 +50,14 @@ bool getBoolValue(const std::string& module, const std::string& signal){
 int getIntValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
-        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt)){
+
+       // return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
+
+        int vp = scrPanelRef->signBuff_[sign]->buffValuePos - 1;
+        return scrPanelRef->signBuff_[sign]->buffData[vp].vals[scrPanelRef->iterValue_].tInt;
+    }
+     
     else
         return 0;
 }
@@ -199,7 +205,7 @@ bool scriptPanel::updateBuffValue(const std::string& module, const std::string& 
             auto md = pfGetModuleData("Virtual");
             if (!md){
                 md = new SV_Cng::moduleData("Virtual");
-                md->isActive = false;
+                md->isActive = true;
                 md->isDelete = false;
                 md->isEnable = true;
                 pfAddModule("Virtual", md);
@@ -212,6 +218,9 @@ bool scriptPanel::updateBuffValue(const std::string& module, const std::string& 
            
             pfAddSignal(sign, sd);
             pfLoadSignalData(sign);
+
+            if (pfAddSignalsCBack)
+                pfAddSignalsCBack();
         }
         else{
 
@@ -226,14 +235,13 @@ bool scriptPanel::updateBuffValue(const std::string& module, const std::string& 
             pfLoadSignalData(sign);
 
             signBuff_[sign] = signRef[sign];
-        }
-
-        if (pfAddSignalsCBack)
-            pfAddSignalsCBack();
+        }      
     }
 
     return true;
 }
+
+
 
 scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::modeGr mode){
 		
@@ -254,6 +262,43 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
                
     connect(ui.btnNewScript, SIGNAL(clicked()), SLOT(addScript()));
     connect(ui.btnSave, SIGNAL(clicked()), SLOT(saveScript()));  
+    connect(ui.btnSetActive, &QPushButton::clicked, [this](){
+
+        auto items = ui.tblScripts->selectedItems();
+        for (auto it : items){
+            QString sname = it->text();
+            auto sts = std::find_if(scrState_.begin(), scrState_.end(),
+                [sname](const scriptState& st) {
+                   return st.name == sname;
+                }
+            );
+            
+            if (!sts->isActive){
+                int rowCnt = ui.tblActiveScripts->rowCount();
+                ui.tblActiveScripts->insertRow(rowCnt);
+                ui.tblActiveScripts->setItem(rowCnt, 0, new QTableWidgetItem(sname));
+            }
+            sts->isActive = true;
+        }
+    });
+    connect(ui.btnResetActive, &QPushButton::clicked, [this](){
+
+        auto items = ui.tblActiveScripts->selectedItems();
+        for (auto it : items){
+            QString sname = it->text();
+            std::find_if(scrState_.begin(), scrState_.end(),
+                [sname](const scriptState& st) {
+                return st.name == sname;
+            }
+            )->isActive = false;
+            
+            ui.tblActiveScripts->removeRow(it->row());
+        }
+    });
+    connect(ui.btnClear, &QPushButton::clicked, [this](){
+
+        ui.txtStatusMess->clear();
+    });
     connect(ui.tblScripts, SIGNAL(cellChanged(int, int)), SLOT(nameScriptChange(int,int)));
     connect(ui.tabWidget, &QTabWidget::tabCloseRequested, [this](int inx){
         
@@ -356,8 +401,24 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
 
     QList<int> ss; ss.append(150); ss.append(500);
     ui.splitter->setSizes(ss);   
+
+    ss[0] = 300; ss[1] = 100;
+    ui.splitter_2->setSizes(ss);
+
     ui.tblScripts->setColumnWidth(0, 150);
     ui.tblActiveScripts->setColumnWidth(0, 150);
+     
+}
+
+scriptPanel::~scriptPanel(){
+
+    isStopWork_ = true;
+    if (workThr_.joinable()) workThr_.join();
+}
+
+void scriptPanel::startUpdateThread(){
+
+    if (workThr_.joinable()) return;
 
     luaState_ = luaL_newstate();
     luaL_openlibs(luaState_);
@@ -369,18 +430,12 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
         .addFunction("setBoolValue", setBoolValue)
         .addFunction("setIntValue", setIntValue)
         .addFunction("setFloatValue", setFloatValue);
-       
+
     luaL_loadfile(luaState_, qPrintable(QApplication::applicationDirPath() + "/scripts/load.lua"));
-    lua_pcall(luaState_, 0, 0, 0);   
-       
+    lua_pcall(luaState_, 0, 0, 0);
+
     if (mode_ == SV_Script::modeGr::player)
-       workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
-}
-
-scriptPanel::~scriptPanel(){
-
-    isStopWork_ = true;
-    if (workThr_.joinable()) workThr_.join();
+        workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
 }
 
 void scriptPanel::addScript(QString name){
@@ -453,7 +508,7 @@ void scriptPanel::nameScriptChange(int row, int col){
 
         }) != scrState_.end())
         {
-            ui.lbStatusMess->setText(tr("Скрипт с таким именем уже существует"));
+            ui.txtStatusMess->append(QString::fromStdString(SV_Aux::CurrDateTime()) + " " + tr("Скрипт с таким именем уже существует"));
 
             ui.tblScripts->item(row, 0)->setText(scrState_[row].name);
             return;
@@ -507,10 +562,7 @@ void scriptPanel::saveScript(){
 
     mtx_.unlock();
 
-    ui.lbChange->setText("");
-    ui.lbStatusMess->setText("");
-
-   
+    ui.lbChange->setText("");   
 }
 
 QString scriptPanel::exlName(QString name){
@@ -539,22 +591,31 @@ void scriptPanel::workCycle(){
 
     SV_Aux::TimerDelay tmDelay;
     tmDelay.UpdateCycTime();
-
+       
     while (!isStopWork_){
 
         tmDelay.UpdateCycTime();
 
         mtx_.lock();
 
+        QString serr;
+
         cTm_ = SV_Aux::CurrDateTimeSinceEpochMs();
         iterValue_ = 0;
         for (int i = 0; i < SV_PACKETSZ; ++i){
 
             for (auto& s : scrState_){
-                if (s.name != "load.lua"){
+                if (s.isActive && (s.name != "load.lua")){
+
                     luaL_loadfile(luaState_, qPrintable(path + s.name));
 
                     lua_pcall(luaState_, 0, 0, 0);
+
+                    const char* err = lua_tostring(luaState_, -1);
+                    if (err && serr.isEmpty()){
+                        serr = QString(err);
+                        lua_pop(luaState_, -1);
+                    }
                 }
             }
             ++iterValue_;
@@ -564,6 +625,9 @@ void scriptPanel::workCycle(){
             pfUpdateSignalsCBack();
 
         mtx_.unlock();
+
+        if (!serr.isEmpty())
+            ui.txtStatusMess->append(QString::fromStdString(SV_Aux::CurrDateTime()) + " " + serr);
 
         int ms = SV_CYCLESAVE_MS - (int)tmDelay.GetCTime();
         if (ms > 0)

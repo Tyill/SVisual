@@ -31,6 +31,12 @@ namespace SV_Script {
 
         return new scriptPanel(parent, cng, mode);
 	}
+
+    void startUpdateThread(QWidget* stp){
+
+        if (stp)
+            ((scriptPanel *)stp)->startUpdateThread();
+    }
 	
 	void setGetCopySignalRef(QDialog *stp, pf_getCopySignalRef f) {
 

@@ -469,6 +469,8 @@ MainWin::MainWin(QWidget *parent)
         else
             statusMess(QString(tr("Не удалось запустить tcp сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
     }
+
+    SV_Script::startUpdateThread(scriptPanel_);
 }
 
 MainWin::~MainWin(){
@@ -505,22 +507,29 @@ bool MainWin::eventFilter(QObject *target, QEvent *event){
 }
 
 void MainWin::sortSignalByModule(){
-	   
-	ui.treeSignals->clear();
+	 
+    int itsz = ui.treeSignals->topLevelItemCount();
+    QMap<QString, bool> isExpanded;
+    for (int i = 0; i < itsz; ++i)
+        isExpanded[ui.treeSignals->topLevelItem(i)->text(0)] = ui.treeSignals->topLevelItem(i)->isExpanded();
 
+	ui.treeSignals->clear();
+  
 	auto mref = SV_Srv::getCopyModuleRef();
 
-	for (auto it : mref){
+    for (auto& it : mref){
 
 		auto md = it.second;
 
-		if (md->isDelete) continue;
+        if (md->isDelete) continue;
 
 		QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
 		
+        if (isExpanded.contains(md->module.c_str()))
+           root->setExpanded(isExpanded[md->module.c_str()]);
 		root->setFlags(root->flags() | Qt::ItemFlag::ItemIsEditable);
 		root->setText(0, md->module.c_str());
-
+        
 		md->isEnable ? root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-green.png")):
 			root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-yel.png"));
 	
