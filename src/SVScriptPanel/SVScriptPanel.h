@@ -24,6 +24,8 @@
 //
 #pragma once
 
+#include <map>
+#include <string>
 #include <QtCore>
 #include "SVConfig/SVConfigData.h"
 
@@ -39,6 +41,11 @@
 
 namespace SV_Script {
 
+    enum class modeGr{
+        viewer = 0,
+        player = 1,
+    };
+
 	struct config {
 
 		int cycleRecMs;
@@ -49,15 +56,35 @@ namespace SV_Script {
 				packetSz(packetSz_) {}
 	};
 
-	SVSCRIPTPANEL_API QDialog* createScriptPanel(QWidget* parent, config);
-
-	typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
+    SVSCRIPTPANEL_API QDialog* createScriptPanel(QWidget* parent, config, modeGr);
+      
+    typedef std::map<std::string, SV_Cng::signalData*>(*pf_getCopySignalRef)();
 	SVSCRIPTPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
 
-	typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
+    typedef SV_Cng::moduleData *(*pf_getModuleData)(const std::string &module);
+    SVSCRIPTPANEL_API void setGetModuleData(QDialog* stPanel, pf_getModuleData f);
+
+    typedef SV_Cng::signalData *(*pf_getSignalData)(const std::string &sign);
 	SVSCRIPTPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
-	typedef bool(*pf_loadSignalData)(const QString& sign);
+    typedef bool(*pf_addSignal)(const std::string &sign, SV_Cng::signalData *);
+    SVSCRIPTPANEL_API void setAddSignal(QDialog* stPanel, pf_addSignal f);
+
+    typedef bool(*pf_addModule)(const std::string &module, SV_Cng::moduleData *);
+    SVSCRIPTPANEL_API void setAddModule(QDialog* stPanel, pf_addModule f);
+
+    typedef bool(*pf_loadSignalData)(const std::string& sign);
 	SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 
+    // обновление данных callBack
+    typedef void(*pf_updateSignalsCBack)();
+    SVSCRIPTPANEL_API void setUpdateSignalsCBack(QDialog* stPanel, pf_updateSignalsCBack);
+
+    // добавление сигнала callBack
+    typedef void(*pf_addSignalsCBack)();
+    SVSCRIPTPANEL_API void setAddSignalsCBack(QDialog* stPanel, pf_addSignalsCBack);
+
+    // модуль подключен
+    typedef void(*pf_moduleConnectCBack)(const std::string& module);
+    SVSCRIPTPANEL_API void setModuleConnectCBack(QDialog* stPanel, pf_moduleConnectCBack);
 }

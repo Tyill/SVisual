@@ -27,9 +27,9 @@
 
 namespace SV_Script {
 
-	QDialog *createScriptPanel(QWidget *parent, SV_Script::config cng) {
+    QDialog *createScriptPanel(QWidget *parent, config cng, modeGr mode) {
 
-		return new scriptPanel(parent, cng);
+        return new scriptPanel(parent, cng, mode);
 	}
 	
 	void setGetCopySignalRef(QDialog *stp, pf_getCopySignalRef f) {
@@ -38,15 +38,54 @@ namespace SV_Script {
             ((scriptPanel *)stp)->pfGetCopySignalRef = f;
 	}
 
+    void setGetModuleData(QDialog* stp, pf_getModuleData f){
+
+        if (stp)
+            ((scriptPanel *)stp)->pfGetModuleData = f;
+    }
+
 	void setGetSignalData(QDialog *stp, pf_getSignalData f) {
 
 		if (stp)
             ((scriptPanel *)stp)->pfGetSignalData = f;
 	}
 
+    void setAddSignal(QDialog *stp, pf_addSignal f) {
+
+        if (stp)
+            ((scriptPanel *)stp)->pfAddSignal = f;
+    }
+
+    void setAddModule(QDialog *stp, pf_addModule f) {
+
+        if (stp)
+            ((scriptPanel *)stp)->pfAddModule = f;
+    }
+
 	void setLoadSignalData(QDialog *stp, pf_loadSignalData f) {
 
 		if (stp)
             ((scriptPanel *)stp)->pfLoadSignalData = f;
 	}
+    
+    // обновление данных callBack
+    void setUpdateSignalsCBack(QDialog *stp, pf_updateSignalsCBack f){
+
+        if (stp)
+            ((scriptPanel *)stp)->pfUpdateSignalsCBack = f;
+    }
+
+    // добавление сигнала callBack
+    void setAddSignalsCBack(QDialog *stp, pf_addSignalsCBack f){
+        
+        if (stp)
+            ((scriptPanel *)stp)->pfAddSignalsCBack = f;
+    }
+
+    // модуль подключен
+    void setModuleConnectCBack(QDialog* stp, pf_moduleConnectCBack f){
+
+        if (stp)
+            ((scriptPanel *)stp)->pfModuleConnectCBack = f;
+    }
 }

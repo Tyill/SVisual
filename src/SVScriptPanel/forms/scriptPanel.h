@@ -24,6 +24,10 @@
 //
 #pragma once
 
+#include <thread>
+#include <mutex>
+#include <map>
+
 #include "src/stdafx.h"
 #include "ui_scriptPanel.h"
 #include "SVConfig/SVConfigData.h"
@@ -32,15 +36,28 @@
 
 class scriptPanel : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
+
+    friend bool getBoolValue(const std::string& module, const std::string& signal);
+    friend int getIntValue(const std::string& module, const std::string& signal);
+    friend float getFloatValue(const std::string& module, const std::string& signal);
+    friend void setBoolValue(const std::string& signal, bool value);
+    friend void setIntValue(const std::string& signal, int value);
+    friend void setFloatValue(const std::string& signal, float value);
 
 public:
-
+    
+    SV_Script::pf_updateSignalsCBack pfUpdateSignalsCBack = nullptr;
+    SV_Script::pf_addSignalsCBack pfAddSignalsCBack = nullptr;
 	SV_Script::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
 	SV_Script::pf_getSignalData pfGetSignalData = nullptr;
+    SV_Script::pf_getModuleData pfGetModuleData = nullptr;
+    SV_Script::pf_addSignal pfAddSignal = nullptr;
+    SV_Script::pf_addModule pfAddModule = nullptr;
+    SV_Script::pf_moduleConnectCBack pfModuleConnectCBack = nullptr;
 	SV_Script::pf_loadSignalData pfLoadSignalData= nullptr;
 	
-    scriptPanel(QWidget *parent, SV_Script::config);
+    scriptPanel(QWidget *parent, SV_Script::config, SV_Script::modeGr mode);
     ~scriptPanel();
 	
 private:
@@ -48,10 +65,21 @@ private:
 	
     QString selDir_;
 
+    SV_Script::modeGr mode_;
+
     SV_Script::config cng;
 
     lua_State* luaState_ = nullptr; 
     
+    std::thread workThr_;
+    std::mutex mtx_;
+    bool isStopWork_ = false;
+
+    std::map<std::string, SV_Cng::signalData *> signBuff_;
+
+    int iterValue_ = 0;
+    uint64_t cTm_ = 0;
+
     struct scriptState{
         bool isChange = true;
         QString name;       
@@ -65,6 +93,13 @@ private:
     QVector<scriptState> scrState_;
     
     QString exlName(QString);
+
+    void updateSign(SV_Cng::signalData* sign, int beginPos, int valuePos);
+    bool updateBuffValue(const std::string& module, const std::string& signal, SV_Cng::valueType stype);
+
+    void setValue(const std::string& signal, SV_Cng::value value);
+
+    void workCycle();
 
 private slots:
     void addScript(QString name = "");

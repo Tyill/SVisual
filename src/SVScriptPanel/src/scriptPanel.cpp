@@ -22,47 +22,220 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+
+#include <thread>
+
 #include "stdafx.h"
 #include "forms/scriptPanel.h"
 #include "SVConfig/SVConfigLimits.h"
 #include "Lua/lua.hpp"
 #include "LuaBridge/LuaBridge.h"
-
+#include "SVAuxFunc/TimerDelay.h"
+#include "SVAuxFunc/auxFunc.h"
 
 using namespace SV_Cng;
 namespace lub = luabridge;
 
-bool getBoolValue(const std::string& name){
+scriptPanel* scrPanelRef = nullptr;
 
-    return false;
+bool getBoolValue(const std::string& module, const std::string& signal){
+
+    std::string sign = signal + module;
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tBool))
+        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool;
+    else
+        return false;
 }
 
-int getIntValue(const std::string& name){
+int getIntValue(const std::string& module, const std::string& signal){
 
-    return 0;
+    std::string sign = signal + module;
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
+        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
+    else
+        return 0;
 }
 
-float getFloatValue(const std::string& name){
+float getFloatValue(const std::string& module, const std::string& signal){
 
-    return 0;
+    std::string sign = signal + module;
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tFloat))
+        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
+    else
+        return 0.F;
 }
 
-void setBoolValue(const std::string& name, bool value){
+void setBoolValue(const std::string& signal, bool value){
 
-    bool ok = true;
+   std::string sign = signal + "Virtual";
+
+   SV_Cng::value val;
+   val.tBool = value;
+
+   if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tBool))
+       scrPanelRef->setValue(sign, val);
 }
      
-void setIntValue(const std::string& name, int value){
+void setIntValue(const std::string& signal, int value){
 
-    bool ok = true;
+    std::string sign = signal + "Virtual";
+
+    SV_Cng::value val;
+    val.tInt = value;
+
+    if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tInt))
+        scrPanelRef->setValue(sign, val);
 }
      
-void setFloatValue(const std::string& name, float value){
+void setFloatValue(const std::string& signal, float value){
 
-    bool ok = true;
+    std::string sign = signal + "Virtual";
+
+    SV_Cng::value val;
+    val.tFloat = value;
+
+    if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tFloat))
+        scrPanelRef->setValue(sign, val);
 }
 
-scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
+void scriptPanel::setValue(const std::string& sign, SV_Cng::value val){
+
+    auto sd = signBuff_[sign];    
+     
+    sd->lastData.vals[iterValue_] = val;
+
+    // заполняем буфер
+    int vp = sd->buffValuePos;
+    
+    sd->buffData[vp].vals[iterValue_] = val;
+    
+    if (iterValue_ == (SV_PACKETSZ - 1)){
+
+        sd->lastData.beginTime = cTm_;
+        sd->buffData[vp].beginTime = cTm_;
+
+        updateSign(sd, sd->buffBeginPos, vp);
+
+        ++vp;
+
+        if (mode_ == SV_Script::modeGr::player){
+            int buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
+
+            if (vp == buffSz) vp = 0;
+            sd->buffValuePos = vp;
+
+            if (vp == sd->buffBeginPos) {
+                ++sd->buffBeginPos;
+                if (sd->buffBeginPos >= buffSz) sd->buffBeginPos = 0;
+            }
+        }
+    }
+}
+
+void scriptPanel::updateSign(signalData* sign, int beginPos, int valuePos){
+
+    sign->buffMinTime = sign->buffData[beginPos].beginTime;
+    sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
+
+    double minValue = sign->buffMinValue, maxValue = sign->buffMaxValue;
+
+    if (sign->type == valueType::tInt){
+
+        value* vl = sign->buffData[valuePos].vals;
+
+        for (int i = 0; i < SV_PACKETSZ; ++i){
+
+            if (vl[i].tInt > maxValue) maxValue = vl[i].tInt;
+            if (vl[i].tInt < minValue) minValue = vl[i].tInt;
+        }
+
+    }
+    else if (sign->type == valueType::tFloat){
+
+        value* vl = sign->buffData[valuePos].vals;
+        for (int i = 0; i < SV_PACKETSZ; ++i){
+
+            if (vl[i].tFloat > maxValue) maxValue = vl[i].tFloat;
+            if (vl[i].tFloat < minValue) minValue = vl[i].tFloat;
+        }
+    }
+
+    sign->buffMinValue = minValue;
+    sign->buffMaxValue = maxValue;
+
+}
+
+bool scriptPanel::updateBuffValue(const std::string& module, const std::string& signal, SV_Cng::valueType stype){
+
+    std::string sign = signal + module;
+             
+    if (signBuff_.find(sign) == signBuff_.end()){
+
+        if (module == "Virtual"){
+
+            if (!pfAddSignal || !pfAddModule || !pfGetModuleData || !pfLoadSignalData)
+                return false;
+
+            signalData* sd = new signalData();
+            signBuff_[sign] = sd;
+
+            sd->isActive = true;
+            sd->isBuffEnable = false;
+            sd->isDelete = false;
+
+            sd->name = signal;
+            sd->module = "Virtual";
+            sd->type = stype;
+
+            sd->lastData.vals = new SV_Cng::value[SV_PACKETSZ];
+            sd->lastData.beginTime = SV_Aux::CurrDateTimeSinceEpochMs();
+            memset(sd->lastData.vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
+
+            sd->buffMinTime = sd->lastData.beginTime - 5000;
+            sd->buffMaxTime = sd->lastData.beginTime + 5000;
+            sd->buffMaxValue = 1;
+            sd->buffMinValue = 0;
+
+            auto md = pfGetModuleData("Virtual");
+            if (!md){
+                md = new SV_Cng::moduleData("Virtual");
+                md->isActive = false;
+                md->isDelete = false;
+                md->isEnable = true;
+                pfAddModule("Virtual", md);
+
+                if (pfModuleConnectCBack)
+                    pfModuleConnectCBack("Virtual");
+            }
+
+            md->signls.push_back(sign);
+           
+            pfAddSignal(sign, sd);
+            pfLoadSignalData(sign);
+        }
+        else{
+
+            if (!pfGetCopySignalRef || !pfLoadSignalData)
+                return false;
+
+            auto signRef = pfGetCopySignalRef();
+
+            if (signRef.find(sign) == signRef.end())
+                return false;
+
+            pfLoadSignalData(sign);
+
+            signBuff_[sign] = signRef[sign];
+        }
+
+        if (pfAddSignalsCBack)
+            pfAddSignalsCBack();
+    }
+
+    return true;
+}
+
+scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::modeGr mode){
 		
 	setParent(parent);
 	
@@ -72,9 +245,12 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
 	QCoreApplication::installTranslator(&translator);
 #endif
     	
+    mode_ = mode;
 	cng = cng_;
 
 	ui.setupUi(this);
+
+    scrPanelRef = this;
                
     connect(ui.btnNewScript, SIGNAL(clicked()), SLOT(addScript()));
     connect(ui.btnSave, SIGNAL(clicked()), SLOT(saveScript()));  
@@ -180,29 +356,37 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_){
 
     QList<int> ss; ss.append(150); ss.append(500);
     ui.splitter->setSizes(ss);   
+    ui.tblScripts->setColumnWidth(0, 150);
+    ui.tblActiveScripts->setColumnWidth(0, 150);
 
     luaState_ = luaL_newstate();
     luaL_openlibs(luaState_);
 
-    lub::getGlobalNamespace(luaState_)                
-                .addFunction("getBoolValue", getBoolValue)
-                .addFunction("getIntValue", getIntValue)
-                .addFunction("getFloatValue", getFloatValue)
-                .addFunction("setBoolValue", setBoolValue)
-                .addFunction("setIntValue", setIntValue)
-                .addFunction("setFloatValue", setFloatValue);
+    lub::getGlobalNamespace(luaState_)
+        .addFunction("getBoolValue", getBoolValue)
+        .addFunction("getIntValue", getIntValue)
+        .addFunction("getFloatValue", getFloatValue)
+        .addFunction("setBoolValue", setBoolValue)
+        .addFunction("setIntValue", setIntValue)
+        .addFunction("setFloatValue", setFloatValue);
        
-    luaL_dofile(luaState_, (QApplication::applicationDirPath() + "/scripts/load.lua").toStdString().c_str());    
+    luaL_loadfile(luaState_, qPrintable(QApplication::applicationDirPath() + "/scripts/load.lua"));
     lua_pcall(luaState_, 0, 0, 0);   
+       
+    if (mode_ == SV_Script::modeGr::player)
+       workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
 }
 
 scriptPanel::~scriptPanel(){
 
-
+    isStopWork_ = true;
+    if (workThr_.joinable()) workThr_.join();
 }
 
 void scriptPanel::addScript(QString name){
       
+    std::unique_lock<std::mutex> lck(mtx_);
+
     bool isNew = name.isEmpty();
     if (isNew)
         name = "NewScript.lua";
@@ -214,7 +398,7 @@ void scriptPanel::addScript(QString name){
 
     ui.tblScripts->setItem(rowCnt, 0, new QTableWidgetItem(name));
        
-    int nameMaxWidth = 0;
+    int nameMaxWidth = 150;
     for (int i = 0; i < (rowCnt + 1); ++i){
        
         int nameFontMetr = int(this->fontMetrics().width(ui.tblScripts->item(i, 0)->text()) * 1.5);
@@ -255,6 +439,35 @@ void scriptPanel::addScript(QString name){
     }
 }
 
+void scriptPanel::nameScriptChange(int row, int col){
+
+    if ((col == 0) && (row < scrState_.size())){
+
+        QString sname = ui.tblScripts->item(row, 0)->text();
+
+        if (std::find_if(scrState_.begin(), scrState_.end(),
+
+            [sname](const scriptState& st) {
+
+            return st.name == sname;
+
+        }) != scrState_.end())
+        {
+            ui.lbStatusMess->setText(tr("Скрипт с таким именем уже существует"));
+
+            ui.tblScripts->item(row, 0)->setText(scrState_[row].name);
+            return;
+        }
+
+        scrState_[row].name = sname;
+
+        if (scrState_[row].tabInx >= 0)
+            ui.tabWidget->setTabText(scrState_[row].tabInx, scrState_[row].name);
+
+        saveScript();
+    }
+}
+
 void scriptPanel::saveScript(){
 
     if (ui.tabWidget->currentIndex() < 0)
@@ -280,7 +493,8 @@ void scriptPanel::saveScript(){
     it->text = script;
     it->isChange = false;
 
-  
+    mtx_.lock();
+
     QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
 
     QTextStream txtStream(&file);
@@ -291,8 +505,12 @@ void scriptPanel::saveScript(){
 
     file.close();
 
+    mtx_.unlock();
+
     ui.lbChange->setText("");
     ui.lbStatusMess->setText("");
+
+   
 }
 
 QString scriptPanel::exlName(QString name){
@@ -315,31 +533,40 @@ QString scriptPanel::exlName(QString name){
     return name;
 }
 
-void scriptPanel::nameScriptChange(int row, int col){
+void scriptPanel::workCycle(){
 
-    if ((col == 0) && (row < scrState_.size())){
+    QString path = QApplication::applicationDirPath() + "/scripts/";
 
-        QString sname = ui.tblScripts->item(row, 0)->text();
-       
-        if (std::find_if(scrState_.begin(), scrState_.end(),
+    SV_Aux::TimerDelay tmDelay;
+    tmDelay.UpdateCycTime();
 
-            [sname](const scriptState& st) {
+    while (!isStopWork_){
 
-                return st.name == sname;
+        tmDelay.UpdateCycTime();
 
-            }) != scrState_.end())
-        {
-            ui.lbStatusMess->setText(tr("Скрипт с таким именем уже существует"));
+        mtx_.lock();
 
-            ui.tblScripts->item(row, 0)->setText(scrState_[row].name); 
-            return;
+        cTm_ = SV_Aux::CurrDateTimeSinceEpochMs();
+        iterValue_ = 0;
+        for (int i = 0; i < SV_PACKETSZ; ++i){
+
+            for (auto& s : scrState_){
+                if (s.name != "load.lua"){
+                    luaL_loadfile(luaState_, qPrintable(path + s.name));
+
+                    lua_pcall(luaState_, 0, 0, 0);
+                }
+            }
+            ++iterValue_;
         }
 
-        scrState_[row].name = sname;
+        if ((scrState_.size() > 1) && pfUpdateSignalsCBack)
+            pfUpdateSignalsCBack();
 
-        if (scrState_[row].tabInx >= 0)
-           ui.tabWidget->setTabText(scrState_[row].tabInx, scrState_[row].name);
+        mtx_.unlock();
 
-        ui.lbStatusMess->setText("");
+        int ms = SV_CYCLESAVE_MS - (int)tmDelay.GetCTime();
+        if (ms > 0)
+            SV_Aux::SleepMs(ms);
     }
 }

@@ -177,6 +177,7 @@ SV_Cng::signalData* server::getSignalData(const std::string& sign){
 	return signalData_.find(sign) != signalData_.end() ? signalData_[sign] : nullptr;
 }
 
+
 // разрешить запись буфера данных
 bool server::signalBufferEna(const std::string& sign){
 

@@ -64,7 +64,7 @@ void MainWin::load(){
     trgPanel_ = new triggerPanel(this); trgPanel_->setWindowFlags(Qt::Window);   
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
-    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz));
+    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
     scriptPanel_->setWindowFlags(Qt::Window);
        
 	SV_Graph::setLoadSignalData(graphPanels_[this], [](const QString& sign){
@@ -73,11 +73,21 @@ void MainWin::load(){
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
 
-    SV_Script::setLoadSignalData(scriptPanel_, [](const QString& sign){
-        return SV_Srv::signalBufferEna(sign.toUtf8().data());
+    SV_Script::setLoadSignalData(scriptPanel_, SV_Srv::signalBufferEna);   
+    SV_Script::setGetCopySignalRef(scriptPanel_, SV_Srv::getCopySignalRef);
+    SV_Script::setGetSignalData(scriptPanel_, SV_Srv::getSignalData);
+    SV_Script::setGetModuleData(scriptPanel_, SV_Srv::getModuleData);
+    SV_Script::setAddSignal(scriptPanel_, SV_Srv::addSignal);
+    SV_Script::setAddModule(scriptPanel_, SV_Srv::addModule);    
+    SV_Script::setAddSignalsCBack(scriptPanel_, [](){
+        QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
     });
-    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
-    SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
+    SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
+        QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+    });
+    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
+        QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+    });
 
     SV_Exp::setLoadSignalData(exportPanel_, [](const QString& sign){
         return SV_Srv::signalBufferEna(sign.toUtf8().data());
@@ -128,7 +138,6 @@ void MainWin::Connect(){
 	connect(ui.actionExit, &QAction::triggered, [this]() { 
 		this->close();
 	});
-
 	connect(ui.actionPrint, &QAction::triggered, [this]() {
 		
 		QPrinter printer(QPrinter::HighResolution);
@@ -149,33 +158,26 @@ void MainWin::Connect(){
             graphPanels_[this]->render(&painter);
 		}
 	});
-
 	connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
 		if (trgPanel_) trgPanel_->show();
 	});
-
 	connect(ui.actionEventOrder, &QAction::triggered, [this]() {
         if (orderWin_) orderWin_->show();
 	});
-
     connect(ui.actionExport, &QAction::triggered, [this]() {
         if (exportPanel_) exportPanel_->show();
     });
-
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
         
         addNewWindow(QRect());
     });
-
     connect(ui.actionScript, &QAction::triggered, [this]() {
 
         if (scriptPanel_) scriptPanel_->show();
     });
-
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
         if (settPanel_) settPanel_->show();
 	});
-
     connect(ui.actionUpFont, &QAction::triggered, [this]() {
        
         QFont ft = this->font();
@@ -186,7 +188,6 @@ void MainWin::Connect(){
 
         QApplication::setFont(ft);
     });
-
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
 
         QFont ft = this->font();
@@ -197,7 +198,6 @@ void MainWin::Connect(){
 
         QApplication::setFont(ft);
     });
-
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
        
         QString fname = QFileDialog::getSaveFileName(this,
@@ -247,7 +247,6 @@ void MainWin::Connect(){
 
         StatusTxtMess(tr("Состояние успешно сохранено"));
     });
-
     connect(ui.actionLoadWinState, &QAction::triggered, [this]() {
 
         QString fname = QFileDialog::getOpenFileName(this,
@@ -296,8 +295,7 @@ void MainWin::Connect(){
         
         StatusTxtMess(tr("Состояние успешно загружено"));
     });
-
-	connect(ui.actionProgram, &QAction::triggered, [this]() {
+    connect(ui.actionProgram, &QAction::triggered, [this]() {
 
         QString mess = "<h2>SVMonitor </h2>"
             "<p>Программное обеспечение предназначенное"
@@ -305,8 +303,7 @@ void MainWin::Connect(){
 			"<p>2017";
 
 		QMessageBox::about(this, tr("About SVisual"), mess);
-	});
-		
+	});		
 	connect(ui.btnSlowPlay, &QPushButton::clicked, [this]() {
 		slowMode();
 	});

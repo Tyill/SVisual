@@ -112,6 +112,13 @@ namespace SV_Srv {
     /// \return
     SVSRV_API SV_Cng::signalData* getSignalData(const std::string& sign);
 
+    /// добавить сигнал
+    /// \param sign = name + module
+    SVSRV_API bool addSignal(const std::string& sign, SV_Cng::signalData*);
+
+    /// добавить модуль
+    SVSRV_API bool addModule(const std::string& name, SV_Cng::moduleData*);
+
     /// разрешить буферизацию сигнала
     /// \param sign = name + module
     /// \return true - ok

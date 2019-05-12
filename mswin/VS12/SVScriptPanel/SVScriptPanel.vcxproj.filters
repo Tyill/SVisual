@@ -41,6 +41,9 @@
     <ClInclude Include="GeneratedFiles\ui_scriptPanel.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\SVScriptPanel\SVScriptPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\SVScriptPanel\src\scriptPanel.cpp">
