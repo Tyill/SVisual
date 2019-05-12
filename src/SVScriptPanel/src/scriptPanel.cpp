@@ -38,73 +38,70 @@ namespace lub = luabridge;
 
 scriptPanel* scrPanelRef = nullptr;
 
-bool getBoolValue(const std::string& module, const std::string& signal){
+boolValue getBoolValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
     if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tBool))
-        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool;
+        return boolValue(scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool, 
+                         scrPanelRef->signBuff_[sign]->lastData.beginTime);
     else
-        return false;
+        return boolValue();
 }
 
-int getIntValue(const std::string& module, const std::string& signal){
+intValue getIntValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt)){
-
-       // return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
-
-        int vp = scrPanelRef->signBuff_[sign]->buffValuePos - 1;
-        return scrPanelRef->signBuff_[sign]->buffData[vp].vals[scrPanelRef->iterValue_].tInt;
-    }
-     
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
+        return intValue(scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt,
+                        scrPanelRef->signBuff_[sign]->lastData.beginTime);
     else
-        return 0;
+        return intValue();
 }
 
-float getFloatValue(const std::string& module, const std::string& signal){
+floatValue getFloatValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tFloat))
-        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
+        return floatValue(scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat,
+                          scrPanelRef->signBuff_[sign]->lastData.beginTime);
     else
-        return 0.F;
+        return floatValue();
 }
 
-void setBoolValue(const std::string& signal, bool value){
+void setBoolValue(const std::string& signal, boolValue bval){
 
    std::string sign = signal + "Virtual";
 
    SV_Cng::value val;
-   val.tBool = value;
+   val.tBool = bval.value;
 
    if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tBool))
-       scrPanelRef->setValue(sign, val);
+       scrPanelRef->setValue(sign, val, bval.time);
 }
      
-void setIntValue(const std::string& signal, int value){
+void setIntValue(const std::string& signal, intValue ival){
 
     std::string sign = signal + "Virtual";
 
     SV_Cng::value val;
-    val.tInt = value;
+    val.tInt = ival.value;
 
     if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tInt))
-        scrPanelRef->setValue(sign, val);
+        scrPanelRef->setValue(sign, val, ival.time);
 }
      
-void setFloatValue(const std::string& signal, float value){
+void setFloatValue(const std::string& signal, floatValue fval){
 
     std::string sign = signal + "Virtual";
 
     SV_Cng::value val;
-    val.tFloat = value;
+    val.tFloat = fval.value;
 
     if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tFloat))
-        scrPanelRef->setValue(sign, val);
+        scrPanelRef->setValue(sign, val, fval.time);
 }
 
-void scriptPanel::setValue(const std::string& sign, SV_Cng::value val){
+void scriptPanel::setValue(const std::string& sign, SV_Cng::value val, uint64_t time){
 
     auto sd = signBuff_[sign];    
      
@@ -117,8 +114,8 @@ void scriptPanel::setValue(const std::string& sign, SV_Cng::value val){
     
     if (iterValue_ == (SV_PACKETSZ - 1)){
 
-        sd->lastData.beginTime = cTm_;
-        sd->buffData[vp].beginTime = cTm_;
+        sd->lastData.beginTime = time;
+        sd->buffData[vp].beginTime = time;
 
         updateSign(sd, sd->buffBeginPos, vp);
 
@@ -599,8 +596,7 @@ void scriptPanel::workCycle(){
         mtx_.lock();
 
         QString serr;
-
-        cTm_ = SV_Aux::CurrDateTimeSinceEpochMs();
+        
         iterValue_ = 0;
         for (int i = 0; i < SV_PACKETSZ; ++i){
 

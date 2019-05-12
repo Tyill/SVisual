@@ -34,16 +34,32 @@
 #include "SVScriptPanel.h"
 #include "Lua/lua.hpp"
 
+struct boolValue{
+    bool value;
+    uint64_t time;
+    boolValue(bool value_ = false, uint64_t time_ = 0) : value(value_), time(time_){}
+};
+struct intValue{
+    int value;
+    uint64_t time;
+    intValue(int value_ = 0, uint64_t time_ = 0) : value(value_), time(time_){}
+};
+struct floatValue{
+    float value;
+    uint64_t time;
+    floatValue(float value_ = 0, uint64_t time_ = 0) : value(value_), time(time_){}
+};
+
 class scriptPanel : public QDialog
 {
     Q_OBJECT
 
-    friend bool getBoolValue(const std::string& module, const std::string& signal);
-    friend int getIntValue(const std::string& module, const std::string& signal);
-    friend float getFloatValue(const std::string& module, const std::string& signal);
-    friend void setBoolValue(const std::string& signal, bool value);
-    friend void setIntValue(const std::string& signal, int value);
-    friend void setFloatValue(const std::string& signal, float value);
+    friend boolValue getBoolValue(const std::string& module, const std::string& signal);
+    friend intValue getIntValue(const std::string& module, const std::string& signal);
+    friend floatValue getFloatValue(const std::string& module, const std::string& signal);
+    friend void setBoolValue(const std::string& signal, boolValue value);
+    friend void setIntValue(const std::string& signal, intValue value);
+    friend void setFloatValue(const std::string& signal, floatValue value);
 
 public:
     
@@ -80,8 +96,7 @@ private:
     std::map<std::string, SV_Cng::signalData *> signBuff_;
 
     int iterValue_ = 0;
-    uint64_t cTm_ = 0;
-
+   
     struct scriptState{
         bool isChange = true;
         bool isActive = false;
@@ -100,7 +115,7 @@ private:
     void updateSign(SV_Cng::signalData* sign, int beginPos, int valuePos);
     bool updateBuffValue(const std::string& module, const std::string& signal, SV_Cng::valueType stype);
 
-    void setValue(const std::string& signal, SV_Cng::value value);
+    void setValue(const std::string& signal, SV_Cng::value value, uint64_t time);
 
     void workCycle();
 
