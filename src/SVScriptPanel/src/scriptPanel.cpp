@@ -38,67 +38,81 @@ namespace lub = luabridge;
 
 scriptPanel* scrPanelRef = nullptr;
 
-boolValue getBoolValue(const std::string& module, const std::string& signal){
+void printMess(const std::string& mess){
+
+    if (scrPanelRef->iterValue_ == 0){
+        QString qmess = QString::fromStdString(SV_Aux::CurrDateTime()) + " " + mess.c_str();
+        QMetaObject::invokeMethod(scrPanelRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
+    }
+}
+
+uint64_t getTimeValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
     if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tBool))
-        return boolValue(scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool, 
-                         scrPanelRef->signBuff_[sign]->lastData.beginTime);
+        return scrPanelRef->signBuff_[sign]->lastData.beginTime;
     else
-        return boolValue();
+        return false;
 }
 
-intValue getIntValue(const std::string& module, const std::string& signal){
+bool getBoolValue(const std::string& module, const std::string& signal){
+
+    std::string sign = signal + module;
+    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tBool))
+        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool;                         
+    else
+        return false;
+}
+
+int getIntValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
     if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
-        return intValue(scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt,
-                        scrPanelRef->signBuff_[sign]->lastData.beginTime);
+        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
     else
-        return intValue();
+        return 0;
 }
 
-floatValue getFloatValue(const std::string& module, const std::string& signal){
+float getFloatValue(const std::string& module, const std::string& signal){
 
     std::string sign = signal + module;
     if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
-        return floatValue(scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat,
-                          scrPanelRef->signBuff_[sign]->lastData.beginTime);
+        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
     else
-        return floatValue();
+        return 0.F;
 }
 
-void setBoolValue(const std::string& signal, boolValue bval){
+void setBoolValue(const std::string& signal, bool bval, uint64_t time){
 
    std::string sign = signal + "Virtual";
 
    SV_Cng::value val;
-   val.tBool = bval.value;
+   val.tBool = bval;
 
    if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tBool))
-       scrPanelRef->setValue(sign, val, bval.time);
+       scrPanelRef->setValue(sign, val, time);
 }
      
-void setIntValue(const std::string& signal, intValue ival){
+void setIntValue(const std::string& signal, int ival, uint64_t time){
 
     std::string sign = signal + "Virtual";
 
     SV_Cng::value val;
-    val.tInt = ival.value;
+    val.tInt = ival;
 
     if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tInt))
-        scrPanelRef->setValue(sign, val, ival.time);
+        scrPanelRef->setValue(sign, val, time);
 }
      
-void setFloatValue(const std::string& signal, floatValue fval){
+void setFloatValue(const std::string& signal, float fval, uint64_t time){
 
     std::string sign = signal + "Virtual";
 
     SV_Cng::value val;
-    val.tFloat = fval.value;
+    val.tFloat = fval;
 
     if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tFloat))
-        scrPanelRef->setValue(sign, val, fval.time);
+        scrPanelRef->setValue(sign, val, time);
 }
 
 void scriptPanel::setValue(const std::string& sign, SV_Cng::value val, uint64_t time){
@@ -273,9 +287,12 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
             if (!sts->isActive){
                 int rowCnt = ui.tblActiveScripts->rowCount();
                 ui.tblActiveScripts->insertRow(rowCnt);
-                ui.tblActiveScripts->setItem(rowCnt, 0, new QTableWidgetItem(sname));
-            }
-            sts->isActive = true;
+                auto itm = new QTableWidgetItem(sname);
+                itm->setFlags(itm->flags() ^ Qt::ItemFlag::ItemIsEditable);
+                ui.tblActiveScripts->setItem(rowCnt, 0, itm);
+
+                sts->isActive = true;
+            }            
         }
     });
     connect(ui.btnResetActive, &QPushButton::clicked, [this](){
@@ -421,6 +438,8 @@ void scriptPanel::startUpdateThread(){
     luaL_openlibs(luaState_);
 
     lub::getGlobalNamespace(luaState_)
+        .addFunction("printMess", printMess)
+        .addFunction("getTimeValue", getTimeValue)
         .addFunction("getBoolValue", getBoolValue)
         .addFunction("getIntValue", getIntValue)
         .addFunction("getFloatValue", getFloatValue)
@@ -480,6 +499,7 @@ void scriptPanel::addScript(QString name){
         QFile file(QApplication::applicationDirPath() + "/scripts/" + name);
 
         QTextStream txtStream(&file);
+        txtStream.setCodec("utf8");
 
         file.open(QIODevice::ReadOnly);
 
@@ -535,13 +555,7 @@ void scriptPanel::saveScript(){
     );
 
     QString script = ((QTextEdit*)ui.tabWidget->currentWidget())->toPlainText();
-
-    /// TODO CHECK
-
-
-
-    //////////
-
+       
     it->text = script;
     it->isChange = false;
 
@@ -550,6 +564,7 @@ void scriptPanel::saveScript(){
     QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
 
     QTextStream txtStream(&file);
+    txtStream.setCodec("utf8");
     
     file.open(QIODevice::WriteOnly);
 
@@ -621,9 +636,11 @@ void scriptPanel::workCycle(){
             pfUpdateSignalsCBack();
 
         mtx_.unlock();
-
-        if (!serr.isEmpty())
-            ui.txtStatusMess->append(QString::fromStdString(SV_Aux::CurrDateTime()) + " " + serr);
+               
+        if (!serr.isEmpty()){
+            QString qmess = QString::fromStdString(SV_Aux::CurrDateTime()) + " " + serr;
+            QMetaObject::invokeMethod(scrPanelRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
+        }
 
         int ms = SV_CYCLESAVE_MS - (int)tmDelay.GetCTime();
         if (ms > 0)

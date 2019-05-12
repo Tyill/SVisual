@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
 	int cp = 0;
 	while (true){
 				
-		std::string val = "dde";
+		std::string val = "ddввсe";
         SV_Cln::svAddIntValue(val.c_str(), cp);
         		
 		cp += 1; if (cp > 100) cp = -100;

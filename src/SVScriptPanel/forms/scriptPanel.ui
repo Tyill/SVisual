@@ -230,6 +230,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnSave">
+           <property name="toolTip">
+            <string>CTRL + S</string>
+           </property>
            <property name="text">
             <string>Сохранить</string>
            </property>
@@ -240,8 +243,14 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnClear">
+           <property name="toolTip">
+            <string>CTRL + D</string>
+           </property>
            <property name="text">
             <string>Очистить</string>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+D</string>
            </property>
           </widget>
          </item>
