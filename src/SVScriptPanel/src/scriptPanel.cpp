@@ -31,6 +31,7 @@
 #include "Lua/lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 #include "SVAuxFunc/TimerDelay.h"
+#include "SVAuxFunc/Front.h"
 #include "SVAuxFunc/auxFunc.h"
 
 using namespace SV_Cng;
@@ -58,7 +59,10 @@ uint64_t getTimeValue(const std::string& module, const std::string& signal){
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
-            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].beginTime;
+
+            int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
+
+            return scrPanelRef->signBuff_[sign]->buffData[inx].beginTime;
         }
     }
     else
@@ -77,7 +81,10 @@ bool getBoolValue(const std::string& module, const std::string& signal){
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                 scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
-            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].vals[scrPanelRef->iterValue_].tBool;
+
+            int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
+
+            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].tBool;
         }
     }
     else
@@ -96,7 +103,10 @@ int getIntValue(const std::string& module, const std::string& signal){
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
-            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].vals[scrPanelRef->iterValue_].tInt;
+
+            int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
+
+            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].tInt;
         }
     }
     else
@@ -115,7 +125,10 @@ float getFloatValue(const std::string& module, const std::string& signal){
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
-            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].vals[scrPanelRef->iterValue_].tFloat;
+
+            int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
+
+            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].tFloat;
         }
     }
     else
@@ -407,9 +420,9 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
 
         for (int i = 0; i < scrState_.size(); ++i){
         
-            if (i == inx)
+            if (scrState_[i].tabInx == inx)
                 scrState_[i].tabInx = -1;
-            else if (i > inx)
+            else if (scrState_[i].tabInx > inx)
                 --scrState_[i].tabInx;
         }
                       
@@ -466,7 +479,7 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
 
         ui.lbChange->setText(scrState_[row].isChange ? "*" : "");
     });
-        
+    
     QDir dir(QApplication::applicationDirPath() + "/scripts/");
 
     if (!dir.exists())
@@ -494,6 +507,49 @@ scriptPanel::~scriptPanel(){
 
     isStopWork_ = true;
     if (workThr_.joinable()) workThr_.join();
+}
+
+void scriptPanel::contextMenuEvent(QContextMenuEvent * event){
+        
+    if (!qobject_cast<QTableWidget*>(focusWidget()) || 
+        (qobject_cast<QTableWidget*>(focusWidget())->objectName() != "tblScripts")) return;
+    
+        QTableWidgetItem* item = ui.tblScripts->currentItem();
+        if (!item) return;
+
+        QMenu* menu = new QMenu(this);
+
+        menu->addAction(tr("Удалить"));
+
+        connect(menu, &QMenu::triggered, [this, item](QAction*){
+            std::unique_lock<std::mutex> lck(mtx_);
+            
+            int row = item->row();
+            QString scrName = ui.tblScripts->item(row, 0)->text();
+            
+            if (scrState_[row].tabInx >= 0){
+                ui.tabWidget->removeTab(scrState_[row].tabInx);
+
+                for (int i = 0; i < scrState_.size(); ++i)
+                    if (scrState_[i].tabInx > scrState_[row].tabInx)
+                        --scrState_[i].tabInx;
+            }
+            scrState_.remove(row);
+            ui.tblScripts->removeRow(row);
+                        
+            int sz = ui.tblActiveScripts->rowCount();
+            for (int i = 0; i < sz; ++i){
+                if (ui.tblActiveScripts->item(i, 0)->text() == scrName){
+                    ui.tblActiveScripts->removeRow(i);
+                    break;
+                }
+            }
+
+            QFile::remove(QApplication::applicationDirPath() + "/scripts/" + scrName);
+        });
+               
+        menu->exec(event->globalPos());
+                    
 }
 
 void scriptPanel::startUpdateThread(){
@@ -592,13 +648,22 @@ void scriptPanel::nameScriptChange(int row, int col){
             ui.tblScripts->item(row, 0)->setText(scrState_[row].name);
             return;
         }
+                
+        if (scrState_[row].tabInx >= 0)
+            ui.tabWidget->setTabText(scrState_[row].tabInx, sname);
+
+        int sz = ui.tblActiveScripts->rowCount();
+        for (int i = 0; i < sz; ++i){
+            if (ui.tblActiveScripts->item(i, 0)->text() == scrState_[row].name){
+                ui.tblActiveScripts->item(i, 0)->setText(sname);
+                break;
+            }
+        }
+
+        QFile::rename(QApplication::applicationDirPath() + "/scripts/" + scrState_[row].name,
+                      QApplication::applicationDirPath() + "/scripts/" + sname);
 
         scrState_[row].name = sname;
-
-        if (scrState_[row].tabInx >= 0)
-            ui.tabWidget->setTabText(scrState_[row].tabInx, scrState_[row].name);
-
-        saveScript();
     }
 }
 
@@ -663,15 +728,11 @@ QString scriptPanel::exlName(QString name){
 void scriptPanel::workCycle(){
 
     QString path = QApplication::applicationDirPath() + "/scripts/";
-
+    
+    SV_Aux::Front fp;
     SV_Aux::TimerDelay tmDelay;
     tmDelay.UpdateCycTime();
-       
-    auto loadScr = std::find_if(scrState_.begin(), scrState_.end(),
-        [](const scriptState& st) {
-        return st.name == "load.lua";
-    });
-
+          
     while (!isStopWork_){
 
         tmDelay.UpdateCycTime();
@@ -681,7 +742,12 @@ void scriptPanel::workCycle(){
         QString serr;
         
         // load.lua
-        if ((loadScr != scrState_.end()) && loadScr->isActive){
+        auto loadScr = std::find_if(scrState_.begin(), scrState_.end(),
+            [](const scriptState& st) {
+            return st.name == "load.lua";
+        });
+        
+        if ((loadScr != scrState_.end()) && fp.PosFront(loadScr->isActive, 0)){
 
             luaL_loadfile(luaState_, qPrintable(path + loadScr->name));
 
@@ -692,8 +758,6 @@ void scriptPanel::workCycle(){
                 serr = QString(err);
                 lua_pop(luaState_, -1);
             }
-
-            loadScr->isActive = false;
         }
 
         bool isActive = false, 

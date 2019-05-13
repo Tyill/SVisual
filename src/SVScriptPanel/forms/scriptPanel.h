@@ -77,7 +77,7 @@ private:
     std::mutex mtx_;
     bool isStopWork_ = false;
 
-    QMap<QString, SV_Cng::signalData *> signBuff_;
+    QMap<QString, SV_Cng::signalData*> signBuff_;
         
     int iterValue_ = 0, buffCPos_ = 0, buffSz_ = 0;
    
@@ -100,7 +100,7 @@ private:
     bool updateBuffValue(const QString& module, const QString& signal, SV_Cng::valueType stype);
 
     void setValue(const QString& signal, SV_Cng::value value, uint64_t time);
-
+    void contextMenuEvent(QContextMenuEvent * event);
     void workCycle();
 
 private slots:
