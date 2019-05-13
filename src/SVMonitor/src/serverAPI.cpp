@@ -58,6 +58,11 @@ QMap<QString, SV_Cng::signalData *> getCopySignalRefSrv(){
 	return csref;
 };
 
+SV_Cng::moduleData* getModuleDataSrv(const QString& sing){
+
+    return SV_Srv::getModuleData(sing.toUtf8().data());
+};
+
 SV_Cng::signalData* getSignalDataSrv(const QString& sing){
 
 	return SV_Srv::getSignalData(sing.toUtf8().data());
@@ -67,6 +72,21 @@ SV_Cng::triggerData* getTriggerDataSrv(const QString& trg){
 
 	return SV_Srv::getTriggerData(trg.toUtf8().data());
 };
+
+bool loadSignalDataSrv(const QString& name){
+
+    return SV_Srv::signalBufferEna(name.toUtf8().data());
+}
+
+bool addSignalSrv(const QString& name, SV_Cng::signalData* sd){
+
+    return SV_Srv::addSignal(name.toUtf8().data(), sd);
+}
+
+bool addModuleSrv(const QString& name, SV_Cng::moduleData* md){
+
+    return SV_Srv::addModule(name.toUtf8().data(), md);
+}
 
 bool addTriggerSrv(QString name, SV_Cng::triggerData* td){
 

@@ -77,9 +77,9 @@ private:
     std::mutex mtx_;
     bool isStopWork_ = false;
 
-    std::map<std::string, SV_Cng::signalData *> signBuff_;
+    QMap<QString, SV_Cng::signalData *> signBuff_;
         
-    int iterValue_ = 0;
+    int iterValue_ = 0, buffCPos_ = 0, buffSz_ = 0;
    
     struct scriptState{
         bool isChange = true;
@@ -97,9 +97,9 @@ private:
     QString exlName(QString);
 
     void updateSign(SV_Cng::signalData* sign, int beginPos, int valuePos);
-    bool updateBuffValue(const std::string& module, const std::string& signal, SV_Cng::valueType stype);
+    bool updateBuffValue(const QString& module, const QString& signal, SV_Cng::valueType stype);
 
-    void setValue(const std::string& signal, SV_Cng::value value, uint64_t time);
+    void setValue(const QString& signal, SV_Cng::value value, uint64_t time);
 
     void workCycle();
 

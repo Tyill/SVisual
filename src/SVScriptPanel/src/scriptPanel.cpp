@@ -40,7 +40,7 @@ scriptPanel* scrPanelRef = nullptr;
 
 void printMess(const std::string& mess){
 
-    if (scrPanelRef->iterValue_ == 0){
+    if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0)){
         QString qmess = QString::fromStdString(SV_Aux::CurrDateTime()) + " " + mess.c_str();
         QMetaObject::invokeMethod(scrPanelRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
     }
@@ -48,81 +48,127 @@ void printMess(const std::string& mess){
 
 uint64_t getTimeValue(const std::string& module, const std::string& signal){
 
-    std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tBool))
-        return scrPanelRef->signBuff_[sign]->lastData.beginTime;
+    QString md = qUtf8Printable(module.c_str()),
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tBool)){
+     
+        if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+            return scrPanelRef->signBuff_[sign]->lastData.beginTime;
+        else{
+            if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
+               scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
+            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].beginTime;
+        }
+    }
     else
-        return false;
+        return 0;
 }
 
 bool getBoolValue(const std::string& module, const std::string& signal){
 
-    std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tBool))
-        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool;                         
+    QString md = qUtf8Printable(module.c_str()),
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tBool)){
+        
+        if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool;
+        else{
+            if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
+                scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
+            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].vals[scrPanelRef->iterValue_].tBool;
+        }
+    }
     else
         return false;
 }
 
 int getIntValue(const std::string& module, const std::string& signal){
 
-    std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
-        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
+    QString md = qUtf8Printable(module.c_str()),
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tInt)){
+
+        if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
+        else{
+            if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
+               scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
+            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].vals[scrPanelRef->iterValue_].tInt;
+        }
+    }
     else
         return 0;
 }
 
 float getFloatValue(const std::string& module, const std::string& signal){
 
-    std::string sign = signal + module;
-    if (scrPanelRef->updateBuffValue(module, signal, SV_Cng::valueType::tInt))
-        return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
+    QString md = qUtf8Printable(module.c_str()),
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tInt)){
+
+        if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
+        else{
+            if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
+               scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
+            return scrPanelRef->signBuff_[sign]->buffData[scrPanelRef->buffCPos_].vals[scrPanelRef->iterValue_].tFloat;
+        }
+    }
     else
         return 0.F;
 }
 
 void setBoolValue(const std::string& signal, bool bval, uint64_t time){
 
-   std::string sign = signal + "Virtual";
-
+    QString md = "Virtual",
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
+      
    SV_Cng::value val;
    val.tBool = bval;
 
-   if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tBool))
+   if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tBool))
        scrPanelRef->setValue(sign, val, time);
 }
      
 void setIntValue(const std::string& signal, int ival, uint64_t time){
 
-    std::string sign = signal + "Virtual";
+    QString md = "Virtual",
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
 
     SV_Cng::value val;
     val.tInt = ival;
 
-    if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tInt))
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tInt))
         scrPanelRef->setValue(sign, val, time);
 }
      
 void setFloatValue(const std::string& signal, float fval, uint64_t time){
 
-    std::string sign = signal + "Virtual";
+    QString md = "Virtual",
+            sn = qUtf8Printable(signal.c_str()),
+            sign = sn + md;
 
     SV_Cng::value val;
     val.tFloat = fval;
 
-    if (scrPanelRef->updateBuffValue("Virtual", signal, SV_Cng::valueType::tFloat))
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tFloat))
         scrPanelRef->setValue(sign, val, time);
 }
 
-void scriptPanel::setValue(const std::string& sign, SV_Cng::value val, uint64_t time){
+void scriptPanel::setValue(const QString& sign, SV_Cng::value val, uint64_t time){
 
     auto sd = signBuff_[sign];    
      
     sd->lastData.vals[iterValue_] = val;
 
     // заполняем буфер
-    int vp = sd->buffValuePos;
+    int vp = (mode_ == SV_Script::modeGr::player) ? sd->buffValuePos : buffCPos_;
     
     sd->buffData[vp].vals[iterValue_] = val;
     
@@ -139,11 +185,25 @@ void scriptPanel::setValue(const std::string& sign, SV_Cng::value val, uint64_t 
             int buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
 
             if (vp == buffSz) vp = 0;
+
             sd->buffValuePos = vp;
 
             if (vp == sd->buffBeginPos) {
                 ++sd->buffBeginPos;
                 if (sd->buffBeginPos >= buffSz) sd->buffBeginPos = 0;
+            }
+        }
+        else{
+
+            sd->buffValuePos = vp;
+            
+            if (vp >= sd->buffData.size()){
+                SV_Cng::recData rd;
+
+                rd.beginTime = time;
+                rd.vals = new SV_Cng::value[SV_PACKETSZ];
+
+                sd->buffData.push_back(rd);
             }
         }
     }
@@ -182,77 +242,83 @@ void scriptPanel::updateSign(signalData* sign, int beginPos, int valuePos){
 
 }
 
-bool scriptPanel::updateBuffValue(const std::string& module, const std::string& signal, SV_Cng::valueType stype){
+bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, SV_Cng::valueType stype){
 
-    std::string sign = signal + module;
+    QString sign = signal + module;
              
-    if (signBuff_.find(sign) == signBuff_.end()){
+    if (signBuff_.find(sign) != signBuff_.end())
+        return true;
+    
+    if (module == "Virtual"){
 
-        if (module == "Virtual"){
+        if (!pfAddSignal || !pfAddModule || !pfGetModuleData || !pfLoadSignalData)
+            return false;
 
-            if (!pfAddSignal || !pfAddModule || !pfGetModuleData || !pfLoadSignalData)
-                return false;
+        signalData* sd = new signalData();
+        signBuff_[sign] = sd;
 
-            signalData* sd = new signalData();
-            signBuff_[sign] = sd;
+        sd->isActive = true;
+        sd->isBuffEnable = false;
+        sd->isDelete = false;
 
-            sd->isActive = true;
-            sd->isBuffEnable = false;
-            sd->isDelete = false;
+        sd->name = qUtf8Printable(signal);
+        sd->module = "Virtual";
+        sd->type = stype;
 
-            sd->name = signal;
-            sd->module = "Virtual";
-            sd->type = stype;
+        sd->lastData.vals = new SV_Cng::value[SV_PACKETSZ];
+        sd->lastData.beginTime = SV_Aux::CurrDateTimeSinceEpochMs();
+        memset(sd->lastData.vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
 
-            sd->lastData.vals = new SV_Cng::value[SV_PACKETSZ];
-            sd->lastData.beginTime = SV_Aux::CurrDateTimeSinceEpochMs();
-            memset(sd->lastData.vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
+        sd->buffMinTime = sd->lastData.beginTime - 5000;
+        sd->buffMaxTime = sd->lastData.beginTime + 5000;
+        sd->buffMaxValue = 1;
+        sd->buffMinValue = 0;
 
-            sd->buffMinTime = sd->lastData.beginTime - 5000;
-            sd->buffMaxTime = sd->lastData.beginTime + 5000;
-            sd->buffMaxValue = 1;
-            sd->buffMinValue = 0;
+        auto md = pfGetModuleData("Virtual");
+        if (!md){
+            md = new SV_Cng::moduleData("Virtual");
+            md->isActive = true;
+            md->isDelete = false;
+            md->isEnable = true;
+            pfAddModule("Virtual", md);
 
-            auto md = pfGetModuleData("Virtual");
-            if (!md){
-                md = new SV_Cng::moduleData("Virtual");
-                md->isActive = true;
-                md->isDelete = false;
-                md->isEnable = true;
-                pfAddModule("Virtual", md);
-
-                if (pfModuleConnectCBack)
-                    pfModuleConnectCBack("Virtual");
-            }
-
-            md->signls.push_back(sign);
-           
-            pfAddSignal(sign, sd);
-            pfLoadSignalData(sign);
-
-            if (pfAddSignalsCBack)
-                pfAddSignalsCBack();
+            if (pfModuleConnectCBack)
+                pfModuleConnectCBack("Virtual");
         }
-        else{
 
-            if (!pfGetCopySignalRef || !pfLoadSignalData)
-                return false;
+        md->signls.push_back(qUtf8Printable(sign));
+           
+        pfAddSignal(sign, sd);
 
-            auto signRef = pfGetCopySignalRef();
-
-            if (signRef.find(sign) == signRef.end())
-                return false;
-
+        if (mode_ == SV_Script::modeGr::player)
             pfLoadSignalData(sign);
+        else{
+            SV_Cng::recData rd;
+            rd.vals = new SV_Cng::value[SV_PACKETSZ];
 
-            signBuff_[sign] = signRef[sign];
-        }      
+            sd->buffData.push_back(rd);
+        }
+
+        if (pfAddSignalsCBack)
+            pfAddSignalsCBack();
+    }
+    else{
+
+        if (!pfGetCopySignalRef || !pfLoadSignalData)
+            return false;
+
+        auto signRef = pfGetCopySignalRef();
+
+        if (!signRef.contains(sign) || !pfLoadSignalData(sign))
+            return false;
+
+        signBuff_[sign] = signRef[sign];
     }
 
     return true;
 }
 
-
+/////////////////////////////////
 
 scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::modeGr mode){
 		
@@ -446,12 +512,8 @@ void scriptPanel::startUpdateThread(){
         .addFunction("setBoolValue", setBoolValue)
         .addFunction("setIntValue", setIntValue)
         .addFunction("setFloatValue", setFloatValue);
-
-    luaL_loadfile(luaState_, qPrintable(QApplication::applicationDirPath() + "/scripts/load.lua"));
-    lua_pcall(luaState_, 0, 0, 0);
-
-    if (mode_ == SV_Script::modeGr::player)
-        workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
+        
+    workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
 }
 
 void scriptPanel::addScript(QString name){
@@ -553,28 +615,29 @@ void scriptPanel::saveScript(){
            return st.name == sname;
         }
     );
+   
+    if (it->isChange && mtx_.try_lock()){
 
-    QString script = ((QTextEdit*)ui.tabWidget->currentWidget())->toPlainText();
-       
-    it->text = script;
-    it->isChange = false;
+        QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
 
-    mtx_.lock();
+        QTextStream txtStream(&file);
+        txtStream.setCodec("utf8");
 
-    QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
+        file.open(QIODevice::WriteOnly);
 
-    QTextStream txtStream(&file);
-    txtStream.setCodec("utf8");
-    
-    file.open(QIODevice::WriteOnly);
+        it->text = ((QTextEdit*)ui.tabWidget->currentWidget())->toPlainText();
+        it->isChange = false;
+                
+        txtStream << it->text;
 
-    txtStream << it->text;
+        file.close();
 
-    file.close();
+        buffCPos_ = 0;
 
-    mtx_.unlock();
-
-    ui.lbChange->setText("");   
+        mtx_.unlock();
+                
+        ui.lbChange->setText("");
+    }
 }
 
 QString scriptPanel::exlName(QString name){
@@ -604,6 +667,11 @@ void scriptPanel::workCycle(){
     SV_Aux::TimerDelay tmDelay;
     tmDelay.UpdateCycTime();
        
+    auto loadScr = std::find_if(scrState_.begin(), scrState_.end(),
+        [](const scriptState& st) {
+        return st.name == "load.lua";
+    });
+
     while (!isStopWork_){
 
         tmDelay.UpdateCycTime();
@@ -612,31 +680,56 @@ void scriptPanel::workCycle(){
 
         QString serr;
         
-        iterValue_ = 0;
-        for (int i = 0; i < SV_PACKETSZ; ++i){
+        // load.lua
+        if ((loadScr != scrState_.end()) && loadScr->isActive){
 
-            for (auto& s : scrState_){
-                if (s.isActive && (s.name != "load.lua")){
+            luaL_loadfile(luaState_, qPrintable(path + loadScr->name));
 
-                    luaL_loadfile(luaState_, qPrintable(path + s.name));
+            lua_pcall(luaState_, 0, 0, 0);
 
-                    lua_pcall(luaState_, 0, 0, 0);
+            const char* err = lua_tostring(luaState_, -1);
+            if (err && serr.isEmpty()){
+                serr = QString(err);
+                lua_pop(luaState_, -1);
+            }
 
-                    const char* err = lua_tostring(luaState_, -1);
-                    if (err && serr.isEmpty()){
-                        serr = QString(err);
-                        lua_pop(luaState_, -1);
+            loadScr->isActive = false;
+        }
+
+        bool isActive = false, 
+             isNewCycle = (buffCPos_ == 0);
+
+        do {           
+            // other scripts
+            for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_){
+
+                for (auto& s : scrState_){
+                    if (s.isActive && (s.name != "load.lua")){
+                        isActive = true;
+
+                        luaL_loadfile(luaState_, qPrintable(path + s.name));
+
+                        lua_pcall(luaState_, 0, 0, 0);
+
+                        const char* err = lua_tostring(luaState_, -1);
+                        if (err && serr.isEmpty()){
+                            serr = QString(err);
+                            lua_pop(luaState_, -1);
+                        }
                     }
                 }
             }
-            ++iterValue_;
-        }
-
-        if ((scrState_.size() > 1) && pfUpdateSignalsCBack)
+            iterValue_ = 0;
+            ++buffCPos_;
+        } while (buffCPos_ < buffSz_);
+               
+        buffCPos_ = qMax(0, buffSz_ - 1);
+     
+        mtx_.unlock();
+     
+        if (isActive && isNewCycle && pfUpdateSignalsCBack)
             pfUpdateSignalsCBack();
 
-        mtx_.unlock();
-               
         if (!serr.isEmpty()){
             QString qmess = QString::fromStdString(SV_Aux::CurrDateTime()) + " " + serr;
             QMetaObject::invokeMethod(scrPanelRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));

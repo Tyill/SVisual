@@ -41,7 +41,15 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.7";
+const QString VERSION = "1.0.8";
+// -add script panel
+
+// const QString VERSION = "1.0.7";
+// -font change
+
+// const QString VERSION = "1.0.6";
+// -save win state
+// -small fix's
 
 MainWin* mainWin = nullptr;
 
@@ -67,18 +75,16 @@ void MainWin::load(){
     scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
     scriptPanel_->setWindowFlags(Qt::Window);
        
-	SV_Graph::setLoadSignalData(graphPanels_[this], [](const QString& sign){
-		return SV_Srv::signalBufferEna(sign.toUtf8().data());
-	});
+    SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
 
-    SV_Script::setLoadSignalData(scriptPanel_, SV_Srv::signalBufferEna);   
-    SV_Script::setGetCopySignalRef(scriptPanel_, SV_Srv::getCopySignalRef);
-    SV_Script::setGetSignalData(scriptPanel_, SV_Srv::getSignalData);
-    SV_Script::setGetModuleData(scriptPanel_, SV_Srv::getModuleData);
-    SV_Script::setAddSignal(scriptPanel_, SV_Srv::addSignal);
-    SV_Script::setAddModule(scriptPanel_, SV_Srv::addModule);    
+    SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
+    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
+    SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
+    SV_Script::setGetModuleData(scriptPanel_, getModuleDataSrv);
+    SV_Script::setAddSignal(scriptPanel_, addSignalSrv);
+    SV_Script::setAddModule(scriptPanel_, addModuleSrv);    
     SV_Script::setAddSignalsCBack(scriptPanel_, [](){
         QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
     });
@@ -89,9 +95,7 @@ void MainWin::load(){
         QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
     });
 
-    SV_Exp::setLoadSignalData(exportPanel_, [](const QString& sign){
-        return SV_Srv::signalBufferEna(sign.toUtf8().data());
-    });
+    SV_Exp::setLoadSignalData(exportPanel_, loadSignalDataSrv);
     SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRefSrv);
     SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRefSrv);
     SV_Exp::setGetSignalData(exportPanel_, getSignalDataSrv);
@@ -180,22 +184,18 @@ void MainWin::Connect(){
 	});
     connect(ui.actionUpFont, &QAction::triggered, [this]() {
        
-        QFont ft = this->font();
+        QFont ft = QApplication::font();
         
         ft.setPointSize(ft.pointSize() + 1);
-
-        this->setFont(ft);
-
+        
         QApplication::setFont(ft);
     });
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
 
-        QFont ft = this->font();
+        QFont ft = QApplication::font();
 
         ft.setPointSize(ft.pointSize() - 1);
-
-        this->setFont(ft);
-
+        
         QApplication::setFont(ft);
     });
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
@@ -362,10 +362,10 @@ bool MainWin::init(QString initPath){
   
     cng.selOpenDir = settings.value("selOpenDir", "").toString();
 
-    QFont ft = this->font();
+    QFont ft = QApplication::font();
     int fsz = settings.value("fontSz", ft.pointSize()).toInt();
     ft.setPointSize(fsz);
-    this->setFont(ft);
+    QApplication::setFont(ft);
     
     // связь по usb
     cng.com_ena = settings.value("com_ena", 0).toInt() == 1;
@@ -956,8 +956,6 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     graphPanels_[graphWin] = gp;
     vertLayout->addWidget(gp);
          
-    graphWin->setFont(this->font());
-
     graphWin->show();  
 
     if (!pos.isNull()){

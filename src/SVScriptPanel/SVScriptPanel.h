@@ -60,22 +60,22 @@ namespace SV_Script {
 
     SVSCRIPTPANEL_API void startUpdateThread(QWidget* stPanel);
       
-    typedef std::map<std::string, SV_Cng::signalData*>(*pf_getCopySignalRef)();
+    typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
 	SVSCRIPTPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
 
-    typedef SV_Cng::moduleData *(*pf_getModuleData)(const std::string &module);
+    typedef SV_Cng::moduleData *(*pf_getModuleData)(const QString &module);
     SVSCRIPTPANEL_API void setGetModuleData(QDialog* stPanel, pf_getModuleData f);
 
-    typedef SV_Cng::signalData *(*pf_getSignalData)(const std::string &sign);
+    typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
 	SVSCRIPTPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
-    typedef bool(*pf_addSignal)(const std::string &sign, SV_Cng::signalData *);
+    typedef bool(*pf_addSignal)(const QString &sign, SV_Cng::signalData *);
     SVSCRIPTPANEL_API void setAddSignal(QDialog* stPanel, pf_addSignal f);
 
-    typedef bool(*pf_addModule)(const std::string &module, SV_Cng::moduleData *);
+    typedef bool(*pf_addModule)(const QString &module, SV_Cng::moduleData *);
     SVSCRIPTPANEL_API void setAddModule(QDialog* stPanel, pf_addModule f);
 
-    typedef bool(*pf_loadSignalData)(const std::string& sign);
+    typedef bool(*pf_loadSignalData)(const QString& sign);
 	SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 
     // обновление данных callBack

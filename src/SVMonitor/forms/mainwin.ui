@@ -242,8 +242,8 @@
    <addaction name="actionEventOrder"/>
    <addaction name="actionPrint"/>
    <addaction name="actionExport"/>
-   <addaction name="actionNewWin"/>
    <addaction name="actionScript"/>
+   <addaction name="actionNewWin"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
