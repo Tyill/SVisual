@@ -17,6 +17,7 @@ if(MSVC)
 endif(MSVC)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Lib/)
 
 add_subdirectory(SVAuxFunc)
 add_subdirectory(SVConfig)
@@ -29,6 +30,7 @@ add_subdirectory(SVClientExample)
 add_subdirectory(SVGraphPanel)
 add_subdirectory(SVStatPanel)
 add_subdirectory(SVExportPanel)
+add_subdirectory(SVScriptPanel)
 add_subdirectory(SVMonitor)
 add_subdirectory(SVViewer)
 

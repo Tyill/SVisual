@@ -12,6 +12,6 @@ FILE(GLOB_RECURSE SRC_ScrPn "*.cpp" "*.h" "*.ui" "*.qrc")
 
 add_library(SVScriptPanel SHARED ${SRC_ScrPn})
 
-target_link_libraries(SVScriptPanel SVConfig)
+target_link_libraries(SVScriptPanel SVConfig SVAuxFunc lua53)
 
 qt5_use_modules(SVScriptPanel Core Widgets Gui )
