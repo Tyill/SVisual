@@ -23,6 +23,8 @@
 // THE SOFTWARE.
 //
 #include <string>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <iostream>
 #include "SVClient/SVClient.h"
 #include "SVAuxFunc/auxFunc.h"
@@ -62,12 +64,12 @@ int main(int argc, char *argv[]){
 	int cp = 0;
 	while (true){
 				
-		std::string val = "ddввсe";
-        SV_Cln::svAddIntValue(val.c_str(), cp);
+		std::string val = "sin";
+        SV_Cln::svAddFloatValue("sin", sin(cp * M_PI / 180.0) * 100);
         		
-		cp += 1; if (cp > 100) cp = -100;
+		cp += 1; if (cp > 359) cp = 0;
 			
-		SV_Aux::SleepMs(cyc);
+		SV_Aux::SleepMs(100);
 	}
 	return 0;
 }
