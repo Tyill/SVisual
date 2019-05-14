@@ -94,8 +94,9 @@ graphPanel::graphPanel(QWidget *parent, SV_Graph::config cng_){
 	connect(tm, &QTimer::timeout, [=]() {
 
 		if (cng.mode == SV_Graph::modeGr::viewer){
-			ui.btnPlay->setVisible(false);
+			ui.btnPlay->setVisible(false);           
             ui.btnAScale->setVisible(false);
+            ui.btnAScale->setChecked(false);
 			ui.dTimeBegin->setVisible(true);
 			ui.dTimeEnd->setVisible(true);
 			ui.lbDTime->setVisible(true);
@@ -480,13 +481,16 @@ void graphPanel::updateSignals(){
             ob->resizeByValue();
     }
 
-	qint64 bTm = QDateTime::currentDateTime().toMSecsSinceEpoch() - SV_CYCLESAVE_MS;
-	
-	QPair<qint64, qint64> tmIntl = ui.axisTime->getTimeInterval();
-		
-    ui.axisTime->setTimeInterval(bTm - (tmIntl.second - tmIntl.first), bTm);
-	
-	ui.axisTime->update();
+    if (cng.mode == SV_Graph::modeGr::player){
+
+        qint64 bTm = QDateTime::currentDateTime().toMSecsSinceEpoch() - SV_CYCLESAVE_MS;
+
+        QPair<qint64, qint64> tmIntl = ui.axisTime->getTimeInterval();
+
+        ui.axisTime->setTimeInterval(bTm - (tmIntl.second - tmIntl.first), bTm);
+
+        ui.axisTime->update();
+    }
 
 	for (auto ob : graphObj_)			
 		ob->plotUpdate();    

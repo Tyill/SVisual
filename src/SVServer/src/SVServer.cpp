@@ -116,6 +116,19 @@ namespace SV_Srv {
 		return serv.getSignalData(sign);
     }
 
+    /// добавить сигнал
+    bool addSignal(const std::string& sign, SV_Cng::signalData* sd){
+
+        return serv.addSignal(sign, sd);
+    }
+
+    /// добавить модуль
+    bool addModule(const std::string& module, SV_Cng::moduleData* md){
+
+        return serv.addModule(module, md);
+    }
+
+    // разрешить буфер сигнала
     bool signalBufferEna(const std::string& sign){
 
         return serv.signalBufferEna(sign);

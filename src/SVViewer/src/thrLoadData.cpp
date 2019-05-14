@@ -174,14 +174,15 @@ bool MainWin::loadModuleVals(QString path){
 }
 
 bool loadSignalData(const QString& sign){
-
-    bool ok = true;
+   
+    if (!mainWin->signalRef_.contains(sign))
+        return false;
 
     MainWin::config& cng = mainWin->cng;
 
     auto sdata = mainWin->signalRef_[sign];
-
-    bool isNewFile = false;
+    
+    bool  ok = true, isNewFile = false;
     for (auto path : mainWin->fileRef_){
 
         if (!path->signls.contains(sign) || path->signls[sign].isLoad) continue;
@@ -201,8 +202,9 @@ bool loadSignalData(const QString& sign){
 
         file.close();
 
-        int csz = mainWin->signalRef_[sign]->buffData.size(), newsz = csz +  path->signls[sign].vlsCnt,
-                vlSz = sizeof(value) * SV_PACKETSZ;
+        int csz = mainWin->signalRef_[sign]->buffData.size(),
+            newsz = csz +  path->signls[sign].vlsCnt,
+            vlSz = sizeof(value) * SV_PACKETSZ;
 
         sdata->buffData.resize(newsz);
 
@@ -244,7 +246,8 @@ bool loadSignalData(const QString& sign){
         delete[] inArr;
     }
 
-    if (!isNewFile) return ok;
+    if (!isNewFile) 
+        return ok && !sdata->buffData.empty();
 
     std::sort(sdata->buffData.begin(), sdata->buffData.end(), [](recData& left, recData& right) {
         return left.beginTime < right.beginTime;
@@ -282,7 +285,7 @@ bool loadSignalData(const QString& sign){
 
     sdata->buffValuePos = sz - 1;
 
-    return ok;
+    return ok && !sdata->buffData.empty();
 }
 
 bool MainWin::loadData(QStringList files){

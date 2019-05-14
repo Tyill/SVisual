@@ -151,43 +151,41 @@ void wdgGraph::paintSignals(){
 	QPair<qint64, qint64> tmInterv = axisTime_->getTimeInterval();
 
 	bool paintPnt = (tmInterv.second - tmInterv.first) < SV_CYCLESAVE_MS;
-
-	
+    	
 	int signBoolCnt = 0;
 	auto sref = grPanel_->pfGetCopySignalRef();
-	for (auto& s : signalListAlter_) if (sref[s]->type == valueType::tBool) ++signBoolCnt;
+
+	for (auto& s : signalListAlter_) 
+        if (sref[s]->type == valueType::tBool) ++signBoolCnt;
+
 	for (int s = signalList_.size() - 1; s >= 0; --s){
 
 		auto& sign = signals_[signalList_[s]];
-
-		
+        		
 		painter.setBrush(sign.color);
 		painter.setPen(sign.color);
 		
 		if (sign.type != valueType::tBool){
 
-		int znSz = sign.pnts.size();
-			for (int z = 0; z < znSz; ++z){
+		    int znSz = sign.pnts.size();
+		    for (int z = 0; z < znSz; ++z){
 
-				QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
+			    QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
 
-				int sz = zonePnts.size();
-												
-				for (int i = 1; i < sz; ++i){
-					painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
-										
-				}
-								
-				if (paintPnt){
-					QPen ptPen(sign.color);
-					ptPen.setCapStyle(Qt::RoundCap);
-					ptPen.setWidth(10);
-					painter.setPen(ptPen);
-					for (int i = 0; i < sz; ++i){
-						painter.drawPoint(zonePnts[i].first, zonePnts[i].second);
-					}
-				}
-			}
+			    int sz = zonePnts.size();												
+			    for (int i = 1; i < sz; ++i)
+				    painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+																		
+			    if (paintPnt){
+				    QPen ptPen(sign.color);
+				    ptPen.setCapStyle(Qt::RoundCap);
+				    ptPen.setWidth(10);
+				    painter.setPen(ptPen);
+				    for (int i = 0; i < sz; ++i){
+					    painter.drawPoint(zonePnts[i].first, zonePnts[i].second);
+				    }
+			    }
+		    }
 		}
 		else{
 
@@ -236,13 +234,11 @@ void wdgGraph::paintSignalsAlter(){
 
 	QPen pn; pn.setColor(Qt::gray); pn.setWidthF(0.2);
 	painter.setPen(pn);
-
 	
 	QPair<qint64, qint64> tmInterv = axisTime_->getTimeInterval();
 
 	bool paintPnt = (tmInterv.second - tmInterv.first) < SV_CYCLESAVE_MS;
-
-	
+    	
 	int signBoolCnt = 0;
 	for (int s = signalListAlter_.size() - 1; s >= 0; --s){
 
@@ -258,12 +254,9 @@ void wdgGraph::paintSignalsAlter(){
 				QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
 
 				int sz = zonePnts.size();
-
-				for (int i = 1; i < sz; ++i){
+				for (int i = 1; i < sz; ++i)
 					painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
-				}
-
-				
+								
 				if (paintPnt){
 					QPen ptPen(sign.color);
 					ptPen.setCapStyle(Qt::RoundCap);
@@ -539,6 +532,7 @@ QStringList wdgGraph::getAllAlterSignals(){
 
 	return signalListAlter_;
 }
+
 void wdgGraph::setAxisTime(wdgAxisTime* axisTime){
 
 	axisTime_ = axisTime;
@@ -644,7 +638,9 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 		tmZnEnd = sign->buffMaxTime,
 		tmMinInterval = tmInterval.first,
 		tmMaxInterval = tmInterval.second;
-	if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QVector<QVector<QPair<int, int>>>();
+
+	if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval))
+        return QVector<QVector<QPair<int, int>>>();
 			
 	int z = sign->buffBeginPos;
 		

@@ -41,7 +41,8 @@ class MainWin : public QMainWindow
 
     friend QMap<QString, SV_Cng::signalData*> getCopySignalRef();
     friend QMap<QString, SV_Cng::moduleData*> getCopyModuleRef();
-    friend SV_Cng::signalData* getSignalData(const QString& sign);	
+    friend SV_Cng::signalData* getSignalData(const QString& sign);
+    friend SV_Cng::moduleData* getModuleData(const QString& md);
     friend bool loadSignalData(const QString& sign);
 
 public:
@@ -70,6 +71,7 @@ private:
     QDialog* exportPanel_ = nullptr;
     QMap<QObject*, QWidget*> graphPanels_;
 	QDialog* statPanel_ = nullptr;
+    QDialog* scriptPanel_ = nullptr;
 
 	thrLoadData* thrLoadData_ = nullptr;
 
@@ -96,6 +98,8 @@ private:
 	void sortSignalByGroupOrModule(bool byModule);
 
 public slots:
+    void updateTblSignal();
+    void updateSignals();
 	void actionOpenData();
 	void actionOpenStat();
 	void selSignalClick(QTreeWidgetItem*, int);

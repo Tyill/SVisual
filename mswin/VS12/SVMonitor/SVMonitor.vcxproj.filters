@@ -185,6 +185,9 @@
     <None Include="..\..\..\src\SVMonitor\resources\svmonitor_en.ts">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\..\src\SVMonitor\resources\svmonitor_en.qm">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\SVMonitor\resources\resource.rc">

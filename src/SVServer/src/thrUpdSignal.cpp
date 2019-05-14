@@ -259,6 +259,8 @@ void thrUpdSignal::updCycle(){
 			}
 
 			for (auto& m : moduleActive){
+
+                if (m.first == "Virtual") continue;
 			    
 			    if (!mref[m.first]->isActive && m.second)
 			        modConnect(m.first);

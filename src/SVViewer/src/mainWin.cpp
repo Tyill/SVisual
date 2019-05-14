@@ -28,11 +28,20 @@
 #include "forms/mainWin.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVStatPanel/SVStatPanel.h"
+#include "SVScriptPanel/SVScriptPanel.h"
 #include "SVExportPanel/SVExportPanel.h" 
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
-const QString VERSION = "1.0.7";
+const QString VERSION = "1.0.8";
+// -add script panel
+
+// const QString VERSION = "1.0.7";
+// -font change
+
+// const QString VERSION = "1.0.6";
+// -save win state
+// -small fix's
 
 MainWin* mainWin = nullptr;
 
@@ -55,13 +64,20 @@ QMap<QString, moduleData*> getCopyModuleRef(){
     return mref;
 }
 
-
 signalData* getSignalData(const QString& sign){
 
     signalData* sd = mainWin->signalRef_.contains(sign) ? mainWin->signalRef_[sign] : nullptr;
 
     return sd;
 }
+
+moduleData* getModuleData(const QString& sign){
+
+    moduleData* md = mainWin->moduleRef_.contains(sign) ? mainWin->moduleRef_[sign] : nullptr;
+
+    return md;
+}
+
 
 bool MainWin::writeSettings(QString pathIni){
 
@@ -150,6 +166,9 @@ bool MainWin::writeSignals(QString path){
 
     for (auto s : signalRef_){
 
+        if (s->module == "Virtual")
+            continue;
+
         txtStream << s->module.c_str() << '\t'
                   << QString::fromLocal8Bit(s->name.c_str()) << '\t'
                   << getSVTypeStr(s->type).c_str() << '\t'
@@ -213,7 +232,47 @@ void MainWin::load(){
         return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
 	});
 
+    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::viewer);
+    scriptPanel_->setWindowFlags(Qt::Window);
+
+    SV_Script::setLoadSignalData(scriptPanel_, loadSignalData);
+    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
+    SV_Script::setGetSignalData(scriptPanel_, getSignalData);
+    SV_Script::setGetModuleData(scriptPanel_, getModuleData);
+    SV_Script::setAddSignal(scriptPanel_, [](const QString& name, SV_Cng::signalData* sd){
+        if (!mainWin->signalRef_.contains(name)) {
+            mainWin->signalRef_.insert(name, sd);
+            mainWin->signalRef_[name]->isActive = true;
+
+            return true;
+        }
+        return false;
+    });
+    SV_Script::setAddModule(scriptPanel_, [](const QString& name, SV_Cng::moduleData* md){
+        if (!mainWin->moduleRef_.contains(name)) {
+            mainWin->moduleRef_.insert(name, md);
+            mainWin->moduleRef_[name]->isActive = true;
+            
+            return true;
+        }   
+        return false;
+    });
+    SV_Script::setAddSignalsCBack(scriptPanel_, [](){
+         QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+    });
+    SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
+        QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+    });
+    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
+        QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+    });
+    
+    SV_Script::startUpdateThread(scriptPanel_);
+
 	ui.splitter->addWidget(gp);
+    QList<int> ss; ss.append(150); ss.append(500);
+    ui.splitter->setSizes(ss);
+
 	ui.progressBar->setVisible(false);
 
 	ui.btnSortByModule->setChecked(cng.sortByMod);
@@ -246,24 +305,24 @@ void MainWin::Connect(){
 		
     connect(ui.actionUpFont, &QAction::triggered, [this]() {
 
-        QFont ft = this->font();
+        QFont ft = QApplication::font();
 
         ft.setPointSize(ft.pointSize() + 1);
 
-        this->setFont(ft);
-                
         QApplication::setFont(ft);
     });
 
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
 
-        QFont ft = this->font();
+        QFont ft = QApplication::font();
 
         ft.setPointSize(ft.pointSize() - 1);
         
-        this->setFont(ft);
-
         QApplication::setFont(ft);
+    });
+    connect(ui.actionScript, &QAction::triggered, [this]() {
+
+        if (scriptPanel_) scriptPanel_->show();
     });
 
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
@@ -414,10 +473,10 @@ bool MainWin::init(QString initPath){
 	cng.selOpenDir = settings.value("selOpenDir", "").toString();
 	cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
 		
-    QFont ft = this->font();
+    QFont ft = QApplication::font();
     int fsz = settings.value("fontSz", ft.pointSize()).toInt();
     ft.setPointSize(fsz);
-    this->setFont(ft);
+    QApplication::setFont(ft);
 
 	if (!QFile(initPath).exists())
 		writeSettings(initPath);
@@ -442,6 +501,7 @@ MainWin::MainWin(QWidget *parent)
 	Connect();
 
 	load();
+
 }
 
 MainWin::~MainWin()
@@ -461,7 +521,23 @@ bool MainWin::eventFilter(QObject *target, QEvent *event){
     return QMainWindow::eventFilter(target, event);
 }
 
+void MainWin::updateTblSignal(){
+
+    mainWin->sortSignalByGroupOrModule(mainWin->ui.btnSortByModule->isChecked());
+}
+
+void MainWin::updateSignals(){
+
+    for (auto gp : graphPanels_)
+        SV_Graph::update(gp);
+}
+
 void MainWin::sortSignalByGroupOrModule(bool byModule){
+
+    int itsz = ui.treeSignals->topLevelItemCount();
+    QMap<QString, bool> isExpanded;
+    for (int i = 0; i < itsz; ++i)
+        isExpanded[ui.treeSignals->topLevelItem(i)->text(0)] = ui.treeSignals->topLevelItem(i)->isExpanded();
 
 	ui.treeSignals->clear();
 	auto sref = getCopySignalRef();
@@ -474,14 +550,16 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 		ui.treeSignals->headerItem()->setText(2, tr("Группа"));
 		
-		for (auto itMod : moduleRef_){
+		for (auto md : moduleRef_){
 
-			if (!itMod->isActive) continue;
+            if (!md->isActive) continue;
 
 			QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
 			
-			root->setText(0, itMod->module.c_str());
-			for (auto& s : itMod->signls){
+            if (isExpanded.contains(md->module.c_str()))
+                root->setExpanded(isExpanded[md->module.c_str()]);
+            root->setText(0, md->module.c_str());
+            for (auto& s : md->signls){
 
 				QString sname = s.c_str();
 
@@ -507,17 +585,19 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 		ui.treeSignals->headerItem()->setText(2, tr("Модуль"));
 
-		for (auto itGrp : groupRef_){
+		for (auto grp : groupRef_){
 
-			if (!itGrp->isActive) continue;
+            if (!grp->isActive) continue;
 
-			if (itGrp->signls.empty()) continue;
+            if (grp->signls.empty()) continue;
 
 			QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
 
-			root->setText(0, itGrp->group.c_str());
+            if (isExpanded.contains(grp->group.c_str()))
+                root->setExpanded(isExpanded[grp->group.c_str()]);
+            root->setText(0, grp->group.c_str());
 					
-			for (auto& s : itGrp->signls){
+            for (auto& s : grp->signls){
 
 				QString sname = s.c_str();
 
@@ -623,7 +703,6 @@ void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
 		
 }
 
-
 QDialog* MainWin::addNewWindow(const QRect& pos){
 
     QDialog* graphWin = new QDialog(this, Qt::Window);
@@ -644,9 +723,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
 
     graphPanels_[graphWin] = gp;
     vertLayout->addWidget(gp);
-
-    graphWin->setFont(this->font());
-
+      
     graphWin->show();
 
     if (!pos.isNull()){

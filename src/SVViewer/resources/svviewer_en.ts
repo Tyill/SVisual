@@ -5,180 +5,186 @@
     <name>MainWin</name>
     <message>
         <location filename="../forms/mainWin.ui" line="14"/>
-        <location filename="../forms/ui_mainWin.h" line="264"/>
+        <location filename="../forms/ui_mainWin.h" line="271"/>
         <source>SVViewer</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="52"/>
-        <location filename="../forms/ui_mainWin.h" line="283"/>
+        <location filename="../forms/ui_mainWin.h" line="291"/>
         <source>Модули</source>
         <translation>Module</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="65"/>
-        <location filename="../forms/ui_mainWin.h" line="284"/>
+        <location filename="../forms/ui_mainWin.h" line="292"/>
         <source>Группы</source>
         <translation>Group</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="99"/>
-        <location filename="../forms/ui_mainWin.h" line="289"/>
+        <location filename="../forms/ui_mainWin.h" line="297"/>
         <source>Имя</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="104"/>
-        <location filename="../forms/ui_mainWin.h" line="288"/>
+        <location filename="../forms/ui_mainWin.h" line="296"/>
         <source>Тип</source>
         <translation>Type</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="109"/>
-        <location filename="../forms/ui_mainWin.h" line="287"/>
-        <location filename="../src/mainWin.cpp" line="471"/>
+        <location filename="../forms/ui_mainWin.h" line="295"/>
+        <location filename="../src/mainWin.cpp" line="551"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="114"/>
-        <location filename="../forms/ui_mainWin.h" line="286"/>
+        <location filename="../forms/ui_mainWin.h" line="294"/>
         <source>Комментарий</source>
         <translation>Comment</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="236"/>
-        <location filename="../forms/ui_mainWin.h" line="294"/>
+        <location filename="../forms/ui_mainWin.h" line="302"/>
         <source>Файл</source>
         <translation>File</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="244"/>
-        <location filename="../forms/ui_mainWin.h" line="295"/>
+        <location filename="../forms/ui_mainWin.h" line="303"/>
         <source>Помощь</source>
         <translation>Help</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="250"/>
-        <location filename="../forms/ui_mainWin.h" line="296"/>
+        <location filename="../forms/ui_mainWin.h" line="304"/>
         <source>Вид</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="281"/>
-        <location filename="../forms/ui_mainWin.h" line="267"/>
+        <location filename="../forms/mainWin.ui" line="282"/>
+        <location filename="../forms/ui_mainWin.h" line="274"/>
         <source>Открыть</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="284"/>
-        <location filename="../forms/ui_mainWin.h" line="269"/>
+        <location filename="../forms/mainWin.ui" line="285"/>
+        <location filename="../forms/ui_mainWin.h" line="276"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="289"/>
-        <location filename="../forms/ui_mainWin.h" line="270"/>
+        <location filename="../forms/mainWin.ui" line="290"/>
+        <location filename="../forms/ui_mainWin.h" line="277"/>
         <source>Выход</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="312"/>
-        <location filename="../forms/ui_mainWin.h" line="273"/>
+        <location filename="../forms/mainWin.ui" line="313"/>
+        <location filename="../forms/ui_mainWin.h" line="280"/>
         <source>Печать</source>
         <translation>Print</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="321"/>
-        <location filename="../forms/ui_mainWin.h" line="274"/>
+        <location filename="../forms/mainWin.ui" line="322"/>
+        <location filename="../forms/ui_mainWin.h" line="281"/>
         <source>Экспорт</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="330"/>
-        <location filename="../forms/ui_mainWin.h" line="275"/>
+        <location filename="../forms/mainWin.ui" line="331"/>
+        <location filename="../forms/ui_mainWin.h" line="282"/>
         <source>Новое окно</source>
         <translation>New window</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="335"/>
-        <location filename="../forms/ui_mainWin.h" line="276"/>
+        <location filename="../forms/mainWin.ui" line="336"/>
+        <location filename="../forms/ui_mainWin.h" line="283"/>
         <source>Сохранить текущее состояние</source>
         <translation>Save current state</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="340"/>
-        <location filename="../forms/ui_mainWin.h" line="277"/>
+        <location filename="../forms/mainWin.ui" line="341"/>
+        <location filename="../forms/ui_mainWin.h" line="284"/>
         <source>Загрузить состояние окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="345"/>
-        <location filename="../forms/ui_mainWin.h" line="278"/>
+        <location filename="../forms/mainWin.ui" line="346"/>
+        <location filename="../forms/ui_mainWin.h" line="285"/>
         <source>Увеличить размер шрифта</source>
         <translation>Increase font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="348"/>
-        <location filename="../forms/ui_mainWin.h" line="279"/>
+        <location filename="../forms/mainWin.ui" line="349"/>
+        <location filename="../forms/ui_mainWin.h" line="286"/>
         <source>Ctrl+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="353"/>
-        <location filename="../forms/ui_mainWin.h" line="280"/>
+        <location filename="../forms/mainWin.ui" line="354"/>
+        <location filename="../forms/ui_mainWin.h" line="287"/>
         <source>Уменьшить размер шрифта</source>
         <translation>Decrease font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="356"/>
-        <location filename="../forms/ui_mainWin.h" line="281"/>
+        <location filename="../forms/mainWin.ui" line="357"/>
+        <location filename="../forms/ui_mainWin.h" line="288"/>
         <source>Ctrl+2</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/mainWin.ui" line="366"/>
+        <location filename="../forms/ui_mainWin.h" line="289"/>
+        <source>Скрипт</source>
+        <translation>Script</translation>
     </message>
     <message>
         <source>Добавить</source>
         <translation type="vanished">Add</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="298"/>
-        <location filename="../forms/ui_mainWin.h" line="271"/>
+        <location filename="../forms/mainWin.ui" line="299"/>
+        <location filename="../forms/ui_mainWin.h" line="278"/>
         <source>Статистика</source>
         <translation>Stat</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="303"/>
-        <location filename="../forms/ui_mainWin.h" line="272"/>
+        <location filename="../forms/mainWin.ui" line="304"/>
+        <location filename="../forms/ui_mainWin.h" line="279"/>
         <source>О программе</source>
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="303"/>
+        <location filename="../src/mainWin.cpp" line="366"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="349"/>
+        <location filename="../src/mainWin.cpp" line="412"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="391"/>
+        <location filename="../src/mainWin.cpp" line="454"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="392"/>
+        <location filename="../src/mainWin.cpp" line="455"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="504"/>
+        <location filename="../src/mainWin.cpp" line="586"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="553"/>
+        <location filename="../src/mainWin.cpp" line="637"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
@@ -191,7 +197,7 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="564"/>
+        <location filename="../src/mainWin.cpp" line="648"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>
