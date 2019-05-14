@@ -108,6 +108,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnResetActive">
+           <property name="toolTip">
+            <string>Удалить из активных</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -125,6 +128,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnSetActive">
+           <property name="toolTip">
+            <string>Добавить в активные</string>
+           </property>
            <property name="text">
             <string/>
            </property>
