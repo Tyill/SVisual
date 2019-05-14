@@ -80,5 +80,8 @@
     <None Include="..\..\..\src\SVScriptPanel\resources\svscriptpanel_en.qm">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\..\src\SVScriptPanel\resources\svscriptpanel_en.ts">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

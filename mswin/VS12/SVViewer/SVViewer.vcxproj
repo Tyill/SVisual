@@ -166,6 +166,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
     </CustomBuild>
+    <None Include="..\..\..\src\SVViewer\resources\svviewer_en.qm" />
     <None Include="..\..\..\src\SVViewer\resources\svviewer_en.ts" />
   </ItemGroup>
   <ItemGroup>

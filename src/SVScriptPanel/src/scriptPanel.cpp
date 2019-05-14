@@ -259,7 +259,7 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, 
 
     QString sign = signal + module;
              
-    if (signBuff_.find(sign) != signBuff_.end())
+    if (signBuff_.contains(sign))
         return true;
     
     if (module == "Virtual"){

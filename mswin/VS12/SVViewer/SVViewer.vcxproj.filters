@@ -110,6 +110,9 @@
     <None Include="..\..\..\src\SVViewer\resources\svviewer_en.ts">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\..\src\SVViewer\resources\svviewer_en.qm">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\SVViewer\resources\resource.rc">
