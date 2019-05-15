@@ -265,8 +265,8 @@ public:
         mainToolBar->addAction(actionEventOrder);
         mainToolBar->addAction(actionPrint);
         mainToolBar->addAction(actionExport);
-        mainToolBar->addAction(actionNewWin);
         mainToolBar->addAction(actionScript);
+        mainToolBar->addAction(actionNewWin);
 
         retranslateUi(MainWin);
 

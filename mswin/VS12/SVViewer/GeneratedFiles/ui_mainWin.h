@@ -46,6 +46,7 @@ public:
     QAction *actionLoadWinState;
     QAction *actionUpFont;
     QAction *actionDnFont;
+    QAction *actionScript;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -115,6 +116,11 @@ public:
         actionUpFont->setObjectName(QStringLiteral("actionUpFont"));
         actionDnFont = new QAction(MainWin);
         actionDnFont->setObjectName(QStringLiteral("actionDnFont"));
+        actionScript = new QAction(MainWin);
+        actionScript->setObjectName(QStringLiteral("actionScript"));
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/SVViewer/images/script.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionScript->setIcon(icon6);
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -252,6 +258,7 @@ public:
         mainToolBar->addAction(actionStat);
         mainToolBar->addAction(actionPrint);
         mainToolBar->addAction(actionExport);
+        mainToolBar->addAction(actionScript);
         mainToolBar->addAction(actionNewWin);
 
         retranslateUi(MainWin);
@@ -279,6 +286,7 @@ public:
         actionUpFont->setShortcut(QApplication::translate("MainWin", "Ctrl+1", 0));
         actionDnFont->setText(QApplication::translate("MainWin", "\320\243\320\274\320\265\320\275\321\214\321\210\320\270\321\202\321\214 \321\200\320\260\320\267\320\274\320\265\321\200 \321\210\321\200\320\270\321\204\321\202\320\260", 0));
         actionDnFont->setShortcut(QApplication::translate("MainWin", "Ctrl+2", 0));
+        actionScript->setText(QApplication::translate("MainWin", "\320\241\320\272\321\200\320\270\320\277\321\202", 0));
         groupBox->setTitle(QString());
         btnSortByModule->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSortByGroup->setText(QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\321\213", 0));

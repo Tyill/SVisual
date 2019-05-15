@@ -312,27 +312,27 @@ public:
         graphPanelClass->setWindowTitle(QApplication::translate("graphPanelClass", "graphPanel", 0));
         groupBox->setTitle(QString());
 #ifndef QT_NO_TOOLTIP
-        btnResizeByAuto->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 [CNTR+A]", 0));
+        btnResizeByAuto->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 [CTRL+A]", 0));
 #endif // QT_NO_TOOLTIP
         btnResizeByAuto->setText(QString());
         btnResizeByAuto->setShortcut(QApplication::translate("graphPanelClass", "Ctrl+A", 0));
 #ifndef QT_NO_TOOLTIP
-        btnResizeByTime->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 \320\277\320\276 \320\262\321\200\320\265\320\274\320\265\320\275\320\270  [CNTR+S]", 0));
+        btnResizeByTime->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 \320\277\320\276 \320\262\321\200\320\265\320\274\320\265\320\275\320\270  [CTRL+S]", 0));
 #endif // QT_NO_TOOLTIP
         btnResizeByTime->setText(QString());
         btnResizeByTime->setShortcut(QApplication::translate("graphPanelClass", "Ctrl+S", 0));
 #ifndef QT_NO_TOOLTIP
-        btnResizeByValue->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 \320\277\320\276 \320\260\320\274\320\277\320\273\320\270\321\202\321\203\320\264\320\265 [CNTR+D]", 0));
+        btnResizeByValue->setToolTip(QApplication::translate("graphPanelClass", "\320\260\320\262\321\202\320\276\321\210\320\272\320\260\320\273\320\260 \320\277\320\276 \320\260\320\274\320\277\320\273\320\270\321\202\321\203\320\264\320\265 [CTRL+D]", 0));
 #endif // QT_NO_TOOLTIP
         btnResizeByValue->setText(QString());
         btnResizeByValue->setShortcut(QApplication::translate("graphPanelClass", "Ctrl+D", 0));
 #ifndef QT_NO_TOOLTIP
-        btnUndo->setToolTip(QApplication::translate("graphPanelClass", "\320\262\320\265\321\200\320\275\321\203\321\202\321\214\321\201\321\217 [CNTR+Z]", 0));
+        btnUndo->setToolTip(QApplication::translate("graphPanelClass", "\320\262\320\265\321\200\320\275\321\203\321\202\321\214\321\201\321\217 [CTRL+Z]", 0));
 #endif // QT_NO_TOOLTIP
         btnUndo->setText(QString());
         btnUndo->setShortcut(QApplication::translate("graphPanelClass", "Ctrl+Z", 0));
 #ifndef QT_NO_TOOLTIP
-        btnColorUpdate->setToolTip(QApplication::translate("graphPanelClass", "\321\201\320\274\320\265\320\275\320\270\321\202\321\214 \321\206\320\262\320\265\321\202\320\260  [CNTR+F]", 0));
+        btnColorUpdate->setToolTip(QApplication::translate("graphPanelClass", "\321\201\320\274\320\265\320\275\320\270\321\202\321\214 \321\206\320\262\320\265\321\202\320\260  [CTRL+F]", 0));
 #endif // QT_NO_TOOLTIP
         btnColorUpdate->setText(QString());
         btnColorUpdate->setShortcut(QApplication::translate("graphPanelClass", "Ctrl+F", 0));
