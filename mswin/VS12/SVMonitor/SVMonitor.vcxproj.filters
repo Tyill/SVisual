@@ -62,9 +62,6 @@
     <ClCompile Include="..\..\..\src\SVMonitor\src\treeWidgetExt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVMonitor\src\triggerPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_comReader.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -93,12 +90,6 @@
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_settingsPanel.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_triggerPanel.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_triggerPanel.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_resource.cpp">
@@ -130,12 +121,6 @@
     <CustomBuild Include="..\..\..\src\SVMonitor\forms\settingsPanel.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVMonitor\forms\triggerPanel.h">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVMonitor\forms\triggerPanel.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVMonitor\resources\resource.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
@@ -153,9 +138,6 @@
     <ClInclude Include="..\..\..\src\SVMonitor\src\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_eventOrderWin.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -163,9 +145,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_settingsPanel.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_triggerPanel.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_eventOrderWin.h">

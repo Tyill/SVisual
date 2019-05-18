@@ -30,13 +30,13 @@
 #include "forms/mainwin.h"
 #include "forms/eventOrderWin.h"
 #include "forms/settingsPanel.h"
-#include "forms/triggerPanel.h"
 #include "sql.h"
 #include "comReader.h"
 #include "SVAuxFunc/mt_log.h"
 #include "SVAuxFunc/serverTCP.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVExportPanel/SVExportPanel.h"
+#include "SVTriggerPanel/SVTriggerPanel.h"
 #include "SVScriptPanel/SVScriptPanel.h"
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
@@ -69,7 +69,8 @@ void MainWin::load(){
 
 	orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
 	settPanel_ = new settingsPanel(this); settPanel_->setWindowFlags(Qt::Window);
-    trgPanel_ = new triggerPanel(this); trgPanel_->setWindowFlags(Qt::Window);   
+    triggerPanel_ = SV_Trigger::createTriggerPanel(this, SV_Trigger::config(cng.cycleRecMs, cng.packetSz));
+    triggerPanel_->setWindowFlags(Qt::Window);
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
     scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
@@ -78,6 +79,12 @@ void MainWin::load(){
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
+
+    SV_Trigger::setLoadSignalData(triggerPanel_, loadSignalDataSrv);
+    SV_Trigger::setGetCopySignalRef(triggerPanel_, getCopySignalRefSrv);
+    SV_Trigger::setGetSignalData(triggerPanel_, getSignalDataSrv);
+    SV_Trigger::setGetCopyModuleRef(triggerPanel_, getCopyModuleRefSrv);
+    SV_Trigger::setGetModuleData(triggerPanel_, getModuleDataSrv);
 
     SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
     SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
@@ -163,7 +170,7 @@ void MainWin::Connect(){
 		}
 	});
 	connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
-		if (trgPanel_) trgPanel_->show();
+        if (triggerPanel_) triggerPanel_->show();
 	});
 	connect(ui.actionEventOrder, &QAction::triggered, [this]() {
         if (orderWin_) orderWin_->show();
@@ -485,7 +492,7 @@ MainWin::~MainWin(){
 	if (db){
 		if (!db->saveSignals(SV_Srv::getCopySignalRef()))
 			statusMess(tr("Ошибка сохранения сигналов в БД"));
-		if (!db->saveTriggers(SV_Srv::getCopyTriggerRef()))
+		if (!db->saveTriggers(SV_Trigger::getCopyTriggerRef()))
 			statusMess(tr("Ошибка сохранения триггеров в БД"));
 		if (!db->saveUserEventData(userEvents_))
 			statusMess(tr("Ошибка сохранения евентов в БД"));

@@ -31,6 +31,7 @@
 #include "SVAuxFunc/TimerDelay.h"
 #include "SVAuxFunc/Front.h"
 #include "SVConfig/SVConfigData.h"
+#include "SVConfig/SVConfigLimits.h"
 #include "SVTriggerPanel/SVTriggerPanel.h"
 #include "ui_triggerPanel.h"
 
@@ -38,49 +39,71 @@ class triggerPanel : public QDialog
 {
 	Q_OBJECT
 
+public:
+   
+    SV_Trigger::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+    SV_Trigger::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
+    SV_Trigger::pf_getSignalData pfGetSignalData = nullptr;
+    SV_Trigger::pf_getModuleData pfGetModuleData = nullptr;
+    SV_Trigger::pf_loadSignalData pfLoadSignalData = nullptr;
+    SV_Trigger::pf_onTriggerCBack pfOnTriggerCBack = nullptr;
+
+	Ui::triggerPanelClass ui;
+
+	triggerPanel(QWidget *parent, SV_Trigger::config);
+	~triggerPanel();
+
+    void startUpdateThread();
+
+	void updateWin();
+
+    // вернуть все триггеры
+    QMap<QString, SV_Trigger::triggerData*> triggerPanel::getCopyTriggerRef();
+
+    // вернуть данные триггера
+    SV_Trigger::triggerData* triggerPanel::getTriggerData(const QString& trg);
+
+    // добавить триггер
+    bool triggerPanel::addTrigger(const QString& trg, SV_Trigger::triggerData* td);
+
+    // удалить триггер
+    bool triggerPanel::delTrigger(const QString& trg);
+
 
 private:
 
     SV_Trigger::config cng;
 
-	SV_Cng::eventType currCondition_ = SV_Cng::eventType::less;
+    SV_Trigger::eventType currCondition_ = SV_Trigger::eventType::less;
+    QMap<QString, SV_Trigger::triggerData*> triggerData_;
 
-	QString selModule_, selSignal_, selTrigg_, selDirProc_;
+    QString selModule_, selSignal_, selTrigg_, selDirProc_;
 
-	bool isSelModule_ = true;
+    bool isSelModule_ = true;
 
-	int ctriggerCnt_ = 0, cTriggRow_ = 0;
+    int ctriggerCnt_ = 0, cTriggRow_ = 0;
 
-    std::map < std::string, SV_Cng::triggerData * > triggerData_;
-	
     SV_Aux::TimerDelay tmDelay_;
     SV_Aux::Front front_;
-        
-    std::thread thr_;
+
+    std::thread workThr_;
     std::mutex mtx_;
     bool thrStop_ = false;
 
     void statusMess(const QString&);
-	void load();
+    void load();
 
-	void showEvent(QShowEvent * event);
-	
-	void enaBtnCondition(bool ena);
+    void showEvent(QShowEvent * event);
 
-	void updateTableTrigger();
-	void updateTableSignal();
-	void updateStateSignal();
+    void enaBtnCondition(bool ena);
 
-    bool checkCondition(SV_Cng::triggerData* tr, SV_Cng::signalData* sd);
+    void updateTableTrigger();
+    void updateTableSignal();
+    void updateStateSignal();
+
+    bool checkCondition(SV_Trigger::triggerData* tr, SV_Cng::signalData* sd);
     void workCycle();
 
-public:
-	Ui::triggerPanelClass ui;
-
-	triggerPanel(QWidget *parent = 0);
-	~triggerPanel();
-
-	void updateWin();
 
 private slots:
 	void selModule(QListWidgetItem * item);
@@ -90,7 +113,7 @@ private slots:
 	void delTrigger();
 	void changeTrigger();
 	void paramChange();
-	void selCondition(SV_Cng::eventType);
+    void selCondition(SV_Trigger::eventType);
 	void selDirProc();
 };
 

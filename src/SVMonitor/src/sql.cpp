@@ -160,7 +160,7 @@ sql::~sql(){
 
 }
 
-bool sql::saveTriggers(const std::map<std::string, triggerData*>& trgData){
+bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 
 	stringstream ss;vector<vector<string>> res;
 		

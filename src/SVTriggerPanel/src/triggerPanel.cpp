@@ -24,35 +24,43 @@
 //
 #include "stdafx.h"
 #include "forms/triggerPanel.h"
-#include "SVServer/SVServer.h"
 
 using namespace SV_Cng;
+using namespace SV_Trigger;
 
 void triggerPanel::statusMess(const QString&){
 
 
 }
 
-triggerPanel::triggerPanel(QWidget *parent){
+triggerPanel::triggerPanel(QWidget *parent, SV_Trigger::config cng_){
+    
+#ifdef SV_EN
+    QTranslator translator;
+    translator.load(":/SVTrigger/svtriggerpanel_en.qm");
+    QCoreApplication::installTranslator(&translator);
+#endif
 
 	setParent(parent);
 	
 	ui.setupUi(this);
+
+    cng = cng_;
 	
 	connect(ui.btnAddTrigger, SIGNAL(clicked()), this, SLOT(addTrigger()));
 	connect(ui.btnDelTrigger, SIGNAL(clicked()), this, SLOT(delTrigger()));
 	connect(ui.btnChangeTrigger, SIGNAL(clicked()), this, SLOT(changeTrigger()));
 	
 	connect(ui.btnLess, &QPushButton::clicked, [this](){
-		paramChange(); selCondition(SV_Cng::eventType::less); });
+		paramChange(); selCondition(eventType::less); });
 	connect(ui.btnEqual, &QPushButton::clicked, [this](){
-		paramChange(); selCondition(SV_Cng::eventType::equals); });
+		paramChange(); selCondition(eventType::equals); });
 	connect(ui.btnMore, &QPushButton::clicked, [this](){
-		paramChange(); selCondition(SV_Cng::eventType::more); });
+		paramChange(); selCondition(eventType::more); });
 	connect(ui.btnNegFront, &QPushButton::clicked, [this](){
-		paramChange(); selCondition(SV_Cng::eventType::negFront); });
+		paramChange(); selCondition(eventType::negFront); });
 	connect(ui.btnPosFront, &QPushButton::clicked, [this](){
-		paramChange(); selCondition(SV_Cng::eventType::posFront); });
+		paramChange(); selCondition(eventType::posFront); });
 
 	connect(ui.listModule, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selModule(QListWidgetItem*)));
 	connect(ui.tableTrigger, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(selTrigger(QTableWidgetItem*)));
@@ -69,18 +77,31 @@ triggerPanel::triggerPanel(QWidget *parent){
 	ui.tableTrigger->hideColumn(2);
 }
 
-triggerPanel::~triggerPanel(){}
+triggerPanel::~triggerPanel(){
+
+    thrStop_ = true;
+    if (workThr_.joinable()) workThr_.join();
+}
+
+void triggerPanel::startUpdateThread(){
+
+    if (workThr_.joinable()) return;
+       
+    workThr_ = std::thread([](triggerPanel* sp){ sp->workCycle(); }, this);
+}
 
 void triggerPanel::showEvent(QShowEvent* event){
 
-	ui.listModule->clear(); auto mref = getCopyModuleRefSrv();
+	ui.listModule->clear();
+    
+    auto mref = pfGetCopyModuleRef();
 	for (auto mod : mref){
 		if (!mod->isDelete) ui.listModule->addItem(mod->module.c_str());
 	}
 	ui.tableSignal->clearContents();
 	ui.tableTrigger->clearContents();
 
-	ctriggerCnt_ = getCopyTriggerRefSrv().size();
+	ctriggerCnt_ = getCopyTriggerRef().size();
 
 	if (ui.listModule->count() > 0) selModule(ui.listModule->item(0));
 }
@@ -109,7 +130,7 @@ void triggerPanel::selSignal(QTableWidgetItem* item){
 
 	eventType cond = eventType::less;
 
-	signalData* sd = getSignalDataSrv(selSignal_ + selModule_);
+	signalData* sd = pfGetSignalData(selSignal_ + selModule_);
 
 	if (sd){
 		if (sd->type == valueType::tBool) cond = eventType::posFront;
@@ -137,15 +158,15 @@ void triggerPanel::updateTableTrigger(){
 
 	ui.tableTrigger->clearContents();
 
-	auto tref = getCopyTriggerRefSrv();
+	auto tref = getCopyTriggerRef();
 
 	int row = 0, rowCnt = ui.tableTrigger->rowCount();
 	for (auto t : tref){
 
-		bool isModule = isSelModule_ && (t->module.c_str() == selModule_) &&
+		bool isModule = isSelModule_ && (t->module == selModule_) &&
 				((t->condType == eventType::connectModule) || (t->condType == eventType::disconnectModule));
 
-		bool isSignal = !isSelModule_ && (t->signal.c_str() == selSignal_);
+		bool isSignal = !isSelModule_ && (t->signal == selSignal_);
 
 		if (isModule || isSignal){
 
@@ -153,15 +174,15 @@ void triggerPanel::updateTableTrigger(){
 				ui.tableTrigger->insertRow(rowCnt);	++rowCnt;
 			}
 
-			ui.tableTrigger->setItem(row, 0, new QTableWidgetItem(t->name.c_str()));
+			ui.tableTrigger->setItem(row, 0, new QTableWidgetItem(t->name));
 
 			if (isModule)
-			    ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(getEventTypeStr(t->condType).c_str()));
+			    ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(getEventTypeStr(t->condType)));
 			else
-				ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(getEventTypeStr(t->condType).c_str() +
+				ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(getEventTypeStr(t->condType) +
 					 QString(" value ") + QString::number(t->condValue) + " tout " + QString::number(t->condTOut)));
 
-			ui.tableTrigger->setItem(row, 2, new QTableWidgetItem(t->signal.c_str()));
+			ui.tableTrigger->setItem(row, 2, new QTableWidgetItem(t->signal));
 
 			++row;
 		}
@@ -177,7 +198,7 @@ void triggerPanel::updateTableTrigger(){
 void triggerPanel::updateTableSignal(){
 
 	ui.tableSignal->clearContents();
-	auto sref = getCopySignalRefSrv();
+	auto sref = pfGetCopySignalRef();
 
 	int row = 0, rowCnt = ui.tableSignal->rowCount();
 	for (auto s : sref){
@@ -204,7 +225,7 @@ void triggerPanel::updateStateSignal(){
 	QString trigr = ui.tableTrigger->item(crow, 0)->text();
 	if (trigr.isEmpty()) return;
 
-	triggerData* td = getTriggerDataSrv(trigr);
+	triggerData* td = getTriggerData(trigr);
 	
     if (!td) return;
 
@@ -216,12 +237,10 @@ void triggerPanel::updateStateSignal(){
 	ui.txtTrigg->setText(trigr);
 	
 	ui.rbtnActiv->setChecked(td->isActive);
+	
+	ui.txtUserProcPath->setText(td->userProcPath);
+	ui.txtUserProcArgs->setText(td->userProcArgs);
 
-	auto ue = mainWin_->getUserData(trigr);
-	if (ue){
-		ui.txtUserProcPath->setText(ue->userProcPath);
-		ui.txtUserProcArgs->setText(ue->userProcArgs);
-	}
 
 }
 
@@ -293,7 +312,7 @@ void triggerPanel::addTrigger(){
 
 	QString tname = ui.txtTrigg->text();
 
-	if (tname.isEmpty() || getTriggerDataSrv(tname)) return;
+	if (tname.isEmpty() || getTriggerData(tname)) return;
 
 	triggerData* td = new triggerData();
 
@@ -304,11 +323,10 @@ void triggerPanel::addTrigger(){
 	td->isActive = ui.rbtnActiv->isChecked();
 	td->condValue = ui.txtCondition->text().toInt();
 	td->condTOut = ui.txtTOut->text().toInt();	
-
-	userEventData ud(tname, ui.txtUserProcPath->text(), ui.txtUserProcArgs->text());
-	mainWin_->addUserData(ud);
-	
-	addTriggerSrv(tname, td);
+    td->userProcPath = ui.txtUserProcPath->text();
+    td->userProcArgs = ui.txtUserProcArgs->text();
+        	
+	addTrigger(tname, td);
 	++ctriggerCnt_;
 
 	if (ctriggerCnt_ > SV_TRIGGER_MAX_CNT)
@@ -327,10 +345,8 @@ void triggerPanel::delTrigger(){
 	QString sign = ui.tableTrigger->item(crow, 0) ? ui.tableTrigger->item(crow, 0)->text() : "";
 	if (sign.isEmpty()) return;
 
-	delTriggerSrv(sign);
-
-	mainWin_->delUserData(sign);
-	
+	delTrigger(sign);
+    	
 	ui.lbIsChange->setText("");
 	updateTableTrigger();
 }
@@ -343,7 +359,7 @@ void triggerPanel::changeTrigger(){
 	QString name = ui.tableTrigger->item(crow, 0)->text();
 	if (name.isEmpty()) return;
 
-	auto td = getTriggerDataSrv(name);
+	auto td = getTriggerData(name);
 
 	if (!td) return;
 	
@@ -354,13 +370,10 @@ void triggerPanel::changeTrigger(){
 	}
 
 	td->isActive = ui.rbtnActiv->isChecked();
-				
-	auto ue = mainWin_->getUserData(name);
-	if (ue){
-		ue->userProcArgs = ui.txtUserProcArgs->text();
-		ue->userProcPath = ui.txtUserProcPath->text();
-	}
-
+		
+	td->userProcArgs = ui.txtUserProcArgs->text();
+	td->userProcPath = ui.txtUserProcPath->text();
+	
 	ui.lbIsChange->setText("");
 	cTriggRow_ = crow;
 	updateTableTrigger();
@@ -389,17 +402,17 @@ void triggerPanel::selDirProc(){
 ///////////////////////////////////////////////////////////
 
 // вернуть все триггеры
-std::map<std::string, SV_Cng::triggerData*> triggerPanel::getCopyTriggerRef(){
+QMap<QString, triggerData*> triggerPanel::getCopyTriggerRef(){
 
 	std::unique_lock<std::mutex> lck (mtx_);
 
-	std::map<std::string, SV_Cng::triggerData*> tref = triggerData_;
+    QMap<QString, triggerData*> tref = triggerData_;
 
 	return tref;
 }
 
 // вернуть данные триггера
-SV_Cng::triggerData* triggerPanel::getTriggerData(const string& trg){
+SV_Trigger::triggerData* triggerPanel::getTriggerData(const QString& trg){
 
 	std::unique_lock<std::mutex> lck (mtx_);
 
@@ -407,12 +420,12 @@ SV_Cng::triggerData* triggerPanel::getTriggerData(const string& trg){
 }
 
 // добавить триггер
-bool triggerPanel::addTrigger(const string& trg, SV_Cng::triggerData* td){
+bool triggerPanel::addTrigger(const QString& trg, SV_Trigger::triggerData* td){
 
 	std::unique_lock<std::mutex> lck (mtx_);
 
 	bool ok = false;
-	if (td && (triggerData_.find(trg) == triggerData_.end())){
+	if (td && !triggerData_.contains(trg)){
         triggerData_[trg] = td;
 	    ok = true;
 	}
@@ -421,16 +434,16 @@ bool triggerPanel::addTrigger(const string& trg, SV_Cng::triggerData* td){
 }
 
 // удалить триггер
-bool triggerPanel::delTrigger(const string& trg){
+bool triggerPanel::delTrigger(const QString& trg){
 
 	std::unique_lock<std::mutex> lck (mtx_);
 
 	bool ok = true;
-	if (triggerData_.find(trg) != triggerData_.end()){
+	if (triggerData_.contains(trg)){
 		triggerData_[trg]->isActive = false;
 	
 		// память не очищается специально!!
-		triggerData_.erase(trg);
+		triggerData_.remove(trg);
 	}
 	else ok = false;
 
@@ -440,9 +453,8 @@ bool triggerPanel::delTrigger(const string& trg){
 
 ///////////////////////////////////////////////////////////
 
-bool triggerPanel::checkCondition(triggerData* tr, signalData* sd){
-
-
+bool triggerPanel::checkCondition(SV_Trigger::triggerData* tr, signalData* sd){
+    
     bool ena = true, isImpulse = tr->condTOut <= 0;
     switch (tr->condType){
     case eventType::equals:
@@ -617,20 +629,20 @@ void triggerPanel::workCycle(){
 
         for (auto& t : tref){
 
-            if (trgId.find(t.first) == trgId.end()) {
+            if (!trgId.contains(t->name)) {
                 ++cid;
-                trgId[t.first] = cid;
-                sdata[t.first] = SV_Srv::getSignalData(t.second->signal + t.second->module);
+                trgId[t->name] = cid;
+                sdata[t->name] = pfGetSignalData(qUtf8Printable(t->signal + t->module));
             }
 
-            if (!sdata[t.first] && (t.second->condType != SV_Cng::eventType::connectModule) &&
-                (t.second->condType != SV_Cng::eventType::disconnectModule)) continue;
+            if (!sdata[t->name] && (t->condType != eventType::connectModule) &&
+                (t->condType != eventType::disconnectModule)) continue;
 
-            if (front_.PosFront(tmDelay_.OnDelTmSec(t.second->isActive && checkCondition(t.second, sdata[t.first]),
-                t.second->condTOut, trgId[t.first]), trgId[t.first])){
+            if (front_.PosFront(tmDelay_.OnDelTmSec(t->isActive && checkCondition(t, sdata[t->name]),
+                t->condTOut, trgId[t->name]), trgId[t->name])){
 
-                if (pServ_->pfTriggerCBack)
-                    pServ_->pfTriggerCBack(t.first);
+                if (pfOnTriggerCBack)
+                    pfOnTriggerCBack(t->name);
             }
         }
 
