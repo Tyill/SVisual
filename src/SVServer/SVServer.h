@@ -124,18 +124,5 @@ namespace SV_Srv {
     /// \return true - ok
     SVSRV_API bool signalBufferEna(const std::string& sign);
 
-
-    // вернуть все триггеры
-    SVSRV_API std::map<std::string, SV_Cng::triggerData*> getCopyTriggerRef();
-
-    // вернуть данные триггера
-    SVSRV_API SV_Cng::triggerData *getTriggerData(const std::string&);
-
-    // добавить триггер
-    SVSRV_API bool addTrigger(const std::string& name, SV_Cng::triggerData* td);
-
-    // удалить триггер
-    SVSRV_API bool delTrigger(const std::string& name);
-
 }
 

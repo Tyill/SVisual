@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVAuxFunc", "svAuxFunc\svAuxFunc.vcxproj", "{ABAC7B39-E15F-4708-9E1D-74AB3B8BEEED}"
 EndProject
@@ -74,6 +74,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVScriptPanel", "SVScriptPa
 		{ABAC7B39-E15F-4708-9E1D-74AB3B8BEEED} = {ABAC7B39-E15F-4708-9E1D-74AB3B8BEEED}
 		{2A3E28AD-7F43-4ED9-919C-F62B9B668F8A} = {2A3E28AD-7F43-4ED9-919C-F62B9B668F8A}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVTriggerPanel", "SVTriggerPanel\SVTriggerPanel.vcxproj", "{75F99AE4-62FD-43AE-981F-9A329F8F8878}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -169,6 +171,14 @@ Global
 		{79F3010A-257C-4C17-8256-4713EAFCEF5E}.Release|Win32.Build.0 = Release|Win32
 		{79F3010A-257C-4C17-8256-4713EAFCEF5E}.Release|x64.ActiveCfg = Release|x64
 		{79F3010A-257C-4C17-8256-4713EAFCEF5E}.Release|x64.Build.0 = Release|x64
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Debug|Win32.ActiveCfg = Debug|Win32
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Debug|Win32.Build.0 = Debug|Win32
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Debug|x64.ActiveCfg = Debug|x64
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Debug|x64.Build.0 = Debug|x64
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Release|Win32.ActiveCfg = Release|Win32
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Release|Win32.Build.0 = Release|Win32
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Release|x64.ActiveCfg = Release|x64
+		{75F99AE4-62FD-43AE-981F-9A329F8F8878}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

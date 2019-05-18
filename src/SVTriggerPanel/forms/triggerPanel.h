@@ -24,10 +24,15 @@
 //
 #pragma once
 
+#include <thread>
+#include <mutex>
+
 #include "src/stdafx.h"
+#include "SVAuxFunc/TimerDelay.h"
+#include "SVAuxFunc/Front.h"
 #include "SVConfig/SVConfigData.h"
+#include "SVTriggerPanel/SVTriggerPanel.h"
 #include "ui_triggerPanel.h"
-#include "mainwin.h"
 
 class triggerPanel : public QDialog
 {
@@ -36,7 +41,7 @@ class triggerPanel : public QDialog
 
 private:
 
-	MainWin* mainWin_ = nullptr;
+    SV_Trigger::config cng;
 
 	SV_Cng::eventType currCondition_ = SV_Cng::eventType::less;
 
@@ -46,6 +51,16 @@ private:
 
 	int ctriggerCnt_ = 0, cTriggRow_ = 0;
 
+    std::map < std::string, SV_Cng::triggerData * > triggerData_;
+	
+    SV_Aux::TimerDelay tmDelay_;
+    SV_Aux::Front front_;
+        
+    std::thread thr_;
+    std::mutex mtx_;
+    bool thrStop_ = false;
+
+    void statusMess(const QString&);
 	void load();
 
 	void showEvent(QShowEvent * event);
@@ -55,6 +70,9 @@ private:
 	void updateTableTrigger();
 	void updateTableSignal();
 	void updateStateSignal();
+
+    bool checkCondition(SV_Cng::triggerData* tr, SV_Cng::signalData* sd);
+    void workCycle();
 
 public:
 	Ui::triggerPanelClass ui;

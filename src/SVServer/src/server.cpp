@@ -47,8 +47,7 @@ bool server::startServer(SV_Srv::config cng_){
 	pBuffData_ = new bufferData(bufferData::config(cng_.cycleRecMs, cng_.packetSz));
 
 	pthrUpdSignal_ = new thrUpdSignal(cng_, this, pBuffData_);
-	pthrUpdTrigger_ = new thrUpdTrigger(cng_, this);
-
+	
 	isRun_ = true;
 
 	return true;
@@ -59,8 +58,7 @@ void server::stopServer(){
 
 	if (isRun_) {
 		delete pthrUpdSignal_;
-		delete pthrUpdTrigger_;
-
+	
 		isRun_ = false;
 	}
 }
@@ -202,56 +200,7 @@ bool server::signalBufferEna(const std::string& sign){
 }
 
 
-// вернуть все триггеры
-std::map<std::string, SV_Cng::triggerData*> server::getCopyTriggerRef(){
-
-	std::unique_lock<std::mutex> lck (mtx_);
-
-	std::map<std::string, SV_Cng::triggerData*> tref = triggerData_;
-
-	return tref;
-}
-
-// вернуть данные триггера
-SV_Cng::triggerData* server::getTriggerData(const string& trg){
-
-	std::unique_lock<std::mutex> lck (mtx_);
-
-	return triggerData_.find(trg) != triggerData_.end() ? triggerData_[trg] : nullptr;
-}
-
-// добавить триггер
-bool server::addTrigger(const string& trg, SV_Cng::triggerData* td){
-
-	std::unique_lock<std::mutex> lck (mtx_);
-
-	bool ok = false;
-	if (td && (triggerData_.find(trg) == triggerData_.end())){
-        triggerData_[trg] = td;
-	    ok = true;
-	}
-	
-	return ok;
-}
-
-// удалить триггер
-bool server::delTrigger(const string& trg){
-
-	std::unique_lock<std::mutex> lck (mtx_);
-
-	bool ok = true;
-	if (triggerData_.find(trg) != triggerData_.end()){
-		triggerData_[trg]->isActive = false;
-	
-		// память не очищается специально!!
-		triggerData_.erase(trg);
-	}
-	else ok = false;
-
-	return ok;
-}
-
-
+//////////////////////////////////////////////////////////
 
 std::string server::jsonGetError(){
 
