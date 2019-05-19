@@ -164,8 +164,16 @@ bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 
 	stringstream ss;vector<vector<string>> res;
 		
+    ss << "DELETE FROM Trigger;";
+    if (!Query(ss.str(), res)) return false;
+
+    ss.str(""); ss.clear();
+    ss << "DELETE FROM UserEventData;";
+    if (!Query(ss.str(), res)) return false;
+
 	for (auto& tr : trgData){
 	
+        ss.str(""); ss.clear();
 		ss << "INSERT INTO Trigger ('name','signal','module','isActive','condType','condValue','condTOut') VALUES(" <<
             "'" << tr->name.toUtf8().constData() << "',"
             "'" << tr->signal.toUtf8().constData() << "',"
@@ -176,17 +184,15 @@ bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 			"'" << tr->condTOut << "');";
 		
 		if (!Query(ss.str(), res)) return false;
-		ss.str(""); ss.clear();
-
+		
         /////////////////////////////////////////////////
-
+        ss.str(""); ss.clear();
         ss << "INSERT INTO UserEventData ('trigger','userProcPath','userProcArgs') VALUES(" <<
             "'" << tr->name.toUtf8().constData() << "',"
             "'" << tr->userProcPath.toUtf8().constData() << "',"
             "'" << tr->userProcArgs.toUtf8().constData() << "');";
 
-        if (!Query(ss.str(), res)) return false;
-        ss.str(""); ss.clear();
+        if (!Query(ss.str(), res)) return false;        
 	}
 	
 	return true;
@@ -221,8 +227,8 @@ QVector<triggerData*> sql::getTrigger(const QString& signal, const QString& modu
         vector<vector<string>> evData;
         if (!Query(ss.str(), evData)) return res;
 
-        td->userProcPath = evData[i][1].c_str();
-        td->userProcArgs = evData[i][2].c_str();
+        td->userProcPath = evData[i][2].c_str();
+        td->userProcArgs = evData[i][3].c_str();
 
 		res.push_back(td);
 	}

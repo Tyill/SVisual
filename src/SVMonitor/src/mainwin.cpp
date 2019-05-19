@@ -81,7 +81,6 @@ void MainWin::load(){
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
 
-    SV_Trigger::setLoadSignalData(triggerPanel_, loadSignalDataSrv);
     SV_Trigger::setGetCopySignalRef(triggerPanel_, getCopySignalRefSrv);
     SV_Trigger::setGetSignalData(triggerPanel_, getSignalDataSrv);
     SV_Trigger::setGetCopyModuleRef(triggerPanel_, getCopyModuleRefSrv);
@@ -126,10 +125,7 @@ void MainWin::load(){
 	SV_Srv::setOnModuleDisconnectCBack([](const std::string& module){
         QMetaObject::invokeMethod(mainWin, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
 	});
-    SV_Srv::setOnTriggerCBack([](const std::string& trigger) {
-        QMetaObject::invokeMethod(mainWin, "onTrigger", Qt::AutoConnection,Q_ARG(QString, QString::fromStdString(trigger)));
-    });
-
+  
 	bool err = false;
 	db = new sql(qUtf8Printable(cng.dbPath), err);
 
@@ -710,7 +706,7 @@ void MainWin::updateTblSignal(){
 
 	// посмотрим в БД что есть
 	if (db){
-		QMutexLocker locker(&mtx_);
+		
 		for (auto& s : sref){
 
 			// только тех, которые еще не видел
@@ -752,62 +748,47 @@ void MainWin::moduleConnect(QString module){
 		statusMess(tr("Превышен лимит количества модулей: %1. Стабильная работа не гарантирована.").
 		arg(SV_MODULE_MAX_CNT));
 
-	// посмотрим в БД что есть
-	if (db){
-		QMutexLocker locker(&mtx_);
-		for (auto& m : mref){
+	// только тех, которые еще не видел
+    if (!signExist_.contains(module)){
+				            				
+        auto trgOn = db ? db->getTrigger(module + "On") : nullptr;
+		if (!trgOn)	{				
+            trgOn = new SV_Trigger::triggerData();
+            trgOn->name = module + "On";
+            trgOn->signal = "";
+            trgOn->module = module;
+            trgOn->condType = SV_Trigger::eventType::connectModule;
+            trgOn->isActive = false;
+            trgOn->condValue = 0;
+            trgOn->condTOut = 0;
+        }
+        SV_Trigger::addTrigger(triggerPanel_, module + "On", trgOn);
+							
+        auto trgOff = db ? db->getTrigger(module + "Off") : nullptr;
+        if (!trgOff){
+            trgOff = new  SV_Trigger::triggerData();
+            trgOff->name = module + "Off";
+            trgOff->signal = "";
+            trgOff->module = module;
+            trgOff->condType = SV_Trigger::eventType::disconnectModule;
+            trgOff->isActive = false;
+            trgOff->condValue = 0;
+            trgOff->condTOut = 0;
+        }   
+        SV_Trigger::addTrigger(triggerPanel_, module + "Off", trgOff);
 
-			// только тех, которые еще не видел
-			if (!signExist_.contains(m.first.c_str())){
-
-				QString nm = QString::fromStdString(m.first) + "On";
-
-				auto trgOn = db->getTrigger(nm);
-				if (trgOn)
-					SV_Trigger::addTrigger(triggerPanel_, trgOn->name, trgOn);
-				
-				nm = QString::fromStdString(m.first) + "Off";
-
-				auto trgOff = db->getTrigger(nm);
-				if (trgOff)
-                    SV_Trigger::addTrigger(triggerPanel_, trgOff->name, trgOff);
-				
-				signExist_.insert(m.first.c_str());
-			}
-		}
+        signExist_.insert(module);
 	}
 	
 	sortSignalByModule();
+    	
+    auto tr = SV_Trigger::getTriggerData(triggerPanel_, module + "On");
+    if (tr->isActive)
+        tr->condValue = 1;
 
-	// добавим базовый триггер, если в БД не оказалось
-	if (!SV_Trigger::getTriggerData(triggerPanel_, module + "On")){
-		
-		QString nm = module + "On";
-		
-        SV_Trigger::triggerData* tdOn = new SV_Trigger::triggerData();
-		tdOn->name = module + "On";
-		tdOn->signal = "";
-		tdOn->module = module;
-		tdOn->condType = SV_Trigger::eventType::connectModule;
-		tdOn->isActive = false;
-		tdOn->condValue = 1;
-		tdOn->condTOut = 0;
-
-        SV_Trigger::addTrigger(triggerPanel_, module + "On", tdOn);
-
-		nm = module + "Off";
-		
-        SV_Trigger::triggerData* tdOff = new  SV_Trigger::triggerData();
-		tdOff->name = module + "Off";
-		tdOff->signal = "";
-		tdOff->module = module;
-        tdOff->condType = SV_Trigger::eventType::disconnectModule;
-		tdOff->isActive = false;
-		tdOff->condValue = 1;
-		tdOff->condTOut = 0;
-		
-        SV_Trigger::addTrigger(triggerPanel_, module + "Off", tdOff);
-	}	
+    tr = SV_Trigger::getTriggerData(triggerPanel_, module + "Off");
+    if (tr->isActive)
+        tr->condValue = 0;
 }
 
 void MainWin::moduleDisconnect(QString module){
@@ -815,6 +796,14 @@ void MainWin::moduleDisconnect(QString module){
     statusMess(tr("Отключен модуль: ") + module);
 		
     sortSignalByModule();
+
+    auto tr = SV_Trigger::getTriggerData(triggerPanel_, module + "On");
+    if (tr->isActive)
+        tr->condValue = 0;
+
+    tr = SV_Trigger::getTriggerData(triggerPanel_, module + "Off");
+    if (tr->isActive)
+        tr->condValue = 1;
 }
 
 void MainWin::onTrigger(QString trigger){

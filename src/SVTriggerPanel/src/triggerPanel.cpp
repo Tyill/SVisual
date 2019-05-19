@@ -595,7 +595,7 @@ bool triggerPanel::checkCondition(SV_Trigger::triggerData* tr, signalData* sd){
         break;
 
     case eventType::disconnectModule:
-        ena = tr->condValue == 0;
+        ena = tr->condValue == 1;
         break;
 
     default: ena = false;

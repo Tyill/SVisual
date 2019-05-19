@@ -99,10 +99,7 @@ namespace SV_Trigger {
 
     typedef SV_Cng::moduleData *(*pf_getModuleData)(const QString &module);
     SVTRIGGERPANEL_API void setGetModuleData(QDialog* panel, pf_getModuleData f);
-      
-    typedef bool(*pf_loadSignalData)(const QString& sign);
-    SVTRIGGERPANEL_API void setLoadSignalData(QDialog* panel, pf_loadSignalData f);
-
+    
     typedef void(*pf_onTriggerCBack)(const QString& name);
     SVTRIGGERPANEL_API void setOnTriggerCBack(QDialog* panel, pf_onTriggerCBack f);
 

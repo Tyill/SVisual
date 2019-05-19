@@ -45,7 +45,6 @@ public:
     SV_Trigger::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
     SV_Trigger::pf_getSignalData pfGetSignalData = nullptr;
     SV_Trigger::pf_getModuleData pfGetModuleData = nullptr;
-    SV_Trigger::pf_loadSignalData pfLoadSignalData = nullptr;
     SV_Trigger::pf_onTriggerCBack pfOnTriggerCBack = nullptr;
 
 	Ui::triggerPanelClass ui;

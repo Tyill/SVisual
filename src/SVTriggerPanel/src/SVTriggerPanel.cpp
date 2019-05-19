@@ -62,13 +62,7 @@ namespace SV_Trigger {
 		if (stp)
             ((triggerPanel*)stp)->pfGetSignalData = f;
 	}
-
-	void setLoadSignalData(QDialog *stp, pf_loadSignalData f) {
-
-		if (stp)
-            ((triggerPanel*)stp)->pfLoadSignalData = f;
-	}
-        	
+    	        	
     // вернуть все триггеры
     QMap<QString, triggerData*> getCopyTriggerRef(QDialog *stp){
 

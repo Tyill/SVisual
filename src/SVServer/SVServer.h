@@ -84,11 +84,7 @@ namespace SV_Srv {
     // добавление сигнала callBack
     typedef void(*onAddSignalsCBack)();
     SVSRV_API void setOnAddSignalsCBack(onAddSignalsCBack);
-
-    // сработал триггер callBack
-    typedef void(*onTriggerCBack)(const std::string& trigger);
-    SVSRV_API void setOnTriggerCBack(onTriggerCBack);
-
+        
     // модуль подключен
     typedef void(*onModuleConnectCBack)(const std::string& module);
     SVSRV_API void setOnModuleConnectCBack(onModuleConnectCBack);

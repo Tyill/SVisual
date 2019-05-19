@@ -26,7 +26,6 @@
 #include "server.h"
 #include "bufferData.h"
 #include "thrUpdSignal.h"
-#include "thrUpdTrigger.h"
 #include "SVAuxFunc/auxFunc.h"
 #include "Lib/rapidjson/document.h"
 #include "Lib/rapidjson/stringbuffer.h"

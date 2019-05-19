@@ -97,10 +97,9 @@ private:
 	eventOrderWin* orderWin_ = nullptr;   
 	settingsPanel* settPanel_ = nullptr;
 	QSystemTrayIcon* trayIcon_ = nullptr;
+
 	sql* db = nullptr;
-
-	QMutex mtx_;
-
+    
 	QSet<QString> signExist_;
 	
     bool eventFilter(QObject *target, QEvent *event);
