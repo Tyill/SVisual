@@ -32,7 +32,7 @@ namespace SV_Script {
         return new scriptPanel(parent, cng, mode);
 	}
 
-    void startUpdateThread(QWidget* stp){
+    void startUpdateThread(QDialog* stp){
 
         if (stp)
             ((scriptPanel *)stp)->startUpdateThread();

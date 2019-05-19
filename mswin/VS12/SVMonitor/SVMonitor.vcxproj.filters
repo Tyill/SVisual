@@ -156,8 +156,8 @@
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_settingsPanel.h">
       <Filter>Form Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_triggerPanel.h">
-      <Filter>Form Files</Filter>
+    <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

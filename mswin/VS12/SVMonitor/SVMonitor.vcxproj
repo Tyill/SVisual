@@ -108,6 +108,7 @@
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_eventOrderWin.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_mainwin.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_settingsPanel.h" />
+    <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h" />
     <ClInclude Include="GeneratedFiles\ui_settingsPanel.h" />
     <CustomBuild Include="..\..\..\src\SVMonitor\forms\settingsPanel.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -343,7 +344,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -361,7 +362,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -378,7 +379,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -396,7 +397,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>

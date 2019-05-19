@@ -36,8 +36,10 @@ class eventOrderWin;
 
 class MainWin : public QMainWindow
 {
-	Q_OBJECT
-			
+    Q_OBJECT
+
+        friend void statusMess(QString mess);
+
 public:
 
 	struct config{
@@ -100,8 +102,7 @@ private:
 	QMutex mtx_;
 
 	QSet<QString> signExist_;
-	QMap<QString, userEventData> userEvents_;
-
+	
     bool eventFilter(QObject *target, QEvent *event);
 
 	bool writeSettings(QString pathIni);
@@ -121,7 +122,6 @@ public slots:
 	void selSignalDClick(QTreeWidgetItem * item, int column);
 	void selSignalChange(QTreeWidgetItem * item, int column);
 	void contextMenuClick(QAction*);
-	void StatusTxtMess(QString mess);
 	void updateTblSignal();
 	void updateSignals();
 	void moduleConnect(QString module);

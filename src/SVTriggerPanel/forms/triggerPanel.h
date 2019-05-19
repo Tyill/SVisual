@@ -81,7 +81,7 @@ private:
 
     bool isSelModule_ = true;
 
-    int ctriggerCnt_ = 0, cTriggRow_ = 0;
+    int cTriggRow_ = 0;
 
     SV_Aux::TimerDelay tmDelay_;
     SV_Aux::Front front_;
@@ -90,7 +90,7 @@ private:
     std::mutex mtx_;
     bool thrStop_ = false;
 
-    void statusMess(const QString&);
+
     void load();
 
     void showEvent(QShowEvent * event);

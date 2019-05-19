@@ -62,12 +62,7 @@ namespace SV_Trigger {
         posFront = 5,         ///< положительный фронт
         negFront = 6,         ///< отрицательный фронт
     };
-
-    /// вернуть тип события как строку
-    /// \param type
-    /// \return
-    QString getEventTypeStr(eventType type);
-
+       
     /// триггер
     struct triggerData {
         bool isActive;               ///< активен
@@ -77,8 +72,7 @@ namespace SV_Trigger {
         QString module;              ///< модуль
         QString userProcPath;        ///< путь к польз процессу
         QString userProcArgs;        ///< аргументы к польз процессу, через /t
-        QString sendDateTime;        ///< время срабатывания
-
+       
         eventType condType;          ///< тип
         int condValue;               ///< значение условия (порог срабатывания)
         int condTOut;                ///< таймаут срабатывания, с
@@ -121,4 +115,6 @@ namespace SV_Trigger {
     // добавить триггер
     SVTRIGGERPANEL_API bool addTrigger(QDialog* panel, const QString& name, triggerData* td);
 
+    // вернуть тип события как строку
+    SVTRIGGERPANEL_API QString getEventTypeStr(eventType type);
 }

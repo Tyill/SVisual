@@ -28,11 +28,6 @@
 using namespace SV_Cng;
 using namespace SV_Trigger;
 
-void triggerPanel::statusMess(const QString&){
-
-
-}
-
 triggerPanel::triggerPanel(QWidget *parent, SV_Trigger::config cng_){
     
 #ifdef SV_EN
@@ -100,8 +95,6 @@ void triggerPanel::showEvent(QShowEvent* event){
 	}
 	ui.tableSignal->clearContents();
 	ui.tableTrigger->clearContents();
-
-	ctriggerCnt_ = getCopyTriggerRef().size();
 
 	if (ui.listModule->count() > 0) selModule(ui.listModule->item(0));
 }
@@ -177,9 +170,9 @@ void triggerPanel::updateTableTrigger(){
 			ui.tableTrigger->setItem(row, 0, new QTableWidgetItem(t->name));
 
 			if (isModule)
-			    ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(getEventTypeStr(t->condType)));
+			    ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(SV_Trigger::getEventTypeStr(t->condType)));
 			else
-				ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(getEventTypeStr(t->condType) +
+                ui.tableTrigger->setItem(row, 1, new QTableWidgetItem(SV_Trigger::getEventTypeStr(t->condType) +
 					 QString(" value ") + QString::number(t->condValue) + " tout " + QString::number(t->condTOut)));
 
 			ui.tableTrigger->setItem(row, 2, new QTableWidgetItem(t->signal));
@@ -327,12 +320,7 @@ void triggerPanel::addTrigger(){
     td->userProcArgs = ui.txtUserProcArgs->text();
         	
 	addTrigger(tname, td);
-	++ctriggerCnt_;
-
-	if (ctriggerCnt_ > SV_TRIGGER_MAX_CNT)
-		statusMess(tr("Превышен лимит количества триггеров: %1. Стабильная работа не гарантирована.").
-		arg(SV_TRIGGER_MAX_CNT));
-	
+    	
 	ui.lbIsChange->setText("");
 	updateTableTrigger();
 }

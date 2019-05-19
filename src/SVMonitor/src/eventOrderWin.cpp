@@ -26,6 +26,7 @@
 #include "forms/eventOrderWin.h"
 #include "structurs.h"
 #include "serverAPI.h"
+#include "SVTriggerPanel/SVTriggerPanel.h"
 
 eventOrderWin::eventOrderWin(QWidget *parent){
 
@@ -64,7 +65,7 @@ void eventOrderWin::showOrder(){
 		ui.tableEvents->setItem(i, 2, new QTableWidgetItem(events[i].module));
 		ui.tableEvents->setItem(i, 3, new QTableWidgetItem(events[i].signal));
 
-		QString cond = SV_Cng::getEventTypeStr(events[i].condType).c_str() + QString(" ") + QString::number(events[i].condValue) + " T" + QString::number(events[i].condTOut);
+		QString cond = SV_Trigger::getEventTypeStr(events[i].condType) + QString(" ") + QString::number(events[i].condValue) + " T" + QString::number(events[i].condTOut);
 
 		ui.tableEvents->setItem(i, 4, new QTableWidgetItem(cond));
 	}
