@@ -78,15 +78,15 @@ namespace SV_Script {
     typedef bool(*pf_loadSignalData)(const QString& sign);
 	SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 
-    // обновление данных callBack
+    // РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… callBack
     typedef void(*pf_updateSignalsCBack)();
     SVSCRIPTPANEL_API void setUpdateSignalsCBack(QDialog* stPanel, pf_updateSignalsCBack);
 
-    // добавление сигнала callBack
+    // РґРѕР±Р°РІР»РµРЅРёРµ СЃРёРіРЅР°Р»Р° callBack
     typedef void(*pf_addSignalsCBack)();
     SVSCRIPTPANEL_API void setAddSignalsCBack(QDialog* stPanel, pf_addSignalsCBack);
 
-    // модуль подключен
+    // РјРѕРґСѓР»СЊ РїРѕРґРєР»СЋС‡РµРЅ
     typedef void(*pf_moduleConnectCBack)(const std::string& module);
     SVSCRIPTPANEL_API void setModuleConnectCBack(QDialog* stPanel, pf_moduleConnectCBack);
 }

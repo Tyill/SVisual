@@ -74,21 +74,21 @@ namespace SV_Script {
             ((scriptPanel *)stp)->pfLoadSignalData = f;
 	}
     
-    // обновление данных callBack
+    // РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… callBack
     void setUpdateSignalsCBack(QDialog *stp, pf_updateSignalsCBack f){
 
         if (stp)
             ((scriptPanel *)stp)->pfUpdateSignalsCBack = f;
     }
 
-    // добавление сигнала callBack
+    // РґРѕР±Р°РІР»РµРЅРёРµ СЃРёРіРЅР°Р»Р° callBack
     void setAddSignalsCBack(QDialog *stp, pf_addSignalsCBack f){
         
         if (stp)
             ((scriptPanel *)stp)->pfAddSignalsCBack = f;
     }
 
-    // модуль подключен
+    // РјРѕРґСѓР»СЊ РїРѕРґРєР»СЋС‡РµРЅ
     void setModuleConnectCBack(QDialog* stp, pf_moduleConnectCBack f){
 
         if (stp)

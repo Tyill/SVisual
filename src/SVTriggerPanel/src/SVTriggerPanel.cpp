@@ -63,7 +63,7 @@ namespace SV_Trigger {
             ((triggerPanel*)stp)->pfGetSignalData = f;
 	}
     	        	
-    // вернуть все триггеры
+    // РІРµСЂРЅСѓС‚СЊ РІСЃРµ С‚СЂРёРіРіРµСЂС‹
     QMap<QString, triggerData*> getCopyTriggerRef(QDialog *stp){
 
         if (stp)
@@ -72,7 +72,7 @@ namespace SV_Trigger {
             return QMap<QString, triggerData*>();
     }
 
-    // вернуть данные триггера
+    // РІРµСЂРЅСѓС‚СЊ РґР°РЅРЅС‹Рµ С‚СЂРёРіРіРµСЂР°
     triggerData* getTriggerData(QDialog *stp, const QString& name){
 
         if (stp)
@@ -81,7 +81,7 @@ namespace SV_Trigger {
             return nullptr;
     }
 
-    // добавить триггер
+    // РґРѕР±Р°РІРёС‚СЊ С‚СЂРёРіРіРµСЂ
     bool addTrigger(QDialog *stp, const QString& name, triggerData* td){
 
         if (stp)
@@ -96,7 +96,7 @@ namespace SV_Trigger {
             ((triggerPanel*)stp)->pfOnTriggerCBack = f;
     }
 
-    /// вернуть тип события как строку
+    /// РІРµСЂРЅСѓС‚СЊ С‚РёРї СЃРѕР±С‹С‚РёСЏ РєР°Рє СЃС‚СЂРѕРєСѓ
     /// \param type
     /// \return
     QString getEventTypeStr(eventType type) {

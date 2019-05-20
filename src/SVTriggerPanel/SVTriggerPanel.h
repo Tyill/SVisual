@@ -51,31 +51,31 @@ namespace SV_Trigger {
 				packetSz(packetSz_) {}
 	};
 
-    /// тип события
+    /// С‚РёРї СЃРѕР±С‹С‚РёСЏ
     enum class eventType {
-        none = -1,            ///< нет
-        connectModule = 0,    ///< модуль подключен
-        disconnectModule = 1, ///< модуль отключен
+        none = -1,            ///< РЅРµС‚
+        connectModule = 0,    ///< РјРѕРґСѓР»СЊ РїРѕРґРєР»СЋС‡РµРЅ
+        disconnectModule = 1, ///< РјРѕРґСѓР»СЊ РѕС‚РєР»СЋС‡РµРЅ
         less = 2,             ///< "<"
         equals = 3,           ///< "=="
         more = 4,             ///< ">"
-        posFront = 5,         ///< положительный фронт
-        negFront = 6,         ///< отрицательный фронт
+        posFront = 5,         ///< РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Р№ С„СЂРѕРЅС‚
+        negFront = 6,         ///< РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Р№ С„СЂРѕРЅС‚
     };
        
-    /// триггер
+    /// С‚СЂРёРіРіРµСЂ
     struct triggerData {
-        bool isActive;               ///< активен
+        bool isActive;               ///< Р°РєС‚РёРІРµРЅ
 
-        QString name;                ///< название триггера
-        QString signal;              ///< сигнал
-        QString module;              ///< модуль
-        QString userProcPath;        ///< путь к польз процессу
-        QString userProcArgs;        ///< аргументы к польз процессу, через /t
+        QString name;                ///< РЅР°Р·РІР°РЅРёРµ С‚СЂРёРіРіРµСЂР°
+        QString signal;              ///< СЃРёРіРЅР°Р»
+        QString module;              ///< РјРѕРґСѓР»СЊ
+        QString userProcPath;        ///< РїСѓС‚СЊ Рє РїРѕР»СЊР· РїСЂРѕС†РµСЃСЃСѓ
+        QString userProcArgs;        ///< Р°СЂРіСѓРјРµРЅС‚С‹ Рє РїРѕР»СЊР· РїСЂРѕС†РµСЃСЃСѓ, С‡РµСЂРµР· /t
        
-        eventType condType;          ///< тип
-        int condValue;               ///< значение условия (порог срабатывания)
-        int condTOut;                ///< таймаут срабатывания, с
+        eventType condType;          ///< С‚РёРї
+        int condValue;               ///< Р·РЅР°С‡РµРЅРёРµ СѓСЃР»РѕРІРёСЏ (РїРѕСЂРѕРі СЃСЂР°Р±Р°С‚С‹РІР°РЅРёСЏ)
+        int condTOut;                ///< С‚Р°Р№РјР°СѓС‚ СЃСЂР°Р±Р°С‚С‹РІР°РЅРёСЏ, СЃ
 
         triggerData() {
             isActive = false;
@@ -103,15 +103,15 @@ namespace SV_Trigger {
     typedef void(*pf_onTriggerCBack)(const QString& name);
     SVTRIGGERPANEL_API void setOnTriggerCBack(QDialog* panel, pf_onTriggerCBack f);
 
-    // вернуть все триггеры
+    // РІРµСЂРЅСѓС‚СЊ РІСЃРµ С‚СЂРёРіРіРµСЂС‹
     SVTRIGGERPANEL_API QMap<QString, triggerData*> getCopyTriggerRef(QDialog* panel);
 
-    // вернуть данные триггера
+    // РІРµСЂРЅСѓС‚СЊ РґР°РЅРЅС‹Рµ С‚СЂРёРіРіРµСЂР°
     SVTRIGGERPANEL_API triggerData* getTriggerData(QDialog* panel, const QString& name);
 
-    // добавить триггер
+    // РґРѕР±Р°РІРёС‚СЊ С‚СЂРёРіРіРµСЂ
     SVTRIGGERPANEL_API bool addTrigger(QDialog* panel, const QString& name, triggerData* td);
 
-    // вернуть тип события как строку
+    // РІРµСЂРЅСѓС‚СЊ С‚РёРї СЃРѕР±С‹С‚РёСЏ РєР°Рє СЃС‚СЂРѕРєСѓ
     SVTRIGGERPANEL_API QString getEventTypeStr(eventType type);
 }
