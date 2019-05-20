@@ -5,7 +5,7 @@ include(../cmake/qt.cmake)
 project(SVTriggerPanel)
 
 if(WIN32)
-    add_definitions(-DSVSCRIPTPANEL_EXPORTS)
+    add_definitions(-DSVTRIGGERPANEL_EXPORTS)
 endif(WIN32)
 
 FILE(GLOB_RECURSE SRC_TrgPn "*.cpp" "*.h" "*.ui" "*.qrc")

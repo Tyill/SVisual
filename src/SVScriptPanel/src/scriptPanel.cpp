@@ -118,7 +118,7 @@ float getFloatValue(const std::string& module, const std::string& signal){
     QString md = qUtf8Printable(module.c_str()),
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tInt)){
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tFloat)){
 
         if (scrPanelRef->mode_ == SV_Script::modeGr::player)
             return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
