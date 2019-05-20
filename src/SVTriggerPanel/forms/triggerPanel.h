@@ -56,17 +56,17 @@ public:
 
 	void updateWin();
 
-    // вернуть все триггеры
-    QMap<QString, SV_Trigger::triggerData*> triggerPanel::getCopyTriggerRef();
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    QMap<QString, SV_Trigger::triggerData*> getCopyTriggerRef();
 
-    // вернуть данные триггера
-    SV_Trigger::triggerData* triggerPanel::getTriggerData(const QString& trg);
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    SV_Trigger::triggerData* getTriggerData(const QString& trg);
 
-    // добавить триггер
-    bool triggerPanel::addTrigger(const QString& trg, SV_Trigger::triggerData* td);
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    bool addTrigger(const QString& trg, SV_Trigger::triggerData* td);
 
-    // удалить триггер
-    bool triggerPanel::delTrigger(const QString& trg);
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    bool delTrigger(const QString& trg);
 
 
 private:

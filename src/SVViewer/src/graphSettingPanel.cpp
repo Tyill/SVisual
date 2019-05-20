@@ -24,7 +24,7 @@
 //
 #include "stdafx.h"
 #include "forms/graphSettingPanel.h"
-#include "forms/mainwin.h"
+#include "forms/mainWin.h"
 
 graphSettingPanel::graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting& gs){
 

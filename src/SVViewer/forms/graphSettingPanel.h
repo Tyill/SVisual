@@ -25,7 +25,7 @@
 #pragma once
 
 #include "forms/ui_graphSetting.h"
-#include "forms/mainwin.h"
+#include "forms/mainWin.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 
 class graphSettingPanel : public QDialog
