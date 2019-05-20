@@ -75,6 +75,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVScriptPanel", "SVScriptPa
 		{2A3E28AD-7F43-4ED9-919C-F62B9B668F8A} = {2A3E28AD-7F43-4ED9-919C-F62B9B668F8A}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVTriggerPanel", "SVTriggerPanel\SVTriggerPanel.vcxproj", "{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -169,6 +171,14 @@ Global
 		{79F3010A-257C-4C17-8256-4713EAFCEF5E}.Release|Win32.Build.0 = Release|Win32
 		{79F3010A-257C-4C17-8256-4713EAFCEF5E}.Release|x64.ActiveCfg = Release|x64
 		{79F3010A-257C-4C17-8256-4713EAFCEF5E}.Release|x64.Build.0 = Release|x64
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Debug|Win32.Build.0 = Debug|Win32
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Debug|x64.ActiveCfg = Debug|x64
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Debug|x64.Build.0 = Debug|x64
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Release|Win32.ActiveCfg = Release|Win32
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Release|Win32.Build.0 = Release|Win32
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Release|x64.ActiveCfg = Release|x64
+		{6C74E658-838E-41DE-B6EA-9CBA38CE3D9A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

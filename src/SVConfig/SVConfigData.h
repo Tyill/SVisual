@@ -132,38 +132,7 @@ namespace SV_Cng {
 			group = grp;
 		}
 	};
-
-    /// тип события
-	enum class eventType {
-		none = -1,            ///< нет
-		connectModule = 0,    ///< модуль подключен
-		disconnectModule = 1, ///< модуль отключен
-		less = 2,             ///< "<"
-		equals = 3,           ///< "=="
-		more = 4,             ///< ">"
-		posFront = 5,         ///< положительный фронт
-		negFront = 6,         ///< отрицательный фронт
-	};
-
-    /// триггер
-	struct triggerData {
-		bool isActive;               ///< активен
-
-		std::string name;            ///< название триггера
-		std::string signal;          ///< сигнал
-		std::string module;          ///< модуль
-
-		eventType condType;          ///< тип
-		int condValue;               ///< значение условия (порог срабатывания)
-		int condTOut;                ///< таймаут срабатывания, с
-
-		triggerData() {
-			isActive = false;
-			condType = eventType::none;
-			condTOut = 0;
-		}
-	};
-
+       
     /// вернуть тип сигнала как значение
     /// \param str
     /// \return
@@ -179,10 +148,5 @@ namespace SV_Cng {
     /// \param value
     /// \return
 	std::string getSValue(valueType vt, double value);
-
-    /// вернуть тип события как строку
-    /// \param type
-    /// \return
-	std::string getEventTypeStr(eventType type);
-
+        
 }

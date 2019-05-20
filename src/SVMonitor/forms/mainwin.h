@@ -29,7 +29,6 @@
 #include "SVServer/SVServer.h"
 #include "SVAuxFunc/mt_log.h"
 #include "src/sql.h"
-#include "src/structurs.h"
 #include "src/comReader.h"
 
 class settingsPanel;
@@ -37,8 +36,10 @@ class eventOrderWin;
 
 class MainWin : public QMainWindow
 {
-	Q_OBJECT
-			
+    Q_OBJECT
+
+        friend void statusMess(QString mess);
+
 public:
 
 	struct config{
@@ -74,10 +75,6 @@ public:
     void updateConfig(config);
     config getConfig();
 
-	void addUserData(userEventData);
-	void delUserData(QString);
-	userEventData* getUserData(QString);
-
 	QVector<uEvent> getEvents(QDateTime, QDateTime);
 
 private:
@@ -96,17 +93,15 @@ private:
     QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;
-	eventOrderWin* orderWin_ = nullptr;
-	QWidget* trgPanel_ = nullptr;
+    QDialog* triggerPanel_ = nullptr;
+	eventOrderWin* orderWin_ = nullptr;   
 	settingsPanel* settPanel_ = nullptr;
 	QSystemTrayIcon* trayIcon_ = nullptr;
+
 	sql* db = nullptr;
-
-	QMutex mtx_;
-
+    
 	QSet<QString> signExist_;
-	QMap<QString, userEventData> userEvents_;
-
+	
     bool eventFilter(QObject *target, QEvent *event);
 
 	bool writeSettings(QString pathIni);
@@ -126,7 +121,6 @@ public slots:
 	void selSignalDClick(QTreeWidgetItem * item, int column);
 	void selSignalChange(QTreeWidgetItem * item, int column);
 	void contextMenuClick(QAction*);
-	void StatusTxtMess(QString mess);
 	void updateTblSignal();
 	void updateSignals();
 	void moduleConnect(QString module);

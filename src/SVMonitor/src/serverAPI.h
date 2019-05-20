@@ -27,23 +27,15 @@
 
 QMap<QString, SV_Cng::moduleData *> getCopyModuleRefSrv();
 
-QMap<QString, SV_Cng::triggerData *> getCopyTriggerRefSrv();
-
 QMap<QString, SV_Cng::signalData *> getCopySignalRefSrv();
 
 SV_Cng::signalData* getSignalDataSrv(const QString& sing);
 
 SV_Cng::moduleData* getModuleDataSrv(const QString& md);
 
-SV_Cng::triggerData* getTriggerDataSrv(const QString& trg);
-
 bool loadSignalDataSrv(const QString& name);
 
 bool addSignalSrv(const QString& name, SV_Cng::signalData* sd);
 
 bool addModuleSrv(const QString& name, SV_Cng::moduleData* md);
-
-bool addTriggerSrv(QString name, SV_Cng::triggerData* td);
-
-bool delTriggerSrv(QString name);
 

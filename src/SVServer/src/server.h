@@ -41,7 +41,6 @@ class server{
 	SV_Srv::statusCBack pfStatusCBack = nullptr;
 	SV_Srv::onUpdateSignalsCBack pfUpdateSignalsCBack = nullptr;
 	SV_Srv::onAddSignalsCBack pfAddSignalsCBack = nullptr;
-	SV_Srv::onTriggerCBack pfTriggerCBack = nullptr;
     SV_Srv::onModuleConnectCBack pfModuleConnectCBack = nullptr;
     SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack = nullptr;
 
@@ -82,18 +81,7 @@ class server{
     // вернуть данные сигнала
     SV_Cng::signalData* getSignalData(const std::string& sign);
 
-    // вернуть все триггеры
-    std::map<std::string, SV_Cng::triggerData*> getCopyTriggerRef();
-
-    // вернуть данные триггера
-    SV_Cng::triggerData *getTriggerData(const std::string& trg);
-
-    // добавить триггер
-    bool addTrigger(const std::string& name, SV_Cng::triggerData* td);
-
-    // удалить триггер
-    bool delTrigger(const std::string& name);
-
+   
 private:
 
     SV_Srv::config cng;
@@ -102,12 +90,10 @@ private:
 
     bufferData* pBuffData_ = nullptr;
     thrUpdSignal* pthrUpdSignal_ = nullptr;
-    thrUpdTrigger* pthrUpdTrigger_ = nullptr;
-
-    std::map < std::string, SV_Cng::moduleData * > moduleData_;
-    std::map < std::string, SV_Cng::signalData * > signalData_;
-    std::map < std::string, SV_Cng::triggerData * > triggerData_;
-
+   
+    std::map < std::string, SV_Cng::moduleData*> moduleData_;
+    std::map < std::string, SV_Cng::signalData*> signalData_;
+    
     std::mutex mtx_;
 
     bool jsonCheckRequest(rapidjson::Document& doc);

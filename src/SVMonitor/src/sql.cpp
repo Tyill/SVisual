@@ -28,6 +28,7 @@
 
 using namespace std;
 using namespace SV_Cng;
+using namespace SV_Trigger;
 
 void statusMess(QString);
 
@@ -52,8 +53,7 @@ bool sql::Init(){
 	}
 
 bool sql::Open(){
-	if (sqlite3_open(qPrintable(pathDB_), &db_) == SQLITE_OK) return true;
-	else return false;
+	return (sqlite3_open(qPrintable(pathDB_), &db_) == SQLITE_OK);
 }
 	
 bool sql::Query(const string& query, vector<vector<string>>& results){
@@ -160,44 +160,45 @@ sql::~sql(){
 
 }
 
-bool sql::saveTriggers(const std::map<std::string, triggerData*>& trgData){
+bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 
 	stringstream ss;vector<vector<string>> res;
 		
+    ss << "DELETE FROM Trigger;";
+    if (!Query(ss.str(), res)) return false;
+
+    ss.str(""); ss.clear();
+    ss << "DELETE FROM UserEventData;";
+    if (!Query(ss.str(), res)) return false;
+
 	for (auto& tr : trgData){
 	
-		ss << "SELECT * FROM Trigger WHERE name = '" << tr.second->name << "';";
-
-		res.clear();
+        ss.str(""); ss.clear();
+		ss << "INSERT INTO Trigger ('name','signal','module','isActive','condType','condValue','condTOut') VALUES(" <<
+            "'" << tr->name.toUtf8().constData() << "',"
+            "'" << tr->signal.toUtf8().constData() << "',"
+            "'" << tr->module.toUtf8().constData() << "',"
+			"'" << (tr->isActive ? "1" : "0") << "',"
+			"'" << (int)tr->condType << "',"
+			"'" << tr->condValue << "',"
+			"'" << tr->condTOut << "');";
+		
 		if (!Query(ss.str(), res)) return false;
-		ss.str(""); ss.clear();
+		
+        /////////////////////////////////////////////////
+        ss.str(""); ss.clear();
+        ss << "INSERT INTO UserEventData ('trigger','userProcPath','userProcArgs') VALUES(" <<
+            "'" << tr->name.toUtf8().constData() << "',"
+            "'" << tr->userProcPath.toUtf8().constData() << "',"
+            "'" << tr->userProcArgs.toUtf8().constData() << "');";
 
-		if (res.empty()){
-			ss << "INSERT INTO Trigger ('name','signal','module','isActive','condType','condValue','condTOut') VALUES(" <<
-				"'" << tr.second->name << "',"
-				"'" << tr.second->signal << "',"
-				"'" << tr.second->module << "',"
-				"'" << (tr.second->isActive ? "1" : "0") << "',"
-				"'" << (int)tr.second->condType << "',"
-				"'" << tr.second->condValue << "',"
-				"'" << tr.second->condTOut << "');";
-		}
-		else{
-			ss << "UPDATE Trigger SET "
-				"isActive = '" << (tr.second->isActive ? "1" : "0") << "',"
-				"condType = '" << (int)tr.second->condType << "',"
-				"condValue = '" << tr.second->condValue << "',"
-				"condTOut = '" << tr.second->condTOut << "' "
-				"WHERE name = '" << tr.second->name << "';";
-		}
-		if (!Query(ss.str(), res)) return false;
-		ss.str(""); ss.clear();
+        if (!Query(ss.str(), res)) return false;        
 	}
 	
 	return true;
 }
 
-QVector<SV_Cng::triggerData*> sql::getTrigger(const QString& signal, const QString& module){
+QVector<triggerData*> sql::getTrigger(const QString& signal, const QString& module){
 
 	stringstream ss;
 
@@ -206,19 +207,28 @@ QVector<SV_Cng::triggerData*> sql::getTrigger(const QString& signal, const QStri
 
 	vector<vector<string>> trg; QVector<triggerData*> res;
 	if (!Query(ss.str(), trg)) return res;
-
+        
 	int sz = trg.size();
 	for (int i = 0; i < sz; ++i){
 
 		triggerData* td = new triggerData();
 
 		td->name = trg[i][1].c_str();
-		td->signal = trg[i][2];
-		td->module = trg[i][3];
+		td->signal = trg[i][2].c_str();
+		td->module = trg[i][3].c_str();
 		td->isActive = trg[i][4] == "1";
 		td->condType = (eventType)atoi(trg[i][5].c_str());
 		td->condValue = atoi(trg[i][6].c_str());
 		td->condTOut = atoi(trg[i][7].c_str());
+
+        ss.str(""); ss.clear();
+        ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
+
+        vector<vector<string>> evData;
+        if (!Query(ss.str(), evData)) return res;
+
+        td->userProcPath = evData[i][2].c_str();
+        td->userProcArgs = evData[i][3].c_str();
 
 		res.push_back(td);
 	}
@@ -240,25 +250,24 @@ triggerData* sql::getTrigger(const QString& trname){
 		td = new triggerData();
 
 		td->name = trg[0][1].c_str();
-		td->signal = trg[0][2];
-		td->module = trg[0][3];
+        td->signal = trg[0][2].c_str();
+        td->module = trg[0][3].c_str();
 		td->isActive = trg[0][4] == "1";
 		td->condType = (eventType)atoi(trg[0][5].c_str());
 		td->condValue = atoi(trg[0][6].c_str());
 		td->condTOut = atoi(trg[0][7].c_str());
+
+        ss.str(""); ss.clear();
+        ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
+
+        vector<vector<string>> evData;
+        if (!Query(ss.str(), evData)) return td;
+
+        td->userProcPath = evData[0][2].c_str();
+        td->userProcArgs = evData[0][3].c_str();
 	}
 
 	return td;
-}
-
-void sql::delTrigger(const QString& trname){
-	
-	stringstream ss;
-
-	ss << "DELETE FROM Trigger WHERE name = '" << trname.toUtf8().data() << "';";
-
-	vector<vector<string>> ret;
-	Query(ss.str(), ret);
 }
 
 bool sql::saveSignals(const std::map<std::string, signalData*>& signs){
@@ -316,57 +325,6 @@ signalData sql::getSignal(const QString& signal, const QString& module){
 
 }
 
-bool sql::saveUserEventData(const QMap<QString, userEventData>& udata){
-
-	stringstream ss; vector<vector<string>> res;
-
-	for (auto& u : udata){
-
-		ss << "SELECT * FROM UserEventData WHERE trigger = '" << u.triggName.toUtf8().data() << "';";
-
-		res.clear();
-		if (!Query(ss.str(), res)) return false;
-		ss.str(""); ss.clear();
-		
-		if (res.empty()){
-			ss << "INSERT INTO UserEventData ('trigger','userProcPath','userProcArgs') VALUES("
-				"'" << u.triggName.toUtf8().data() << "',"
-				"'" << u.userProcPath.toUtf8().data() << "',"
-				"'" << u.userProcArgs.toUtf8().data() << "');";
-		}
-		else{
-			ss << "UPDATE UserEventData SET "
-				"userProcPath = '" << u.userProcPath.toUtf8().data() << "',"
-				"userProcArgs = '" << u.userProcArgs.toUtf8().data() << "' "
-				"WHERE trigger = '" << u.triggName.toUtf8().data() << "';";
-		}
-		if (!Query(ss.str(), res)) return false;
-		ss.str(""); ss.clear();
-	}
-
-	return true;
-
-}
-
-userEventData sql::getUserEventData(QString name){
-
-	stringstream ss;
-
-	ss << "SELECT * FROM UserEventData WHERE trigger = '" << name.toUtf8().data() << "';";
-
-	vector<vector<string>> signs; userEventData ud(name);
-	if (!Query(ss.str(), signs)) return ud;
-
-	if (!signs.empty()){
-		ud.triggName = signs[0][1].c_str();
-		ud.userProcPath = signs[0][2].c_str();
-		ud.userProcArgs = signs[0][3].c_str();
-	}
-	
-	return ud;
-}
-
-
 void sql::saveEvent(QString trg, QDateTime dt){
 
 	stringstream ss;
@@ -410,7 +368,7 @@ QVector<uEvent> sql::getEvents(QDateTime beginDT, QDateTime endDT){
 				if (r.triggName == t){
 					r.signal = tr[0][2].c_str();
 					r.module = tr[0][3].c_str();
-					r.condType = (SV_Cng::eventType)stoi(tr[0][5]);
+					r.condType = (SV_Trigger::eventType)stoi(tr[0][5]);
 					r.condValue = stoi(tr[0][6]);
 					r.condTOut = stoi(tr[0][7]);
 					break;

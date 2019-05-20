@@ -287,7 +287,7 @@
     <message>
         <location filename="../src/mainwin.cpp" line="822"/>
         <source>Отключен модуль: </source>
-        <translation>Module is disconnected</translation>
+        <translation>Module is disconnected: </translation>
     </message>
     <message>
         <source>Закрытие приложения. Сохранение параметров успешно</source>
@@ -373,17 +373,17 @@
     <message>
         <location filename="../src/mainwin.cpp" line="835"/>
         <source>Событие: </source>
-        <translation>Event</translation>
+        <translation>Event: </translation>
     </message>
     <message>
         <location filename="../src/mainwin.cpp" line="847"/>
         <source> Процесс запущен: </source>
-        <translation>Process is run</translation>
+        <translation>Process is run: </translation>
     </message>
     <message>
         <location filename="../src/mainwin.cpp" line="850"/>
         <source> Путь не найден: </source>
-        <translation>Path is not found</translation>
+        <translation>Path is not found: </translation>
     </message>
 </context>
 <context>

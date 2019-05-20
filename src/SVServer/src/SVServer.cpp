@@ -75,13 +75,7 @@ namespace SV_Srv {
 
 		serv.pfAddSignalsCBack = cback;
 	}
-
-    // сработал триггер callBack
-    void setOnTriggerCBack(onTriggerCBack cback){
-
-		serv.pfTriggerCBack = cback;
-	}
-
+   
     void setOnModuleConnectCBack(onModuleConnectCBack cback){
 
         serv.pfModuleConnectCBack = cback;
@@ -134,28 +128,4 @@ namespace SV_Srv {
         return serv.signalBufferEna(sign);
     }
 
-
-    // вернуть все триггеры
-	std::map<std::string, SV_Cng::triggerData*> getCopyTriggerRef(){
-
-		return serv.getCopyTriggerRef();
-    }
-
-    // вернуть данные триггера
-    SV_Cng::triggerData *getTriggerData(const string& name){
-
-		return serv.getTriggerData(name);
-    }
-
-    // добавить триггер
-    bool addTrigger(const string& name, SV_Cng::triggerData* td){
-
-		return serv.addTrigger(name, td);
-    }
-
-    // удалить триггер
-    bool delTrigger(const string& name){
-
-		return serv.delTrigger(name);
-    }
 }

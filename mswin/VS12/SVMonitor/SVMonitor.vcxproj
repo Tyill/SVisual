@@ -33,7 +33,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\..\src\SVMonitor\src\treeWidgetExt.cpp" />
-    <ClCompile Include="..\..\..\src\SVMonitor\src\triggerPanel.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_comReader.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -51,10 +50,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_treeWidgetExt.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_triggerPanel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -88,10 +83,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_triggerPanel.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\src\SVMonitor\src\comReader.h">
@@ -117,26 +108,7 @@
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_eventOrderWin.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_mainwin.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_settingsPanel.h" />
-    <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_triggerPanel.h" />
-    <ClInclude Include="GeneratedFiles\ui_triggerPanel.h" />
-    <CustomBuild Include="..\..\..\src\SVMonitor\forms\triggerPanel.h">
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing triggerPanel.h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing triggerPanel.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtWidgets"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtWidgets"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing triggerPanel.h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing triggerPanel.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtWidgets"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtPrintSupport" "-I$(QTDIR)\include\QtWidgets"</Command>
-    </CustomBuild>
+    <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h" />
     <ClInclude Include="GeneratedFiles\ui_settingsPanel.h" />
     <CustomBuild Include="..\..\..\src\SVMonitor\forms\settingsPanel.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -198,7 +170,6 @@
     <ClInclude Include="..\..\..\src\SVMonitor\src\serverAPI.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\src\sql.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\src\stdafx.h" />
-    <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h" />
     <CustomBuild Include="..\..\..\src\SVMonitor\src\treeWidgetExt.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -260,26 +231,6 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\src\SVMonitor\forms\settingsPanel.ui">
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="..\..\..\src\SVMonitor\forms\triggerPanel.ui">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
@@ -393,7 +344,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -411,7 +362,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPortd.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -428,7 +379,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -446,7 +397,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies);SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportPanel.lib;SVScriptPanel.lib;SVTriggerPanel.lib;sqlite3.lib;Qt5SerialPort.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
