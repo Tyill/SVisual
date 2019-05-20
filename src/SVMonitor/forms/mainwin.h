@@ -28,10 +28,12 @@
 #include "SVConfig/SVConfigData.h"
 #include "SVServer/SVServer.h"
 #include "SVAuxFunc/mt_log.h"
+#include "SVGraphPanel/SVGraphPanel.h" 
 #include "src/sql.h"
 #include "src/comReader.h"
 
 class settingsPanel;
+class graphSettingPanel;
 class eventOrderWin;
 
 class MainWin : public QMainWindow
@@ -65,6 +67,8 @@ public:
 		// связь по TCP
 		QString tcp_addr;          ///< ip
 		int tcp_port;              ///< port
+        
+        SV_Graph::graphSetting graphSett;
 	};
 
     SV_Aux::Logger lg;
@@ -76,6 +80,8 @@ public:
     config getConfig();
 
 	QVector<uEvent> getEvents(QDateTime, QDateTime);
+
+    void updateGraphSetting(const SV_Graph::graphSetting&);
 
 private:
 
@@ -96,6 +102,7 @@ private:
     QDialog* triggerPanel_ = nullptr;
 	eventOrderWin* orderWin_ = nullptr;   
 	settingsPanel* settPanel_ = nullptr;
+    graphSettingPanel* graphSettPanel_ = nullptr;
 	QSystemTrayIcon* trayIcon_ = nullptr;
 
 	sql* db = nullptr;

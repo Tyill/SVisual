@@ -30,6 +30,7 @@
 #include "forms/mainwin.h"
 #include "forms/eventOrderWin.h"
 #include "forms/settingsPanel.h"
+#include "forms/graphSettingPanel.h"
 #include "sql.h"
 #include "comReader.h"
 #include "SVAuxFunc/mt_log.h"
@@ -41,7 +42,10 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.8";
+const QString VERSION = "1.0.9";
+// -add setting graph view 
+
+// const QString VERSION = "1.0.8";
 // -add script panel
 
 // const QString VERSION = "1.0.7";
@@ -70,6 +74,7 @@ void MainWin::load(){
 
 	orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
 	settPanel_ = new settingsPanel(this); settPanel_->setWindowFlags(Qt::Window);
+    graphSettPanel_ = new graphSettingPanel(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
     triggerPanel_ = SV_Trigger::createTriggerPanel(this, SV_Trigger::config(cng.cycleRecMs, cng.packetSz));
     triggerPanel_->setWindowFlags(Qt::Window);
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
@@ -80,6 +85,7 @@ void MainWin::load(){
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
+    SV_Graph::setGraphSetting(graphPanels_[this], cng.graphSett);
 
     SV_Trigger::setGetCopySignalRef(triggerPanel_, getCopySignalRefSrv);
     SV_Trigger::setGetSignalData(triggerPanel_, getSignalDataSrv);
@@ -170,25 +176,27 @@ void MainWin::Connect(){
 		}
 	});
 	connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
-        if (triggerPanel_) triggerPanel_->show();
+        if (triggerPanel_) triggerPanel_->showNormal();
 	});
 	connect(ui.actionEventOrder, &QAction::triggered, [this]() {
-        if (orderWin_) orderWin_->show();
+        if (orderWin_) orderWin_->showNormal();
 	});
     connect(ui.actionExport, &QAction::triggered, [this]() {
-        if (exportPanel_) exportPanel_->show();
+        if (exportPanel_) exportPanel_->showNormal();
     });
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
         
         addNewWindow(QRect());
     });
     connect(ui.actionScript, &QAction::triggered, [this]() {
-
-        if (scriptPanel_) scriptPanel_->show();
+        if (scriptPanel_) scriptPanel_->showNormal();
     });
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
-        if (settPanel_) settPanel_->show();
+        if (settPanel_) settPanel_->showNormal();
 	});
+    connect(ui.actionGraphSett, &QAction::triggered, [this]() {
+        if (graphSettPanel_) graphSettPanel_->showNormal();
+    });
     connect(ui.actionUpFont, &QAction::triggered, [this]() {
        
         QFont ft = QApplication::font();
@@ -345,7 +353,8 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << endl;
     txtStream << "selOpenDir = " << cng.selOpenDir << endl;
     txtStream << "fontSz = " << this->font().pointSize() << endl;
-
+    txtStream << "transparent = " << cng.graphSett.transparent << endl;
+    txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
 
     file.close();
 
@@ -393,6 +402,9 @@ bool MainWin::init(QString initPath){
     cng.outArchiveName = settings.value("outFileName", "svrec").toString();;
     cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
     cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
+
+    cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
+    cng.graphSett.transparent = settings.value("transparent", "100").toInt();
 
     settings.endGroup();
 
@@ -493,6 +505,14 @@ MainWin::~MainWin(){
 
 	writeSettings(cng.initPath);
 
+}
+
+void MainWin::updateGraphSetting(const SV_Graph::graphSetting& gs){
+
+    cng.graphSett = gs;
+
+    for (auto o : graphPanels_)
+        SV_Graph::setGraphSetting(o, gs);
 }
 
 bool MainWin::eventFilter(QObject *target, QEvent *event){
@@ -914,6 +934,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     });
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
     SV_Graph::setGetSignalData(gp, getSignalDataSrv);
+    SV_Graph::setGraphSetting(gp, cng.graphSett);
 
     graphPanels_[graphWin] = gp;
     vertLayout->addWidget(gp);

@@ -52,6 +52,7 @@ public:
     QAction *actionUpFont;
     QAction *actionDnFont;
     QAction *actionScript;
+    QAction *actionGraphSett;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_2;
     QSplitter *splitter;
@@ -145,6 +146,8 @@ public:
         QIcon icon9;
         icon9.addFile(QStringLiteral(":/SVMonitor/images/script.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionScript->setIcon(icon9);
+        actionGraphSett = new QAction(MainWin);
+        actionGraphSett->setObjectName(QStringLiteral("actionGraphSett"));
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout_2 = new QVBoxLayout(centralWidget);
@@ -261,6 +264,7 @@ public:
         menuHelp->addAction(actionProgram);
         menu->addAction(actionUpFont);
         menu->addAction(actionDnFont);
+        menu->addAction(actionGraphSett);
         mainToolBar->addAction(actionTrgPanel);
         mainToolBar->addAction(actionEventOrder);
         mainToolBar->addAction(actionPrint);
@@ -295,6 +299,7 @@ public:
         actionDnFont->setText(QApplication::translate("MainWin", "\320\243\320\274\320\265\320\275\321\214\321\210\320\270\321\202\321\214 \321\200\320\260\320\267\320\274\320\265\321\200 \321\210\321\200\320\270\321\204\321\202\320\260", 0));
         actionDnFont->setShortcut(QApplication::translate("MainWin", "Ctrl+2", 0));
         actionScript->setText(QApplication::translate("MainWin", "\320\241\320\272\321\200\320\270\320\277\321\202", 0));
+        actionGraphSett->setText(QApplication::translate("MainWin", "\320\222\320\270\320\264 \320\263\321\200\320\260\321\204\320\270\320\272\320\260", 0));
         groupBox->setTitle(QString());
         label->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSlowPlay->setText(QApplication::translate("MainWin", "\320\242\320\270\321\205\320\270\320\271 \321\200\320\265\320\266\320\270\320\274", 0));

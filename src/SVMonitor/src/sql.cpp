@@ -58,7 +58,7 @@ bool sql::Open(){
 	
 bool sql::Query(const string& query, vector<vector<string>>& results){
 	
-	mtx_.lock();
+    QMutexLocker locker(&mtx_);
 
 	bool res = true;
 	try{
@@ -89,9 +89,7 @@ bool sql::Query(const string& query, vector<vector<string>>& results){
 
 	}
 	catch (std::exception ex){ statusMess(QString("SQL::Query Exception ") + ex.what()); res = false; }
-
-	mtx_.unlock();
-
+    	
 	return res;
 }
 

@@ -26,6 +26,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include "forms/mainWin.h"
+#include "forms/graphSettingPanel.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVStatPanel/SVStatPanel.h"
 #include "SVScriptPanel/SVScriptPanel.h"
@@ -33,7 +34,10 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
-const QString VERSION = "1.0.8";
+const QString VERSION = "1.0.9";
+// -add setting graph view 
+
+// const QString VERSION = "1.0.8";
 // -add script panel
 
 // const QString VERSION = "1.0.7";
@@ -95,6 +99,8 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << endl;
     txtStream << "sortByMod = " << (cng.sortByMod ? 1 : 0) << endl;
     txtStream << "fontSz = " << this->font().pointSize() << endl;
+    txtStream << "transparent = " << cng.graphSett.transparent << endl;
+    txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
     txtStream << endl;
 	file.close();
 
@@ -211,7 +217,10 @@ void MainWin::load(){
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
     SV_Graph::setGetSignalData(gp, getSignalData);
     SV_Graph::setLoadSignalData(gp, loadSignalData);
+    SV_Graph::setGraphSetting(gp, cng.graphSett);
     graphPanels_[this] = gp;
+
+    graphSettPanel_ = new graphSettingPanel(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
 
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
@@ -293,16 +302,13 @@ void MainWin::Connect(){
 	connect(ui.actionExit, &QAction::triggered, [this]() { 
 		this->close();
 	});
-
 	connect(ui.actionExport, &QAction::triggered, [this]() {
-        if (exportPanel_) exportPanel_->show();
+        if (exportPanel_) exportPanel_->showNormal();
 	});
-
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
 
         addNewWindow(QRect());
-    });
-		
+    });		
     connect(ui.actionUpFont, &QAction::triggered, [this]() {
 
         QFont ft = QApplication::font();
@@ -311,7 +317,6 @@ void MainWin::Connect(){
 
         QApplication::setFont(ft);
     });
-
     connect(ui.actionDnFont, &QAction::triggered, [this]() {
 
         QFont ft = QApplication::font();
@@ -322,7 +327,11 @@ void MainWin::Connect(){
     });
     connect(ui.actionScript, &QAction::triggered, [this]() {
 
-        if (scriptPanel_) scriptPanel_->show();
+        if (scriptPanel_) scriptPanel_->showNormal();
+    });
+    connect(ui.actionGraphSett, &QAction::triggered, [this]() {
+
+        if (graphSettPanel_) graphSettPanel_->showNormal();
     });
 
 	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
@@ -447,9 +456,7 @@ void MainWin::Connect(){
         }
 
     });
-
-
-
+    
 	connect(ui.actionProgram, &QAction::triggered, [this]() {
 	QMessageBox::about(this, tr("About SVisual"),
 			tr("<h2>SVViewer </h2>"
@@ -473,6 +480,9 @@ bool MainWin::init(QString initPath){
 	cng.selOpenDir = settings.value("selOpenDir", "").toString();
 	cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
 		
+    cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
+    cng.graphSett.transparent = settings.value("transparent", "100").toInt();
+
     QFont ft = QApplication::font();
     int fsz = settings.value("fontSz", ft.pointSize()).toInt();
     ft.setPointSize(fsz);
@@ -508,6 +518,14 @@ MainWin::~MainWin()
 {	
 	writeSettings(cng.initPath + "/sviewer.ini");
 	writeSignals(cng.initPath + "/svsignals.txt");
+}
+
+void MainWin::updateGraphSetting(const SV_Graph::graphSetting& gs){
+
+    cng.graphSett = gs;
+
+    for (auto o : graphPanels_)
+        SV_Graph::setGraphSetting(o, gs);
 }
 
 bool MainWin::eventFilter(QObject *target, QEvent *event){
@@ -658,7 +676,7 @@ void MainWin::actionOpenData(){
 
 void MainWin::actionOpenStat(){
 		
-	statPanel_->show();
+    statPanel_->showNormal();
 }
 
 void MainWin::selSignalClick(QTreeWidgetItem* item, int column){
@@ -720,6 +738,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
     SV_Graph::setGetSignalData(gp, getSignalData);
     SV_Graph::setLoadSignalData(gp, loadSignalData);
+    SV_Graph::setGraphSetting(gp, cng.graphSett);
 
     graphPanels_[graphWin] = gp;
     vertLayout->addWidget(gp);

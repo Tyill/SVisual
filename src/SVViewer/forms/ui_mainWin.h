@@ -47,6 +47,7 @@ public:
     QAction *actionUpFont;
     QAction *actionDnFont;
     QAction *actionScript;
+    QAction *actionGraphSett;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QSplitter *splitter;
@@ -121,6 +122,8 @@ public:
         QIcon icon6;
         icon6.addFile(QStringLiteral(":/SVViewer/images/script.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionScript->setIcon(icon6);
+        actionGraphSett = new QAction(MainWin);
+        actionGraphSett->setObjectName(QStringLiteral("actionGraphSett"));
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -254,6 +257,7 @@ public:
         menu_2->addAction(actionProgram);
         menu_3->addAction(actionUpFont);
         menu_3->addAction(actionDnFont);
+        menu_3->addAction(actionGraphSett);
         mainToolBar->addAction(actionOpen);
         mainToolBar->addAction(actionStat);
         mainToolBar->addAction(actionPrint);
@@ -287,6 +291,7 @@ public:
         actionDnFont->setText(QApplication::translate("MainWin", "\320\243\320\274\320\265\320\275\321\214\321\210\320\270\321\202\321\214 \321\200\320\260\320\267\320\274\320\265\321\200 \321\210\321\200\320\270\321\204\321\202\320\260", 0));
         actionDnFont->setShortcut(QApplication::translate("MainWin", "Ctrl+2", 0));
         actionScript->setText(QApplication::translate("MainWin", "\320\241\320\272\321\200\320\270\320\277\321\202", 0));
+        actionGraphSett->setText(QApplication::translate("MainWin", "\320\222\320\270\320\264 \320\263\321\200\320\260\321\204\320\270\320\272\320\260", 0));
         groupBox->setTitle(QString());
         btnSortByModule->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSortByGroup->setText(QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\321\213", 0));

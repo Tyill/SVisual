@@ -62,6 +62,8 @@ private:
         selLeftMark_ = false, selRigthMark_ = false;
 
 	int colorCnt_ = 0;
+
+    SV_Graph::graphSetting graphSetting_;
 		
 	QMap <QString, graphSignData> signals_, signalsAlter_;
 	QStringList signalList_, signalListAlter_;
@@ -108,6 +110,8 @@ public:
 	void setAxisTime(wdgAxisTime* axisTime);
 	void plotUpdate();
 	
+    void setGraphSetting(const SV_Graph::graphSetting&);
+
 	void setMarkersPos(QPoint left, QPoint right);
 	void getMarkersPos(QPoint& left, QPoint& right);
 	QVector<graphSignPoint> getSignalValueByMarkerPos(int pos);

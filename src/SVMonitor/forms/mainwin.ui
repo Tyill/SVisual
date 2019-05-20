@@ -226,6 +226,7 @@
     </property>
     <addaction name="actionUpFont"/>
     <addaction name="actionDnFont"/>
+    <addaction name="actionGraphSett"/>
    </widget>
    <addaction name="menuMain"/>
    <addaction name="menu"/>
@@ -370,6 +371,11 @@
    </property>
    <property name="text">
     <string>Скрипт</string>
+   </property>
+  </action>
+  <action name="actionGraphSett">
+   <property name="text">
+    <string>Вид графика</string>
    </property>
   </action>
  </widget>
