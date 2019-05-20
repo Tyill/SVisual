@@ -134,6 +134,7 @@
     </CustomBuild>
     <ClInclude Include="..\..\..\src\SVViewer\forms\ui_graphSetting.h" />
     <ClInclude Include="..\..\..\src\SVViewer\forms\ui_mainWin.h" />
+    <ClInclude Include="..\..\..\src\SVViewer\resources\resource.h" />
     <ClInclude Include="..\..\..\src\SVViewer\src\resource.h" />
     <ClInclude Include="..\..\..\src\SVViewer\src\stdafx.h" />
     <ClInclude Include="..\..\..\src\SVViewer\src\structurs.h" />
@@ -218,6 +219,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\SVViewer\resources\resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\src\SVViewer\resources\images\logo.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6275DED1-7C9C-4E05-A148-B27CA79D4489}</ProjectGuid>

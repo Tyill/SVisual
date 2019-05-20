@@ -126,6 +126,9 @@
     <ClInclude Include="..\..\..\src\SVViewer\forms\ui_graphSetting.h">
       <Filter>Form Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\SVViewer\resources\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\SVViewer\resources\svviewer_en.ts">
@@ -139,5 +142,8 @@
     <ResourceCompile Include="..\..\..\src\SVViewer\resources\resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\src\SVViewer\resources\images\logo.ico" />
   </ItemGroup>
 </Project>

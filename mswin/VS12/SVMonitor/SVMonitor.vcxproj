@@ -136,6 +136,7 @@
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_graphSetting.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_mainwin.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_settingsPanel.h" />
+    <ClInclude Include="..\..\..\src\SVMonitor\resources\resource.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h" />
     <ClInclude Include="GeneratedFiles\ui_graphSetting.h" />
     <ClInclude Include="GeneratedFiles\ui_settingsPanel.h" />
@@ -320,6 +321,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\SVMonitor\resources\resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\src\SVMonitor\resources\images\logo.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3FED2569-0287-4077-A20F-87628D80B648}</ProjectGuid>
