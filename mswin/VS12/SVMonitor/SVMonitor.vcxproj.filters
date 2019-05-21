@@ -198,6 +198,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\src\SVMonitor\resources\images\logo.ico" />
+    <Image Include="..\..\..\src\SVMonitor\resources\images\logo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
