@@ -69,7 +69,7 @@ void graphPanel::load(){
 	ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
 }
 
-graphPanel::graphPanel(QWidget *parent, SV_Graph::config cng_){
+graphPanel::graphPanel(QWidget *parent, const SV_Graph::config& cng_){
 
 #ifdef SV_EN
 	QTranslator translator;
@@ -115,6 +115,17 @@ graphPanel::graphPanel(QWidget *parent, SV_Graph::config cng_){
 
 graphPanel::~graphPanel(){}
 
+void graphPanel::setGraphSetting(const SV_Graph::graphSetting& gs){
+
+    graphSett_ = gs;
+
+    for (auto ob : graphObj_){
+     
+        ob->setGraphSetting(gs);        
+        ob->plotUpdate();
+    }
+}
+
 void graphPanel::addSignalOnGraph(QString sign, int section){
 
 	SV_Cng::signalData* sd = pfGetSignalData(sign);
@@ -157,6 +168,8 @@ void graphPanel::addGraph(QString sign){
 	graph->setObjectName("graph_" + QString::number(graphCnt_));
 	++graphCnt_;
 		
+    graph->setGraphSetting(graphSett_);
+
 	graphObj_.append(graph);
 	
 	splitterGraph_->addWidget(graph);

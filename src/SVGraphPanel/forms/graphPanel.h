@@ -46,6 +46,8 @@ private:
 	QSplitter* splitterGraph_ = nullptr;
 	wdgGraph* selGraph_ = nullptr;
 
+    SV_Graph::graphSetting graphSett_;
+
 	bool isPlay_ = true;
 		
     void load();
@@ -55,17 +57,19 @@ private:
 public:
 	Ui::graphPanelClass ui;
 
-	graphPanel(QWidget *parent, SV_Graph::config cng);
+	graphPanel(QWidget *parent, const SV_Graph::config& cng);
 	~graphPanel();
 
 	SV_Graph::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
 	SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
 	SV_Graph::pf_loadSignalData pfLoadSignalData= nullptr;
-
+        
     void addSignalOnGraph(QString name, int section);
 	QPair<qint64, qint64> getTimeInterval();
 	void setTimeInterval(qint64 stTime, qint64 enTime);
     QVector<QVector<QString>> getLocateSignals();
+
+    void setGraphSetting(const SV_Graph::graphSetting&);
 
 public slots:
 	void updateSignals();

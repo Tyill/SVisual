@@ -85,42 +85,7 @@ namespace SV_Cng {
         return res;
     }
 
-    /// вернуть тип события как строку
-    /// \param type
-    /// \return
-    std::string getEventTypeStr(eventType type) {
-
-        std::string res = "none";
-
-        switch (type) {
-            case eventType::connectModule:
-                res = "connectModule";
-                break;
-            case eventType::disconnectModule:
-                res = "disconnectModule";
-                break;
-            case eventType::less:
-                res = "less";
-                break;
-            case eventType::equals:
-                res = "equals";
-                break;
-            case eventType::more:
-                res = "more";
-                break;
-            case eventType::posFront:
-                res = "posFront";
-                break;
-            case eventType::negFront:
-                res = "negFront";
-                break;
-            default:
-                res = "none";
-                break;
-        }
-
-        return res;
-    }
+    
 }
 
 

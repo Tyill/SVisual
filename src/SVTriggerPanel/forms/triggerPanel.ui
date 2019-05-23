@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget1">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="label_8">
@@ -515,8 +515,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/resource.qrc">
-                <normaloff>:/SVMonitor/images/open.png</normaloff>:/SVMonitor/images/open.png</iconset>
+               <iconset resource="../resources/svtriggerresource.qrc">
+                <normaloff>:/SVTrigger/images/open.png</normaloff>:/SVTrigger/images/open.png</iconset>
               </property>
              </widget>
             </item>
@@ -575,7 +575,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/resource.qrc"/>
+  <include location="../resources/svtriggerresource.qrc"/>
  </resources>
  <connections/>
 </ui>

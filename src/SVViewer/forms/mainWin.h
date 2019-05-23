@@ -28,11 +28,13 @@
 #include "src/stdafx.h"
 #include "mainWin.h"
 #include "ui_mainWin.h"
-//#include "exportWin.h"
 #include "src/treeWidgetExt.h"
 #include "src/thrLoadData.h"
 #include "SVConfig/SVConfigData.h"
+#include "SVGraphPanel/SVGraphPanel.h"
 #include "src/structurs.h"
+
+class graphSettingPanel;
 
 class MainWin : public QMainWindow
 {
@@ -60,9 +62,13 @@ public:
 
         QString initPath;
         QString selOpenDir;
+
+        SV_Graph::graphSetting graphSett;
 	};
 
     bool loadModuleVals(QString path);
+
+    void updateGraphSetting(const SV_Graph::graphSetting&);
 
 private:
 
@@ -71,6 +77,7 @@ private:
     QDialog* exportPanel_ = nullptr;
     QMap<QObject*, QWidget*> graphPanels_;
 	QDialog* statPanel_ = nullptr;
+    graphSettingPanel* graphSettPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;
 
 	thrLoadData* thrLoadData_ = nullptr;

@@ -48,15 +48,23 @@ namespace SV_Graph {
         bool isShowTable = true;
         int cycleRecMs;
         int packetSz;
+
         modeGr mode;
 
         config(int cycleRecMs_ = 100, int packetSz_ = 10, modeGr mode_ = modeGr::player) :
-                cycleRecMs(cycleRecMs_),
-                packetSz(packetSz_),
-                mode(mode_) {}
+            cycleRecMs(cycleRecMs_),
+            packetSz(packetSz_),
+            mode(mode_) {}
     };
 
-    SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget *parent, config cng);
+    struct graphSetting{
+        int transparent = 0;
+        int lineWidth = 1;
+    };
+
+    SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget *parent, const config& cng);
+
+    SVGRAPHPANEL_API void setGraphSetting(QWidget *parent, const graphSetting&);
 
     typedef QMap<QString, SV_Cng::signalData *>(*pf_getCopySignalRef)();
     SVGRAPHPANEL_API void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f);

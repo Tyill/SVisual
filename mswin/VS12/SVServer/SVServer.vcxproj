@@ -25,7 +25,6 @@
     <ClInclude Include="..\..\..\src\SVServer\src\sharedFunc.h" />
     <ClInclude Include="..\..\..\src\SVServer\src\stdafx.h" />
     <ClInclude Include="..\..\..\src\SVServer\src\thrUpdSignal.h" />
-    <ClInclude Include="..\..\..\src\SVServer\src\thrUpdTrigger.h" />
     <ClInclude Include="..\..\..\src\SVServer\SVServer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -36,7 +35,6 @@
     <ClCompile Include="..\..\..\src\SVServer\src\stdafx.cpp" />
     <ClCompile Include="..\..\..\src\SVServer\src\SVServer.cpp" />
     <ClCompile Include="..\..\..\src\SVServer\src\thrUpdSignal.cpp" />
-    <ClCompile Include="..\..\..\src\SVServer\src\thrUpdTrigger.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ABD50AE4-7C7E-478F-8778-BF2C19C24989}</ProjectGuid>

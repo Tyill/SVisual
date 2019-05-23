@@ -58,7 +58,7 @@ namespace SV_Script {
 
     SVSCRIPTPANEL_API QDialog* createScriptPanel(QWidget* parent, config, modeGr);
 
-    SVSCRIPTPANEL_API void startUpdateThread(QWidget* stPanel);
+    SVSCRIPTPANEL_API void startUpdateThread(QDialog* stPanel);
       
     typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
 	SVSCRIPTPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);

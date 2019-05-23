@@ -28,17 +28,20 @@
 #include "SVConfig/SVConfigData.h"
 #include "SVServer/SVServer.h"
 #include "SVAuxFunc/mt_log.h"
+#include "SVGraphPanel/SVGraphPanel.h" 
 #include "src/sql.h"
-#include "src/structurs.h"
 #include "src/comReader.h"
 
 class settingsPanel;
+class graphSettingPanel;
 class eventOrderWin;
 
 class MainWin : public QMainWindow
 {
-	Q_OBJECT
-			
+    Q_OBJECT
+
+        friend void statusMess(QString mess);
+
 public:
 
 	struct config{
@@ -64,6 +67,8 @@ public:
 		// связь по TCP
 		QString tcp_addr;          ///< ip
 		int tcp_port;              ///< port
+        
+        SV_Graph::graphSetting graphSett;
 	};
 
     SV_Aux::Logger lg;
@@ -74,11 +79,9 @@ public:
     void updateConfig(config);
     config getConfig();
 
-	void addUserData(userEventData);
-	void delUserData(QString);
-	userEventData* getUserData(QString);
-
 	QVector<uEvent> getEvents(QDateTime, QDateTime);
+
+    void updateGraphSetting(const SV_Graph::graphSetting&);
 
 private:
 
@@ -96,17 +99,16 @@ private:
     QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;
-	eventOrderWin* orderWin_ = nullptr;
-	QWidget* trgPanel_ = nullptr;
+    QDialog* triggerPanel_ = nullptr;
+	eventOrderWin* orderWin_ = nullptr;   
 	settingsPanel* settPanel_ = nullptr;
+    graphSettingPanel* graphSettPanel_ = nullptr;
 	QSystemTrayIcon* trayIcon_ = nullptr;
+
 	sql* db = nullptr;
-
-	QMutex mtx_;
-
+    
 	QSet<QString> signExist_;
-	QMap<QString, userEventData> userEvents_;
-
+	
     bool eventFilter(QObject *target, QEvent *event);
 
 	bool writeSettings(QString pathIni);
@@ -126,7 +128,6 @@ public slots:
 	void selSignalDClick(QTreeWidgetItem * item, int column);
 	void selSignalChange(QTreeWidgetItem * item, int column);
 	void contextMenuClick(QAction*);
-	void StatusTxtMess(QString mess);
 	void updateTblSignal();
 	void updateSignals();
 	void moduleConnect(QString module);

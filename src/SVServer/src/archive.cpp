@@ -226,8 +226,7 @@ void archive::addValue(const string& sign, const recData& rd){
 
 	++valPos_[sign];
 	
-	if (valPos_[sign] >= cpySz_){
-		valPos_[sign] = cpySz_ - 1;
+	if (valPos_[sign] == cpySz_){
 
 		copyToDisk(false);
 	}

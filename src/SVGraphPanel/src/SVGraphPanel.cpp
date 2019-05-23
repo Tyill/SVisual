@@ -31,10 +31,16 @@
 
 namespace SV_Graph {
 
-	QWidget *createGraphPanel(QWidget *parent, SV_Graph::config cng) {
+	QWidget *createGraphPanel(QWidget *parent, const SV_Graph::config& cng) {
 				     
 		return new graphPanel(parent, cng);
 	}
+
+    void setGraphSetting(QWidget *gp, const graphSetting& gs){
+
+        if (gp)
+            ((graphPanel*)gp)->setGraphSetting(gs);
+    }
 
 	void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f) {
 

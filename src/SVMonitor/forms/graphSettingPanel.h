@@ -24,37 +24,22 @@
 //
 #pragma once
 
-#include "stdafx.h"
-#include "SVServer/SVServer.h"
-#include <thread>
-#include "SVConfig/SVConfigData.h"
-#include "SVAuxFunc/TimerDelay.h"
-#include "SVAuxFunc/Front.h"
-#include "server.h"
+#include "forms/ui_graphSetting.h"
+#include "forms/mainwin.h"
+#include "SVGraphPanel/SVGraphPanel.h"
 
-class thrUpdTrigger
+class graphSettingPanel : public QDialog
 {
+	Q_OBJECT
 
 public:
-
-    thrUpdTrigger(SV_Srv::config, server*);
-
-    ~thrUpdTrigger();
+	graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting&);
+	~graphSettingPanel() = default;
+	
+	Ui::graphSettingClass ui;
 
 private:
 
-    SV_Srv::config cng;
+private slots:
 
-    bool thrStop_ = false;
-
-    std::thread thr_;
-	server* pServ_ = nullptr;
-
-	SV_Aux::TimerDelay tmDelay_;
-    SV_Aux::Front front_;
-
-	std::mutex mtx_;
-
-	bool checkCondition(SV_Cng::triggerData* tr, SV_Cng::signalData* sd);
-	void updCycle();
 };
