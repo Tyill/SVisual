@@ -23,6 +23,7 @@ add_subdirectory(SVAuxFunc)
 add_subdirectory(SVConfig)
 add_subdirectory(SVClient)
 add_subdirectory(SVServer)
+add_subdirectory(SVWebServer)
 add_subdirectory(SVWriterExample)
 add_subdirectory(SVClientExample)
 
