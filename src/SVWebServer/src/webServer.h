@@ -22,47 +22,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#pragma once
+
+
+/////////////////////
 #include "stdafx.h"
-#include "SVWebServer/SVWebServer.h"
-#include "webServer.h"
+#include "http_parser.h"
+#include <QTcpServer>
+#include <QTcpSocket>
 
-webServer wServer;
-
-namespace SV_Web {
-
-    bool startServer(const QString& addr, int port, const config&){
-               
-        return wServer.listen(QHostAddress(addr), port);
-    }
-
-    void stopServer(){
-
-
-    }
-    	
-	void setGetCopySignalRef(pf_getCopySignalRef f) {
-
-		/*if (stp)
-            ((scriptPanel *)stp)->pfGetCopySignalRef = f;*/
-	}
-
-    void setGetModuleData(pf_getModuleData f){
-
-       /* if (stp)
-            ((scriptPanel *)stp)->pfGetModuleData = f;*/
-    }
-
-	void setGetSignalData(pf_getSignalData f) {
-
-		/*if (stp)
-            ((scriptPanel *)stp)->pfGetSignalData = f;*/
-	}
-
-	void setLoadSignalData(pf_loadSignalData f) {
-/*
-		if (stp)
-            ((scriptPanel *)stp)->pfLoadSignalData = f;
-	*/}
+class webServer : public QTcpServer{
     
-    
-}
+    Q_OBJECT
+
+public:
+
+    webServer(QObject *parent = nullptr) : QTcpServer(parent){}
+
+    ~webServer() = default;
+
+private:
+    void incomingConnection(qintptr handle) override;
+
+};
+
+class clientSocket : public QTcpSocket
+{
+    Q_OBJECT
+        
+    friend int on_url(http_parser*, const char* url, size_t length);    
+    friend int on_header_field(http_parser*, const char* url, size_t length);
+    friend int on_header_value(http_parser*, const char* url, size_t length);
+    friend int response(http_parser*);
+
+public:
+
+    QString cField_;
+    QMap<QString, QString> reqFields_;
+
+    QString reqPage_;
+
+    clientSocket(QObject *parent = nullptr);
+
+private: 
+    http_parser parser_;
+
+private slots:
+    void readData();
+};
