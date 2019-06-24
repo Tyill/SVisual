@@ -189,7 +189,9 @@ void wdgGraph::paintSignals(){
 
                 int sz = zonePnts.size();
 
-                if (isFillGraph){
+                bool isRelieve = (sz > 1) && ((zonePnts[1].first - zonePnts[0].first) > 1);
+
+                if (isFillGraph && isRelieve){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -705,11 +707,11 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 	
 	double valMinInterval = valInterval.first, valMaxInterval = valInterval.second;
 
-	if (isAlter){
+    if (isAlter){
 		valInterval = getSignMaxMinValue(sign, tmInterval);
 		valMinInterval = valInterval.first - 1, valMaxInterval = valInterval.second + 3;
 		valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
-	}
+    }
 
     if (!sign->isBuffEnable && grPanel_->pfLoadSignalData)
     	grPanel_->pfLoadSignalData(QString::fromStdString(sign->name + sign->module));
@@ -739,7 +741,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 	QVector<double> tmPosMem;
 	for (int i = 0; i < SV_PACKETSZ; ++i)
         tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
-
+    
 	double valPosMem = valMinInterval / valScale;
 	double tmZnBeginMem = double(tmZnBegin) / tmScale;
 	
