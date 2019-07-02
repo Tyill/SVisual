@@ -49,10 +49,7 @@ private:
 class clientSocket : public QTcpSocket
 {
     Q_OBJECT
-        
-    friend int on_url(http_parser*, const char* url, size_t length);    
-    friend int on_header_field(http_parser*, const char* url, size_t length);
-    friend int on_header_value(http_parser*, const char* url, size_t length);
+   
     friend int response(http_parser*);
 
 public:

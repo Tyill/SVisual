@@ -50,20 +50,16 @@ void clientSocket::readData(){
     parser_settings.on_url = [](http_parser* parser, const char* url, size_t length){
     
         struct http_parser_url u{ 0 };
-        if (http_parser_parse_url(url, length, 0, &u) != 0) {
-
+        if (http_parser_parse_url(url, length, 0, &u) != 0)
             return -1;
-        }
-        else {
+        
+        if (u.field_set & (1 << UF_PATH)) {
+            for (int i = 0; i < UF_MAX; ++i){
 
-            if (u.field_set & (1 << UF_PATH)) {
-                for (int i = 0; i < UF_MAX; ++i){
+                QString fld = QString(url).mid(u.field_data[i].off, u.field_data[i].len);
 
-                    QString fld = QString(url).mid(u.field_data[i].off, u.field_data[i].len);
-
-                    if (!fld.isEmpty() && (fld[0] == '/'))
-                        ((clientSocket*)parser->data)->reqPage_ = fld;
-                }
+                if (!fld.isEmpty() && (fld[0] == '/'))
+                    ((clientSocket*)parser->data)->reqPage_ = fld;
             }
         }
         return 0;

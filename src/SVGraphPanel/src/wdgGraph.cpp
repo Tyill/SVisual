@@ -733,7 +733,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 	QVector<QVector<QPair<int, int>>> zonePnts(1);
 	zonePnts.back().reserve(axisTime_->width());
 		
-	int prevPos = 0, endPos = sign->buffValuePos;
+	int prevPos = -1, endPos = sign->buffValuePos;
 	uint64_t tmZnEndPrev = sign->buffData[z].beginTime;
 	
 	tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
@@ -745,23 +745,23 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 	double valPosMem = valMinInterval / valScale;
 	double tmZnBeginMem = double(tmZnBegin) / tmScale;
 	
-	QPair<int , int> pnt;
-	int valMem = 0, backVal = 0, prevBackVal = 0, backValInd = -1, prevBackValInd = -2;
-	bool isChange = false;
-    while (tmZnBegin < tmMaxInterval){
+	QPair<int, int> pnt;
+	int valMem = 0, backVal = 0, prevBackVal = 0, backValInd = 0, prevBackValInd = -1;
+	while (tmZnBegin < tmMaxInterval){
 
 		if (tmZnEnd > tmMinInterval){
 			recData& rd = sign->buffData[z];
 
-          	if (int(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS){
-				zonePnts.push_back(QVector<QPair<int, int>>());
-				isChange = false;
-				backValInd = -1;
-				prevBackValInd = -2;
-			}
-
-			tmZnBeginMem = double(tmZnBegin) / tmScale;
+            if (int(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS){
+                zonePnts.push_back(QVector<QPair<int, int>>());
+                backValInd = 0;
+                prevBackValInd = -1;
+                prevPos = -1;
+            }
+						
             auto& backZone = zonePnts.back();
+
+            tmZnBeginMem = double(tmZnBegin) / tmScale;
 
 			for (int i = 0; i < SV_PACKETSZ; ++i){
 				pnt.first = tmPosMem[i] + tmZnBeginMem;
@@ -772,48 +772,37 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnt(signalData* sign, bool 
 				case valueType::tFloat: pnt.second = rd.vals[i].tFloat / valScale - valPosMem; break;
 				}
 
-                if (pnt.first != prevPos){
-					isChange = false;
+                if (pnt.first != prevPos){					
 					prevPos = pnt.first;
 
                     backZone.push_back(pnt);
 					++backValInd;
 					++prevBackValInd;
+
+                    backVal = backZone[backValInd].second;
+                    prevBackVal = backZone[prevBackValInd].second;
 				}
 				else if (pnt.second != valMem){
 					valMem = pnt.second;
-						
-					if (!isChange){
-                        backZone.push_back(pnt);
-						++backValInd;
-						++prevBackValInd;
-								
-						if (prevBackValInd >= 0){
-							isChange = true;
-							backVal = backZone[backValInd].second;
-							prevBackVal = backZone[prevBackValInd].second;
+											
+					if (prevBackVal <= backVal){
+						if (valMem < prevBackVal){
+							prevBackVal = valMem;
+                            backZone[prevBackValInd].second = valMem;
+						}
+						else if (valMem > backVal){
+							backVal = valMem;
+                            backZone[backValInd].second = valMem;
 						}
 					}
 					else{
-						if (prevBackVal <= backVal){
-							if (valMem < prevBackVal){
-								prevBackVal = valMem;
-                                backZone[prevBackValInd].second = valMem;
-							}
-							else if (valMem > backVal){
-								backVal = valMem;
-                                backZone[backValInd].second = valMem;
-							}
+						if (valMem > prevBackVal){
+							prevBackVal = valMem;
+                            backZone[prevBackValInd].second = valMem;
 						}
-						else{
-							if (valMem > prevBackVal){
-								prevBackVal = valMem;
-                                backZone[prevBackValInd].second = valMem;
-							}
-							else if (valMem < backVal){
-								backVal = valMem;
-                                backZone[backValInd].second = valMem;
-							}
+						else if (valMem < backVal){
+							backVal = valMem;
+                            backZone[backValInd].second = valMem;
 						}
 					}
 				}

@@ -66,7 +66,9 @@ int main(int argc, char *argv[]){
 				
 		std::string val = "sin";
         SV_Cln::svAddFloatValue("sin", sin(cp * M_PI / 180.0) * 100);
-        		
+        
+        SV_Cln::svAddBoolValue("sinb", cp > 100);
+
 		cp += 1; if (cp > 359) cp = 0;
 			
 		SV_Aux::SleepMs(100);
