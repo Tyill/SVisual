@@ -49,6 +49,7 @@ private:
 		QLabel* lbLeftMarkVal;
 		QLabel* lbRightMarkVal;
 		QVector<QVector<QPair<int, int>>> pnts;
+        QVector<QPair<int, int>> localMaxMin;
 	};
 
 	struct histPos{
@@ -68,7 +69,25 @@ private:
 	QMap <QString, graphSignData> signals_, signalsAlter_;
 	QStringList signalList_, signalListAlter_;
 		
-	QVector<QVector<QPair<int, int>>> getSignalPnt(SV_Cng::signalData* sign, bool isAlter = false);
+	QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Cng::signalData* sign, bool isAlter = false);
+
+    // получить точки для разряженныго графика
+    QVector<QVector<QPair<int, int>>> getDischargedSignalPnts(SV_Cng::signalData* sign,
+                                                             int iBuf,
+                                                             const QPair<qint64, qint64>& tmInterval,
+                                                             const QPair<double, double>& valInterval,
+                                                             double tmScale,
+                                                             double valScale);
+
+    // получить точки для сосредоточенного графика
+    QVector<QVector<QPair<int, int>>> getFocusedSignalPnts(SV_Cng::signalData* sign,
+                                                           int iBuf,
+                                                           QVector<QPair<int, int>>& localMaxMin,
+                                                           const QPair<qint64, qint64>& tmInterval,
+                                                           const QPair<double, double>& valInterval,
+                                                           double tmScale,
+                                                           double valScale);
+
 	QPair<double, double > getSignMaxMinValue(graphSignData* sign);
 	QPair<double, double> getSignMaxMinValue(SV_Cng::signalData* sign, QPair<qint64, qint64>& tmInterval);
 	void addPosToHistory();
