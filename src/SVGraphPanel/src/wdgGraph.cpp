@@ -187,11 +187,9 @@ void wdgGraph::paintSignals(){
 
                 QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
 
-                int sz = zonePnts.size();
-
-                bool isRelieve = (sz > 1) && ((zonePnts[1].first - zonePnts[0].first) > 1);
-
-                if (isFillGraph && isRelieve){
+                int zsz = zonePnts.size();
+                            
+                if (isFillGraph && (zsz < w * 0.8)){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -201,7 +199,7 @@ void wdgGraph::paintSignals(){
 
                     QPainterPath pp;
                     pp.moveTo(zonePnts[0].first, yPos);
-                    for (int i = 0; i < sz; ++i)
+                    for (int i = 0; i < zsz; ++i)
                         pp.lineTo(zonePnts[i].first, zonePnts[i].second);
 
                     pp.lineTo(zonePnts.back().first, yPos);
@@ -209,7 +207,7 @@ void wdgGraph::paintSignals(){
                     painter.drawPath(pp);
                 }
                 else{
-                    for (int i = 1; i < sz; ++i)
+                    for (int i = 1; i < zsz; ++i)
                         painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
                 }
 
@@ -218,7 +216,7 @@ void wdgGraph::paintSignals(){
                     ptPen.setCapStyle(Qt::RoundCap);
                     ptPen.setWidth(10);
                     painter.setPen(ptPen);
-                    for (int i = 0; i < sz; ++i){
+                    for (int i = 0; i < zsz; ++i){
                         painter.drawPoint(zonePnts[i].first, zonePnts[i].second);
                     }
                 }
@@ -309,8 +307,10 @@ void wdgGraph::paintSignalsAlter(){
 
                 QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
                 int sz = zonePnts.size();
-
-                if (isFillGraph){
+                              
+                bool isRelieve = (sz > 2) && ((zonePnts[2].first - zonePnts[0].first) > 1);
+                
+                if (isFillGraph && isRelieve){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -749,23 +749,21 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
         iBuf = std::distance(sign->buffData.begin(), bIt);
     }
     
-    tmZnBegin = sign->buffData[iBuf].beginTime;
-    uint64_t tmFirst = double(tmZnBegin - tmMinInterval) / tmScale;
-
-    int inx = iBuf + 1;
-    if (inx >= sign->buffData.size()) inx = 0;
-    
-    tmZnBegin = sign->buffData[inx].beginTime;
-    uint64_t tmSecond = double(tmZnBegin - tmMinInterval) / tmScale;
-        
     //////////// Получаем точки
- //   if (tmFirst != tmSecond){ // разряженный график
+    tmMinInterval = sign->buffData[iBuf].beginTime;
+    tmMaxInterval = qMin(tmMaxInterval, sign->buffMaxTime);
+       
+    bool isDischPnts = (cng.mode != SV_Graph::modeGr::viewer) || ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 1000); // < 12 часов
+         
+    if (isDischPnts){
+        // разряженный график
         return getDischargedSignalPnts(sign, iBuf, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
- //   }
- //   else{                     // собранный график
-  //      auto& localMaxMin = isAlter ? signalsAlter_[sname].localMaxMin : signals_[sname].localMaxMin;
-   //     return getFocusedSignalPnts(sign, iBuf, localMaxMin, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
- //   }
+    }
+    else{        
+        // собранный график
+        auto& localMaxMin = isAlter ? signalsAlter_[sname].localMaxMin : signals_[sname].localMaxMin;
+        return getFocusedSignalPnts(sign, iBuf, localMaxMin, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
+    }
 }
 
 QVector<QVector<QPair<int, int>>> 
@@ -784,14 +782,12 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
            
     uint64_t tmZnBegin = sign->buffData[iBuf].beginTime,
              tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS,
-             tmZnEndPrev = 0;
+             tmZnEndPrev = tmZnBegin;
         
     QVector<double> tmPosMem;
     for (int i = 0; i < SV_PACKETSZ; ++i)
         tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
-
-    QVector<QVector<QPair<int, int>>> zonePnts;
-   
+       
     int znSz = sign->buffData.size(),
         endPos = sign->buffValuePos,
         prevPos = -1,
@@ -799,21 +795,29 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
         backVal = 0,
         prevBackVal = 0,
         backValInd = 0,
-        prevBackValInd = -1;
+        prevBackValInd = 0;
     
-    bool isFirstPnt = true;
+    bool isBegin = true;
 
     QPair<int, int> pnt;
+    QVector<QVector<QPair<int, int>>> zonePnts;
+
     while (tmZnBegin < tmMaxInterval){
 
         if (tmZnEnd > tmMinInterval){
             
             recData& rd = sign->buffData[iBuf];
-                      
+          
             double tmZnBeginMem = double(tmZnBegin) / tmScale;
             
-            if (isFirstPnt || (int(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS)){
-                isFirstPnt = false;
+            if ((int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) || isBegin){
+                isBegin = false;
+
+                zonePnts.push_back(QVector<QPair<int, int>>());
+
+                auto& backZone = zonePnts.back();
+
+                backZone.reserve(axisTime_->width());
 
                 pnt.first = tmPosMem[0] + tmZnBeginMem;
 
@@ -822,20 +826,35 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
                    case valueType::tBool: pnt.second = rd.vals[0].tBool; break;
                    case valueType::tFloat: pnt.second = rd.vals[0].tFloat / valScale - valPosMem; break;
                 }
+                
+                valMem = pnt.second;
 
-                QVector<QPair<int, int>> pnts;
-                pnts.reserve(axisTime_->width());
-                pnts.push_back(pnt);
+                backZone.push_back(pnt);
+               
+                if (tmPosMem.size() > 1){
 
-                zonePnts.push_back(pnts);
+                    pnt.first = tmPosMem[1] + tmZnBeginMem;
 
-                backValInd = 0;
-                prevBackValInd = -1;
-                prevPos = -1;
+                    switch (sign->type){
+                    case valueType::tInt: pnt.second = rd.vals[1].tInt / valScale - valPosMem; break;
+                    case valueType::tBool: pnt.second = rd.vals[1].tBool; break;
+                    case valueType::tFloat: pnt.second = rd.vals[1].tFloat / valScale - valPosMem; break;
+                    }
+                }
+                
+                backZone.push_back(pnt);
+
+                backValInd = 1;
+                prevBackValInd = 0;
+
+                backVal = backZone[backValInd].second;
+                prevBackVal = backZone[prevBackValInd].second;
+                               
+                prevPos = pnt.first;
             }
             
             auto& backZone = zonePnts.back();
-
+                      
             for (int i = 0; i < SV_PACKETSZ; ++i){
 
                 pnt.first = tmPosMem[i] + tmZnBeginMem;
@@ -846,7 +865,7 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
                    case valueType::tFloat: pnt.second = rd.vals[i].tFloat / valScale - valPosMem; break;
                 }
                                
-                if (pnt.first != prevPos){
+                if (pnt.first > prevPos){
                     prevPos = pnt.first;
 
                     backZone.push_back(pnt);
@@ -857,8 +876,8 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
                     prevBackVal = backZone[prevBackValInd].second;
                 }
                 else if (pnt.second != valMem){
-                    valMem = pnt.second;
-
+                    valMem = pnt.second;                  
+                                      
                     if (prevBackVal <= backVal){
                         if (valMem < prevBackVal){
                             prevBackVal = valMem;
@@ -894,14 +913,7 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
         else break;
     }
 
-    int sz = zonePnts.size();
-    for (int i = 0; i < sz; ++i){
-        if (zonePnts[i].isEmpty()){
-            zonePnts.remove(i);
-            i--; sz--;
-        }
-    }
-
+   
     return zonePnts;
 }
 
@@ -919,7 +931,7 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
        
     //////////// Локальные макс-мин
        
-    if ((cng.mode == SV_Graph::modeGr::player) || (localMaxMin.size() != sign->buffValuePos)){
+    if (localMaxMin.size() != sign->buffValuePos){
 
         localMaxMin.clear();
         localMaxMin.reserve(znSz);
@@ -964,6 +976,9 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
         }
     }
 
+    if (localMaxMin.empty())
+        return QVector<QVector<QPair<int, int>>>();
+
 
     //////////// Цикл получения точек для сосредоточен графика
 
@@ -975,58 +990,64 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
 
     uint64_t tmZnBegin = sign->buffData[iBuf].beginTime,
              tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS,
-             tmZnEndPrev = 0;
-
-    QVector<double> tmPosMem;
-    for (int i = 0; i < SV_PACKETSZ; ++i)
-        tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
-
-    QVector<QVector<QPair<int, int>>> zonePnts;
-
-    bool isRotn = false;
-
-    QPair<int, int> pnt;
-
+             tmZnEndPrev = tmZnBegin;
+                
     int prevPos = -1,
-        valMem = 0,
         backVal = 0, 
         prevBackVal = 0,
         backValInd = 0,
-        prevBackValInd = -1;
+        prevBackValInd = 0;
+
+    bool isBegin = true;
+
+    QPair<int, int> pnt;   
+    QVector<QVector<QPair<int, int>>> zonePnts;   
 
     while (tmZnBegin < tmMaxInterval){
 
         if (tmZnEnd > tmMinInterval){
-                                    
-            if ((tmZnBegin - tmZnEndPrev) > size_t(SV_CYCLESAVE_MS)){
+                      
+            if ((int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) || isBegin){
+                isBegin = false;
+
+                zonePnts.push_back(QVector<QPair<int, int>>());
+
+                auto& backZone = zonePnts.back();
+
+                backZone.reserve(axisTime_->width());
+
+                pnt.first = double(tmZnBegin - tmMinInterval) / tmScale;
                
-                pnt.first = tmPosMem[0] + double(tmZnBegin) / tmScale;
-                pnt.second = localMaxMin[iBuf].first;
-             
-                isRotn = false;
+                pnt.second = (sign->type != valueType::tBool) ?
+                    (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first;
 
-                QVector<QPair<int, int>> pnts;
-                pnts.reserve(axisTime_->width());
-                pnts.push_back(pnt);
+                backZone.push_back(pnt);
 
-                zonePnts.push_back(pnts);
+                
+                pnt.second = (sign->type != valueType::tBool) ?
+                    (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
 
-                backValInd = 0;
-                prevBackValInd = -1;
-                prevPos = -1;
+                backZone.push_back(pnt);
+                              
+                backValInd = 1;
+                prevBackValInd = 0;
+          
+                backVal = backZone[backValInd].second;
+                prevBackVal = backZone[prevBackValInd].second;
+
+                prevPos = pnt.first;
             }
-           
+       
             auto& backZone = zonePnts.back();
                       
-            pnt.first = tmPosMem[0] + double(tmZnBegin) / tmScale;
+            pnt.first = double(tmZnBegin - tmMinInterval) / tmScale;
             
-            if (pnt.first != prevPos){
+            if (pnt.first > prevPos){
                 prevPos = pnt.first;
                   
-                pnt.second = isRotn ? localMaxMin[iBuf].first : localMaxMin[iBuf].second;
-
-                isRotn = !isRotn;
-
+                pnt.second = (sign->type != valueType::tBool) ?
+                    (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first;
+               
                 backZone.push_back(pnt);
                 ++backValInd;
                 ++prevBackValInd;
@@ -1034,28 +1055,33 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
                 backVal = backZone[backValInd].second;
                 prevBackVal = backZone[prevBackValInd].second;
             }
-            else if (pnt.second != valMem){
-                valMem = pnt.second;
+           
+            int vmax = (sign->type != valueType::tBool) ?
+                (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first,
 
-                if (prevBackVal <= backVal){
-                    if (valMem < prevBackVal){
-                        prevBackVal = valMem;
-                        backZone[prevBackValInd].second = valMem;
-                    }
-                    else if (valMem > backVal){
-                        backVal = valMem;
-                        backZone[backValInd].second = valMem;
-                    }
+                vmin = (sign->type != valueType::tBool) ?
+                (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
+         
+            if (prevBackVal <= backVal){           
+                
+                if (vmin < prevBackVal){
+                    prevBackVal = vmin;
+                    backZone[prevBackValInd].second = vmin;
                 }
-                else{
-                    if (valMem > prevBackVal){
-                        prevBackVal = valMem;
-                        backZone[prevBackValInd].second = valMem;
-                    }
-                    else if (valMem < backVal){
-                        backVal = valMem;
-                        backZone[backValInd].second = valMem;
-                    }
+                else if (vmax > backVal){
+                    backVal = vmax;
+                    backZone[backValInd].second = vmax;
+                }               
+            }
+            else{
+                               
+                if (vmax > prevBackVal){
+                    prevBackVal = vmax;
+                    backZone[prevBackValInd].second = vmax;
+                }
+                if (vmin < backVal){
+                    backVal = vmin;
+                    backZone[backValInd].second = vmin;
                 }
             }
         }
@@ -1071,14 +1097,6 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
         else break;
     }
     
-    int sz = zonePnts.size();
-    for (int i = 0; i < sz; ++i){
-        if (zonePnts[i].isEmpty()){
-            zonePnts.remove(i);
-            --i; --sz;
-        }
-    }
-
     return zonePnts;
 
 }

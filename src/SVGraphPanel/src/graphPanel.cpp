@@ -157,6 +157,8 @@ void graphPanel::addSignalOnGraph(QString sign, int section){
         
         tableUpdate(graphObj_[section]);
         tableUpdateAlter(graphObj_[section]);
+
+        selGraph_ = graphObj_[section];
     }
 	
 }
@@ -202,6 +204,8 @@ void graphPanel::addGraph(QString sign){
 
 	tableUpdate(graph);
 	tableUpdateAlter(graph);
+
+    selGraph_ = graph;
 }
 
 void graphPanel::delSignal(QString sign){
