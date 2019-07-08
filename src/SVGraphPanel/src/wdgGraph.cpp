@@ -189,7 +189,7 @@ void wdgGraph::paintSignals(){
 
                 int zsz = zonePnts.size();
                             
-                if (isFillGraph && (zsz < w * 0.8)){
+                if (isFillGraph && (zsz < 1024)){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -198,6 +198,7 @@ void wdgGraph::paintSignals(){
                         yPos = h;
 
                     QPainterPath pp;
+                    
                     pp.moveTo(zonePnts[0].first, yPos);
                     for (int i = 0; i < zsz; ++i)
                         pp.lineTo(zonePnts[i].first, zonePnts[i].second);
@@ -306,11 +307,9 @@ void wdgGraph::paintSignalsAlter(){
             for (int z = 0; z < znSz; ++z){
 
                 QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
-                int sz = zonePnts.size();
-                              
-                bool isRelieve = (sz > 2) && ((zonePnts[2].first - zonePnts[0].first) > 1);
-                
-                if (isFillGraph && isRelieve){
+                int zsz = zonePnts.size();
+                 
+                if (isFillGraph && (zsz < 1024)){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -320,7 +319,7 @@ void wdgGraph::paintSignalsAlter(){
 
                     QPainterPath pp;
                     pp.moveTo(zonePnts[0].first, yPos);
-                    for (int i = 0; i < sz; ++i)
+                    for (int i = 0; i < zsz; ++i)
                         pp.lineTo(zonePnts[i].first, zonePnts[i].second);
 
                     pp.lineTo(zonePnts.back().first, yPos);
@@ -328,7 +327,7 @@ void wdgGraph::paintSignalsAlter(){
                     painter.drawPath(pp);
                 }
                 else{
-                    for (int i = 1; i < sz; ++i)
+                    for (int i = 1; i < zsz; ++i)
                         painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
                 }
 
@@ -337,7 +336,7 @@ void wdgGraph::paintSignalsAlter(){
                     ptPen.setCapStyle(Qt::RoundCap);
                     ptPen.setWidth(10);
                     painter.setPen(ptPen);
-                    for (int i = 0; i < sz; ++i){
+                    for (int i = 0; i < zsz; ++i){
                         painter.drawPoint(zonePnts[i].first, zonePnts[i].second);
                     }
                 }
@@ -532,10 +531,10 @@ void wdgGraph::addSignal(QString sign){
 	
 	if (!signals_.contains(sign)){
 				
-		int num = signals_.size();
+		int num = signals_.size() + 1;
 
 		colorCnt_ += 30;
-		QColor clr = QColor((num * (60 + colorCnt_)) % 255, (num * (120 + colorCnt_)) % 255, (num * (180 + colorCnt_)) % 255, 255);
+		QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
 
 		dragLabel* lb = new dragLabel(this);
         QLabel* lbLeftVal = new QLabel(ui.wPlot);
@@ -579,7 +578,7 @@ void wdgGraph::addAlterSignal(QString sign){
 		int num = signalsAlter_.size() + 1;
 
 		colorCnt_ += 30;
-		QColor clr = QColor((num * (60 + colorCnt_)) % 255, (num * (120 + colorCnt_)) % 255, (num * (180 + colorCnt_)) % 255, 255);
+        QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
 
 		dragLabel* lb = new dragLabel(this);
 		QLabel* lbLeftVal = new QLabel(ui.wPlot);
@@ -797,7 +796,7 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
         backValInd = 0,
         prevBackValInd = 0;
     
-    bool isBegin = true;
+    bool isBegin = true, isChange = false;
 
     QPair<int, int> pnt;
     QVector<QVector<QPair<int, int>>> zonePnts;
@@ -864,20 +863,22 @@ wdgGraph::getDischargedSignalPnts(signalData* sign,
                    case valueType::tBool: pnt.second = rd.vals[i].tBool; break;
                    case valueType::tFloat: pnt.second = rd.vals[i].tFloat / valScale - valPosMem; break;
                 }
-                               
-                if (pnt.first > prevPos){
-                    prevPos = pnt.first;
+                   
+                if ((pnt.first > prevPos) || isChange){
+                    prevPos = pnt.first;   
 
+                    isChange = !isChange;
+                                       
                     backZone.push_back(pnt);
                     ++backValInd;
                     ++prevBackValInd;
 
                     backVal = backZone[backValInd].second;
                     prevBackVal = backZone[prevBackValInd].second;
-                }
+                }                
                 else if (pnt.second != valMem){
                     valMem = pnt.second;                  
-                                      
+                    
                     if (prevBackVal <= backVal){
                         if (valMem < prevBackVal){
                             prevBackVal = valMem;
@@ -945,7 +946,7 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
             int vmax = INT32_MIN, vmin = INT32_MAX;
             if (sign->type == valueType::tBool){
                 vmax = 0;
-                vmin = 0;
+                vmin = 1;
             }
 
             for (int i = 0; i < SV_PACKETSZ; ++i){
@@ -960,6 +961,8 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
                 case valueType::tBool:
                     if (vals[i].tBool)
                         vmax = 1;
+                    else
+                        vmin = 0;
                     break;
                 case valueType::tFloat:
                     if (vals[i].tFloat > vmax)
@@ -998,7 +1001,7 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
         backValInd = 0,
         prevBackValInd = 0;
 
-    bool isBegin = true;
+    bool isBegin = true, isChange = false;
 
     QPair<int, int> pnt;   
     QVector<QVector<QPair<int, int>>> zonePnts;   
@@ -1042,12 +1045,19 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
                       
             pnt.first = double(tmZnBegin - tmMinInterval) / tmScale;
             
-            if (pnt.first > prevPos){
+            if ((pnt.first > prevPos) || isChange){
                 prevPos = pnt.first;
-                  
-                pnt.second = (sign->type != valueType::tBool) ?
-                    (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first;
-               
+                
+                if (!isChange){
+                    pnt.second = (sign->type != valueType::tBool) ?
+                        (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first;
+                }
+                else{
+                    pnt.second = (sign->type != valueType::tBool) ?
+                        (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
+                }
+                isChange = !isChange;
+
                 backZone.push_back(pnt);
                 ++backValInd;
                 ++prevBackValInd;

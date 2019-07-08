@@ -122,6 +122,8 @@ bool MainWin::loadModuleVals(QString path){
                     signalRef_[sign]->isActive = true;
                     moduleRef_[vr->module]->isActive = true;
                     groupRef_[signalRef_[sign]->group.c_str()]->isActive = true;
+
+                    signalRef_[sign]->type = vr->type;
                 }
 
                 if (signalRef_[sign]->group.empty())
