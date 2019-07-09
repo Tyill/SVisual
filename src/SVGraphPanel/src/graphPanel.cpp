@@ -513,7 +513,7 @@ void graphPanel::updateSignals(){
 		ob->plotUpdate();    
 }
 
-void graphPanel::graphToUp(QString obj){
+void graphPanel::graphToDn(QString obj){
 
 	wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
 
@@ -536,7 +536,7 @@ void graphPanel::graphToUp(QString obj){
 	
 }
 
-void graphPanel::graphToDn(QString obj){
+void graphPanel::graphToUp(QString obj){
 
 	wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
 
