@@ -698,7 +698,7 @@ void wdgGraph::getMarkersPos(QPoint& left, QPoint& right){
 
 QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool isAlter){
 		
-    //////////// Ïîëó÷åíèå äàííûõ äëÿ ðàñ÷åòà 
+    //////////// ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð´Ð»Ñ Ñ€Ð°ÑÑ‡ÐµÑ‚Ð° 
 
 	double tmScale = axisTime_->getTimeScale(), 
 	       valScale = ui.wAxisValue->getValScale(); 
@@ -723,7 +723,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
     if (sign->buffData.empty()) return QVector<QVector<QPair<int, int>>>();
 
       
-    //////////// Ïðåäâàðèò ïîèñê ñòàðò òî÷êè
+    //////////// ÐŸÑ€ÐµÐ´Ð²Ð°Ñ€Ð¸Ñ‚ Ð¿Ð¾Ð¸ÑÐº ÑÑ‚Ð°Ñ€Ñ‚ Ñ‚Ð¾Ñ‡ÐºÐ¸
 
 	uint64_t tmZnBegin = sign->buffMinTime,
 		     tmZnEnd = sign->buffMaxTime,
@@ -748,18 +748,18 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
         iBuf = std::distance(sign->buffData.begin(), bIt);
     }
     
-    //////////// Ïîëó÷àåì òî÷êè
+    //////////// ÐŸÐ¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ñ‚Ð¾Ñ‡ÐºÐ¸
     tmMinInterval = sign->buffData[iBuf].beginTime;
     tmMaxInterval = qMin(tmMaxInterval, sign->buffMaxTime);
        
-    bool isDischPnts = (cng.mode != SV_Graph::modeGr::viewer) || ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 1000); // < 12 ÷àñîâ
+    bool isDischPnts = (cng.mode != SV_Graph::modeGr::viewer) || ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 1000); // < 12 Ñ‡Ð°ÑÐ¾Ð²
          
     if (isDischPnts){
-        // ðàçðÿæåííûé ãðàôèê
+        // Ñ€Ð°Ð·Ñ€ÑÐ¶ÐµÐ½Ð½Ñ‹Ð¹ Ð³Ñ€Ð°Ñ„Ð¸Ðº
         return getDischargedSignalPnts(sign, iBuf, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
     }
     else{        
-        // ñîáðàííûé ãðàôèê
+        // ÑÐ¾Ð±Ñ€Ð°Ð½Ð½Ñ‹Ð¹ Ð³Ñ€Ð°Ñ„Ð¸Ðº
         auto& localMaxMin = isAlter ? signalsAlter_[sname].localMaxMin : signals_[sname].localMaxMin;
         return getFocusedSignalPnts(sign, iBuf, localMaxMin, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
     }
@@ -930,7 +930,7 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
     int znSz = sign->buffData.size(),
         endPos = sign->buffValuePos;
        
-    //////////// Ëîêàëüíûå ìàêñ-ìèí
+    //////////// Ð›Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ Ð¼Ð°ÐºÑ-Ð¼Ð¸Ð½
        
     if (localMaxMin.size() != sign->buffValuePos){
 
@@ -983,7 +983,7 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
         return QVector<QVector<QPair<int, int>>>();
 
 
-    //////////// Öèêë ïîëó÷åíèÿ òî÷åê äëÿ ñîñðåäîòî÷åí ãðàôèêà
+    //////////// Ð¦Ð¸ÐºÐ» Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ñ Ñ‚Ð¾Ñ‡ÐµÐº Ð´Ð»Ñ ÑÐ¾ÑÑ€ÐµÐ´Ð¾Ñ‚Ð¾Ñ‡ÐµÐ½ Ð³Ñ€Ð°Ñ„Ð¸ÐºÐ°
 
     uint64_t tmMinInterval = tmInterval.first,
              tmMaxInterval = tmInterval.second;
@@ -1065,33 +1065,34 @@ wdgGraph::getFocusedSignalPnts(signalData* sign,
                 backVal = backZone[backValInd].second;
                 prevBackVal = backZone[prevBackValInd].second;
             }
-           
-            int vmax = (sign->type != valueType::tBool) ?
-                (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first,
-
-                vmin = (sign->type != valueType::tBool) ?
-                (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
-         
-            if (prevBackVal <= backVal){           
-                
-                if (vmin < prevBackVal){
-                    prevBackVal = vmin;
-                    backZone[prevBackValInd].second = vmin;
-                }
-                else if (vmax > backVal){
-                    backVal = vmax;
-                    backZone[backValInd].second = vmax;
-                }               
-            }
             else{
-                               
-                if (vmax > prevBackVal){
-                    prevBackVal = vmax;
-                    backZone[prevBackValInd].second = vmax;
+                int vmax = (sign->type != valueType::tBool) ?
+                    (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first,
+
+                    vmin = (sign->type != valueType::tBool) ?
+                    (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
+
+                if (prevBackVal <= backVal){
+
+                    if (vmin < prevBackVal){
+                        prevBackVal = vmin;
+                        backZone[prevBackValInd].second = vmin;
+                    }
+                    if (vmax > backVal){
+                        backVal = vmax;
+                        backZone[backValInd].second = vmax;
+                    }
                 }
-                if (vmin < backVal){
-                    backVal = vmin;
-                    backZone[backValInd].second = vmin;
+                else{
+
+                    if (vmax > prevBackVal){
+                        prevBackVal = vmax;
+                        backZone[prevBackValInd].second = vmax;
+                    }
+                    if (vmin < backVal){
+                        backVal = vmin;
+                        backZone[backValInd].second = vmin;
+                    }
                 }
             }
         }
