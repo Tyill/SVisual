@@ -42,7 +42,10 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.9";
+const QString VERSION = "1.0.10";
+// -fix graph view
+
+//const QString VERSION = "1.0.9";
 // -add setting graph view 
 
 // const QString VERSION = "1.0.8";
