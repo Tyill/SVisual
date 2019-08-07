@@ -58,8 +58,9 @@ namespace SV_Graph {
     };
 
     struct graphSetting{
+        bool darkTheme = false;
         int transparent = 0;
-        int lineWidth = 1;
+        int lineWidth = 1;        
     };
 
     SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget *parent, const config& cng);

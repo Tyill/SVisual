@@ -87,6 +87,13 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="QCheckBox" name="chbDarkTheme">
+     <property name="text">
+      <string>Черный фон</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

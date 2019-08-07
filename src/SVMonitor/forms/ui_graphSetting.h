@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -34,6 +35,7 @@ public:
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout_2;
     QSlider *slrPenWidth;
+    QCheckBox *chbDarkTheme;
 
     void setupUi(QDialog *graphSettingClass)
     {
@@ -86,6 +88,11 @@ public:
 
         verticalLayout_3->addWidget(groupBox_2);
 
+        chbDarkTheme = new QCheckBox(graphSettingClass);
+        chbDarkTheme->setObjectName(QStringLiteral("chbDarkTheme"));
+
+        verticalLayout_3->addWidget(chbDarkTheme);
+
 
         retranslateUi(graphSettingClass);
 
@@ -97,6 +104,7 @@ public:
         graphSettingClass->setWindowTitle(QApplication::translate("graphSettingClass", "\320\222\320\270\320\264 \320\263\321\200\320\260\321\204\320\270\320\272\320\260", 0));
         groupBox->setTitle(QApplication::translate("graphSettingClass", "\320\237\321\200\320\276\320\267\321\200\320\260\321\207\320\275\320\276\321\201\321\202\321\214", 0));
         groupBox_2->setTitle(QApplication::translate("graphSettingClass", "\320\242\320\276\320\273\321\211\320\270\320\275\320\260 \320\273\320\270\320\275\320\270\320\270", 0));
+        chbDarkTheme->setText(QApplication::translate("graphSettingClass", "\320\247\320\265\321\200\320\275\321\213\320\271 \321\204\320\276\320\275", 0));
     } // retranslateUi
 
 };

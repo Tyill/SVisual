@@ -218,6 +218,7 @@
     <property name="title">
      <string>Помощь</string>
     </property>
+    <addaction name="actionCheckUpdate"/>
     <addaction name="actionProgram"/>
    </widget>
    <widget class="QMenu" name="menu">

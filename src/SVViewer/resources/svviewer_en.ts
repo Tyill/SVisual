@@ -36,7 +36,7 @@
     <message>
         <location filename="../forms/mainWin.ui" line="109"/>
         <location filename="../forms/ui_mainWin.h" line="300"/>
-        <location filename="../src/mainWin.cpp" line="575"/>
+        <location filename="../src/mainWin.cpp" line="581"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
@@ -165,32 +165,32 @@
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="379"/>
+        <location filename="../src/mainWin.cpp" line="386"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="425"/>
+        <location filename="../src/mainWin.cpp" line="432"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="467"/>
+        <location filename="../src/mainWin.cpp" line="472"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="468"/>
+        <location filename="../src/mainWin.cpp" line="473"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="610"/>
+        <location filename="../src/mainWin.cpp" line="616"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="661"/>
+        <location filename="../src/mainWin.cpp" line="667"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
@@ -203,7 +203,7 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="672"/>
+        <location filename="../src/mainWin.cpp" line="678"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>
@@ -212,21 +212,27 @@
     <name>graphSettingClass</name>
     <message>
         <location filename="../forms/graphSetting.ui" line="20"/>
-        <location filename="../forms/ui_graphSetting.h" line="97"/>
+        <location filename="../forms/ui_graphSetting.h" line="104"/>
         <source>Вид графика</source>
         <translation>View graphics</translation>
     </message>
     <message>
         <location filename="../forms/graphSetting.ui" line="26"/>
-        <location filename="../forms/ui_graphSetting.h" line="98"/>
+        <location filename="../forms/ui_graphSetting.h" line="105"/>
         <source>Прозрачность</source>
         <translation>Transparency</translation>
     </message>
     <message>
         <location filename="../forms/graphSetting.ui" line="58"/>
-        <location filename="../forms/ui_graphSetting.h" line="99"/>
+        <location filename="../forms/ui_graphSetting.h" line="106"/>
         <source>Толщина линии</source>
         <translation>Line thickness</translation>
+    </message>
+    <message>
+        <location filename="../forms/graphSetting.ui" line="93"/>
+        <location filename="../forms/ui_graphSetting.h" line="107"/>
+        <source>Черный фон</source>
+        <translation>Dark theme</translation>
     </message>
 </context>
 </TS>

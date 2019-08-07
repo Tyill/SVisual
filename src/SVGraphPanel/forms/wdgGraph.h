@@ -62,7 +62,7 @@ private:
 	bool repaintEna_ = false,
         selLeftMark_ = false, selRigthMark_ = false;
 
-	int colorCnt_ = -30;
+	int colorCnt_ = 30;
 
     SV_Graph::graphSetting graphSetting_;
 		

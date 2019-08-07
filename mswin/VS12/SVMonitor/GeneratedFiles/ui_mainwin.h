@@ -261,6 +261,7 @@ public:
         menuMain->addAction(actionSaveWinState);
         menuMain->addAction(actionLoadWinState);
         menuMain->addAction(actionExit);
+        menuHelp->addAction(actionCheckUpdate);
         menuHelp->addAction(actionProgram);
         menu->addAction(actionUpFont);
         menu->addAction(actionDnFont);

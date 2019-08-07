@@ -127,7 +127,11 @@ void wdgGraph::paintSignals(){
 	int h = ui.wPlot->height(), w = ui.wPlot->width();
 		
 	imSign_ = QImage(ui.wPlot->size(), QImage::Format_RGB888);
-	imSign_.fill(Qt::white);
+	
+    if (graphSetting_.darkTheme)
+       imSign_.fill(Qt::black);
+    else
+       imSign_.fill(Qt::white);
 
 	QPainter painter;
 	painter.begin(&imSign_);
@@ -532,9 +536,10 @@ void wdgGraph::addSignal(QString sign){
 	if (!signals_.contains(sign)){
 				
 		int num = signals_.size() + 1;
-
+               
 		colorCnt_ += 30;
-		QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+		        
+        QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
 
 		dragLabel* lb = new dragLabel(this);
         QLabel* lbLeftVal = new QLabel(ui.wPlot);

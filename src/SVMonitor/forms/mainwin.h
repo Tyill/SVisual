@@ -24,6 +24,8 @@
 //
 #pragma once
 
+#include <QNetworkAccessManager>
+
 #include "forms/ui_mainwin.h"
 #include "SVConfig/SVConfigData.h"
 #include "SVServer/SVServer.h"
@@ -107,6 +109,8 @@ private:
 
 	sql* db = nullptr;
     
+    QNetworkAccessManager* netManager_ = nullptr;
+
 	QSet<QString> signExist_;
 	
     bool eventFilter(QObject *target, QEvent *event);

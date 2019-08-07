@@ -27,6 +27,9 @@
 #include <QSystemTrayIcon>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #include "forms/mainwin.h"
 #include "forms/eventOrderWin.h"
 #include "forms/settingsPanel.h"
@@ -42,7 +45,10 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.0.10";
+const QString VERSION = "1.1.0";
+// -add dark theme
+
+// const QString VERSION = "1.0.10";
 // -fix graph view
 
 //const QString VERSION = "1.0.9";
@@ -146,7 +152,7 @@ void MainWin::load(){
 
 	/////////////////////
 	initTrayIcon();
-
+       
 }
 
 void MainWin::Connect(){
@@ -215,6 +221,38 @@ void MainWin::Connect(){
         ft.setPointSize(ft.pointSize() - 1);
         
         QApplication::setFont(ft);
+    });
+    connect(ui.actionCheckUpdate, &QAction::triggered, [this]() {
+        
+        if (!netManager_){
+            netManager_ = new QNetworkAccessManager(this);
+            connect(netManager_, &QNetworkAccessManager::finished, [](QNetworkReply* reply){
+                              
+                QByteArray response_data = reply->readAll();
+                QJsonDocument jsDoc = QJsonDocument::fromJson(response_data);
+                
+                if (jsDoc.isObject()){
+                    QJsonObject	jsObj = jsDoc.object();
+
+                    QMessageBox msgBox;
+                    msgBox.setTextFormat(Qt::RichText); 
+                    msgBox.setStandardButtons(QMessageBox::Ok);
+                    
+                    QString lastVer = jsObj["tag_name"].toString();
+
+                    if (VERSION != lastVer)
+                        msgBox.setText(tr("Доступна новая версия: ") + "<a href='" + jsObj["html_url"].toString() + "'>" + lastVer + "</a>");
+                    else
+                        msgBox.setText(tr("У вас самая новая версия"));
+
+                    msgBox.exec();
+                }
+            });
+        }
+
+        QNetworkRequest request(QUrl("https://api.github.com/repos/Tyill/SVisual/releases/latest"));
+    
+        netManager_->get(request);
     });
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
        
@@ -358,6 +396,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "fontSz = " << this->font().pointSize() << endl;
     txtStream << "transparent = " << cng.graphSett.transparent << endl;
     txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
+    txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << endl;
 
     file.close();
 
@@ -408,6 +447,7 @@ bool MainWin::init(QString initPath){
 
     cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
     cng.graphSett.transparent = settings.value("transparent", "100").toInt();
+    cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
 
     settings.endGroup();
 

@@ -34,7 +34,11 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
-const QString VERSION = "1.0.10";
+
+const QString VERSION = "1.1.0";
+// -add dark theme
+
+//const QString VERSION = "1.0.10";
 // -fix graph view
 
 //const QString VERSION = "1.0.9";
@@ -104,6 +108,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "fontSz = " << this->font().pointSize() << endl;
     txtStream << "transparent = " << cng.graphSett.transparent << endl;
     txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
+    txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << endl;
     txtStream << endl;
 	file.close();
 
@@ -173,19 +178,22 @@ bool MainWin::writeSignals(QString path){
 
     file.open(QIODevice::WriteOnly);
 
-    for (auto s : signalRef_){
+    if (file.isOpen()){
 
-        if (s->module == "Virtual")
-            continue;
+        for (auto s : signalRef_){
 
-        txtStream << s->module.c_str() << '\t'
-                  << QString::fromLocal8Bit(s->name.c_str()) << '\t'
-                  << getSVTypeStr(s->type).c_str() << '\t'
-                  << QString::fromLocal8Bit(s->comment.c_str()) << '\t'
-                  << QString::fromLocal8Bit(s->group.c_str()) << endl;
+            if (s->module == "Virtual")
+                continue;
+
+            txtStream << s->module.c_str() << '\t'
+                << QString::fromLocal8Bit(s->name.c_str()) << '\t'
+                << getSVTypeStr(s->type).c_str() << '\t'
+                << QString::fromLocal8Bit(s->comment.c_str()) << '\t'
+                << QString::fromLocal8Bit(s->group.c_str()) << endl;
+        }
+
+        file.close();
     }
-
-    file.close();
 
     return true;
 }
@@ -485,6 +493,7 @@ bool MainWin::init(QString initPath){
 		
     cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
     cng.graphSett.transparent = settings.value("transparent", "100").toInt();
+    cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
 
     QFont ft = QApplication::font();
     int fsz = settings.value("fontSz", ft.pointSize()).toInt();
