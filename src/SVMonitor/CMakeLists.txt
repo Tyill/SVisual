@@ -33,4 +33,4 @@ endif()
 
 target_link_libraries(SVMonitor SVConfig SVAuxFunc SVGraphPanel SVTriggerPanel SVExportPanel SVScriptPanel SVServer)
 
-qt5_use_modules(SVMonitor Core Widgets Gui SerialPort PrintSupport)
+qt5_use_modules(SVMonitor Core Widgets Network Gui SerialPort PrintSupport)
