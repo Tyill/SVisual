@@ -83,6 +83,8 @@ exportPanel::exportPanel(QWidget *parent, SV_Exp::config cng_){
                 exportToTXT(fileName);
         }
     });
+
+    connect(ui.tableModule, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selModule(QListWidgetItem*)));
 }
 
 exportPanel::~exportPanel(){
@@ -114,7 +116,7 @@ void exportPanel::selModule(QListWidgetItem* item){
 void exportPanel::addSignalOnExport(){
 
     int rows = ui.tableSignal->rowCount();
-
+    
     for (int i = 0; i < rows; ++i){
 
         auto item = ui.tableSignal->item(i, 0);
