@@ -67,7 +67,9 @@ private:
 		SV_Cng::value* vals;
 	};
 
-	bool isConnect_ = false, thrStop_ = false, isWrite_ = false;
+	bool isConnect_ = false, 
+         thrStop_ = false, 
+         isWrite_ = false;
 
 	std::thread thr_;
 	std::mutex mtxConnect_, mtxUpdValue_;

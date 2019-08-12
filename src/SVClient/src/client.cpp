@@ -28,12 +28,12 @@
 #include "SVAuxFunc/auxFunc.h"
 #include <thread>
 
-
 using namespace std;
 
 client::~client(){
 
-	if (isConnect_) SV_TcpCln::disconnect();
+	if (isConnect_)
+        SV_TcpCln::disconnect();
 
 	thrStop_ = true;
 	if (thr_.joinable()) thr_.join();
@@ -41,12 +41,14 @@ client::~client(){
 
 void client::setConfig(config cng_){
 
+    std::lock_guard<std::mutex> lck(mtxUpdValue_);
+
 	cng = cng_;
 }
 
 bool client::connect(const char* moduleName, const char* ipAddr, int port){
 
-	std::unique_lock<std::mutex> lck(mtxConnect_);
+    std::lock_guard<std::mutex> lck(mtxConnect_);
 
 	if (isConnect_) return true;
 
@@ -73,19 +75,19 @@ bool client::connect(const char* moduleName, const char* ipAddr, int port){
 
 void client::disconnect(){
 
-	if (isConnect_) SV_TcpCln::disconnect();
+    std::lock_guard<std::mutex> lck(mtxConnect_);
+
+	if (isConnect_) 
+        SV_TcpCln::disconnect();
 
 	thrStop_ = true;
-
 	if (thr_.joinable()) thr_.join();
 }
 
 bool client::addValue(const char* name, SV_Cng::valueType type, SV_Cng::value val, bool onlyPosFront){
 
 	if (!isConnect_) return false;
-
-	bool ok = true;
-		
+    		
 	if (values_.find(name) == values_.end()){
 
 		if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ)){
@@ -100,11 +102,14 @@ bool client::addValue(const char* name, SV_Cng::valueType type, SV_Cng::value va
 		strcpy(vd->name, name);
 		vd->type = type;
 		vd->isOnlyFront = onlyPosFront;
-		mtxUpdValue_.lock();
+
+        mtxUpdValue_.lock();
+
 		values_.insert(pair<string, valueRec*>(name, vd));
 		values_[name]->vals = new SV_Cng::value[SV_PACKETSZ];
 		memset(values_[name]->vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
-		mtxUpdValue_.unlock();
+
+        mtxUpdValue_.unlock();
 	}
 	
 	valueRec* vr = values_[name];
@@ -115,27 +120,30 @@ bool client::addValue(const char* name, SV_Cng::valueType type, SV_Cng::value va
 		vr->isActive = true;
 	}
 	else {
-		mtxUpdValue_.lock();
+        std::lock_guard<std::mutex> lck(mtxUpdValue_);
 
 		vr->vals[curCycCnt_] = val;
 		vr->isActive = true;
-
-		mtxUpdValue_.unlock();
-	}
+    }
 	
-	return ok;
+	return true;
 }
 
 bool client::sendData(){
 		
 	if (values_.empty()) return true;
 
-	size_t SINT = sizeof(int), vlSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ,
-           dataSz = SV_NAMESZ + vlSz * values_.size(),
-           startSz = 7, endSz = 5,
-           arrSz = startSz + SINT + dataSz + endSz,
-           offs = 0;
-	
+    size_t SINT = sizeof(int),
+        /*     val name    type      vals           */
+        vlSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ,
+        /*       mod name            vals           */
+        dataSz = SV_NAMESZ + vlSz * values_.size(),
+
+        startSz = 7, endSz = 5, offs = 0,
+
+        /*                dataSz                    */
+        arrSz = startSz + SINT + dataSz + endSz;
+	    
     char* arr = new char[arrSz];
     memset(arr, 0, arrSz);
 
@@ -168,8 +176,10 @@ bool client::sendData(){
 
 void client::sendCyc(){
 
-
-	uint64_t cTm = SV_Aux::CurrDateTimeSinceEpochMs(), prevTm = cTm, tmDiff = SV_CYCLEREC_MS;
+    uint64_t cTm = SV_Aux::CurrDateTimeSinceEpochMs(),
+             prevTm = cTm;
+             
+    int tmDiff = SV_CYCLEREC_MS;
 		
 	while (!thrStop_ ){
 		
@@ -177,12 +187,17 @@ void client::sendCyc(){
 			isConnect_ = SV_TcpCln::connect(addrServ_, portServ_);
 
 		cTm = SV_Aux::CurrDateTimeSinceEpochMs();
-		tmDiff = cTm - prevTm - (SV_CYCLEREC_MS - tmDiff); prevTm = cTm;
+		tmDiff = int(cTm - prevTm) - (SV_CYCLEREC_MS - tmDiff); 
+        
+        prevTm = cTm;
 
 		mtxUpdValue_.lock();
 		isWrite_ = true;
 
-		int prevCyc = curCycCnt_ - 1; if (prevCyc < 0) prevCyc = SV_PACKETSZ - 1;
+		int prevCyc = curCycCnt_ - 1;
+        if (prevCyc < 0) 
+            prevCyc = SV_PACKETSZ - 1;
+
 		for (auto it = values_.begin(); it != values_.end(); ++it){
 						
 			if (!it->second->isActive){
@@ -203,7 +218,8 @@ void client::sendCyc(){
 
 			curCycCnt_ = 0;
 		}
-		else ++curCycCnt_;
+		else 
+            ++curCycCnt_;
 
 		isWrite_ = false;
 		mtxUpdValue_.unlock();
@@ -212,7 +228,3 @@ void client::sendCyc(){
 			SV_Aux::SleepMs(SV_CYCLEREC_MS - tmDiff);
 	}
 }
-
-
-
-
