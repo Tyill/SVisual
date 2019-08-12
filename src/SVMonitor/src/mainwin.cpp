@@ -45,21 +45,21 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.0";
-// -add dark theme
 
+const QString VERSION = "1.1.1";
+// SVExportPanel
+// -fix select module
+
+// const QString VERSION = "1.1.0";
+// -add dark theme
 // const QString VERSION = "1.0.10";
 // -fix graph view
-
 //const QString VERSION = "1.0.9";
 // -add setting graph view 
-
 // const QString VERSION = "1.0.8";
 // -add script panel
-
 // const QString VERSION = "1.0.7";
 // -font change
-
 // const QString VERSION = "1.0.6";
 // -save win state
 // -small fix's

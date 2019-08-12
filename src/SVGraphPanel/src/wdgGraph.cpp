@@ -686,6 +686,32 @@ void wdgGraph::dropEvent(QDropEvent *event)
 	}
 }
 
+void wdgGraph::keyPressEvent(QKeyEvent * event){
+
+    if (signalList_.isEmpty() && signalsAlter_.isEmpty()) return;
+
+    QPair<qint64, qint64> tmIntl = axisTime_->getTimeInterval();
+
+    qint64 delta = tmIntl.second - tmIntl.first;
+
+    if (event->key() == Qt::Key::Key_Left)
+        axisTime_->setTimeInterval(tmIntl.first - delta * 0.2, tmIntl.second - delta * 0.2);
+
+    else if (event->key() == Qt::Key::Key_Right)
+        axisTime_->setTimeInterval(tmIntl.first + delta * 0.2, tmIntl.second + delta * 0.2);
+
+    else if (event->key() == Qt::Key::Key_PageUp)
+        axisTime_->setTimeInterval(tmIntl.first + delta * 0.8, tmIntl.second + delta * 0.8);
+
+    else if (event->key() == Qt::Key::Key_PageDown)
+        axisTime_->setTimeInterval(tmIntl.first - delta * 0.8, tmIntl.second - delta * 0.8);
+    else
+        return;
+     
+    axisTimeChange();
+    emit req_axisTimeUpdate(this->objectName());
+}
+
 void wdgGraph::setMarkersPos(QPoint left, QPoint right){
 
 	left.setX(left.x() - leftMarker_->width() / 2);

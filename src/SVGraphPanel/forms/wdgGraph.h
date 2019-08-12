@@ -147,6 +147,7 @@ protected:
 	void dragMoveEvent(QDragMoveEvent *event);
 	void dropEvent(QDropEvent *event);
 	void resizeEvent(QResizeEvent * event);
+    void keyPressEvent(QKeyEvent * event);
 
 public slots:
 	void axisValueChange();
