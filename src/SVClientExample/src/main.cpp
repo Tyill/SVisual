@@ -50,14 +50,14 @@ int main(int argc, char *argv[]){
 
 		std::cout << "connect " << nm.c_str() << " ok" << std::endl;
 
-		/*for (int i = 0; i < 100; ++i){
+		for (int i = 0; i < 1000; ++i){
 
 			std::string val = "абрвал" + std::to_string(i);
 			SV_Cln::svAddIntValue(val.c_str(), 0);
 
 			val = "front" + std::to_string(i);
 			SV_Cln::svAddBoolValue(val.c_str(), true);
-		}*/
+		}
 	}
 	else std::cout << "connect no" << std::endl;
 
@@ -66,7 +66,8 @@ int main(int argc, char *argv[]){
 				
 		std::string val = "sin";
         SV_Cln::svAddIntValue("sin", sin(cp * M_PI / 180.0) * 100);
-        
+        SV_Cln::svAddIntValue("абрвал0", sin((cp + 1) * M_PI / 180.0) * 100);
+
         SV_Cln::svAddBoolValue("sinb", cp > 100);
 
 		cp += 1; if (cp > 359) cp = 0;

@@ -36,26 +36,35 @@ namespace SV_TcpSrv {
 #define SRVCheck(func, mess){ int fsts = func; \
  if (fsts != 0){ if (server.errCBack) server.errCBack(std::string(mess) + " " + std::to_string(fsts)); return; }}
 
-     /// клиент
-	struct client_t {
+    struct client_t {
 		uv_tcp_t handle;
 		uv_write_t write_req;
-		std::string inMess;     ///< вх данные
-		std::string outMess;    ///< ответ данные
-	};
+        uv_buf_t buf;
+		std::string inMess;     
+		std::string outMess;    
 
-    /// сервер
+        client_t(){
+            buf.base = nullptr;
+            buf.len = 0;
+        }
+
+        ~client_t(){
+            if (buf.base)
+              free(buf.base);
+        }
+	};
+       
 	struct server_t {
 		uv_tcp_t u_server;
 		uv_loop_t *uv_loop;
-		dataCBack dataCBack_;   ///< callback польз данные
-		errorCBack errCBack;    ///< callback ошибка сервера
+		dataCBack dataCBack_;   
+		errorCBack errCBack;    
 
-		std::string addr;       ///< IP адрес сервера
-		int port;               ///< порт
-		int tout;               ///< ждать связи, мс
-		bool keepAlive;         ///< оставлять подключение активным
-		bool isRun;             /// запущен?
+		std::string addr;       
+		int port;               
+		int tout;               // ждать связи, мс
+		bool keepAlive;         // оставлять подключение активным
+		bool isRun;             
 
 		server_t() {
 			uv_loop = nullptr;
@@ -65,41 +74,40 @@ namespace SV_TcpSrv {
 		}
 	};
 
-    /// отдельный поток сервера
-	std::thread thr;
+    std::thread thr;
 
-    /// сервер
-	server_t server{};
+   server_t server{};
 
-    /// освобождение клиента
-    /// \param handle
-	void on_close(uv_handle_t *handle) {
+    void on_close(uv_handle_t *handle) {
 		client_t *client = (client_t *) handle->data;
 		delete client;
 	}
 
-    /// выделение памяти для вх сообщения
-    /// \param suggested_size
-    /// \param buf
-	void alloc_cb(uv_handle_t * /*handle*/, size_t suggested_size, uv_buf_t *buf) {
-		*buf = uv_buf_init((char *) malloc(suggested_size), int(suggested_size));
+    
+    void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
+         
+        client_t* client = (client_t*)handle->data;
+
+        if (client->buf.len < suggested_size){
+            client->buf.base = (char*)realloc(client->buf.base, suggested_size);
+            client->buf.len = suggested_size;
+        }
+
+        *buf = client->buf;
 	}
 
-    /// чтение данные
-    /// \param tcp
-    /// \param nread кол-во получен байт
-    /// \param buf данные
-	void on_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t *buf) {
+    
+	void on_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t* buf) {
 
-		client_t *client = (client_t *) tcp->data;
+		client_t* client = (client_t*)tcp->data;
 
 		if (nread > 0) {
-
-			// копим данные
-			auto clSz = client->inMess.size();
-			client->inMess.resize(clSz + nread);
-			memcpy((char *) client->inMess.data() + clSz, buf->base, nread);
-
+            
+            // копим данные          
+            auto clSz = client->inMess.size();
+            client->inMess.resize(clSz + nread);
+            memcpy((char *)client->inMess.data() + clSz, buf->base, nread);
+            
 			// передача пользователю
 			if (server.dataCBack_)
 				server.dataCBack_(client->inMess, client->outMess);
@@ -116,7 +124,6 @@ namespace SV_TcpSrv {
 								 &resbuf,
 								 1,
 								 [](uv_write_t *req, int status) {
-									 // все ок?
 									 SRVCheck(status, "on_read::uv_write error");
 								 });
 			}
@@ -125,16 +132,10 @@ namespace SV_TcpSrv {
 			if (!uv_is_closing((uv_handle_t *) client))
 				uv_close((uv_handle_t *) client, on_close);
 		}
-
-		free(buf->base);
 	}
-
-    /// новое подключение
-    /// \param server_handle
-    /// \param status
+        
 	void on_connect(uv_stream_t *server_handle, int sts) {
-
-		// все ок?
+        		
 		SRVCheck(sts, "on_connect:: error");
 
 		client_t *client = new client_t();
@@ -150,8 +151,7 @@ namespace SV_TcpSrv {
 		SRVCheck(uv_read_start((uv_stream_t *) &client->handle, alloc_cb, on_read),
 			 "on_connect::uv_read_start error");
 	}
-
-    /// иниц-ия
+       
 	void initConnection() {
 
 		server.uv_loop = uv_default_loop();
@@ -177,14 +177,7 @@ namespace SV_TcpSrv {
 		SRVCheck(uv_run(server.uv_loop, UV_RUN_DEFAULT),
 			 "initConnection::uv_run error");
 	}
-
-    /// запустить сервер
-    /// \param addr IP адрес
-    /// \param port порт
-    /// \param keepAlive не обывать связь
-    /// \param noReceive не отвечать
-    /// \param tout ждать после потери связи
-    /// \return true - ok
+       
 	bool runServer(std::string addr, int port, bool keepAlive, int tout) {
 
 		if (server.isRun) return true;
@@ -209,8 +202,7 @@ namespace SV_TcpSrv {
 		return server.isRun;
 	}
 
-    /// остановить сервер
-	void stopServer() {
+    void stopServer() {
 
 		if (!server.isRun) return;
 
@@ -220,16 +212,12 @@ namespace SV_TcpSrv {
 
 		uv_loop_delete(server.uv_loop);
 	}
-
-    /// задать польз callback - получение данных
-    /// \param uf - callback
+        
 	void setDataCBack(dataCBack uf) {
 
 		server.dataCBack_ = uf;
 	}
-
-    /// задать польз callback - ошибка сервера
-    /// \param uf - callback
+    
 	void setErrorCBack(errorCBack uf) {
 
 		server.errCBack = uf;
