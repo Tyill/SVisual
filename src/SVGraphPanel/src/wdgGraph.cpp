@@ -782,10 +782,10 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
     //////////// Получаем точки
     tmMinInterval = sign->buffData[iBuf].beginTime;
     tmMaxInterval = qMin(tmMaxInterval, sign->buffMaxTime);
-       
+
     bool isDischPnts = (cng.mode != SV_Graph::modeGr::viewer) || 
-        ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 1000 * SV_CYCLEREC_MS / 100); // < 12 часов с учетом периода записи
-         
+        ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 10 * SV_CYCLEREC_MS); // < 12 часов с учетом периода записи
+    
     if (isDischPnts){
         // разряженный график
         return getDischargedSignalPnts(sign, iBuf, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
