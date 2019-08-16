@@ -48,23 +48,6 @@ thrLoadData::thrLoadData(QStringList files){
 	thr->start();
 }
 
-bool uncompressData(char* inArr, size_t& cPos, size_t& outDataSz, char** outArr){
-
-    int sInt = sizeof(int);
-
-    int comprSz = *(int*)(inArr + cPos);
-    uLongf dataSz = *(int*)(inArr + cPos + sInt);
-
-    *outArr = new char[dataSz];
-
-    int ret = uncompress((Bytef*)*outArr, &dataSz, (Bytef*)(inArr + cPos + sInt + sInt), comprSz);
-
-    outDataSz = dataSz;
-    cPos += comprSz + sInt + sInt;
-
-    return ret == 0;
-}
-
 bool MainWin::loadModuleVals(QString path){
 
     if (mainWin->fileRef_.contains(path)) return true;
@@ -88,25 +71,36 @@ bool MainWin::loadModuleVals(QString path){
     mainWin->fileRef_.insert(path, new fileData(path, utcOffs));
 
     QDataStream dataStream(&file);
+   
+    int valSz = sizeof(uint64_t) + sizeof(value) * SV_PACKETSZ, 
+        vheadSz = sizeof(valueData),
+        patchNum = 0,
+        comprSz = 0,
+        dataSz = 0;
 
-    size_t fsz = file.size();
-    char* inArr = new char[fsz];
-    dataStream.readRawData(inArr, fsz);
+    QVector<char> inArr, outArr;
 
-    file.close();
+    while (!dataStream.atEnd()){
+        
+        dataStream.readRawData((char*)&comprSz, 4);
+        dataStream.readRawData((char*)&dataSz, 4);
 
-    char* outArr; size_t cFilePos = 0, dataSz = 0, patchNum = 0;
-    int valSz = sizeof(uint64_t) + sizeof(value) * SV_PACKETSZ, vdataSz = sizeof(valueData);
-    while ((cFilePos < fsz) && uncompressData(inArr, cFilePos, dataSz, &outArr)){
+        inArr.resize(comprSz);
+        outArr.resize(dataSz);
+
+        dataStream.readRawData(inArr.data(), comprSz);
+
+        if (uncompress((Bytef*)outArr.data(), (uLongf*)&dataSz, (Bytef*)inArr.data(), comprSz) != 0){
+            file.close();
+            return false;
+        }
 
         ////
 
-        int cPos = 0, szVl = 0;
-
-        size_t itData = 0;
+        int cPos = 0, itData = 0;
         while (itData < dataSz){
 
-            valueData* vr = (valueData*)(outArr + itData);
+            valueData* vr = (valueData*)(outArr.data() + itData);
 
             QString sign = QString(vr->name) + vr->module;
 
@@ -132,7 +126,7 @@ bool MainWin::loadModuleVals(QString path){
                 if (signalRef_[sign]->comment.empty())
                     signalRef_[sign]->comment = vr->comment;
 
-                szVl = vdataSz + vr->vlCnt * valSz;
+                int szVl = vheadSz + vr->vlCnt * valSz;
                 itData += szVl;
                 cPos += szVl;
                 continue;
@@ -161,16 +155,15 @@ bool MainWin::loadModuleVals(QString path){
 
 			signalRef_[sign] = sd;
 
-            szVl = vdataSz + vr->vlCnt * valSz;
+            int szVl = vheadSz + vr->vlCnt * valSz;
             itData += szVl;
             cPos += szVl;
         }
 
-        delete[] outArr;
         ++patchNum;
     }
-
-    delete[] inArr;
+    
+    file.close();
 
     return true;
 }
@@ -197,15 +190,9 @@ bool loadSignalData(const QString& sign){
         }
 
         QDataStream dataStream(&file);
-
-        size_t fsz = file.size();
-        char* inArr = new char[fsz];
-        dataStream.readRawData(inArr, fsz);
-
-        file.close();
-
+                
         int csz = mainWin->signalRef_[sign]->buffData.size(),
-            newsz = csz +  path->signls[sign].vlsCnt,
+            newsz = csz + path->signls[sign].vlsCnt,
             vlSz = sizeof(value) * SV_PACKETSZ;
 
         sdata->buffData.resize(newsz);
@@ -217,35 +204,62 @@ bool loadSignalData(const QString& sign){
         for (int i = csz, j = 0; i < newsz; ++i, ++j)
             sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
 
-        char* outArr; size_t cFilePos = 0, dataSz = 0;
-        int psz = path->signls[sign].patchApos.size(), posMem = 0, patchNum = 0, vdSz =  sizeof(valueData);
-        while ((cFilePos < fsz) && uncompressData(inArr, cFilePos, dataSz, &outArr)){
+        int psz = path->signls[sign].patchApos.size(),
+            posMem = 0,
+            patchNum = 0,
+            comprSz = 0,
+            dataSz = 0,
+            tmSz = sizeof(uint64_t),
+            valSz = tmSz + vlSz,
+            vheadSz = sizeof(valueData);
+
+        QVector<char> inArr, outArr;
+
+        while (!dataStream.atEnd()){
+        
+            dataStream.readRawData((char*)&comprSz, 4);
+            dataStream.readRawData((char*)&dataSz, 4);
+                        
+            inArr.resize(comprSz);
+            outArr.resize(dataSz);
+
+            dataStream.readRawData(inArr.data(), comprSz);
+
+            if (uncompress((Bytef*)outArr.data(), (uLongf*)&dataSz, (Bytef*)inArr.data(), comprSz) != 0){
+                ok = false;
+                continue;
+            }
 
             for (int i = posMem; i < psz; ++i){
 
-                if (path->signls[sign].patchApos[i].first != patchNum){ posMem = i; break; }
+                if (path->signls[sign].patchApos[i].first != patchNum){ 
+                    posMem = i;
+                    break; 
+                }
 
                 int offs = path->signls[sign].patchApos[i].second;
 
                 if (offs > dataSz) break;
 
-                int vlCnt = ((valueData*)(outArr + offs))->vlCnt,
-                        tmSz = sizeof(uint64_t), rdSz = tmSz + vlSz;
+                int vlCnt = ((valueData*)(outArr.data() + offs))->vlCnt;
+                
+                offs += vheadSz;
 
-                offs += vdSz;
+                char* pData = outArr.data() + offs;
+
                 for (int j = 0; j < vlCnt; ++j){
-                    sdata->buffData[csz + j].beginTime = *(uint64_t*)(outArr + offs + j * rdSz) + path->utcOffsMs;
-                    memcpy(sdata->buffData[csz + j].vals, outArr + offs + j * rdSz + tmSz, vlSz);
+                    sdata->buffData[csz + j].beginTime = *(uint64_t*)(pData + j * valSz) + path->utcOffsMs;
+                    memcpy(sdata->buffData[csz + j].vals, pData + j * valSz + tmSz, vlSz);
                 }
 
                 csz += vlCnt;
             }
-            delete[] outArr;
+
             ++patchNum;
         }
         isNewFile = true;
         path->signls[sign].isLoad = true;
-        delete[] inArr;
+    
     }
 
     if (!isNewFile) 
