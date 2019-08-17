@@ -109,20 +109,17 @@ string archive::getOutPath(bool isStop){
 	return path + fName;
 }
 
-bool archive::compressData(uint8_t* arr, size_t sz, size_t& outsz, uint8_t** outArr){
+bool archive::compressData(size_t insz, const vector<char>& inArr, vector<char>& outArr){
 
     FUNC_BEGIN
+        
+    uLong compressed_size = compressBound(uLong(insz));
+    
+    outArr.resize(compressed_size);
 
-    uLong compress_buff_size = compressBound(uLong(sz));
-    Bytef *compress_buff = new Bytef[compress_buff_size];
-
-    uLong compressed_size = compress_buff_size;
-    int res = compress(compress_buff, &compressed_size, arr, uLong(sz));
-
-    outsz = compressed_size;
-    *outArr = compress_buff;
-
-    return (res == Z_OK) && compress_buff;
+    int res = compress((Bytef*)outArr.data(), &compressed_size, (Bytef*)inArr.data(), uLong(insz));
+        
+    return (res == Z_OK) && !outArr.empty();
 
     FUNC_END
 }
@@ -139,15 +136,16 @@ bool archive::copyToDisk(bool isStop){
 	int sint = sizeof(int), tmSz = sizeof(uint64_t), vlSz = sizeof(value) * SV_PACKETSZ;
 		//       name        module      group       comment       type    vCnt
 	int	headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + sint + sint;
-	
-	uint8_t *inArr = new uint8_t[(tmSz + vlSz) * cpySz_ * SMAXCNT + headSz * SMAXCNT];
+		
+    vector<char> inArr((tmSz + vlSz) * cpySz_ * SMAXCNT + headSz * SMAXCNT);
 
 	vector<string> keys; keys.reserve(dsz);
 	for (auto &it : archiveData_) keys.push_back(it.first);
 	
 	fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
 
-	if (!file.good()){ delete[] inArr; return false;}
+	if (!file.good())
+        return false;
 
 	size_t sCnt = 0, csize = 0;
 	for (int i = 0; i < dsz; ++i) {
@@ -155,18 +153,21 @@ bool archive::copyToDisk(bool isStop){
 		auto sign = pServ_->getSignalData(keys[i]);
 
 		string sn = sign->name + sign->module;
+
+        char* pIn = inArr.data();
+
 		int vCnt = valPos_[sn];
 		if (vCnt > 0) {
-			memcpy(inArr + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
-			memcpy(inArr + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
-			memcpy(inArr + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
-			memcpy(inArr + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-			memcpy(inArr + csize, &sign->type, sint);                   csize += sint;
-			memcpy(inArr + csize, &vCnt, sint);                         csize += sint;
+			memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
+			memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
+			memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
+			memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
+			memcpy(pIn + csize, &sign->type, sint);                   csize += sint;
+			memcpy(pIn + csize, &vCnt, sint);                         csize += sint;
 
 			for (int j = 0; j < vCnt; ++j) {
-				memcpy(inArr + csize, &archiveData_[sn][j].beginTime, tmSz);  csize += tmSz;
-				memcpy(inArr + csize, archiveData_[sn][j].vals, vlSz);       csize += vlSz;
+				memcpy(pIn + csize, &archiveData_[sn][j].beginTime, tmSz);  csize += tmSz;
+				memcpy(pIn + csize, archiveData_[sn][j].vals, vlSz);       csize += vlSz;
 			}
 
 			valPos_[sn] = 0;
@@ -176,26 +177,25 @@ bool archive::copyToDisk(bool isStop){
 
 		if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dsz - 1)))) {
 			sCnt = 0;
-
-			size_t outSz = 0;
-			uint8_t *compArr = nullptr;
-			if (!compressData(inArr, csize, outSz, &compArr)) {
+            			
+            vector<char> compArr;
+			
+            if (!compressData(csize, inArr, compArr)) {
 				statusMess("archive::copyToDisk compressData error");
-				delete[] inArr;
 				file.close();
 				return false;
 			};
 
-			file.write((char *) &outSz, sizeof(int));
-			file.write((char *) &csize, sizeof(int));
-			file.write((char *) compArr, outSz);
+            size_t compSz = compArr.size();
 
-			delete[] compArr;
+            file.write((char *) &compSz, sizeof(int));
+			file.write((char *) &csize, sizeof(int));
+            file.write((char *) compArr.data(), compSz);
+
 			csize = 0;
 		}
 
 	}
-	delete[] inArr;
 
 	file.close();
 
