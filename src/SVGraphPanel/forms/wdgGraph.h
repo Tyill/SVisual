@@ -49,7 +49,6 @@ private:
 		QLabel* lbLeftMarkVal;
 		QLabel* lbRightMarkVal;
 		QVector<QVector<QPair<int, int>>> pnts;
-        QVector<QPair<int, int>> localMaxMin;
 	};
 
 	struct histPos{
