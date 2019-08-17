@@ -68,29 +68,31 @@ bool MainWin::loadModuleVals(QString path){
 
     if (!file.exists() || !file.open(QIODevice::ReadOnly)) return false;
 
+
     mainWin->fileRef_.insert(path, new fileData(path, utcOffs));
 
     QDataStream dataStream(&file);
-   
-    int valSz = sizeof(uint64_t) + sizeof(value) * SV_PACKETSZ, 
-        vheadSz = sizeof(valueData),
-        patchNum = 0,
-        comprSz = 0,
-        dataSz = 0;
 
-    QVector<char> inArr, outArr;
+    int valSz = sizeof(uint64_t) + sizeof(value) * SV_PACKETSZ,
+        vheadSz = sizeof(valueData),
+        patchNum = 0;
+
+    uLong comprSz = 0,
+          dataSz = 0;
+
+    QVector<Bytef> inArr, outArr;
 
     while (!dataStream.atEnd()){
-        
+
         dataStream.readRawData((char*)&comprSz, 4);
         dataStream.readRawData((char*)&dataSz, 4);
 
         inArr.resize(comprSz);
         outArr.resize(dataSz);
 
-        dataStream.readRawData(inArr.data(), comprSz);
+        dataStream.readRawData((char*)inArr.data(), comprSz);
 
-        if (uncompress((Bytef*)outArr.data(), (uLongf*)&dataSz, (Bytef*)inArr.data(), comprSz) != 0){
+        if (uncompress(outArr.data(), &dataSz, inArr.data(), comprSz) != 0){
             file.close();
             return false;
         }
@@ -207,13 +209,14 @@ bool loadSignalData(const QString& sign){
         int psz = path->signls[sign].patchApos.size(),
             posMem = 0,
             patchNum = 0,
-            comprSz = 0,
-            dataSz = 0,
             tmSz = sizeof(uint64_t),
             valSz = tmSz + vlSz,
             vheadSz = sizeof(valueData);
 
-        QVector<char> inArr, outArr;
+        uLong comprSz = 0,
+              dataSz = 0;
+
+        QVector<Bytef> inArr, outArr;
 
         while (!dataStream.atEnd()){
         
@@ -223,9 +226,9 @@ bool loadSignalData(const QString& sign){
             inArr.resize(comprSz);
             outArr.resize(dataSz);
 
-            dataStream.readRawData(inArr.data(), comprSz);
+            dataStream.readRawData((char*)inArr.data(), comprSz);
 
-            if (uncompress((Bytef*)outArr.data(), (uLongf*)&dataSz, (Bytef*)inArr.data(), comprSz) != 0){
+            if (uncompress(outArr.data(), &dataSz, inArr.data(), comprSz) != 0){
                 ok = false;
                 continue;
             }
@@ -245,7 +248,7 @@ bool loadSignalData(const QString& sign){
                 
                 offs += vheadSz;
 
-                char* pData = outArr.data() + offs;
+                Bytef* pData = outArr.data() + offs;
 
                 for (int j = 0; j < vlCnt; ++j){
                     sdata->buffData[csz + j].beginTime = *(uint64_t*)(pData + j * valSz) + path->utcOffsMs;
