@@ -34,11 +34,12 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
+const QString VERSION = "1.1.2";
+// patch for prev release: repair view graph
 
-const QString VERSION = "1.1.1";
+//const QString VERSION = "1.1.1";
 // SVExportPanel
 // -fix select module
-
 //const QString VERSION = "1.1.0";
 // -add dark theme
 //const QString VERSION = "1.0.10";
