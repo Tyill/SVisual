@@ -78,7 +78,7 @@ private:
 	bool isCopyTimeHour();
     std::string getOutPath(bool isStop);
 
-    bool compressData(size_t insz, const std::vector<char>& inArr, std::vector<char>& outArr);
+    bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
 
     void statusMess(const std::string&);
 };

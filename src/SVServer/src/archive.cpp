@@ -109,17 +109,20 @@ string archive::getOutPath(bool isStop){
 	return path + fName;
 }
 
-bool archive::compressData(size_t insz, const vector<char>& inArr, vector<char>& outArr){
+bool archive::compressData(size_t insz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr){
 
     FUNC_BEGIN
-        
-    uLong compressed_size = compressBound(uLong(insz));
-    
-    outArr.resize(compressed_size);
+
+	uLong compressed_size = compressBound(uLong(insz));
+
+    if (outArr.size() < compressed_size)
+      outArr.resize(compressed_size);
 
     int res = compress((Bytef*)outArr.data(), &compressed_size, (Bytef*)inArr.data(), uLong(insz));
-        
-    return (res == Z_OK) && !outArr.empty();
+
+	outsz = compressed_size;
+
+    return res == Z_OK;
 
     FUNC_END
 }
@@ -131,13 +134,14 @@ bool archive::copyToDisk(bool isStop){
 	size_t dsz = archiveData_.size();
 	if (dsz == 0) return true;
 
-	int SMAXCNT = 100; // посылка жестко
+	int SMAXCNT = 100; // макс кол-во сигналов в посылке
 
 	int sint = sizeof(int), tmSz = sizeof(uint64_t), vlSz = sizeof(value) * SV_PACKETSZ;
 		//       name        module      group       comment       type    vCnt
 	int	headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + sint + sint;
 		
-    vector<char> inArr((tmSz + vlSz) * cpySz_ * SMAXCNT + headSz * SMAXCNT);
+    vector<char> inArr((tmSz + vlSz) * cpySz_ * SMAXCNT + headSz * SMAXCNT),
+			     compArr;
 
 	vector<string> keys; keys.reserve(dsz);
 	for (auto &it : archiveData_) keys.push_back(it.first);
@@ -177,16 +181,14 @@ bool archive::copyToDisk(bool isStop){
 
 		if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dsz - 1)))) {
 			sCnt = 0;
-            			
-            vector<char> compArr;
-			
-            if (!compressData(csize, inArr, compArr)) {
+
+			size_t compSz = 0;
+
+            if (!compressData(csize, inArr, compSz, compArr)) {
 				statusMess("archive::copyToDisk compressData error");
 				file.close();
 				return false;
 			};
-
-            size_t compSz = compArr.size();
 
             file.write((char *) &compSz, sizeof(int));
 			file.write((char *) &csize, sizeof(int));
