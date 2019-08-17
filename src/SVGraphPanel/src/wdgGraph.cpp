@@ -753,7 +753,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
        
     if (sign->buffData.empty()) return QVector<QVector<QPair<int, int>>>();
 
-      
+
     //////////// Предварит поиск старт точки
 
 	uint64_t tmZnBegin = sign->buffMinTime,
@@ -778,371 +778,152 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
 
         iBuf = std::distance(sign->buffData.begin(), bIt);
     }
-    
+
+
     //////////// Получаем точки
-    tmMinInterval = sign->buffData[iBuf].beginTime;
-    tmMaxInterval = qMin(tmMaxInterval, sign->buffMaxTime);
 
-    bool isDischPnts = (cng.mode != SV_Graph::modeGr::viewer) || 
-        ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 1000); // < 12 часов
-    
-    if (isDischPnts){
-        // разряженный график
-        return getDischargedSignalPnts(sign, iBuf, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
-    }
-    else{        
-        // собранный график
-        auto& localMaxMin = isAlter ? signalsAlter_[sname].localMaxMin : signals_[sname].localMaxMin;
-        return getFocusedSignalPnts(sign, iBuf, localMaxMin, tmInterval, qMakePair(valMinInterval, valMaxInterval), tmScale, valScale);
-    }
+	double valPosMem = valMinInterval / valScale;
+
+	tmZnBegin = sign->buffData[iBuf].beginTime;
+	tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
+
+	uint64_t tmZnEndPrev = tmZnBegin;
+
+	QVector<double> tmPosMem;
+	for (int i = 0; i < SV_PACKETSZ; ++i)
+		tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
+
+	int znSz = sign->buffData.size(),
+		endPos = sign->buffValuePos,
+		prevPos = -1,
+		valMem = 0,
+		backVal = 0,
+		prevBackVal = 0,
+		backValInd = 0,
+		prevBackValInd = 0;
+
+	bool isBegin = true, isChange = false;
+
+	QPair<int, int> pnt;
+	QVector<QVector<QPair<int, int>>> zonePnts;
+
+	while (tmZnBegin < tmMaxInterval){
+
+		if (tmZnEnd > tmMinInterval){
+
+			recData& rd = sign->buffData[iBuf];
+
+			double tmZnBeginMem = double(tmZnBegin) / tmScale;
+
+			if ((int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) || isBegin){
+				isBegin = false;
+
+				zonePnts.push_back(QVector<QPair<int, int>>());
+
+				auto& backZone = zonePnts.back();
+
+				backZone.reserve(axisTime_->width());
+
+				pnt.first = tmPosMem[0] + tmZnBeginMem;
+
+				switch (sign->type){
+					case valueType::tInt: pnt.second = rd.vals[0].tInt / valScale - valPosMem; break;
+					case valueType::tBool: pnt.second = rd.vals[0].tBool; break;
+					case valueType::tFloat: pnt.second = rd.vals[0].tFloat / valScale - valPosMem; break;
+				}
+
+				valMem = pnt.second;
+
+				backZone.push_back(pnt);
+
+				if (tmPosMem.size() > 1){
+
+					pnt.first = tmPosMem[1] + tmZnBeginMem;
+
+					switch (sign->type){
+						case valueType::tInt: pnt.second = rd.vals[1].tInt / valScale - valPosMem; break;
+						case valueType::tBool: pnt.second = rd.vals[1].tBool; break;
+						case valueType::tFloat: pnt.second = rd.vals[1].tFloat / valScale - valPosMem; break;
+					}
+				}
+
+				backZone.push_back(pnt);
+
+				backValInd = 1;
+				prevBackValInd = 0;
+
+				backVal = backZone[backValInd].second;
+				prevBackVal = backZone[prevBackValInd].second;
+
+				prevPos = pnt.first;
+			}
+
+			auto& backZone = zonePnts.back();
+
+			for (int i = 0; i < SV_PACKETSZ; ++i){
+
+				pnt.first = tmPosMem[i] + tmZnBeginMem;
+
+				switch (sign->type){
+					case valueType::tInt: pnt.second = rd.vals[i].tInt / valScale - valPosMem; break;
+					case valueType::tBool: pnt.second = rd.vals[i].tBool; break;
+					case valueType::tFloat: pnt.second = rd.vals[i].tFloat / valScale - valPosMem; break;
+				}
+
+				if ((pnt.first > prevPos) || isChange){
+					prevPos = pnt.first;
+
+					isChange = !isChange;
+
+					backZone.push_back(pnt);
+					++backValInd;
+					++prevBackValInd;
+
+					backVal = backZone[backValInd].second;
+					prevBackVal = backZone[prevBackValInd].second;
+				}
+				else if (pnt.second != valMem){
+					valMem = pnt.second;
+
+					if (prevBackVal <= backVal){
+						if (valMem < prevBackVal){
+							prevBackVal = valMem;
+							backZone[prevBackValInd].second = valMem;
+						}
+						else if (valMem > backVal){
+							backVal = valMem;
+							backZone[backValInd].second = valMem;
+						}
+					}
+					else{
+						if (valMem > prevBackVal){
+							prevBackVal = valMem;
+							backZone[prevBackValInd].second = valMem;
+						}
+						else if (valMem < backVal){
+							backVal = valMem;
+							backZone[backValInd].second = valMem;
+						}
+					}
+				}
+			}
+		}
+		tmZnEndPrev = tmZnEnd;
+
+		++iBuf;
+		if (iBuf >= znSz) iBuf = 0;
+
+		if (iBuf != endPos){
+			tmZnBegin = sign->buffData[iBuf].beginTime;
+			tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
+		}
+		else break;
+	}
+
+
+	return zonePnts;
 }
 
-QVector<QVector<QPair<int, int>>> 
-wdgGraph::getDischargedSignalPnts(signalData* sign,
-                                 int iBuf,
-                                 const QPair<qint64, qint64>& tmInterval,
-                                 const QPair<double, double>& valInterval,
-                                 double tmScale,
-                                 double valScale){
-    
-    uint64_t tmMinInterval = tmInterval.first,
-             tmMaxInterval = tmInterval.second;
-   
-    double valMinInterval = valInterval.first,
-           valPosMem = valMinInterval / valScale;
-           
-    uint64_t tmZnBegin = sign->buffData[iBuf].beginTime,
-             tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS,
-             tmZnEndPrev = tmZnBegin;
-        
-    QVector<double> tmPosMem;
-    for (int i = 0; i < SV_PACKETSZ; ++i)
-        tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
-       
-    int znSz = sign->buffData.size(),
-        endPos = sign->buffValuePos,
-        prevPos = -1,
-        valMem = 0,
-        backVal = 0,
-        prevBackVal = 0,
-        backValInd = 0,
-        prevBackValInd = 0;
-    
-    bool isBegin = true, isChange = false;
-
-    QPair<int, int> pnt;
-    QVector<QVector<QPair<int, int>>> zonePnts;
-
-    while (tmZnBegin < tmMaxInterval){
-
-        if (tmZnEnd > tmMinInterval){
-            
-            recData& rd = sign->buffData[iBuf];
-          
-            double tmZnBeginMem = double(tmZnBegin) / tmScale;
-            
-            if ((int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) || isBegin){
-                isBegin = false;
-
-                zonePnts.push_back(QVector<QPair<int, int>>());
-
-                auto& backZone = zonePnts.back();
-
-                backZone.reserve(axisTime_->width());
-
-                pnt.first = tmPosMem[0] + tmZnBeginMem;
-
-                switch (sign->type){
-                   case valueType::tInt: pnt.second = rd.vals[0].tInt / valScale - valPosMem; break;
-                   case valueType::tBool: pnt.second = rd.vals[0].tBool; break;
-                   case valueType::tFloat: pnt.second = rd.vals[0].tFloat / valScale - valPosMem; break;
-                }
-                
-                valMem = pnt.second;
-
-                backZone.push_back(pnt);
-               
-                if (tmPosMem.size() > 1){
-
-                    pnt.first = tmPosMem[1] + tmZnBeginMem;
-
-                    switch (sign->type){
-                    case valueType::tInt: pnt.second = rd.vals[1].tInt / valScale - valPosMem; break;
-                    case valueType::tBool: pnt.second = rd.vals[1].tBool; break;
-                    case valueType::tFloat: pnt.second = rd.vals[1].tFloat / valScale - valPosMem; break;
-                    }
-                }
-                
-                backZone.push_back(pnt);
-
-                backValInd = 1;
-                prevBackValInd = 0;
-
-                backVal = backZone[backValInd].second;
-                prevBackVal = backZone[prevBackValInd].second;
-                               
-                prevPos = pnt.first;
-            }
-            
-            auto& backZone = zonePnts.back();
-                      
-            for (int i = 0; i < SV_PACKETSZ; ++i){
-
-                pnt.first = tmPosMem[i] + tmZnBeginMem;
-
-                switch (sign->type){
-                   case valueType::tInt: pnt.second = rd.vals[i].tInt / valScale - valPosMem; break;
-                   case valueType::tBool: pnt.second = rd.vals[i].tBool; break;
-                   case valueType::tFloat: pnt.second = rd.vals[i].tFloat / valScale - valPosMem; break;
-                }
-                   
-                if ((pnt.first > prevPos) || isChange){
-                    prevPos = pnt.first;   
-
-                    isChange = !isChange;
-                                       
-                    backZone.push_back(pnt);
-                    ++backValInd;
-                    ++prevBackValInd;
-
-                    backVal = backZone[backValInd].second;
-                    prevBackVal = backZone[prevBackValInd].second;
-                }                
-                else if (pnt.second != valMem){
-                    valMem = pnt.second;                  
-                    
-                    if (prevBackVal <= backVal){
-                        if (valMem < prevBackVal){
-                            prevBackVal = valMem;
-                            backZone[prevBackValInd].second = valMem;
-                        }
-                        else if (valMem > backVal){
-                            backVal = valMem;
-                            backZone[backValInd].second = valMem;
-                        }
-                    }
-                    else{
-                        if (valMem > prevBackVal){
-                            prevBackVal = valMem;
-                            backZone[prevBackValInd].second = valMem;
-                        }
-                        else if (valMem < backVal){
-                            backVal = valMem;
-                            backZone[backValInd].second = valMem;
-                        }
-                    }
-                }
-            }
-        }
-        tmZnEndPrev = tmZnEnd;
-        
-        ++iBuf; 
-        if (iBuf >= znSz) iBuf = 0;
-
-        if (iBuf != endPos){
-            tmZnBegin = sign->buffData[iBuf].beginTime;
-            tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
-        }
-        else break;
-    }
-
-   
-    return zonePnts;
-}
-
-QVector<QVector<QPair<int, int>>> 
-wdgGraph::getFocusedSignalPnts(signalData* sign,
-                               int iBuf,
-                               QVector<QPair<int, int>>& localMaxMin,
-                               const QPair<qint64, qint64>& tmInterval,
-                               const QPair<double, double>& valInterval,
-                               double tmScale,
-                               double valScale){
-        
-    int znSz = sign->buffData.size(),
-        endPos = sign->buffValuePos;
-       
-    //////////// Локальные макс-мин
-       
-    if (localMaxMin.size() != sign->buffValuePos){
-
-        localMaxMin.clear();
-        localMaxMin.reserve(znSz);
-
-        int cPos = sign->buffBeginPos,
-            endPos = sign->buffValuePos;
-        while (cPos != endPos){
-
-            auto vals = sign->buffData[cPos].vals;
-
-            int vmax = INT32_MIN, vmin = INT32_MAX;
-            if (sign->type == valueType::tBool){
-                vmax = 0;
-                vmin = 1;
-            }
-
-            for (int i = 0; i < SV_PACKETSZ; ++i){
-
-                switch (sign->type)	{
-                case valueType::tInt:
-                    if (vals[i].tInt > vmax)
-                        vmax = vals[i].tInt;
-                    if (vals[i].tInt < vmin)
-                        vmin = vals[i].tInt;
-                    break;
-                case valueType::tBool:
-                    if (vals[i].tBool)
-                        vmax = 1;
-                    else
-                        vmin = 0;
-                    break;
-                case valueType::tFloat:
-                    if (vals[i].tFloat > vmax)
-                        vmax = vals[i].tFloat;
-                    if (vals[i].tFloat < vmin)
-                        vmin = vals[i].tFloat;
-                    break;
-                }
-            }
-            localMaxMin.push_back(qMakePair(vmax, vmin));
-
-            ++cPos;
-            if (cPos >= znSz) cPos = 0;
-        }
-    }
-
-    if (localMaxMin.empty())
-        return QVector<QVector<QPair<int, int>>>();
-
-
-    //////////// Цикл получения точек для сосредоточен графика
-
-    uint64_t tmMinInterval = tmInterval.first,
-             tmMaxInterval = tmInterval.second;
-
-    double valMinInterval = valInterval.first,
-           valPosMem = valMinInterval / valScale;
-
-    uint64_t tmZnBegin = sign->buffData[iBuf].beginTime,
-             tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS,
-             tmZnEndPrev = tmZnBegin;
-                
-    int prevPos = -1,
-        backVal = 0, 
-        prevBackVal = 0,
-        backValInd = 0,
-        prevBackValInd = 0;
-
-    bool isBegin = true, isChange = false;
-
-    QPair<int, int> pnt;   
-    QVector<QVector<QPair<int, int>>> zonePnts;   
-
-    while (tmZnBegin < tmMaxInterval){
-
-        if (tmZnEnd > tmMinInterval){
-                      
-            if ((int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) || isBegin){
-                isBegin = false;
-
-                zonePnts.push_back(QVector<QPair<int, int>>());
-
-                auto& backZone = zonePnts.back();
-
-                backZone.reserve(axisTime_->width());
-
-                pnt.first = double(tmZnBegin - tmMinInterval) / tmScale;
-               
-                pnt.second = (sign->type != valueType::tBool) ?
-                    (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first;
-
-                backZone.push_back(pnt);
-
-                
-                pnt.second = (sign->type != valueType::tBool) ?
-                    (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
-
-                backZone.push_back(pnt);
-                              
-                backValInd = 1;
-                prevBackValInd = 0;
-          
-                backVal = backZone[backValInd].second;
-                prevBackVal = backZone[prevBackValInd].second;
-
-                prevPos = pnt.first;
-            }
-       
-            auto& backZone = zonePnts.back();
-                      
-            pnt.first = double(tmZnBegin - tmMinInterval) / tmScale;
-            
-            if ((pnt.first > prevPos) || isChange){
-                prevPos = pnt.first;
-                
-                if (!isChange){
-                    pnt.second = (sign->type != valueType::tBool) ?
-                        (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first;
-                }
-                else{
-                    pnt.second = (sign->type != valueType::tBool) ?
-                        (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
-                }
-                isChange = !isChange;
-
-                backZone.push_back(pnt);
-                ++backValInd;
-                ++prevBackValInd;
-
-                backVal = backZone[backValInd].second;
-                prevBackVal = backZone[prevBackValInd].second;
-            }
-            else{
-                int vmax = (sign->type != valueType::tBool) ?
-                    (localMaxMin[iBuf].first / valScale - valPosMem) : localMaxMin[iBuf].first,
-
-                    vmin = (sign->type != valueType::tBool) ?
-                    (localMaxMin[iBuf].second / valScale - valPosMem) : localMaxMin[iBuf].second;
-
-                if (prevBackVal <= backVal){
-
-                    if (vmin < prevBackVal){
-                        prevBackVal = vmin;
-                        backZone[prevBackValInd].second = vmin;
-                    }
-                    if (vmax > backVal){
-                        backVal = vmax;
-                        backZone[backValInd].second = vmax;
-                    }
-                }
-                else{
-
-                    if (vmax > prevBackVal){
-                        prevBackVal = vmax;
-                        backZone[prevBackValInd].second = vmax;
-                    }
-                    if (vmin < backVal){
-                        backVal = vmin;
-                        backZone[backValInd].second = vmin;
-                    }
-                }
-            }
-        }
-        tmZnEndPrev = tmZnEnd;
-
-        ++iBuf; 
-        if (iBuf >= znSz) iBuf = 0;
-
-        if (iBuf != endPos){
-            tmZnBegin = sign->buffData[iBuf].beginTime;
-            tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
-        }
-        else break;
-    }
-    
-    return zonePnts;
-
-}
 
 QPair<double, double> wdgGraph::getSignMaxMinValue(graphSignData* sign){
 
