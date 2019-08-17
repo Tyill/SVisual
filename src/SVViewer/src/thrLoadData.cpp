@@ -257,6 +257,9 @@ bool loadSignalData(const QString& sign){
 
             ++patchNum;
         }
+
+        file.close();
+
         isNewFile = true;
         path->signls[sign].isLoad = true;
     
