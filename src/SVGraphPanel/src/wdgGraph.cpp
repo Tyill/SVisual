@@ -784,7 +784,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
     tmMaxInterval = qMin(tmMaxInterval, sign->buffMaxTime);
 
     bool isDischPnts = (cng.mode != SV_Graph::modeGr::viewer) || 
-        ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 10 * SV_CYCLEREC_MS); // < 12 часов с учетом периода записи
+        ((tmMaxInterval - tmMinInterval) < 12 * 60 * 60 * 1000); // < 12 часов
     
     if (isDischPnts){
         // разряженный график
