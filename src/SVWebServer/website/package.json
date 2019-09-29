@@ -1,0 +1,45 @@
+{
+  "name": "jstaskmanager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bundle.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack -w",
+    "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tyill/jsTaskManager.git"
+  },
+  "author": "a.medvedev",
+  "bugs": {
+    "url": "https://github.com/Tyill/jsTaskManager/issues"
+  },
+  "homepage": "https://github.com/Tyill/jsTaskManager#readme",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "@babel/preset-react"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@material-ui/icons": "^4.2.1",
+    "babel-loader": "^8.0.6",
+    "bootstrap": "^4.3.1",
+    "css-loader": "^3.2.0",
+    "eslint": "^6.2.1",
+    "eslint-plugin-react": "^7.14.3",
+    "prop-types": "^15.7.2",
+    "react": "^16.9.0",
+    "react-bootstrap": "^1.0.0-beta.12",
+    "react-dom": "^16.9.0",
+    "react-hot-loader": "^4.12.12",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {}
+}
