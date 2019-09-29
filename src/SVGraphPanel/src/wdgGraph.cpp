@@ -193,7 +193,7 @@ void wdgGraph::paintSignals(){
 
                 int zsz = zonePnts.size();
                             
-                if (isFillGraph && (zsz < 1024)){
+                if (isFillGraph){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -204,8 +204,21 @@ void wdgGraph::paintSignals(){
                     QPainterPath pp;
                     
                     pp.moveTo(zonePnts[0].first, yPos);
-                    for (int i = 0; i < zsz; ++i)
-                        pp.lineTo(zonePnts[i].first, zonePnts[i].second);
+                    pp.lineTo(zonePnts[0].first, zonePnts[0].second);
+
+                    double step = 1024.0 / zsz, cxPos = 0;
+                    int prevxPos = -1;
+
+                    for (int i = 1; i < zsz; ++i){
+
+                        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+                                                
+                        if (int(cxPos) > prevxPos){
+                            prevxPos = int(cxPos);
+                            pp.lineTo(zonePnts[i].first, zonePnts[i].second);
+                        }
+                        cxPos += step;
+                    }
 
                     pp.lineTo(zonePnts.back().first, yPos);
 
@@ -313,7 +326,7 @@ void wdgGraph::paintSignalsAlter(){
                 QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
                 int zsz = zonePnts.size();
                  
-                if (isFillGraph && (zsz < 1024)){
+                if (isFillGraph){
 
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
@@ -323,8 +336,21 @@ void wdgGraph::paintSignalsAlter(){
 
                     QPainterPath pp;
                     pp.moveTo(zonePnts[0].first, yPos);
-                    for (int i = 0; i < zsz; ++i)
-                        pp.lineTo(zonePnts[i].first, zonePnts[i].second);
+                    pp.lineTo(zonePnts[0].first, zonePnts[0].second);
+
+                    double step = 1024.0 / zsz, cxPos = 0;
+                    int prevxPos = -1;
+
+                    for (int i = 1; i < zsz; ++i){
+
+                        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+
+                        if (int(cxPos) > prevxPos){
+                            prevxPos = int(cxPos);
+                            pp.lineTo(zonePnts[i].first, zonePnts[i].second);
+                        }
+                        cxPos += step;
+                    }
 
                     pp.lineTo(zonePnts.back().first, yPos);
 
