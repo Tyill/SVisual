@@ -1,5 +1,5 @@
 {
-  "name": "jstaskmanager",
+  "name": "svisual",
   "version": "1.0.0",
   "description": "",
   "main": "bundle.js",
@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Tyill/jsTaskManager.git"
+    "url": "git+https://github.com/Tyill/SVisual.git"
   },
   "author": "a.medvedev",
   "bugs": {
-    "url": "https://github.com/Tyill/jsTaskManager/issues"
+    "url": "https://github.com/Tyill/SVisual/issues"
   },
-  "homepage": "https://github.com/Tyill/jsTaskManager#readme",
+  "homepage": "https://github.com/Tyill/SVisual#readme",
   "license": "MIT",
   "babel": {
     "presets": [

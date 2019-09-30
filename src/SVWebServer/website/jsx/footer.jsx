@@ -2,11 +2,11 @@
 
 import React from "react"
 import PropTypes from 'prop-types';
-import "../css/treeWidget.css";
+import "../css/tree.css";
 
-export {TreeWidget}
+export {Tree}
 
-class TreeWidget extends React.Component {
+class Tree extends React.Component {
 
   constructor(props){
     super(props);   
@@ -18,7 +18,7 @@ class TreeWidget extends React.Component {
     if (typeof(obj) == "string"){
 
       outObjList.push(<section key={level + "." + obj} 
-                               className="treeWidget-leaf-container"
+                               className="tree-leaf-container"
                                style={{paddingLeft: 10 + level * 5}}>
                                {obj}
                       </section>);      
@@ -26,7 +26,7 @@ class TreeWidget extends React.Component {
     else{
 
       outObjList.push(<section key={level + "." + obj.submenu}
-                               className="treeWidget-node-container"
+                               className="tree-node-container"
                                style={{paddingLeft: 10 + level * 5}}>
                                {obj.submenu}
                       </section>);
@@ -49,6 +49,6 @@ class TreeWidget extends React.Component {
   }
 }
 
-TreeWidget.propTypes = {
+Tree.propTypes = {
    // scheme_: PropTypes.object,
 };
