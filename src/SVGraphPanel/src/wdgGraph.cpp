@@ -180,19 +180,22 @@ void wdgGraph::paintSignals(){
             clr.setAlpha(graphSetting_.transparent);
             painter.setBrush(QBrush(clr));
 
-            QPen pen(sign.color);
-            pen.setWidth(graphSetting_.lineWidth);
-            painter.setPen(pen);
-
             bool isFillGraph = graphSetting_.transparent > 0;
 
             int znSz = sign.pnts.size();
             for (int z = 0; z < znSz; ++z){
 
+                QPen pen(sign.color);
+                pen.setWidth(graphSetting_.lineWidth);
+                painter.setPen(pen);
+
                 QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
 
                 int zsz = zonePnts.size();
-                            
+                    
+                for (int i = 1; i < zsz; ++i)
+                    painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+
                 if (isFillGraph){
 
                     float yPos = 0;
@@ -200,19 +203,18 @@ void wdgGraph::paintSignals(){
                         yPos = h - valInterval.second / valScale;
                     else if ((valInterval.first < 0) && (valInterval.second < 0))
                         yPos = h;
+                                        
+                    painter.setPen(clr);
 
                     QPainterPath pp;
                     
                     pp.moveTo(zonePnts[0].first, yPos);
-                    pp.lineTo(zonePnts[0].first, zonePnts[0].second);
-
+                    
                     double step = 1024.0 / zsz, cxPos = 0;
                     int prevxPos = -1;
 
-                    for (int i = 1; i < zsz; ++i){
-
-                        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
-                                                
+                    for (int i = 0; i < zsz; ++i){
+                                                                        
                         if (int(cxPos) > prevxPos){
                             prevxPos = int(cxPos);
                             pp.lineTo(zonePnts[i].first, zonePnts[i].second);
@@ -223,10 +225,6 @@ void wdgGraph::paintSignals(){
                     pp.lineTo(zonePnts.back().first, yPos);
 
                     painter.drawPath(pp);
-                }
-                else{
-                    for (int i = 1; i < zsz; ++i)
-                        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
                 }
 
                 if (paintPnt){
@@ -313,19 +311,22 @@ void wdgGraph::paintSignalsAlter(){
             QColor clr = sign.color;
             clr.setAlpha(graphSetting_.transparent);
             painter.setBrush(QBrush(clr));
-
-            QPen pen(sign.color);
-            pen.setWidth(graphSetting_.lineWidth);
-            painter.setPen(pen);
-
+                       
             bool isFillGraph = graphSetting_.transparent > 0;
 
             int znSz = sign.pnts.size();
             for (int z = 0; z < znSz; ++z){
 
+                QPen pen(sign.color);
+                pen.setWidth(graphSetting_.lineWidth);
+                painter.setPen(pen);
+
                 QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
                 int zsz = zonePnts.size();
                  
+                for (int i = 1; i < zsz; ++i)
+                    painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+
                 if (isFillGraph){
 
                     float yPos = 0;
@@ -334,16 +335,15 @@ void wdgGraph::paintSignalsAlter(){
                     else if ((valInterval.first < 0) && (valInterval.second < 0))
                         yPos = h;
 
+                    painter.setPen(clr);
+
                     QPainterPath pp;
                     pp.moveTo(zonePnts[0].first, yPos);
-                    pp.lineTo(zonePnts[0].first, zonePnts[0].second);
-
+                   
                     double step = 1024.0 / zsz, cxPos = 0;
                     int prevxPos = -1;
 
-                    for (int i = 1; i < zsz; ++i){
-
-                        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+                    for (int i = 0; i < zsz; ++i){
 
                         if (int(cxPos) > prevxPos){
                             prevxPos = int(cxPos);
@@ -355,10 +355,6 @@ void wdgGraph::paintSignalsAlter(){
                     pp.lineTo(zonePnts.back().first, yPos);
 
                     painter.drawPath(pp);
-                }
-                else{
-                    for (int i = 1; i < zsz; ++i)
-                        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
                 }
 
                 if (paintPnt){
