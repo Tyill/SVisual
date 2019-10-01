@@ -15,9 +15,8 @@ class GraphPanel extends React.Component {
   render(){
     
     return(
-       <div> 
          <Graph></Graph>
-       </div>
+     
     )  
 }
 }

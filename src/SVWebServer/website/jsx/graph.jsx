@@ -19,13 +19,13 @@ class Graph extends React.Component {
     
     return (
       <Container>
-        <Row>
-          <Col>
+        <Row noGutters={true}>
+          <Col style={headerStyle}>
            Graph header
           </Col>
         </Row>
-        <Row>
-          <Col className="col-auto">      
+        <Row noGutters={true}>
+          <Col>      
            <AxisValue/>     
           </Col>
           <Col>
@@ -33,11 +33,16 @@ class Graph extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col className="col-auto">
+          <Col>
            <AxisTime/>
           </Col>
         </Row>
       </Container>
     )
   }
+}
+
+const headerStyle = {  
+  border: "1px solid red",
+  boxSizing: "border-box",
 }

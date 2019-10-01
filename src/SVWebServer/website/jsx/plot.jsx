@@ -5,16 +5,16 @@ import PropTypes from "prop-types";
 
 export default 
 class Plot extends React.Component {
-
-  constructor(props){
-    super(props);   
   
-  }
-
   render(){
   
-    return <div> Graph Plot </div>
+    return <div style={style}> Graph Plot </div>
   }
+}
+
+const style = {  
+  border: "1px solid red",
+  boxSizing: "border-box",
 }
 
 Plot.propTypes = {
