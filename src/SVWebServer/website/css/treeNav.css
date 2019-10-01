@@ -1,4 +1,4 @@
-.treeWidget-node-container {
+.treeNav-node-container {
 	width: 100%;
 	background-color: rgb(137, 139, 143);
 	color: rgb(255, 255, 255);
@@ -6,11 +6,11 @@
 	border-bottom: solid 1px rgb(73, 73, 73);
 }
 
-.treeWidget-node-container:hover {
+.treeNav-node-container:hover {
 	background-color: rgb(116, 112, 112);
 }
 
-.treeWidget-leaf-container {
+.treeNav-leaf-container {
 	width: 100%;
 	background-color: rgb(94, 96, 99);
 	color: rgb(255, 255, 255);
@@ -18,6 +18,6 @@
 	border-bottom: solid 1px rgb(73, 73 ,73);
 }
 
-.treeWidget-leaf-container:hover {
+.treeNav-leaf-container:hover {
 	background-color: rgb(73, 73, 73);
 }

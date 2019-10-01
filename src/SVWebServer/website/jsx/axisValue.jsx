@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 
 import React from "react"
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-export {AxisValue}
-
+export default
 class AxisValue extends React.Component {
 
   constructor(props){
@@ -15,7 +14,7 @@ class AxisValue extends React.Component {
   render(){
 
     
-    return <div >   </div>
+    return <div > Graph Value  </div>
   }
 }
 

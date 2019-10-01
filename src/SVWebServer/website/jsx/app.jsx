@@ -1,9 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import ReactDOM from "react-dom";
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import {Container, Row, Col} from "react-bootstrap";
+import Header from "./header.jsx"; 
+import GraphPanel from "./graphPanel.jsx"; 
+import Footer from "./footer.jsx"; 
+import TreeNav from "./treeNav.jsx"
 
-import {TreeWidget} from "./tree.jsx"
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
  
 function App() {
     
@@ -37,7 +41,28 @@ function App() {
       }
     ]
 
-    return <TreeWidget scheme = {scheme}/>
+  return (
+    <Container>
+      <Row>
+        <Col>
+         <Header/>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+         <TreeNav scheme = {scheme}></TreeNav>
+        </Col>
+        <Col>
+         <GraphPanel/>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+         <Footer/>
+        </Col>
+      </Row>
+    </Container>
+  )
 }
 
 ReactDOM.render(

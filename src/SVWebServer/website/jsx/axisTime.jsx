@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 
 import React from "react"
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-export {AxisTime}
-
+export default 
 class AxisTime extends React.Component {
 
   constructor(props){
@@ -14,7 +13,8 @@ class AxisTime extends React.Component {
 
   render(){
 
-    return <div >  </div>
+
+    return <div > Graph Time  </div>
   }
 }
 
