@@ -42,28 +42,55 @@ function App() {
     ]
 
   return (
-    <Container>
-      <Row>
+    <Container style={containerStyle}>
+      <Row style={headerStyle}>
         <Col>
          <Header/>
         </Col>
       </Row>
-      <Row>
-        <Col>
-         <TreeNav scheme = {scheme}></TreeNav>
+     
+      <Row className="row h-100" style={articleStyle}>
+        <Col className="col-auto"> 
+         <TreeNav scheme={scheme} />
         </Col>
-        <Col>
+        <Col> 
          <GraphPanel/>
         </Col>
       </Row>
-      <Row>
-        <Col>
+
+      <Row style={footerStyle}>
+        <Col> 
          <Footer/>
         </Col>
       </Row>
     </Container>
   )
 }
+
+const containerStyle = {   
+  height: document.documentElement.clientHeight - 150,
+}
+
+const headerStyle = {  
+  border: "1px solid black",
+  boxSizing: "border-box",
+  backgroundColor : "yellow",
+  height : "100px",
+}
+
+const articleStyle = {  
+  border: "1px solid black",
+  boxSizing: "border-box",
+  backgroundColor : "brown",
+}
+
+const footerStyle = {  
+  border: "1px solid black",
+  boxSizing: "border-box",
+  backgroundColor : "#898b8f",
+  height : "50px",
+}
+
 
 ReactDOM.render(
   <App />, 

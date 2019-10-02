@@ -18,31 +18,28 @@ class Graph extends React.Component {
   render(){
     
     return (
-      <Container>
-        <Row noGutters={true}>
+      <Container-fluid >
+        <Row style={{backgroundColor : "grey"}}>
           <Col style={headerStyle}>
-           Graph header
+            <div style={{backgroundColor : "red"}}> header </div>           
           </Col>
         </Row>
-        <Row noGutters={true}>
-          <Col>      
-           <AxisValue/>     
-          </Col>
-          <Col>
-           <Plot/>
+        <Row style={{backgroundColor : "grey", height : "100%"}}>
+          <Col style={headerStyle}>
+            <div style={{backgroundColor : "green"}}> body </div>           
           </Col>
         </Row>
-        <Row>
-          <Col>
-           <AxisTime/>
+        <Row style={{backgroundColor : "grey"}}>
+          <Col style={headerStyle}>
+            <div style={{backgroundColor : "blue"}}> footer </div>           
           </Col>
-        </Row>
-      </Container>
+        </Row>       
+      </Container-fluid>
     )
   }
 }
 
 const headerStyle = {  
-  border: "1px solid red",
+  border: "1px solid black",
   boxSizing: "border-box",
 }
