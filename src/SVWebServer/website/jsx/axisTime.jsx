@@ -46,7 +46,7 @@ class AxisTime extends React.Component {
     tmInterval.first += offs;
     tmInterval.second += offs;    
     
-    this.props.onMouseMoveChange(tmInterval);
+    this.props.onChange(tmInterval);
   }
 
   componentDidMount() {
