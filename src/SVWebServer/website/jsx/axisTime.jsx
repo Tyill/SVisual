@@ -13,9 +13,9 @@ class AxisTime extends React.Component {
     this._canvasRef = null;
    
     this.handleMouseMove = this.handleMouseMove.bind(this);
-   
+  
     this._curOffsPos = 0;
-    this._curDashStep = 150;
+    this._curDashStep = 100;
     this._isMouseDown = false;
   }
    
@@ -46,6 +46,7 @@ class AxisTime extends React.Component {
     tmInterval.first += offs;
     tmInterval.second += offs;    
     
+    this.props.onMouseMoveChange(tmInterval);
   }
 
   componentDidMount() {
@@ -79,28 +80,24 @@ class AxisTime extends React.Component {
     
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      this.drawDashLines(canvas);
+      this.drawDashLines(w, ctx);
 
-      this.drawTimeMark(canvas);
+      this.drawTimeMark(w, h, ctx);
     }
 
   }
 
-  drawDashLines(canvas){
+  drawDashLines(width, ctx){
 
-    let w = canvas.clientWidth,
-        h = canvas.clientHeight,
-        ctx = canvas.getContext("2d");
-  
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#000000';        
 
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(w, 0);    
+    ctx.lineTo(width, 0);    
     
     let offs = this._curOffsPos % this._curDashStep;
-    while (offs < w){
+    while (offs < width){
       
       ctx.moveTo(offs, 0);
       ctx.lineTo(offs, 5);
@@ -111,22 +108,18 @@ class AxisTime extends React.Component {
     ctx.stroke();
   }
   
-  drawTimeMark(canvas){
-  
-    let w = canvas.clientWidth,
-        h = canvas.clientHeight,
-        ctx = canvas.getContext("2d");
-    
-    let offs = this._curOffsPos % this._curDashStep + this._curDashStep;
-  //  while (offs < w){
+  drawTimeMark(width, height, ctx){
+      
+    let offs = this._curOffsPos % this._curDashStep;
+    while (offs < width){
    
-      let timeMark = this.getTimeMark(w, offs),
+      let timeMark = this.getTimeMark(width, offs),
           fontMetr = ctx.measureText(timeMark).width;
 
-      ctx.fillText(timeMark, offs - fontMetr / 2, h / 2);
+      ctx.fillText(timeMark, offs - fontMetr / 2, height / 2);
    
-  //    offs += this._curDashStep; 
- //   }
+      offs += this._curDashStep; 
+    }
   }
   
   getTimeMark(width, offs){
@@ -137,23 +130,24 @@ class AxisTime extends React.Component {
 
         tmScale = (tmInterval.beginMs - tmInterval.endMs) / width,
    
-        dt = new Date(tmInterval.beginMs + tmScale * offs);
+        dt = new Date(tmInterval.beginMs - tmScale * offs);
   
-    let options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    let timeMark = dt.toLocaleTimeString('en-US', options).split(' ')[0];
+    let timeMark = '';
 
-    timeMark += ":" + dt.getMilliseconds();
-
-  //  if (curIntervSec > 86400){
-     
-      options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-      timeMark = dt.toLocaleTimeString('en-US', options);
-
-     // timeMark = dt.toString("dd.MM.yy hh:mm");
-  //  }
-    // else if (curIntervSec > 60)
-    //   timeMark = dt.toString("hh:mm:ss");
-      
+    if (curIntervSec > 86400){     
+      let options = { hour12 : false, day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
+      timeMark = dt.toLocaleTimeString('en-US', options).split(' ');
+      timeMark.pop();
+      timeMark = timeMark.join('');
+    }
+    else{
+      let options = { hour12 : false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      timeMark = dt.toLocaleTimeString('en-US', options).split(' ')[0];  
+    
+      if (curIntervSec < 60)
+        timeMark += ":" + dt.getMilliseconds();
+    }
+        
      return timeMark;
   }
 

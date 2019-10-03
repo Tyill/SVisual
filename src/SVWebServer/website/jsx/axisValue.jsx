@@ -15,7 +15,6 @@ class AxisValue extends React.Component {
 
 const style = {  
   border: "1px solid blue",
-  maxWidth: "50px",
   boxSizing: "border-box",
 }
 

@@ -13,6 +13,14 @@ class Graph extends React.Component {
   constructor(props){
     super(props);   
   
+    this.handleAxisTimeMoveChange = this.handleAxisTimeMoveChange.bind(this);
+
+    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}};
+  }
+
+  handleAxisTimeMoveChange(tmIntl){
+
+    this.setState({tmInterval : tmIntl});
   }
 
   render(){
@@ -36,7 +44,8 @@ class Graph extends React.Component {
           <Col className="col-1" >
           </Col>
           <Col style={{border: "1px solid green", height: "50px"}}>
-            <AxisTime tmInterval={{ beginMs : Date.now(), endMs : Date.now() + 3600000 }} />           
+            <AxisTime tmInterval={this.state.tmInterval}
+                      onMouseMoveChange = {this.handleAxisTimeMoveChange} />           
           </Col>
         </Row>       
       </Container-fluid>
