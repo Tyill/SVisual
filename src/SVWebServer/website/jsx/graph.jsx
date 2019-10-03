@@ -21,17 +21,22 @@ class Graph extends React.Component {
       <Container-fluid >
         <Row style={{backgroundColor : "grey"}}>
           <Col style={headerStyle}>
-            <div style={{backgroundColor : "red"}}> header </div>           
+            header           
           </Col>
         </Row>
-        <Row style={{backgroundColor : "grey", height : "100%"}}>
+        <Row style={{backgroundColor : "grey", height : "50%"}}>
+          <Col className="col-1" style={headerStyle}>
+            <AxisValue/>          
+          </Col>
           <Col style={headerStyle}>
-            <div style={{backgroundColor : "green"}}> body </div>           
+            <Plot/>          
           </Col>
         </Row>
         <Row style={{backgroundColor : "grey"}}>
-          <Col style={headerStyle}>
-            <div style={{backgroundColor : "blue"}}> footer </div>           
+          <Col className="col-1" >
+          </Col>
+          <Col style={{border: "1px solid green", height: "50px"}}>
+            <AxisTime tmInterval={{ beginMs : Date.now(), endMs : Date.now() + 3600000 }} />           
           </Col>
         </Row>       
       </Container-fluid>
@@ -40,6 +45,6 @@ class Graph extends React.Component {
 }
 
 const headerStyle = {  
-  border: "1px solid black",
+  border: "1px solid green",
   boxSizing: "border-box",
 }
