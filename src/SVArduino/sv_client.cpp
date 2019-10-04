@@ -52,7 +52,8 @@ namespace svisual{
   // add value for rec
   bool addBoolValue(const char* name, bool value_in, bool onlyPosFront){
 
-    value val; val.tBool = value_in;
+    value val; 
+    val.tBool = value_in;
 
 	return objCln.addValue(name, valueType::tBool, val, onlyPosFront);
 	
@@ -61,7 +62,8 @@ namespace svisual{
   // add value for rec
   bool addIntValue(const char* name, int value_in){
 
-    value val; val.tInt = value_in;
+    value val;
+    val.tInt = value_in;
 
 	return objCln.addValue(name, valueType::tInt, val);	
   }
@@ -69,7 +71,8 @@ namespace svisual{
   // add value for rec
   bool addFloatValue(const char* name, float value_in){
 
-    value val; val.tFloat = value_in;
+    value val; 
+    val.tFloat = value_in;
 
 	return objCln.addValue(name, valueType::tFloat, val);	
   }
@@ -250,12 +253,15 @@ namespace svisual{
         const char* start = "=begin=";
 		ethClient_->write((const uint8_t*)start, strlen(start));
 		
-		int vlSz = sizeof(dataRef); long int allSz = SV_NAMESZ + vlSz * sz;
+		int vlSz = sizeof(dataRef);
+        long int allSz = SV_NAMESZ + vlSz * sz;
 		ethClient_->write((const uint8_t*)&allSz, 4);
 		
 		ethClient_->write((const uint8_t*)module_, SV_NAMESZ);
 		
-		valueRec* data; dataRef auxSD; memset(auxSD.vals, 0, 4 * SV_PACKETSZ);
+		valueRec* data; 
+        dataRef auxSD; 
+        memset(auxSD.vals, 0, 4 * SV_PACKETSZ);
 		for (int i = 0; i < sz; ++i){
 		
 			data = (valueRec*)values_.at(i);
@@ -296,12 +302,15 @@ namespace svisual{
 	const char* start = "=begin=";
 	Serial.write(start, strlen(start));
 	
-	int vlSz = sizeof(dataRef); long int allSz = SV_NAMESZ + vlSz * sz;
+	int vlSz = sizeof(dataRef); 
+    long int allSz = SV_NAMESZ + vlSz * sz;
 	Serial.write((char*)&allSz, 4);
 	
 	Serial.write(module_, SV_NAMESZ);
 		
-	valueRec* data; dataRef auxSD; memset(auxSD.vals, 0, 4 * SV_PACKETSZ);
+	valueRec* data; 
+    dataRef auxSD; 
+    memset(auxSD.vals, 0, 4 * SV_PACKETSZ);
 	for (int i = 0; i < sz; ++i){
 	
 		data = (valueRec*)values_.at(i);
@@ -325,11 +334,9 @@ namespace svisual{
   }
 	
   bool sv_client::sendData(){
-
-    bool ok = false;
-	if (isCom_) ok = sendDataOfCom();  
-    else ok = sendDataOfEthernet();
-   
+      
+    bool ok = isCom_ ? sendDataOfCom() : sendDataOfEthernet();
+      
 	return ok; 
   }
   
