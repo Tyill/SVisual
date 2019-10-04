@@ -22,7 +22,33 @@ class Plot extends React.Component {
 
     if (!canvas || !event.buttons) return;
 
+    let diff = event.nativeEvent.movementY;
+        
+    let valInterval = this.props.valInterval;
+
+    let height = canvas.clientHeight,
+        valScale = (valInterval.end - valInterval.begin) / height;
+
+    valInterval.begin += valScale * diff;
+    valInterval.end += valScale * diff;   
     
+    //////////////////////////////////////
+
+    let tmInterval = this.props.tmInterval;
+
+    let width = canvas.clientWidth,
+        tmScale = (tmInterval.endMs - tmInterval.beginMs) / width;
+   
+    let diffPos = event.nativeEvent.movementX;
+      
+    let offs = -tmScale * diffPos - 1;
+    if (diffPos < 0) 
+       offs = -tmScale * diffPos + 1;
+  
+    tmInterval.beginMs += offs;
+    tmInterval.endMs += offs;    
+      
+    this.props.onChange(tmInterval, valInterval);
   }
 
   handleWheel(e){
@@ -34,12 +60,12 @@ class Plot extends React.Component {
   
   componentDidMount() {
    
-  //  this.drawCanvas();
+    this.drawCanvas();
   }
 
   componentDidUpdate() {
    
-  //  this.drawCanvas();
+    this.drawCanvas();
   }
 
   drawCanvas(){    
@@ -57,32 +83,35 @@ class Plot extends React.Component {
         canvas.height = h;
       }
     
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, w, h);
 
-      this.drawDashLines(w, h, ctx);
+      this.drawAxisLines(w, h, ctx);
       
     }
 
   }
 
-  drawDashLines(width, height, ctx){
+  drawAxisLines(width, height, ctx){
     
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#000000';        
 
-    ctx.beginPath();
-    ctx.moveTo(width, 0);
-    ctx.lineTo(width, height);    
-    
-    let offs = this._curOffsPos % this._curDashStep;
-    while (offs < height){
-      
-      ctx.moveTo(width - 5, offs);
-      ctx.lineTo(width, offs);
-      
-      offs += this._curDashStep;
+    ctx.beginPath();  
+
+    let tmAxisLines = this.props.tmAxisLines;    
+    for(pos of tmAxisLines){
+
+      ctx.moveTo(pos, 0);
+      ctx.lineTo(pos, height);
     }
-    
+
+    let valAxisLines = this.props.valAxisLines;    
+    for(pos of valAxisLines){
+
+      ctx.moveTo(0, pos);
+      ctx.lineTo(width, pos);
+    }
+
     ctx.stroke();
   }
     

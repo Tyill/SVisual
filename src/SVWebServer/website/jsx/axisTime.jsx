@@ -95,7 +95,24 @@ class AxisTime extends React.Component {
       tmInterval.endMs += offs;
     }
 
-    this.props.onChange(tmInterval);
+    ////////////////////////////////////
+
+  //   QVector<int> mark;
+	
+	// int w = width();
+
+	// int cWidth = curOffsPos_ % curDashStep_;
+
+	// while (cWidth < w){
+		
+	// 	mark.push_back(cWidth);
+
+	// 	cWidth += curDashStep_;
+	// }
+
+	// return mark;
+
+    this.props.onChange(tmInterval, );
   }
 
   componentDidMount() {
@@ -123,7 +140,7 @@ class AxisTime extends React.Component {
         canvas.height = h;
       }
     
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, w, h);
 
       this.drawDashLines(w, ctx);
 

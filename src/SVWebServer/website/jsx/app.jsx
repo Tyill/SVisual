@@ -53,7 +53,7 @@ function App() {
         <Col className="col-auto"> 
          <TreeNav scheme={scheme} />
         </Col>
-        <Col > 
+        <Col className="col-auto"> 
          <GraphPanel/>
         </Col>
       </Row>

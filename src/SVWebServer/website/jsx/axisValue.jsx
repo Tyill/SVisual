@@ -111,7 +111,7 @@ class AxisValue extends React.Component {
         canvas.height = h;
       }
     
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, w, h);
 
       this.drawDashLines(w, h, ctx);
 
