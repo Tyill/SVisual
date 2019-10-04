@@ -13,25 +13,25 @@ class AxisTime extends React.Component {
     this._canvasRef = null;
    
     this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleWheel = this.handleWheel.bind(this);
   
     this._curOffsPos = 0;
     this._curDashStep = 100;
-    this._isMouseDown = false;
   }
    
   handleMouseMove(event) {
     
     let canvas = this._canvasRef;
 
-    if (!canvas || !this._isMouseDown) return;
+    if (!canvas || !event.buttons) return;
     
     let tmInterval = this.props.tmInterval;
 
     let width = canvas.clientWidth,
-        tmScale = (tmInterval.beginMs - tmInterval.endMs) / width;
+        tmScale = (tmInterval.endMs - tmInterval.beginMs) / width;
    
     let diffPos = event.nativeEvent.movementX;
-       
+      
     this._curOffsPos += diffPos;
     
     if (this._curOffsPos_ > this._curDashStep) 
@@ -43,23 +43,68 @@ class AxisTime extends React.Component {
     if (diffPos < 0) 
        offs = -tmScale * diffPos + 1;
   
-    tmInterval.first += offs;
-    tmInterval.second += offs;    
+    tmInterval.beginMs += offs;
+    tmInterval.endMs += offs;    
     
     this.props.onChange(tmInterval);
   }
 
-  componentDidMount() {
-    
-    console.log("mount");
+  handleWheel(e){
 
+    let delta = e.deltaY || e.detail || e.wheelDelta;
+
+    this.scale(delta);
+  }
+  
+  scale(delta){
+    
+    if (delta > 0) this._curDashStep++;
+    else this._curDashStep--;
+
+    let canvas = this._canvasRef,
+        w = canvas.clientWidth,
+        ctx = canvas.getContext("2d"),
+        timeMark = this.getTimeMark(w, 0),
+        fontMetr = ctx.measureText(timeMark).width;
+
+    if (this._curDashStep > 3 * fontMetr) this._curDashStep = 2 * fontMetr;
+    else if (this._curDashStep < fontMetr * 1.1) this._curDashStep = 2 * fontMetr;
+
+    let tmInterval = this.props.tmInterval,
+        offs = 10000,
+        curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000;
+     
+    if (curIntervSec > 86400) offs *= 1000;
+    else if (curIntervSec > 3600) offs *= 100;
+    else if (curIntervSec < 1) offs /= 1000;
+    else if (curIntervSec < 60) offs /= 10;
+     
+    if (delta > 0){ 
+
+      tmInterval.beginMs += offs;
+      tmInterval.endMs += -offs;
+
+      if (tmInterval.beginMs >= tmInterval.endMs){
+        let mdl = Math.abs(tmInterval.beginMs + tmInterval.endMs) / 2;
+        tmInterval.beginMs = mdl - 10;
+        tmInterval.endMs = mdl + 10;
+      }
+    }
+    else{ 
+      tmInterval.beginMs += -offs;
+      tmInterval.endMs += offs;
+    }
+
+    this.props.onChange(tmInterval);
+  }
+
+  componentDidMount() {
+   
     this.drawCanvas();
   }
 
   componentDidUpdate() {
-
-    console.log("update");
-
+   
     this.drawCanvas();
   }
 
@@ -110,6 +155,8 @@ class AxisTime extends React.Component {
   
   drawTimeMark(width, height, ctx){
       
+    ctx.font = "normal 9pt Arial";
+
     let offs = this._curOffsPos % this._curDashStep;
     while (offs < width){
    
@@ -126,19 +173,17 @@ class AxisTime extends React.Component {
       
     let tmInterval = this.props.tmInterval,
 
-        curIntervSec = (tmInterval.beginMs - tmInterval.endMs) / 1000,
+        curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000,
 
-        tmScale = (tmInterval.beginMs - tmInterval.endMs) / width,
+        tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,
    
-        dt = new Date(tmInterval.beginMs - tmScale * offs);
+        dt = new Date(tmInterval.beginMs + tmScale * offs);
   
     let timeMark = '';
 
     if (curIntervSec > 86400){     
       let options = { hour12 : false, day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-      timeMark = dt.toLocaleTimeString('en-US', options).split(' ');
-      timeMark.pop();
-      timeMark = timeMark.join('');
+      timeMark = dt.toLocaleTimeString('en-US', options);
     }
     else{
       let options = { hour12 : false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -155,9 +200,8 @@ class AxisTime extends React.Component {
 
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
-                   onMouseMove={ this.handleMouseMove }                   
-                   onMouseDown={ e => this._isMouseDown = true }
-                   onMouseUp={ e => this._isMouseDown = false } >
+                   onMouseMove={ this.handleMouseMove } 
+                   onWheel={ this.handleWheel } >
            </canvas>
   }
 }
@@ -167,6 +211,7 @@ const style = {
   width: "100%",
 }
 
-AxisTime.propTypes = {
-   // scheme_: PropTypes.object,
+AxisTime.propTypes = { 
+  _curOffsPos : PropTypes.number,
+  _curDashStep : PropTypes.number,
 };

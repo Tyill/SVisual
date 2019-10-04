@@ -12,40 +12,36 @@ class Graph extends React.Component {
 
   constructor(props){
     super(props);   
-  
-    this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);
-
-    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}};
-  }
-
-  handleAxisTimeChange(tmIntl){
-
-    this.setState({tmInterval : tmIntl});
+     
+    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}, 
+                  valInterval : { begin : 0, end : 1000},
+                 };
   }
 
   render(){
     
     return (
       <Container-fluid >
-        <Row style={{backgroundColor : "grey"}}>
-          <Col style={headerStyle}>
+        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
+          <Col style={{ border: "1px solid green" }}>
             header           
           </Col>
         </Row>
-        <Row style={{backgroundColor : "grey", height : "50%"}}>
-          <Col className="col-1" style={headerStyle}>
-            <AxisValue/>          
+        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
+          <Col className="col-1" >
+            <AxisValue valInterval={this.state.valInterval}
+                       onChange = { valIntl => this.setState({valInterval : valIntl})} />          
           </Col>
-          <Col style={headerStyle}>
+          <Col className="col-11" style={{ border: "1px solid green" }}>
             <Plot/>          
           </Col>
         </Row>
-        <Row style={{backgroundColor : "grey"}}>
+        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey" }}>
           <Col className="col-1" >
           </Col>
-          <Col style={{border: "1px solid green", height: "50px"}}>
-            <AxisTime tmInterval={this.state.tmInterval}
-                      onChange = {this.handleAxisTimeChange} />           
+          <Col>
+            <AxisTime tmInterval={ this.state.tmInterval}
+                      onChange = { tmIntl => this.setState({tmInterval : tmIntl})} />           
           </Col>
         </Row>       
       </Container-fluid>
@@ -53,7 +49,3 @@ class Graph extends React.Component {
   }
 }
 
-const headerStyle = {  
-  border: "1px solid green",
-  boxSizing: "border-box",
-}
