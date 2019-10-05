@@ -13,36 +13,36 @@ class Graph extends React.Component {
   constructor(props){
     super(props);   
      
+    let axisParams = { valOffsPos : 0,
+                       valDashStep : 100,  
+                       tmOffsPos : 0,
+                       tmDashStep : 100,
+                       minValDashStep : 100,
+                       maxValDashStep : 300}
+
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}, 
                   valInterval : { begin : 0, end : 1000},
-                 };
-
-    this.tmAxisLines = [];
-    this.valAxisLines = [];
+                  axisParams,
+                 };   
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
     this.handleAxisValueChange = this.handleAxisValueChange.bind(this);             
   }
 
-  handleAxisTimeChange(tmIntl, tmAxisLines){
+  handleAxisTimeChange(tmInterval, axisParams){
     
-    this.tmAxisLines = tmAxisLines;
-
-    this.setState({tmInterval : tmIntl })
+    this.setState({tmInterval, axisParams });
   }
 
-  handleAxisValueChange(valIntl, valAxisLines){
+  handleAxisValueChange(valInterval, axisParams){
     
-    this.valAxisLines = valAxisLines;
-
-    this.setState({valInterval : valIntl })
+    this.setState({valInterval, axisParams });
   }
 
-  handlePlotChange(tmIntl, valIntl){
+  handlePlotChange(tmInterval, valInterval, axisParams){
         
-    this.setState({tmInterval : tmIntl, 
-                   valInterval : valIntl })
+    this.setState({tmInterval, valInterval, axisParams});
   }
 
   render(){
@@ -57,22 +57,23 @@ class Graph extends React.Component {
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
           <Col className="col-1" >
             <AxisValue valInterval={this.state.valInterval}
-                       onChange = { this.handleAxisValueChange } />          
+                       axisParams={ this.state.axisParams}
+                       onChange = { this.handleAxisValueChange } />    
           </Col>
           <Col className="col-11" style={{ border: "1px solid green" }}>
             <Plot tmInterval={ this.state.tmInterval}
-                  tmAxisLines={ this.tmAxisLines}
                   valInterval={ this.state.valInterval}
-                  valAxisLines={ this.valAxisLines}
+                  axisParams={ this.state.axisParams}
                   onChange = { this.handlePlotChange } />            
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey" }}>
           <Col className="col-1" >
           </Col>
-          <Col>
+          <Col>                
             <AxisTime tmInterval={ this.state.tmInterval}
-                      onChange = { this.handleAxisTimeChange } />           
+                      axisParams={ this.state.axisParams}
+                      onChange = { this.handleAxisTimeChange } />; 
           </Col>
         </Row>       
       </Container-fluid>

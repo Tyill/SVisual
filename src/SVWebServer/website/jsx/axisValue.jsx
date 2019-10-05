@@ -14,54 +14,54 @@ class AxisValue extends React.Component {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
   
-    this._curOffsPos = 0;
-    this._curDashStep = 50;
-    this._maxDashStep = 100;
-    this._minDashStep = 50;
   }
    
   handleMouseMove(event) {
     
-    let canvas = this._canvasRef;
+    const canvas = this._canvasRef;
 
     if (!canvas || !event.buttons) return;
 
-    let diff = event.nativeEvent.movementY;
+    const diff = event.nativeEvent.movementY;
       
-    this._curOffsPos += diff;
+    let {valOffsPos, valDashStep, ...exPrms} = this.props.axisParams;
 
-    if (this._curOffsPos > this._curDashStep) 
-      this._curOffsPos = 0;
-    else if (this._curOffsPos < 0) 
-      this._curOffsPos = this._curDashStep; 
+    valOffsPos += diff;
+
+    if (valOffsPos > valDashStep) 
+      valOffsPos = 0;
+    else if (valOffsPos < 0) 
+      valOffsPos = valDashStep; 
         
     let valInterval = this.props.valInterval;
 
-    let height = canvas.clientHeight,
-        valScale = (valInterval.end - valInterval.begin) / height;
+    const height = canvas.clientHeight,
+          valScale = (valInterval.end - valInterval.begin) / height;
 
     valInterval.begin += valScale * diff;
     valInterval.end += valScale * diff;    
-    
-    this.props.onChange(valInterval);
+       
+    this.props.onChange(valInterval, {valOffsPos, valDashStep, ...exPrms});
   }
 
   handleWheel(e){
 
-    let delta = e.deltaY || e.detail || e.wheelDelta;
+    const delta = e.deltaY || e.detail || e.wheelDelta;
 
     this.scale(delta);
   }
   
   scale(delta){
     
-    if (delta > 0) this._curDashStep++;
-    else this._curDashStep--;
+    let {valDashStep, minValDashStep, maxValDashStep, ...exParams} = this.props.axisParams;
 
-    if (this._curDashStep > this._maxDashStep) 
-      this._curDashStep = this._minDashStep;
-    else if (this._curDashStep < this._minDashStep) 
-      this._curDashStep = this._maxDashStep;
+    if (delta > 0) valDashStep++;
+    else valDashStep--;
+
+    if (valDashStep > maxValDashStep) 
+      valDashStep = minValDashStep;
+    else if (valDashStep < minValDashStep) 
+      valDashStep = maxValDashStep;
    
     let valInterval = this.props.valInterval,
         curInterval = valInterval.end - valInterval.begin,
@@ -83,7 +83,7 @@ class AxisValue extends React.Component {
       valInterval.second += offs;
     }
 
-    this.props.onChange(valInterval);
+    this.props.onChange(valInterval, {valDashStep, minValDashStep, maxValDashStep, ...exParams});
   }
 
   componentDidMount() {
@@ -92,19 +92,19 @@ class AxisValue extends React.Component {
   }
 
   componentDidUpdate() {
-   
+       
     this.drawCanvas();
   }
 
   drawCanvas(){    
     
-    let canvas = this._canvasRef;
+    const canvas = this._canvasRef;
     
     if (canvas) {
       
-      let w = canvas.clientWidth,
-          h = canvas.clientHeight,
-          ctx = canvas.getContext("2d");
+      const w = canvas.clientWidth,
+            h = canvas.clientHeight,
+            ctx = canvas.getContext("2d");
  
       if ((canvas.width != w) || (canvas.height != h)){
         canvas.width = w;
@@ -129,13 +129,14 @@ class AxisValue extends React.Component {
     ctx.moveTo(width, 0);
     ctx.lineTo(width, height);    
     
-    let offs = this._curOffsPos % this._curDashStep;
+    let {valOffsPos, valDashStep} = this.props.axisParams,
+        offs = valOffsPos % valDashStep;
     while (offs < height){
       
       ctx.moveTo(width - 5, offs);
       ctx.lineTo(width, offs);
       
-      offs += this._curDashStep;
+      offs += valDashStep;
     }
     
     ctx.stroke();
@@ -145,7 +146,8 @@ class AxisValue extends React.Component {
    
     ctx.font = "normal 9pt Arial";
 
-    let offs = this._curOffsPos % this._curDashStep;
+    let {valOffsPos, valDashStep} = this.props.axisParams,
+        offs = valOffsPos % valDashStep;
     while (offs < height){
    
       let valMark = this.getValMark(height, offs),
@@ -154,7 +156,7 @@ class AxisValue extends React.Component {
 
       ctx.fillText(valMark, xp, offs + 5);
    
-      offs += this._curDashStep; 
+      offs += valDashStep; 
     }
   }
   
@@ -164,11 +166,10 @@ class AxisValue extends React.Component {
         scale = (valInterval.end - valInterval.begin) / height,
         vl = valInterval.end - scale * offs;
 
-    let sign = vl > 0 ? 1 : -1;
+    const sign = vl > 0 ? 1 : -1,
+          diap = Math.abs(valInterval.end - valInterval.begin);
 
     vl *= sign;
-
-    let diap = Math.abs(valInterval.end - valInterval.begin);
 
     if (diap > 100) vl = parseInt(vl + 0.5);
     else if (diap > 10) vl = parseInt(vl * 10 + 0.5) / 10.0;
@@ -176,6 +177,25 @@ class AxisValue extends React.Component {
     else vl = parseInt(vl * 1000 + 0.5) / 1000.0;
 
     return (vl * sign).toString();
+  }
+
+  getPosMark(){
+
+    const canvas = this._canvasRef,
+          height = canvas.clientHeight;
+
+    let {valOffsPos, valDashStep} = this.props.axisParams,
+        offs = valOffsPos % valDashStep,
+        mark = [];	
+
+    while (offs < height){
+    
+      mark.push(offs);
+
+      offs += valDashStep;
+    }
+
+    return mark;
   }
 
   render(){
@@ -194,8 +214,8 @@ const style = {
 }
 
 AxisValue.propTypes = { 
-  _curOffsPos : PropTypes.number,
-  _curDashStep : PropTypes.number,
-  _maxDashStep : PropTypes.number,
-  _minDashStep : PropTypes.number,
+  // _curOffsPos : PropTypes.number,
+  // _curDashStep : PropTypes.number,
+  // _maxDashStep : PropTypes.number,
+  // _minDashStep : PropTypes.number,
 };

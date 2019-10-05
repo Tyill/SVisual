@@ -12,48 +12,63 @@ class Plot extends React.Component {
     this._canvasRef = null;
    
     this.handleMouseMove = this.handleMouseMove.bind(this);
-    this.handleWheel = this.handleWheel.bind(this);  
-  
+    this.handleWheel = this.handleWheel.bind(this);    
+   
   }
    
   handleMouseMove(event) {
     
-    let canvas = this._canvasRef;
+    const canvas = this._canvasRef;
 
     if (!canvas || !event.buttons) return;
-
-    let diff = event.nativeEvent.movementY;
         
-    let valInterval = this.props.valInterval;
+    let valInterval = this.props.valInterval,
+        {valOffsPos, valDashStep, tmOffsPos, tmDashStep, ...exParams} = this.props.axisParams;
 
-    let height = canvas.clientHeight,
-        valScale = (valInterval.end - valInterval.begin) / height;
+    const height = canvas.clientHeight,
+          valScale = (valInterval.end - valInterval.begin) / height,
+          valDiff = event.nativeEvent.movementY;          
+    
+    valOffsPos += valDiff;
 
-    valInterval.begin += valScale * diff;
-    valInterval.end += valScale * diff;   
+    if (valOffsPos > valDashStep) 
+      valOffsPos = 0;
+    else if (valOffsPos < 0) 
+      valOffsPos = valDashStep; 
+
+    valInterval.begin += valScale * valDiff;
+    valInterval.end += valScale * valDiff;   
     
     //////////////////////////////////////
 
     let tmInterval = this.props.tmInterval;
 
-    let width = canvas.clientWidth,
-        tmScale = (tmInterval.endMs - tmInterval.beginMs) / width;
-   
-    let diffPos = event.nativeEvent.movementX;
+    const width = canvas.clientWidth,
+          tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
+          tmDiff = event.nativeEvent.movementX;
       
-    let offs = -tmScale * diffPos - 1;
-    if (diffPos < 0) 
-       offs = -tmScale * diffPos + 1;
+    tmOffsPos += tmDiff;
+
+    if (tmOffsPos > tmDashStep) 
+      tmOffsPos = 0;
+    else if (tmOffsPos < 0) 
+      tmOffsPos = tmDashStep; 
+
+    let offs = -tmScale * tmDiff - 1;
+    if (tmDiff < 0) 
+       offs = -tmScale * tmDiff + 1;
+
   
     tmInterval.beginMs += offs;
     tmInterval.endMs += offs;    
       
-    this.props.onChange(tmInterval, valInterval);
+    this.props.onChange(tmInterval, valInterval, 
+      {tmOffsPos, tmDashStep, valOffsPos, valDashStep, ...exParams});
   }
 
   handleWheel(e){
 
-    let delta = e.deltaY || e.detail || e.wheelDelta;
+    const delta = e.deltaY || e.detail || e.wheelDelta;
 
     //this.scale(delta);
   }
@@ -70,13 +85,13 @@ class Plot extends React.Component {
 
   drawCanvas(){    
     
-    let canvas = this._canvasRef;
+    const canvas = this._canvasRef;
     
     if (canvas) {
       
-      let w = canvas.clientWidth,
-          h = canvas.clientHeight,
-          ctx = canvas.getContext("2d");
+      const w = canvas.clientWidth,
+            h = canvas.clientHeight,
+            ctx = canvas.getContext("2d");
  
       if ((canvas.width != w) || (canvas.height != h)){
         canvas.width = w;
@@ -85,29 +100,29 @@ class Plot extends React.Component {
     
       ctx.clearRect(0, 0, w, h);
 
-      this.drawAxisLines(w, h, ctx);
+      this.drawAxisMark(w, h, ctx);
       
     }
 
   }
 
-  drawAxisLines(width, height, ctx){
+  drawAxisMark(width, height, ctx){
     
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#000000';        
 
     ctx.beginPath();  
 
-    let tmAxisLines = this.props.tmAxisLines;    
-    for(pos of tmAxisLines){
+    const tmAxisMark = this.getTimePosMark();    
+    for(let pos of tmAxisMark){
 
       ctx.moveTo(pos, 0);
       ctx.lineTo(pos, height);
     }
 
-    let valAxisLines = this.props.valAxisLines;    
-    for(pos of valAxisLines){
-
+    const valAxisMark =  this.getValPosMark();    
+    for(let pos of valAxisMark){
+      
       ctx.moveTo(0, pos);
       ctx.lineTo(width, pos);
     }
@@ -115,6 +130,43 @@ class Plot extends React.Component {
     ctx.stroke();
   }
     
+  getTimePosMark(){
+
+    const canvas = this._canvasRef,
+          width = canvas.clientWidth;        
+	      
+    let {tmOffsPos, tmDashStep} = this.props.axisParams,
+        offs = tmOffsPos % tmDashStep,
+        mark = [];
+
+	  while (offs < width){
+		
+	    mark.push(offs);
+
+	    offs += tmDashStep;
+    }
+    
+    return mark;
+  }
+
+  getValPosMark(){
+
+    const canvas = this._canvasRef,
+          height = canvas.clientHeight;
+
+    let {valOffsPos, valDashStep} = this.props.axisParams,
+        offs = valOffsPos % valDashStep,
+        mark = [];	
+
+    while (offs < height){
+    
+      mark.push(offs);
+      offs += valDashStep;
+    }
+
+    return mark;
+  }
+
   render(){
 
     return <canvas style={ style }
