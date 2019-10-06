@@ -17,8 +17,8 @@ class Graph extends React.Component {
                        valDashStep : 100,  
                        tmOffsPos : 0,
                        tmDashStep : 100,
-                       minValDashStep : 100,
-                       maxValDashStep : 300}
+                       minValDashStep : 50,
+                       maxValDashStep : 100}
 
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}, 
                   valInterval : { begin : 0, end : 1000},

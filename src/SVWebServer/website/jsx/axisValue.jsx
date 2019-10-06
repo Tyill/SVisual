@@ -48,11 +48,6 @@ class AxisValue extends React.Component {
 
     const delta = e.deltaY || e.detail || e.wheelDelta;
 
-    this.scale(delta);
-  }
-  
-  scale(delta){
-    
     let {valDashStep, minValDashStep, maxValDashStep, ...exParams} = this.props.axisParams;
 
     if (delta > 0) valDashStep++;
@@ -85,7 +80,7 @@ class AxisValue extends React.Component {
 
     this.props.onChange(valInterval, {valDashStep, minValDashStep, maxValDashStep, ...exParams});
   }
-
+  
   componentDidMount() {
    
     this.drawCanvas();

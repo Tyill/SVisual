@@ -53,17 +53,13 @@ class AxisTime extends React.Component {
 
     const delta = e.deltaY || e.detail || e.wheelDelta;
 
-    this.scale(delta);
-  }
-  
-  scale(delta){
-   
     const canvas = this._canvasRef,
           width = canvas.clientWidth,
           ctx = canvas.getContext("2d"),
           timeMark = this.getTimeMark(width, 0),
-          fontMetr = ctx.measureText(timeMark).width,
-          {tmDashStep, ...exParams} = this.props.axisParams;
+          fontMetr = ctx.measureText(timeMark).width;
+    
+    let {tmDashStep, ...exParams} = this.props.axisParams;
 
     if (delta > 0) tmDashStep++;
     else tmDashStep--;
@@ -98,7 +94,7 @@ class AxisTime extends React.Component {
     
     this.props.onChange(tmInterval, {tmDashStep, ...exParams});
   }
-
+  
   componentDidMount() {
    
     this.drawCanvas();
