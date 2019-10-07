@@ -5,7 +5,11 @@ import {Container, Row, Col} from "react-bootstrap";
 import Header from "./header.jsx"; 
 import GraphPanel from "./graphPanel.jsx"; 
 import Footer from "./footer.jsx"; 
-import TreeNav from "./treeNav.jsx"
+import TreeNav from "./treeNav.jsx";
+
+const { Provider } = require('react-redux')
+const { createStore } = require('react-redux')
+//const reducers = require('./modules')
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
  
@@ -92,7 +96,13 @@ const footerStyle = {
 }
 
 
-ReactDOM.render(
-  <App />, 
-  document.getElementById('root')
-);
+// ReactDOM.render(
+//   <App />, 
+//   document.getElementById('root')
+// );
+
+ReactDOM.render((
+  <Provider store={createStore()}>
+    <App />
+  </Provider>
+), document.getElementById('root'))
