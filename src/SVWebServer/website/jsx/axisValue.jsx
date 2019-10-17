@@ -174,25 +174,6 @@ class AxisValue extends React.Component {
     return (vl * sign).toString();
   }
 
-  getPosMark(){
-
-    const canvas = this._canvasRef,
-          height = canvas.clientHeight;
-
-    let {valOffsPos, valDashStep} = this.props.axisParams,
-        offs = valOffsPos % valDashStep,
-        mark = [];	
-
-    while (offs < height){
-    
-      mark.push(offs);
-
-      offs += valDashStep;
-    }
-
-    return mark;
-  }
-
   render(){
 
     return <canvas style={ style }

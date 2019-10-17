@@ -43,8 +43,8 @@ class AxisTime extends React.Component {
        offs = -tmScale * diffPos + 1;
   
     tmInterval.beginMs += offs;
-    tmInterval.endMs += offs;    
-  	
+    tmInterval.endMs += offs;  
+    
     this.props.onChange(tmInterval, {tmOffsPos, tmDashStep, ...exPrms});
 
   }
@@ -190,25 +190,6 @@ class AxisTime extends React.Component {
     }
         
      return timeMark;
-  }
-
-  getPosMark(){
-
-    const canvas = this._canvasRef,
-          width = canvas.clientWidth;        
-        
-    let {tmOffsPos, tmDashStep} = this.props.axisParams,
-        offs = tmOffsPos % tmDashStep,
-        mark = [];
-
-	  while (offs < width){
-		
-	    mark.push(offs);
-
-	    offs += tmDashStep;
-    }
-    
-    return mark;
   }
 
   render(){

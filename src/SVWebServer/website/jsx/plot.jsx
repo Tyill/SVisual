@@ -241,16 +241,16 @@ class Plot extends React.Component {
 
     const canvas = this._canvasRef,
           width = canvas.clientWidth;        
-	      
+
     let {tmOffsPos, tmDashStep} = this.props.axisParams,
         offs = tmOffsPos % tmDashStep,
         mark = [];
 
-	  while (offs < width){
+    while (offs < width){
 		
-	    mark.push(offs);
+      mark.push(offs);
 
-	    offs += tmDashStep;
+      offs += tmDashStep;
     }
     
     return mark;
