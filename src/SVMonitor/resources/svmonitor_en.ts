@@ -183,7 +183,7 @@
         <translation>View graphics</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="147"/>
+        <location filename="../src/mainwin.cpp" line="150"/>
         <source>Подключение базы данных успешно</source>
         <translation>Database Connection successful</translation>
     </message>
@@ -192,7 +192,7 @@
         <translation type="vanished">Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="361"/>
+        <location filename="../src/mainwin.cpp" line="364"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
@@ -202,7 +202,7 @@
         <translation type="vanished">&lt;h2&gt;SVisual DEMO v1.0&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017 Software Inc.&lt;p&gt;SVisual is software designed to analyze signals from devices.&lt;p&gt; www.s-visual.com </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="149"/>
+        <location filename="../src/mainwin.cpp" line="152"/>
         <source>Подключение базы данных ошибка: </source>
         <translation>Database Connection error: </translation>
     </message>
@@ -211,72 +211,72 @@
         <translation type="vanished">&lt;h2&gt;SVisualMonitor &lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017 SVisual.&lt;p&gt;Software designed to analyze signals from devices.&lt;p&gt; www.s-visual.com </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="244"/>
+        <location filename="../src/mainwin.cpp" line="247"/>
         <source>Доступна новая версия: </source>
         <translation>New version available: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="246"/>
+        <location filename="../src/mainwin.cpp" line="249"/>
         <source>У вас самая новая версия</source>
         <translation>You have the newest version</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="260"/>
+        <location filename="../src/mainwin.cpp" line="263"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="304"/>
+        <location filename="../src/mainwin.cpp" line="307"/>
         <source>Состояние успешно сохранено</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="309"/>
+        <location filename="../src/mainwin.cpp" line="312"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="352"/>
+        <location filename="../src/mainwin.cpp" line="355"/>
         <source>Состояние успешно загружено</source>
         <translation>Load state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="483"/>
+        <location filename="../src/mainwin.cpp" line="506"/>
         <source>Инициализация параметров успешно</source>
         <translation>Initialization successfully settings</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="485"/>
+        <location filename="../src/mainwin.cpp" line="508"/>
         <source>Не найден файл инициализации %1</source>
         <translation>Not found ini file %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="506"/>
+        <location filename="../src/mainwin.cpp" line="535"/>
         <source>Прослушивание %1 порта запущено</source>
         <translation>Listening port %1 running</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="513"/>
+        <location filename="../src/mainwin.cpp" line="542"/>
         <source>%1 порт недоступен</source>
         <translation>%1 port is not available</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="519"/>
+        <location filename="../src/mainwin.cpp" line="551"/>
         <source>Сервер tcp запущен: адрес %1 порт %2</source>
         <translation>tcp server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="526"/>
+        <location filename="../src/mainwin.cpp" line="558"/>
         <source>Не удалось запустить tcp сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server tcp: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="544"/>
+        <location filename="../src/mainwin.cpp" line="578"/>
         <source>Ошибка сохранения сигналов в БД</source>
         <translation>Error save signals in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="546"/>
+        <location filename="../src/mainwin.cpp" line="580"/>
         <source>Ошибка сохранения триггеров в БД</source>
         <translation>Error save triggers in DB</translation>
     </message>
@@ -285,22 +285,22 @@
         <translation type="vanished">Error save events in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="767"/>
+        <location filename="../src/mainwin.cpp" line="801"/>
         <source>Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.</source>
         <translation>Signal limit exceeded:% 1. Stable work is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="806"/>
+        <location filename="../src/mainwin.cpp" line="840"/>
         <source>Подключен модуль: </source>
         <translation>Module is connected: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="811"/>
+        <location filename="../src/mainwin.cpp" line="845"/>
         <source>Превышен лимит количества модулей: %1. Стабильная работа не гарантирована.</source>
         <translation>Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="859"/>
+        <location filename="../src/mainwin.cpp" line="893"/>
         <source>Отключен модуль: </source>
         <translation>Module is disconnected: </translation>
     </message>
@@ -313,36 +313,36 @@
         <translation type="vanished">Close an application. Saving options error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="678"/>
-        <location filename="../src/mainwin.cpp" line="728"/>
+        <location filename="../src/mainwin.cpp" line="712"/>
+        <location filename="../src/mainwin.cpp" line="762"/>
         <source>Отключить</source>
         <translation>Shut off</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="680"/>
-        <location filename="../src/mainwin.cpp" line="723"/>
+        <location filename="../src/mainwin.cpp" line="714"/>
+        <location filename="../src/mainwin.cpp" line="757"/>
         <source>Включить</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="681"/>
-        <location filename="../src/mainwin.cpp" line="685"/>
-        <location filename="../src/mainwin.cpp" line="733"/>
+        <location filename="../src/mainwin.cpp" line="715"/>
+        <location filename="../src/mainwin.cpp" line="719"/>
+        <location filename="../src/mainwin.cpp" line="767"/>
         <source>Удалить</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="715"/>
+        <location filename="../src/mainwin.cpp" line="749"/>
         <source>Сигнал удален </source>
         <translation>The signal is deleted </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="736"/>
+        <location filename="../src/mainwin.cpp" line="770"/>
         <source>Удалить модуль со всеми сигналами?</source>
         <translation>Remove the module with all the signals?</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="743"/>
+        <location filename="../src/mainwin.cpp" line="777"/>
         <source>Модуль удален </source>
         <translation>Module removed </translation>
     </message>
@@ -386,17 +386,17 @@
         <translation type="vanished">Disconnect module &apos;</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="878"/>
+        <location filename="../src/mainwin.cpp" line="912"/>
         <source>Событие: </source>
         <translation>Event: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="891"/>
+        <location filename="../src/mainwin.cpp" line="925"/>
         <source> Процесс запущен: </source>
         <translation>Process is run: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="894"/>
+        <location filename="../src/mainwin.cpp" line="928"/>
         <source> Путь не найден: </source>
         <translation>Path is not found: </translation>
     </message>
@@ -539,12 +539,22 @@
 <context>
     <name>settingsPanel</name>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="105"/>
+        <location filename="../src/settingsPanel.cpp" line="119"/>
+        <source>порт</source>
+        <translation>port</translation>
+    </message>
+    <message>
+        <location filename="../src/settingsPanel.cpp" line="134"/>
+        <source>скорость</source>
+        <translation>speed</translation>
+    </message>
+    <message>
+        <location filename="../src/settingsPanel.cpp" line="185"/>
         <source>Выбор пути сохранения файлов записи</source>
         <translation>Choosing ways to preserve the recording files</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="134"/>
+        <location filename="../src/settingsPanel.cpp" line="217"/>
         <source>Изменения вступят в силу после перезагрузки</source>
         <translation>Changes will take effect after a reboot</translation>
     </message>
@@ -557,13 +567,13 @@
     <name>settingsPanelClass</name>
     <message>
         <location filename="../forms/settingsPanel.ui" line="26"/>
-        <location filename="../forms/ui_settingsPanel.h" line="284"/>
+        <location filename="../forms/ui_settingsPanel.h" line="276"/>
         <source>Настройки</source>
         <translation>Settings</translation>
     </message>
     <message>
         <location filename="../forms/settingsPanel.ui" line="32"/>
-        <location filename="../forms/ui_settingsPanel.h" line="285"/>
+        <location filename="../forms/ui_settingsPanel.h" line="277"/>
         <source>Получение данных</source>
         <translation>Retrieving data</translation>
     </message>
@@ -573,127 +583,85 @@
     </message>
     <message>
         <location filename="../forms/settingsPanel.ui" line="101"/>
-        <location filename="../forms/settingsPanel.ui" line="127"/>
-        <location filename="../forms/ui_settingsPanel.h" line="287"/>
-        <location filename="../forms/ui_settingsPanel.h" line="289"/>
+        <location filename="../forms/ui_settingsPanel.h" line="279"/>
         <source>порт</source>
         <translation>port</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="175"/>
-        <location filename="../forms/ui_settingsPanel.h" line="291"/>
         <source>скорость</source>
-        <translation>speed</translation>
+        <translation type="vanished">speed</translation>
     </message>
     <message>
         <location filename="../forms/settingsPanel.ui" line="40"/>
-        <location filename="../forms/ui_settingsPanel.h" line="286"/>
+        <location filename="../forms/ui_settingsPanel.h" line="278"/>
         <source>соединение по Ethernet</source>
         <translation>connect of the Ethernet</translation>
     </message>
     <message>
         <location filename="../forms/settingsPanel.ui" line="114"/>
-        <location filename="../forms/ui_settingsPanel.h" line="288"/>
+        <location filename="../forms/ui_settingsPanel.h" line="280"/>
         <source>ip адрес</source>
         <translation>ip addr</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="140"/>
-        <location filename="../forms/ui_settingsPanel.h" line="290"/>
+        <location filename="../forms/settingsPanel.ui" line="127"/>
+        <location filename="../forms/ui_settingsPanel.h" line="281"/>
         <source>соединение по COM/UART</source>
         <translation>connect of COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="188"/>
-        <location filename="../forms/settingsPanel.ui" line="192"/>
-        <location filename="../forms/ui_settingsPanel.h" line="294"/>
-        <location filename="../forms/ui_settingsPanel.h" line="303"/>
-        <source>1200</source>
-        <translation></translation>
+        <location filename="../forms/settingsPanel.ui" line="157"/>
+        <location filename="../forms/ui_settingsPanel.h" line="282"/>
+        <source>Добавить COM/UART</source>
+        <translation>Add COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="197"/>
-        <location filename="../forms/ui_settingsPanel.h" line="295"/>
-        <source>2400</source>
-        <translation></translation>
+        <location filename="../forms/settingsPanel.ui" line="164"/>
+        <location filename="../forms/ui_settingsPanel.h" line="283"/>
+        <source>Удалить COM/UART</source>
+        <translation>Delete COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="202"/>
-        <location filename="../forms/ui_settingsPanel.h" line="296"/>
-        <source>4800</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/settingsPanel.ui" line="207"/>
-        <location filename="../forms/ui_settingsPanel.h" line="297"/>
-        <source>9600</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/settingsPanel.ui" line="212"/>
-        <location filename="../forms/ui_settingsPanel.h" line="298"/>
-        <source>19200</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/settingsPanel.ui" line="217"/>
-        <location filename="../forms/ui_settingsPanel.h" line="299"/>
-        <source>38400</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/settingsPanel.ui" line="222"/>
-        <location filename="../forms/ui_settingsPanel.h" line="300"/>
-        <source>57600</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/settingsPanel.ui" line="227"/>
-        <location filename="../forms/ui_settingsPanel.h" line="301"/>
-        <source>115200</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/settingsPanel.ui" line="256"/>
-        <location filename="../forms/ui_settingsPanel.h" line="304"/>
+        <location filename="../forms/settingsPanel.ui" line="189"/>
+        <location filename="../forms/ui_settingsPanel.h" line="284"/>
         <source>Сохранение данных</source>
         <translation>Save data archive</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="265"/>
-        <location filename="../forms/settingsPanel.ui" line="271"/>
-        <location filename="../forms/ui_settingsPanel.h" line="306"/>
-        <location filename="../forms/ui_settingsPanel.h" line="308"/>
+        <location filename="../forms/settingsPanel.ui" line="198"/>
+        <location filename="../forms/settingsPanel.ui" line="204"/>
+        <location filename="../forms/ui_settingsPanel.h" line="286"/>
+        <location filename="../forms/ui_settingsPanel.h" line="288"/>
         <source>Активно</source>
         <translation>Active</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="283"/>
-        <location filename="../forms/ui_settingsPanel.h" line="309"/>
+        <location filename="../forms/settingsPanel.ui" line="216"/>
+        <location filename="../forms/ui_settingsPanel.h" line="289"/>
         <source>путь</source>
         <translation>path</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="346"/>
-        <location filename="../forms/ui_settingsPanel.h" line="311"/>
+        <location filename="../forms/settingsPanel.ui" line="279"/>
+        <location filename="../forms/ui_settingsPanel.h" line="291"/>
         <source>Настройка измерений</source>
         <translation>Measurement Setup</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="354"/>
-        <location filename="../forms/ui_settingsPanel.h" line="312"/>
+        <location filename="../forms/settingsPanel.ui" line="287"/>
+        <location filename="../forms/ui_settingsPanel.h" line="292"/>
         <source>Период записи</source>
         <translation>Recording period</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="361"/>
-        <location filename="../forms/ui_settingsPanel.h" line="313"/>
+        <location filename="../forms/settingsPanel.ui" line="294"/>
+        <location filename="../forms/ui_settingsPanel.h" line="293"/>
         <source> мс</source>
         <translation>ms</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="377"/>
-        <location filename="../forms/ui_settingsPanel.h" line="314"/>
+        <location filename="../forms/settingsPanel.ui" line="310"/>
+        <location filename="../forms/ui_settingsPanel.h" line="294"/>
         <source>Размер пакета</source>
         <translation>Size of packet</translation>
     </message>
@@ -714,14 +682,14 @@
         <translation type="obsolete">hour</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="430"/>
-        <location filename="../forms/ui_settingsPanel.h" line="315"/>
+        <location filename="../forms/settingsPanel.ui" line="366"/>
+        <location filename="../forms/ui_settingsPanel.h" line="295"/>
         <source>*</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="437"/>
-        <location filename="../forms/ui_settingsPanel.h" line="316"/>
+        <location filename="../forms/settingsPanel.ui" line="373"/>
+        <location filename="../forms/ui_settingsPanel.h" line="296"/>
         <source>Сохранить</source>
         <translation>Save</translation>
     </message>
