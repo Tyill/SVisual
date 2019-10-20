@@ -36,14 +36,18 @@ settingsPanel::settingsPanel(QWidget *parent){
 	ui.setupUi(this);
 	
 	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveChange()));
-	connect(ui.btnCopyPath, SIGNAL(clicked()), this, SLOT(selDirCopy()));
-	connect(ui.txtComPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.btnArchPath, SIGNAL(clicked()), this, SLOT(selDirArch()));
 	connect(ui.rbtnConnectByCom, &QRadioButton::toggled, this, [this] (){
 		
 		bool isSel = ui.rbtnConnectByCom->isChecked();
+        		
+        ui.btnAddCOM->setEnabled(isSel);
+        ui.btnDelCOM->setEnabled(isSel);
 
-		ui.cbxComSpeed->setEnabled(isSel);
-		ui.txtComPort->setEnabled(isSel);
+        for (auto& com : comPorts_){
+            com.first->setEnabled(isSel);
+            com.second->setEnabled(isSel);
+        }
 
 		selParamLoad_ = true;
 		paramChange();
@@ -58,22 +62,28 @@ settingsPanel::settingsPanel(QWidget *parent){
 		selParamLoad_ = true;
 		paramChange();
 	});
-	connect(ui.cbxComSpeed, SIGNAL(currentTextChanged(QString)), this, SLOT(paramChange()));
-	connect(ui.rbtnCopyEna, &QCheckBox::toggled, this, [this](){
+	connect(ui.rbtnArchEna, &QCheckBox::toggled, this, [this](){
 
-		bool isSel = ui.rbtnCopyEna->isChecked();
+        bool isSel = ui.rbtnArchEna->isChecked();
 
-		ui.txtCopyPath->setEnabled(isSel);
-		ui.btnCopyPath->setEnabled(isSel);
+		ui.txtArchPath->setEnabled(isSel);
+		ui.btnArchPath->setEnabled(isSel);
 		paramChange();
 	});
+    connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
+    connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
 
 	connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-	connect(ui.txtCopyPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	
+    MainWin::config cng = mainWin_->getConfig();
+        
+    for (int i = 0; i < cng.com_ports.size(); ++i)
+        addCOM(cng.com_ports[i].first, cng.com_ports[i].second, i + 1);
+    
 }
 
 settingsPanel::~settingsPanel(){}
@@ -86,29 +96,99 @@ void settingsPanel::showEvent(QShowEvent * event){
 	ui.txtTCPPort->setText(QString::number(cng.tcp_port));
 	
 	ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
-	ui.txtComPort->setText(cng.com_name);
-	ui.cbxComSpeed->setCurrentText(QString::number(cng.com_speed));
-
-	ui.rbtnCopyEna->setChecked(cng.outArchiveEna);
-	ui.txtCopyPath->setText(cng.outArchivePath);
+	
+    ui.rbtnArchEna->setChecked(cng.outArchiveEna);
+    ui.txtArchPath->setText(cng.outArchivePath);
 	
 	ui.spinCycleRecMs->setValue(cng.cycleRecMs);
 	ui.spinPacketSz->setValue(cng.packetSz);
-	
+	  
 	selParamLoad_ = false;
 	ui.lbChange->setText("");
 }
 
-void settingsPanel::selDirCopy(){
+void settingsPanel::addCOM(QString port, QString speed, int setRow){
+    
+    int row = ui.gridLayout->rowCount() + 1;
+
+    if (setRow >= 0) row = setRow;
+
+    bool isEna = ui.rbtnConnectByCom->isChecked();
+
+    auto label = new QLabel(ui.groupBox);
+    label->setText(tr("порт"));
+    label->setMinimumSize(QSize(50, 0));
+
+    ui.gridLayout->addWidget(label, row, 2, 1, 1);
+
+    auto txtComPort = new QLineEdit(ui.groupBox);
+    txtComPort->setMinimumSize(QSize(100, 0));
+    txtComPort->setMaximumSize(QSize(100, 16777215));
+    txtComPort->setText(port);
+    connect(txtComPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    txtComPort->setEnabled(isEna);
+
+    ui.gridLayout->addWidget(txtComPort, row, 3, 1, 1);
+
+    label = new QLabel(ui.groupBox);
+    label->setText(tr("скорость"));
+    label->setMinimumSize(QSize(55, 0));
+
+    ui.gridLayout->addWidget(label, row, 5, 1, 1);
+
+    auto cbxComSpeed = new QComboBox(ui.groupBox);
+    cbxComSpeed->clear();
+    cbxComSpeed->insertItems(0, QStringList()
+        << "1200" 
+        << "2400" 
+        << "4800"
+        << "9600" 
+        << "19200"
+        << "38400"
+        << "57600"
+        << "115200"
+        );
+    cbxComSpeed->setCurrentText(speed);
+    connect(cbxComSpeed, SIGNAL(currentIndexChanged(int)), this, SLOT(paramChange()));
+    cbxComSpeed->setEnabled(isEna);
+
+    ui.gridLayout->addWidget(cbxComSpeed, row, 6, 1, 1);
+
+    comPorts_.push_back(qMakePair(txtComPort, cbxComSpeed));
+
+    selParamLoad_ = true;
+    ui.lbChange->setText("*");
+
+    auto geom = this->geometry(); 
+    this->setGeometry(QRect(geom.x(), geom.y(), geom.width(), geom.height() + 34));
+}
+
+void settingsPanel::delCOM(){
+    
+    int i = comPorts_.size() - 1;
+    while (i >= 0){
+
+        if (!comPorts_[i].first->text().isEmpty()){
+            comPorts_[i].first->clear();
+            break;
+        }
+        --i;
+    }
+
+    selParamLoad_ = true;
+    ui.lbChange->setText("*");
+}
+
+void settingsPanel::selDirArch(){
 		
 	QString fl = QFileDialog::getExistingDirectory(this,
-		tr("Выбор пути сохранения файлов записи"), selDirCopy_);
+        tr("Выбор пути сохранения файлов записи"), selDirArch_);
 
 	if (fl.isEmpty()) return;
 
-	ui.txtCopyPath->setText(fl + "/");
+    ui.txtArchPath->setText(fl + "/");
 
-	selDirCopy_ = fl;
+    selDirArch_ = fl;
 }
 
 void settingsPanel::saveChange(){
@@ -118,13 +198,16 @@ void settingsPanel::saveChange(){
 	cng.tcp_addr = ui.txtIPAddr->text();
 	cng.tcp_port = ui.txtTCPPort->text().toInt();
 
-	cng.outArchiveEna = ui.rbtnCopyEna->isChecked();
-	cng.outArchivePath = ui.txtCopyPath->text();
+    cng.outArchiveEna = ui.rbtnArchEna->isChecked();
+    cng.outArchivePath = ui.txtArchPath->text();
 
 	cng.com_ena = ui.rbtnConnectByCom->isChecked();
-	cng.com_name = ui.txtComPort->text();
-	cng.com_speed = ui.cbxComSpeed->currentText().toInt();
-	
+
+    cng.com_ports.clear();
+    for (auto& port : comPorts_){
+        cng.com_ports.push_back(qMakePair(port.first->text(), port.second->currentText()));
+    }
+
 	cng.cycleRecMs = ui.spinCycleRecMs->value();
 	cng.packetSz = ui.spinPacketSz->value();
 
@@ -138,16 +221,7 @@ void settingsPanel::saveChange(){
 }
 
 void settingsPanel::paramChange(){
-
-	QString name = sender()->objectName();
-	if ((name == "cbxComSpeed") ||
-		(name == "txtIPAddr") ||
-		(name == "txtTCPPort") ||
-		(name == "txtComPort") ||
-		(name == "spinCycleRecMs") ||
-		(name == "spinPacketSz")
-		)
-		selParamLoad_ = true;
-	ui.lbChange->setText("*");
-
+    	
+    selParamLoad_ = true;
+	ui.lbChange->setText("*"); 
 }

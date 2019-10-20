@@ -35,7 +35,7 @@ public:
 	settingsPanel(QWidget *parent = 0);
 	~settingsPanel();
 
-	QString selDirCopy_;
+    QString selDirArch_;
 
 	Ui::settingsPanelClass ui;
 
@@ -47,9 +47,13 @@ private:
 
     MainWin* mainWin_ = nullptr;
 
+    QVector<QPair<QLineEdit*, QComboBox*>> comPorts_;
+
 private slots:
 	void saveChange();
-	void selDirCopy();
+    void addCOM(QString port = "", QString speed = "", int row = -1);
+    void delCOM();
+    void selDirArch();
 	void paramChange();
 
 };

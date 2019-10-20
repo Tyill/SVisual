@@ -45,14 +45,14 @@
 #include "SVServer/SVServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.2";
+const QString VERSION = "1.1.3";
+// reading from additional COM ports
+
+// const QString VERSION = "1.1.2";
 // patch for prev release: repair view graph
-
-
 //const QString VERSION = "1.1.1";
 // SVExportPanel
 // -fix select module
-
 // const QString VERSION = "1.1.0";
 // -add dark theme
 // const QString VERSION = "1.0.10";
@@ -382,8 +382,12 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "tcp_port = " << cng.tcp_port << endl;
     txtStream << endl;
     txtStream << "com_ena = " << (cng.com_ena ? 1 : 0) << endl;
-    txtStream << "com_name = " << cng.com_name << endl;
-    txtStream << "com_speed = " << cng.com_speed << endl;
+    
+    for (int i = 0; i < cng.com_ports.size(); ++i){
+        txtStream << "com" << i << "_name = " << cng.com_ports[i].first << endl;
+        txtStream << "com" << i << "_speed = " << cng.com_ports[i].second << endl;
+    }
+
     txtStream << endl;
     txtStream << "dbPath = " << cng.dbPath << endl;
     txtStream << endl;
@@ -430,9 +434,25 @@ bool MainWin::init(QString initPath){
     
     // связь по usb
     cng.com_ena = settings.value("com_ena", 0).toInt() == 1;
-    cng.com_name = settings.value("com_name", "COM4").toString();
-    cng.com_speed = settings.value("com_speed", 9600).toInt();
+    QString com_name = settings.value("com0_name", "COM4").toString();
+    QString com_speed = settings.value("com0_speed", "9600").toString();
 
+    cng.com_ports.push_back(qMakePair(com_name, com_speed));
+
+    // доп порты
+    int comCnt = 1;
+    while (true){
+
+        QString com_name = settings.value("com" + QString::number(comCnt) + "_name", "").toString();
+        QString com_speed = settings.value("com" + QString::number(comCnt) + "_speed", "").toString();
+
+        if (com_name.isEmpty() || com_speed.isEmpty())
+            break;
+
+        cng.com_ports.push_back(qMakePair(com_name, com_speed));
+        ++comCnt;
+    }
+    
     cng.dbPath = settings.value("dbPath", "").toString();
     if (cng.dbPath.isEmpty())cng.dbPath = cng.dirPath + "/svm.db";
 
@@ -502,18 +522,27 @@ MainWin::MainWin(QWidget *parent)
 	// запуск получения данных
 	if (cng.com_ena){
 
-		pComReader_ = new SerialPortReader(SerialPortReader::config(cng.com_name, cng.com_speed, cng.cycleRecMs, cng.packetSz));
+        for (auto& port : cng.com_ports){
 
-		if (pComReader_->startServer()) {
+            if (port.first.isEmpty() || port.second.isEmpty()) continue;
 
-			statusMess(QString(tr("Прослушивание %1 порта запущено")).arg(cng.com_name));
+            SerialPortReader::config ccng(port.first, port.second.toInt(), cng.cycleRecMs, cng.packetSz);
 
-			SV_Srv::startServer(srvCng);
+            auto comReader = new SerialPortReader(ccng);
 
-			pComReader_->setDataCBack(SV_Srv::receiveData);
-		}
-		else
-			statusMess(QString(tr("%1 порт недоступен")).arg(cng.com_name));
+            if (comReader->startServer()) {
+
+                statusMess(QString(tr("Прослушивание %1 порта запущено")).arg(port.first));
+                                
+                SV_Srv::startServer(srvCng);
+
+                comReader->setDataCBack(SV_Srv::receiveData);
+            }
+            else
+                statusMess(QString(tr("%1 порт недоступен")).arg(port.first));
+
+            comReaders_.push_back(comReader);
+        }    
 	}
 	else{
 
@@ -539,8 +568,10 @@ MainWin::~MainWin(){
 	
     SV_Srv::stopServer();
 
-	if (pComReader_ && pComReader_->isRunning())
-		pComReader_->stopServer();
+    for (auto comReader : comReaders_){
+        if (comReader && comReader->isRunning())
+            comReader->stopServer();
+    }
 
 	if (db){
 		if (!db->saveSignals(SV_Srv::getCopySignalRef()))

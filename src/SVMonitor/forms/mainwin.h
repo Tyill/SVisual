@@ -61,8 +61,7 @@ public:
 		int packetSz;              ///< размер пакета - задает пользователь
 
 		bool com_ena;              ///< запись по com
-		QString com_name;          ///< COM0..
-		int com_speed;             ///< 9600..
+        QVector<QPair<QString, QString>> com_ports;   ///< COM name, speed
                                    
 		QString dbPath;            ///< путь к бд
 
@@ -91,7 +90,7 @@ private:
 	Ui::MainWin ui;
 	bool isSlowMode_ = false;
     
-	SerialPortReader* pComReader_ = nullptr;
+	QVector<SerialPortReader*> comReaders_;
 
 	config cng;
 	SV_Srv::config srvCng;
