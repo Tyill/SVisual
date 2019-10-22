@@ -6,7 +6,7 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack -w",
     "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js",
-    "serverTest" : "nodemon serverTest.js"
+    "serverTest": "nodemon serverTest.js"
   },
   "repository": {
     "type": "git",

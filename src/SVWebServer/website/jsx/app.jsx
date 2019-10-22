@@ -8,8 +8,9 @@ import Footer from "./footer.jsx";
 import TreeNav from "./treeNav.jsx";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
  
-// const { Provider } = require('react-redux')
-// const { createStore } = require('react-redux')
+const { Provider } = require('react-redux')
+const { createStore } = require('react-redux')
+
 //const reducers = require('./modules')
 
 class App extends React.Component {
@@ -18,18 +19,19 @@ class App extends React.Component {
     super(props);
     
     this.state = { navScheme: [] };
+    
   }
 
   componentDidMount() {
-      
+   
     (async () => {
       let response = await fetch('api/allSignals');
       let signs = await response.json();     
       
-      let scheme = [];
+      let navScheme = [];
       for (let s of signs){
     
-        let it = scheme.find((it) => {
+        let it = navScheme.find((it) => {
           return s.module == it.submenu;
         });
   
@@ -39,13 +41,13 @@ class App extends React.Component {
                  isShow : true,
                  items : []};
   
-          scheme.push(it);
+          navScheme.push(it);
         }
   
         it.items.push(s.name);
       }
     
-      this.setState({navScheme : scheme});
+      this.setState({navScheme});
 
     })().catch(() => console.log('api/allSignals error'));
 
@@ -105,6 +107,8 @@ const footerStyle = {
 }
 
 ReactDOM.render(
-  <App />, 
+//<Provider store={createStore({})}>
+   <App /> ,
+// </Provider>,
   document.getElementById('root')
 );

@@ -3,14 +3,14 @@ const express = require("express");
 
 const app = express();
 
-const params = {
+const dataParams = {
     packetSize : 10,
     cycleTimeMs : 100, 
 };
 
-app.get("/api/params", function(request, response){
+app.get("/api/dataParams", function(request, response){
       
-    response.send(JSON.stringify(params));
+    response.send(dataParams);
 });
 
 app.get("/api/allSignals", function(request, response){
@@ -36,28 +36,32 @@ app.get("/api/allSignals", function(request, response){
         },        
     ];
    
-    response.send(JSON.stringify(signals));
+    response.send(signals);
 });
 
 let counter = 0;
 
 app.get("/api/signalData", function(request, response){
+    
+    //let nm = request.query.name;
+
+   // console.log(nm);
 
     let signData = { 
         beginTime : Date.now(),
         vals : [],             
     };
 
-    for (let i = 0; i < params.packetSize; ++i){
+    for (let i = 0; i < dataParams.packetSize; ++i){
         signData.vals.push(counter + i);
     }
 
-    counter += params.packetSize;
+    counter += dataParams.packetSize;
 
     if (counter >= 100)
       counter = -100; 
    
-    response.send(JSON.stringify(signData));
+    response.send(signData);
 });
 
 app.listen(3000);
