@@ -5,7 +5,8 @@
   "main": "bundle.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack -w",
-    "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js"
+    "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js",
+    "serverTest" : "nodemon serverTest.js"
   },
   "repository": {
     "type": "git",

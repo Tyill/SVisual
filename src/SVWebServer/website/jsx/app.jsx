@@ -6,69 +6,78 @@ import Header from "./header.jsx";
 import GraphPanel from "./graphPanel.jsx"; 
 import Footer from "./footer.jsx"; 
 import TreeNav from "./treeNav.jsx";
-
-const { Provider } = require('react-redux')
-const { createStore } = require('react-redux')
-//const reducers = require('./modules')
-
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
  
-function App() {
+// const { Provider } = require('react-redux')
+// const { createStore } = require('react-redux')
+//const reducers = require('./modules')
+
+class App extends React.Component {
     
-    let scheme = [
-      "patch",
-      { submenu : "users",
-        isShow : true,
-        items : [
-          "Ivan",
-          "Petrov",
-          { submenu : "address",
-            isShow : true,
-            items : [
-              "Московское ш., 101, кв.101",
-              {
-                submenu: "index",
-                isShow : true,
-                items: [ "101101" ],
-              },
-              "Ленинград"
-             ],
-          },
-          { submenu : "phoneNumbers",
-            isShow : true,
-            items : [
-              "812 123-1234",
-              "916 123-4567"
-            ]
-          }
-        ]
+  constructor(props){
+    super(props);
+    
+    this.state = { navScheme: [] };
+  }
+
+  componentDidMount() {
+      
+    (async () => {
+      let response = await fetch('api/allSignals');
+      let signs = await response.json();     
+      
+      let scheme = [];
+      for (let s of signs){
+    
+        let it = scheme.find((it) => {
+          return s.module == it.submenu;
+        });
+  
+        if (!it){ 
+  
+          it = { submenu : s.module,
+                 isShow : true,
+                 items : []};
+  
+          scheme.push(it);
+        }
+  
+        it.items.push(s.name);
       }
-    ]
+    
+      this.setState({navScheme : scheme});
 
-  return (
-    <Container style={containerStyle}>
-      <Row style={headerStyle}>
-        <Col>
-         <Header/>
-        </Col>
-      </Row>
-     
-      <Row className="row h-100" style={articleStyle}>
-        <Col className="col-auto"> 
-         <TreeNav scheme={scheme} />
-        </Col>
-        <Col className="col-auto"> 
-         <GraphPanel/>
-        </Col>
-      </Row>
+    })().catch(() => console.log('api/allSignals error'));
 
-      <Row style={footerStyle}>
-        <Col> 
-         <Footer/>
-        </Col>
-      </Row>
-    </Container>
-  )
+  }
+    
+  render(){
+
+    return (
+      <Container style={containerStyle}>
+        <Row style={headerStyle}>
+          <Col>
+            <Header/>
+          </Col>
+        </Row>
+        
+        <Row className="row h-100" style={articleStyle}>
+          <Col className="col-auto"> 
+            <TreeNav scheme={this.state.navScheme} />
+          </Col>
+          <Col className="col-auto"> 
+            <GraphPanel/>
+          </Col>
+        </Row>
+  
+        <Row style={footerStyle}>
+          <Col> 
+            <Footer/>
+          </Col>
+        </Row>
+      </Container>
+    )
+  } 
 }
 
 const containerStyle = {   
@@ -95,14 +104,7 @@ const footerStyle = {
   height : "50px",
 }
 
-
-// ReactDOM.render(
-//   <App />, 
-//   document.getElementById('root')
-// );
-
-ReactDOM.render((
-  <Provider store={createStore()}>
-    <App />
-  </Provider>
-), document.getElementById('root'))
+ReactDOM.render(
+  <App />, 
+  document.getElementById('root')
+);
