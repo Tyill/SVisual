@@ -8,10 +8,6 @@ import Footer from "./footer.jsx";
 import TreeNav from "./treeNav.jsx";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
  
-const { Provider } = require('react-redux')
-const { createStore } = require('react-redux')
-
-//const reducers = require('./modules')
 
 class App extends React.Component {
     
