@@ -64,7 +64,10 @@ class Graph extends React.Component {
             <Plot tmInterval={ this.state.tmInterval}
                   valInterval={ this.state.valInterval}
                   axisParams={ this.state.axisParams}
-                  onChange = { this.handlePlotChange } />            
+                  onChange = { this.handlePlotChange }
+                  onDragOver = { 
+                    event.stopPropagation(); (e) => e.preventDefault() } 
+                   />            
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey" }}>

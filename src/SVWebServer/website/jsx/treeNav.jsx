@@ -10,6 +10,7 @@ class TreeNav extends React.Component {
   constructor(props){
     super(props);   
   
+    this.state = { scheme : this.props.scheme};
   }
 
   renderSubmenu(level, obj, outObjList){
@@ -18,6 +19,7 @@ class TreeNav extends React.Component {
 
       outObjList.push(<section key={level + "." + obj} 
                                className="treeNav-leaf-container"
+                               draggable="true"
                                style={{paddingLeft: 10 + level * 5}}>
                                {obj}
                       </section>);      
@@ -26,7 +28,9 @@ class TreeNav extends React.Component {
 
       outObjList.push(<section key={level + "." + obj.submenu}
                                className="treeNav-node-container"
-                               style={{paddingLeft: 10 + level * 5}}>
+                               style={{paddingLeft: 10 + level * 5}}
+                               onClick= { () => {obj.isShow = !obj.isShow;
+                                                 this.setState({ scheme : this.props.scheme});} }> 
                                {obj.submenu}
                       </section>);
 

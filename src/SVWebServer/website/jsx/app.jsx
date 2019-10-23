@@ -54,8 +54,10 @@ class App extends React.Component {
       /////////////////////////////////////
 
       let navScheme = [];
-      for (let s of signs){
+      for (let k in signs){
     
+        let s = signs[k];
+
         let it = navScheme.find((it) => {
           return s.module == it.submenu;
         });
@@ -85,12 +87,11 @@ class App extends React.Component {
       let signs = this.props.signals,
           dataParams = this.props.dataParams;
 
-      let buffVals = { };
+      let buffVals = {};
       
       for (let k in signs){
         
-        // eslint-disable-next-line no-constant-condition
-        if (signs[k].isBuffEna || true){
+        if (signs[k].isBuffEna){
           
           let name = signs[k].name,
               module = signs[k].module; 
