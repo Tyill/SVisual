@@ -8,7 +8,9 @@ import Footer from "./footer.jsx";
 import TreeNav from "./treeNav.jsx";
 import GraphPanelRedux from "./graphPanel.jsx";
  
-import { updateFromServer } from "./redux/actions.jsx"; 
+import { updateFromServer, 
+         setDataParams, 
+         setSignalsFromServer } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -19,7 +21,7 @@ class App extends React.Component {
     super(props);
     
     this.state = { navScheme: [] };
-    
+        
   }
 
   componentDidMount() {
@@ -27,7 +29,30 @@ class App extends React.Component {
     (async () => {
       let response = await fetch('api/allSignals');
       let signs = await response.json();     
+
+      for (let k in signs){
+        signs[k].isBuffEna = false,
+        signs[k].buffVals = [
+          //          {
+          //            time : 0,
+          //            vals : []
+          //          }
+                     ]    
+      }
       
+      this.props.onSetSignalsFromServer(signs);
+
+      response = await fetch('api/dataParams');
+      let dataParams = await response.json();     
+            
+      this.props.onSetDataParams(dataParams);
+     
+      /////////////////////////////////////
+      
+      this.updateSignalData();
+
+      /////////////////////////////////////
+
       let navScheme = [];
       for (let s of signs){
     
@@ -52,6 +77,41 @@ class App extends React.Component {
     })().catch(() => console.log('api/allSignals error'));
 
   }
+
+  updateSignalData(){
+
+    let update = async function () {
+      
+      let signs = this.props.signals,
+          dataParams = this.props.dataParams;
+
+      let buffVals = { };
+      
+      for (let k in signs){
+        
+        // eslint-disable-next-line no-constant-condition
+        if (signs[k].isBuffEna || true){
+          
+          let name = signs[k].name,
+              module = signs[k].module; 
+          
+          let response = await fetch(`api/lastSignalData?name=${name}&module=${module}`),          
+              data = await response.json();         
+                    
+          buffVals[k] = data;
+        }
+      }
+      
+      if (Object.keys(buffVals).length > 0) 
+        this.props.onUpdateFromServer(buffVals);
+
+      setTimeout(update, dataParams.cycleTimeMs * dataParams.packetSize);
+    };
+
+    update = update.bind(this);
+
+    update();
+  }    
     
   render(){
 
@@ -114,9 +174,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpdateFromServer: (newSignData) => {
-      dispatch(updateFromServer(newSignData))
-    }
+      onSetSignalsFromServer: setSignalsFromServer(dispatch),    
+
+      onUpdateFromServer: updateFromServer(dispatch),
+        
+      onSetDataParams: setDataParams(dispatch),
   }
 }
 

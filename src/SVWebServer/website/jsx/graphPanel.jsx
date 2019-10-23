@@ -9,49 +9,28 @@ class GraphPanel extends React.Component {
 
   constructor(props){
     super(props);   
-  
-    this._dataParams = {};  
-   
+      
   }
 
   componentDidMount() {
 
-    (async () => {
-      
-      let response = await fetch('api/dataParams');
-      this._dataParams = await response.json();     
-      
-      let cycleMs = this._dataParams.packetSize * this._dataParams.cycleTimeMs;
-     
-      let update = async function(){
+  }
 
-        let sname = "s1"; 
-        let response = await fetch(`api/signalData?name=${sname}`);
-        let jnData = await response.json();     
-             
-        this.render();
+  componentDidUpdate() {
 
-        setTimeout(update, cycleMs);
-      }
-
-      update = update.bind(this);
-
-      update();
-
-    })().catch(() => console.log('api/dataParams error'));
-
+        
   }
 
   render(){
     
     return(
-        <Graph dataParams = {this._dataParams}></Graph>     
+        <Graph></Graph>     
     )  
   }
 }
 
 const mapStateToProps = (state) => {
-  return state.signals;
+  return state;
 }
 
 const GraphPanelRedux = connect(

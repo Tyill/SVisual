@@ -1,9 +1,13 @@
 /* eslint-disable no-unused-vars */
 
-import CombReducer from "./reducers.jsx";
+import ComboReducer from "./reducers.jsx";
 import { createStore } from 'redux'
 
 const initialState = {
+  dataParams : { 
+    packetSize : 10,
+    cycleTimeMs : 100,
+  },
   signals: { 
     // name + module : {
     //                  name : "s1",
@@ -11,6 +15,7 @@ const initialState = {
     //                  type : "int",
     //                  group : "group",
     //                  comment : "",
+    //                  isBuffEna : false, 
     //                  buffVals : [
     //                    {
     //                      time : 0,
@@ -21,6 +26,6 @@ const initialState = {
   },
 };
 
-const Store = createStore(CombReducer, initialState);
+const Store = createStore(ComboReducer, initialState);
 
 export default Store;

@@ -1,20 +1,48 @@
 /* eslint-disable no-unused-vars */
 
-import { UPDATE_FROM_SERVER } from "./actions.jsx";
+import { UPDATE_FROM_SERVER,
+         SET_DATA_PARAMS,
+         SET_SIGNALS_FROM_SERVER } from "./actions.jsx";
 import { combineReducers } from 'redux'
 import _ from "lodash";
 
-function signals(state = {}, action){
+function signals(curSignals = {}, action){
 
-  switch (action) {
-    case UPDATE_FROM_SERVER:      
-      return _.cloneDeep(state);
+  switch (action.type) {
+    case UPDATE_FROM_SERVER:{     
+     
+      let signalsCpy = _.cloneDeep(curSignals);
 
+      for (let k in action.newSignData){
+
+        signalsCpy[k].buffVals.push(action.newSignData[k]);
+      }      
+
+      return signalsCpy;
+    }
+
+    case SET_SIGNALS_FROM_SERVER:     
+      return action.signals;
+     
     default:
-      return state;
+      return curSignals;
  }
 }
 
-const CombReducer = combineReducers({signals});
+function dataParams(curParams, action){
 
-export default CombReducer;
+  switch (action.type) {
+    case SET_DATA_PARAMS:     
+      return action.dataParams;
+    
+    default: 
+      return action.dataParams ? action.dataParams : { 
+          packetSize : 10,
+          cycleTimeMs : 100,
+        };
+ }
+}
+
+const ComboReducer = combineReducers({signals, dataParams});
+
+export default ComboReducer;

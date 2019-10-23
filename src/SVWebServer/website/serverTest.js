@@ -15,38 +15,47 @@ app.get("/api/dataParams", function(request, response){
 
 app.get("/api/allSignals", function(request, response){
 
-    let signals = [
-        {name : "s1",
-         type : "int",
-         module: "oneModule",
-         group: "oneGroup",
-         isActive: true, 
-        },   
-        {name : "s2",
-         type : "float",
-         module: "twoModule",
-         group: "twoGroup",
-         isActive: true, 
-        },  
-        {name : "s3",
-         type : "bool",
-         module: "threeModule",
-         group: "threeGroup",
-         isActive: true, 
+    let signals = {
+        s1oneModule : {
+            name : "s1",
+            module: "oneModule",
+            type : "int",
+            group: "oneGroup",
+            comment: "",
+            isActive: true, 
+        },
+        s1twoModule : {
+            name : "s2",
+            module: "twoModule",
+            type : "float",
+            group: "twoGroup",
+            comment: "",
+            isActive: true, 
+        },
+        s3threeModule : {
+            name : "s3",
+            module: "threeModule",
+            type : "bool",
+            group: "threeGroup",
+            comment: "",
+            isActive: true, 
         },        
-    ];
+    };
    
     response.send(signals);
 });
 
-let counter = 0;
+let counterMain = { s1oneModule : 0,
+                    s2twoModule : 0,
+                    s3threeModule : 0,
+                  };
 
-app.get("/api/signalData", function(request, response){
+app.get("/api/lastSignalData", function(request, response){
     
-    //let nm = request.query.name;
-
-   // console.log(nm);
-
+    let name = request.query.name,
+        module = request.query.module,
+        counter = counterMain[name + module];
+   
     let signData = { 
         beginTime : Date.now(),
         vals : [],             
@@ -61,6 +70,8 @@ app.get("/api/signalData", function(request, response){
     if (counter >= 100)
       counter = -100; 
    
+    counterMain[name + module] = counter;
+
     response.send(signData);
 });
 
