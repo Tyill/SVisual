@@ -1,13 +1,17 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import ReactDOM from "react-dom";
+import { connect, Provider } from "react-redux";
 import {Container, Row, Col} from "react-bootstrap";
 import Header from "./header.jsx"; 
-import GraphPanel from "./graphPanel.jsx"; 
 import Footer from "./footer.jsx"; 
 import TreeNav from "./treeNav.jsx";
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import GraphPanelRedux from "./graphPanel.jsx";
  
+import { updateFromServer } from "./redux/actions.jsx"; 
+import Store from "./redux/store.jsx"; 
+
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
     
@@ -64,7 +68,7 @@ class App extends React.Component {
             <TreeNav scheme={this.state.navScheme} />
           </Col>
           <Col className="col-auto"> 
-            <GraphPanel/>
+            <GraphPanelRedux/>
           </Col>
         </Row>
   
@@ -102,9 +106,25 @@ const footerStyle = {
   height : "50px",
 }
 
+//////////////////////////////////////////////////
+
+const mapStateToProps = (state) => {
+  return state;
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpdateFromServer: (newSignData) => {
+      dispatch(updateFromServer(newSignData))
+    }
+  }
+}
+
+let AppRedux = connect(mapStateToProps, mapDispatchToProps)(App);
+
 ReactDOM.render(
-//<Provider store={createStore({})}>
-   <App /> ,
-// </Provider>,
+  <Provider store={Store}>
+     <AppRedux /> ,
+  </Provider>,
   document.getElementById('root')
 );

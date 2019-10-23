@@ -1,28 +1,26 @@
 /* eslint-disable no-unused-vars */
 
-import { changeSignalData } from "./reducers.jsx";
-import { createStore, combineReducers } from 'react-redux'
+import CombReducer from "./reducers.jsx";
+import { createStore } from 'redux'
 
 const initialState = {
-  signals: [
-  {
-    // name : "s1",
-    // module : "myModule",
-    // type : "int",
-    // group : "myGroup",
-    // comment : "int",
-    // buffVals : [
-    //   {
-    //     time : 0,
-    //     vals : []
-    //   }
-    // ]    
-  }
-]
+  signals: { 
+    // name + module : {
+    //                  name : "s1",
+    //                  module : "module",
+    //                  type : "int",
+    //                  group : "group",
+    //                  comment : "",
+    //                  buffVals : [
+    //                    {
+    //                      time : 0,
+    //                      vals : []
+    //                    }
+    //                  ]    
+    //                 }
+  },
 };
 
-export
-const Store = createStore(
-  combineReducers({changeSignalData}),
-  initialState
-);
+const Store = createStore(CombReducer, initialState);
+
+export default Store;

@@ -1,15 +1,20 @@
 /* eslint-disable no-unused-vars */
 
-import {CYCLE_UPDATE} from "./actions.jsx";
+import { UPDATE_FROM_SERVER } from "./actions.jsx";
+import { combineReducers } from 'redux'
+import _ from "lodash";
 
-export
-const changeSignalData = (state={}, action) => {
+function signals(state = {}, action){
 
   switch (action) {
-    case CYCLE_UPDATE:      
-      return state;
+    case UPDATE_FROM_SERVER:      
+      return _.cloneDeep(state);
 
     default:
       return state;
  }
 }
+
+const CombReducer = combineReducers({signals});
+
+export default CombReducer;

@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 import React from "react"
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Graph from "./graph.jsx";
 
-export default 
 class GraphPanel extends React.Component {
 
   constructor(props){
@@ -49,3 +49,13 @@ class GraphPanel extends React.Component {
     )  
   }
 }
+
+const mapStateToProps = (state) => {
+  return state.signals;
+}
+
+const GraphPanelRedux = connect(
+  mapStateToProps
+)(GraphPanel);
+
+export default GraphPanelRedux
