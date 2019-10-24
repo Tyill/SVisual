@@ -3,6 +3,7 @@
 export const SET_SIGNALS_FROM_SERVER = "SET_SIGNALS_FROM_SERVER";
 export const UPDATE_FROM_SERVER = "UPDATE_FROM_SERVER";
 export const SET_DATA_PARAMS = "SET_DATA_PARAMS";
+export const SIGNAL_BUFFER_ENABLE = "SIGNAL_BUFFER_ENABLE";
 
 export
 function setSignalsFromServer(dispatch){
@@ -33,6 +34,18 @@ function setDataParams(dispatch){
     
       dispatch({ type : SET_DATA_PARAMS,
                  dataParams,
+               });
+    }
+}
+
+export
+function signalBufferEnable(dispatch){
+    
+    return function(name, module){
+    
+      dispatch({ type : SIGNAL_BUFFER_ENABLE,
+                 name,
+                 module,
                });
     }
 }

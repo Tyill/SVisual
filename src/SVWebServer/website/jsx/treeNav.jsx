@@ -3,6 +3,7 @@
 import React from "react"
 import PropTypes from "prop-types";
 import "../css/treeNav.css";
+import "../css/fontello.css";
 
 export default 
 class TreeNav extends React.Component {
@@ -13,14 +14,15 @@ class TreeNav extends React.Component {
     this.state = { scheme : this.props.scheme};
   }
 
-  renderSubmenu(level, obj, outObjList){
+  renderSubmenu(level, submenu, obj, outObjList){
    
     if (typeof(obj) == "string"){
 
       outObjList.push(<section key={level + "." + obj} 
                                className="treeNav-leaf-container"
                                draggable="true"
-                               style={{paddingLeft: 10 + level * 5}}>
+                               style={{paddingLeft: 10 + level * 5}}
+                               onDragStart = {(e) => e.dataTransfer.setData('text', submenu + obj) } >
                                {obj}
                       </section>);      
     }  
@@ -29,14 +31,16 @@ class TreeNav extends React.Component {
       outObjList.push(<section key={level + "." + obj.submenu}
                                className="treeNav-node-container"
                                style={{paddingLeft: 10 + level * 5}}
-                               onClick= { () => {obj.isShow = !obj.isShow;
+                               onClick= { (e) => {obj.isShow = !obj.isShow;
                                                  this.setState({ scheme : this.props.scheme});} }> 
-                               {obj.submenu}
-                      </section>);
+                               {obj.submenu} 
+                               <span className= { obj.isShow ? "icon-down-dir" : "icon-left-dir" } />
+                      </section>); 
 
+      submenu += obj.submenu + ".";
       if (obj.isShow){
         for(let i of obj.items)
-          outObjList.push(this.renderSubmenu(level + 1, i, outObjList)); 
+          outObjList.push(this.renderSubmenu(level + 1, submenu, i, outObjList)); 
       }
     }  
   }
@@ -46,7 +50,7 @@ class TreeNav extends React.Component {
     let outObjList = [];
 
     for(let obj of this.props.scheme)
-      this.renderSubmenu(0, obj, outObjList);
+      this.renderSubmenu(0, "", obj, outObjList);
 
     return <div style={{ overflow: "auto"}}> {outObjList}  </div>
   }

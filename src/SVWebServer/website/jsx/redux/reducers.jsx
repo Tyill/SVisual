@@ -2,7 +2,8 @@
 
 import { UPDATE_FROM_SERVER,
          SET_DATA_PARAMS,
-         SET_SIGNALS_FROM_SERVER } from "./actions.jsx";
+         SET_SIGNALS_FROM_SERVER,
+         SIGNAL_BUFFER_ENABLE } from "./actions.jsx";
 import { combineReducers } from 'redux'
 import _ from "lodash";
 
@@ -23,6 +24,16 @@ function signals(curSignals = {}, action){
 
     case SET_SIGNALS_FROM_SERVER:     
       return action.signals;
+
+    case SIGNAL_BUFFER_ENABLE:{
+
+      let signalsCpy = _.cloneDeep(curSignals);
+
+      signalsCpy[action.name + action.module].isBuffEna = true;
+      
+      return signalsCpy;
+    }
+
      
     default:
       return curSignals;

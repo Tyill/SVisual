@@ -24,7 +24,7 @@ app.get("/api/allSignals", function(request, response){
             comment: "",
             isActive: true, 
         },
-        s1twoModule : {
+        s2twoModule : {
             name : "s2",
             module: "twoModule",
             type : "float",

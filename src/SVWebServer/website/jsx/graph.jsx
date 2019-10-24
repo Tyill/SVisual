@@ -22,12 +22,12 @@ class Graph extends React.Component {
 
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}, 
                   valInterval : { begin : 0, end : 1000},
-                  axisParams,
+                  axisParams, 
                  };   
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
-    this.handleAxisValueChange = this.handleAxisValueChange.bind(this);             
+    this.handleAxisValueChange = this.handleAxisValueChange.bind(this);                
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
@@ -56,18 +56,17 @@ class Graph extends React.Component {
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
           <Col className="col-1" >
-            <AxisValue valInterval={this.state.valInterval}
-                       axisParams={ this.state.axisParams}
+            <AxisValue valInterval= { this.state.valInterval}
+                       axisParams= { this.state.axisParams}
                        onChange = { this.handleAxisValueChange } />    
           </Col>
           <Col className="col-11" style={{ border: "1px solid green" }}>
-            <Plot tmInterval={ this.state.tmInterval}
-                  valInterval={ this.state.valInterval}
-                  axisParams={ this.state.axisParams}
+            <Plot tmInterval= { this.state.tmInterval}
+                  valInterval= { this.state.valInterval}
+                  axisParams= { this.state.axisParams}
+                  signals = { this.props.signals}
                   onChange = { this.handlePlotChange }
-                  onDragOver = { 
-                    event.stopPropagation(); (e) => e.preventDefault() } 
-                   />            
+                  onDrop = { (name, module) => this.props.onAddSignal(this.props.id, name, module) } />            
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey" }}>
@@ -76,7 +75,7 @@ class Graph extends React.Component {
           <Col>                
             <AxisTime tmInterval={ this.state.tmInterval}
                       axisParams={ this.state.axisParams}
-                      onChange = { this.handleAxisTimeChange } />; 
+                      onChange = { this.handleAxisTimeChange } /> 
           </Col>
         </Row>       
       </Container-fluid>

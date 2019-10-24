@@ -79,6 +79,7 @@ class Plot extends React.Component {
     ({tmInterval, tmDashStep} = this.scaleByTime(delta, tmInterval, tmDashStep));
 
     this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams});
+   
   }
 
   scaleByValue(delta, valInterval, valDashStep){
@@ -185,8 +186,27 @@ class Plot extends React.Component {
 
       this.drawAxisMark(w, h, ctx);
       
+      this.drawSignals(w, h, ctx);
+   
+    }
+  }
+
+  drawSignals(width, height, ctx){
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#1C6BFF';
+
+    ctx.beginPath();
+
+    for (let k in this.props.signals){
+
+      let pnts = this.props.signals[k].buffVals;
+
+      
+
     }
 
+    ctx.stroke();
   }
 
   drawAxisMark(width, height, ctx){
@@ -279,7 +299,13 @@ class Plot extends React.Component {
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
                    onMouseMove={ this.handleMouseMove } 
-                   onWheel={ this.handleWheel } >
+                   onWheel={ this.handleWheel } 
+                   onDragOver = { (e) => e.preventDefault() }
+                   onDrop = { (e) => { e.preventDefault();
+                                       let module = e.dataTransfer.getData('text').split('.')[0],
+                                           name = e.dataTransfer.getData('text').split('.')[1];
+                                       this.props.onDrop(name, module);
+                                     } } >
            </canvas>
   }
 }
