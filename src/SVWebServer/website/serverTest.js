@@ -67,8 +67,8 @@ app.get("/api/lastSignalData", function(request, response){
 
     counter += dataParams.packetSize;
 
-    if (counter >= 100)
-      counter = -100; 
+    if (counter >= 300)
+      counter = -300; 
    
     counterMain[name + module] = counter;
 

@@ -19,15 +19,18 @@ class Graph extends React.Component {
                        tmDashStep : 100,
                        minValDashStep : 50,
                        maxValDashStep : 100}
+   
+    this.props.signParams = {};
 
-    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e6}, 
+    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e5}, 
                   valInterval : { begin : 0, end : 1000},
                   axisParams, 
                  };   
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
-    this.handleAxisValueChange = this.handleAxisValueChange.bind(this);                
+    this.handleAxisValueChange = this.handleAxisValueChange.bind(this);    
+    
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
@@ -46,6 +49,16 @@ class Graph extends React.Component {
   }
 
   render(){
+    
+    let signals = this.props.signals;
+    for (let k in signals){
+
+      let signParams = { lineWidth : 1,
+        color : '#'+Math.floor(Math.random()*16777215).toString(16) }
+
+      signals[k].lineWidth = signals[k].lineWidth || 1;
+      signals[k].color = signals[k].color || ;
+    }
     
     return (
       <Container-fluid >

@@ -191,15 +191,15 @@ class Plot extends React.Component {
   }
 
   drawSignals(width, height, ctx){
-
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#1C6BFF';
-   
+      
     let signPnts = this.getSignalPoints(width, height);
    
     ctx.beginPath();
 
     for (let k in signPnts){
+
+      ctx.lineWidth = this.props.signals[k].lineWidth;
+      ctx.strokeStyle = this.props.signals[k].color;
 
       const zonePnts = signPnts[k]; 
      
@@ -207,9 +207,9 @@ class Plot extends React.Component {
         
         if (pnts.length == 0) continue; 
      
-        ctx.moveTo(pnts[0].first, pnts[0].second);
+        ctx.moveTo(pnts[0].pos, height - pnts[0].value);
         for (let i = 1; i < pnts.length; ++i)
-          ctx.lineTo(pnts[i].first, height - pnts[i].second);
+          ctx.lineTo(pnts[i].pos, height - pnts[i].value);
       }
     }
     
@@ -223,8 +223,7 @@ class Plot extends React.Component {
             tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,
             valScale = (valInterval.end - valInterval.begin) / height; 
       
-      const valMinInterval = valInterval.begin,
-            valMaxInterval = valInterval.end;
+      const valMinInterval = valInterval.begin;
       
       const tmMinInterval = tmInterval.beginMs,
             tmMaxInterval = tmInterval.endMs;
@@ -259,7 +258,6 @@ class Plot extends React.Component {
 
         let prevPos = -1,
             iBuf = 0;
-
         
         let zonePnts = [[]];
 
@@ -281,27 +279,27 @@ class Plot extends React.Component {
             for (let i = 0; i < packetSize; ++i){
 
               let pnt = {};
-              pnt.first = tmPosMem[i] + tmZnBeginMem;
+              pnt.pos = tmPosMem[i] + tmZnBeginMem;
           
-              if (Math.round(pnt.first) > Math.round(prevPos)){
-                prevPos = pnt.first;
+              if (Math.round(pnt.pos) > prevPos){
+                prevPos = Math.round(pnt.pos);
 
                 if (stype != tBool)
-                  pnt.second = rd.vals[i] / valScale - valPosMem;
+                  pnt.value = rd.vals[i] / valScale - valPosMem;
                 else
-                  pnt.second = rd.vals[i];
+                  pnt.value = rd.vals[i];
                 
                 backZone.push(pnt);
               }           
           }
-          tmZnEndPrev = tmZnEnd;
-
-          ++iBuf;
-          if (iBuf == buffSz) break;
-
-          tmZnBegin = buffVals[iBuf].beginTime;
-          tmZnEnd = tmZnBegin + packetTimeMs;
         }
+        tmZnEndPrev = tmZnEnd;
+
+        ++iBuf;
+        if (iBuf == buffSz) break;
+
+        tmZnBegin = buffVals[iBuf].beginTime;
+        tmZnEnd = tmZnBegin + packetTimeMs;        
       }
 
       resPnts[sign] = zonePnts;
