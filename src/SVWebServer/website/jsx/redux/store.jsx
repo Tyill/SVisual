@@ -12,13 +12,13 @@ const initialState = {
     // name + module : {
     //                  name : "s1",
     //                  module : "module",
-    //                  type : "int",
+    //                  type : 0,   // 0 - bool, 1 - int, 2 - float 
     //                  group : "group",
     //                  comment : "",
     //                  isBuffEna : false, 
     //                  buffVals : [
     //                    {
-    //                      time : 0,
+    //                      beginTime : 0,
     //                      vals : []
     //                    }
     //                  ]    

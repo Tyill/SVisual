@@ -64,6 +64,7 @@ class Graph extends React.Component {
             <Plot tmInterval= { this.state.tmInterval}
                   valInterval= { this.state.valInterval}
                   axisParams= { this.state.axisParams}
+                  dataParams = {this.props.dataParams}
                   signals = { this.props.signals}
                   onChange = { this.handlePlotChange }
                   onDrop = { (name, module) => this.props.onAddSignal(this.props.id, name, module) } />            

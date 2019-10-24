@@ -19,7 +19,7 @@ app.get("/api/allSignals", function(request, response){
         s1oneModule : {
             name : "s1",
             module: "oneModule",
-            type : "int",
+            type : 1,
             group: "oneGroup",
             comment: "",
             isActive: true, 
@@ -27,7 +27,7 @@ app.get("/api/allSignals", function(request, response){
         s2twoModule : {
             name : "s2",
             module: "twoModule",
-            type : "float",
+            type : 2,
             group: "twoGroup",
             comment: "",
             isActive: true, 
@@ -35,7 +35,7 @@ app.get("/api/allSignals", function(request, response){
         s3threeModule : {
             name : "s3",
             module: "threeModule",
-            type : "bool",
+            type : 0,
             group: "threeGroup",
             comment: "",
             isActive: true, 

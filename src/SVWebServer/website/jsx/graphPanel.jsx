@@ -32,8 +32,9 @@ class GraphPanel extends React.Component {
       for (let s of this._listGraph[i]) 
         signals[s] = this.props.signals[s];
         
-      objList.push(<Graph key={i} id={i}
-                          signals={signals}
+      objList.push(<Graph key = {i} id = {i}
+                          dataParams = {this.props.dataParams}
+                          signals = {signals}
                           onAddSignal = {this.handleAddSignal} ></Graph>);
     }
 
@@ -53,7 +54,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const GraphPanelRedux = connect(
+let GraphPanelRedux = connect(
   mapStateToProps,
   mapDispatchToProps
 )(GraphPanel);

@@ -47,7 +47,7 @@ function dataParams(curParams, action){
       return action.dataParams;
     
     default: 
-      return action.dataParams ? action.dataParams : { 
+      return curParams ? curParams : { 
           packetSize : 10,
           cycleTimeMs : 100,
         };

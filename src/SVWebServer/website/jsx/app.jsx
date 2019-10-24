@@ -49,7 +49,7 @@ class App extends React.Component {
      
       /////////////////////////////////////
       
-      this.updateSignalData();
+      this.updateSignalData(dataParams);
 
       /////////////////////////////////////
 
@@ -80,12 +80,11 @@ class App extends React.Component {
 
   }
 
-  updateSignalData(){
+  updateSignalData(dataParams){
 
     let update = async function () {
       
-      let signs = this.props.signals,
-          dataParams = this.props.dataParams;
+      let signs = this.props.signals;
 
       let buffVals = {};
       

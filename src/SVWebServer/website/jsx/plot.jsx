@@ -12,8 +12,7 @@ class Plot extends React.Component {
     this._canvasRef = null;
    
     this.handleMouseMove = this.handleMouseMove.bind(this);
-    this.handleWheel = this.handleWheel.bind(this);    
-   
+    this.handleWheel = this.handleWheel.bind(this);  
   }
    
   handleMouseMove(event) {
@@ -195,18 +194,120 @@ class Plot extends React.Component {
 
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#1C6BFF';
-
+   
+    let signPnts = this.getSignalPoints(width, height);
+   
     ctx.beginPath();
 
-    for (let k in this.props.signals){
+    for (let k in signPnts){
 
-      let pnts = this.props.signals[k].buffVals;
+      const zonePnts = signPnts[k]; 
+     
+      for (const pnts of zonePnts){
+        
+        if (pnts.length == 0) continue; 
+     
+        ctx.moveTo(pnts[0].first, pnts[0].second);
+        for (let i = 1; i < pnts.length; ++i)
+          ctx.lineTo(pnts[i].first, height - pnts[i].second);
+      }
+    }
+    
+    ctx.stroke();    
+  }
 
+  getSignalPoints(width, height){
+         
+      const tmInterval = this.props.tmInterval,
+            valInterval = this.props.valInterval,
+            tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,
+            valScale = (valInterval.end - valInterval.begin) / height; 
       
+      const valMinInterval = valInterval.begin,
+            valMaxInterval = valInterval.end;
+      
+      const tmMinInterval = tmInterval.beginMs,
+            tmMaxInterval = tmInterval.endMs;
 
+      const packetSize = this.props.dataParams.packetSize,
+            cycleTimeMs = this.props.dataParams.cycleTimeMs,
+            packetTimeMs = packetSize * cycleTimeMs;
+
+      const valPosMem = valMinInterval / valScale;
+    
+      //////////////////////////////////////////
+
+      let resPnts = {};
+
+      for (let sign in this.props.signals){
+
+        const buffVals = this.props.signals[sign].buffVals,
+              buffSz = buffVals.length,
+              stype = this.props.signals[sign].type,
+              tBool = 0;
+
+        if (buffSz == 0) continue;
+      
+        let tmZnBegin = buffVals[0].beginTime,
+            tmZnEnd = tmZnBegin + packetTimeMs;    
+      
+        let tmZnEndPrev = tmZnBegin;
+
+        let tmPosMem = [];
+        for (let i = 0; i < packetSize; ++i)
+          tmPosMem.push((i * cycleTimeMs - tmMinInterval) / tmScale);
+
+        let prevPos = -1,
+            iBuf = 0;
+
+        
+        let zonePnts = [[]];
+
+        while (tmZnBegin < tmMaxInterval){
+
+          if (tmZnEnd > tmMinInterval){
+
+            const rd = buffVals[iBuf];
+
+            const tmZnBeginMem = tmZnBegin / tmScale;
+
+            if ((tmZnBegin - tmZnEndPrev) > packetTimeMs){
+              
+              zonePnts.push([]);
+            }
+
+            let backZone = zonePnts[zonePnts.length - 1];
+
+            for (let i = 0; i < packetSize; ++i){
+
+              let pnt = {};
+              pnt.first = tmPosMem[i] + tmZnBeginMem;
+          
+              if (Math.round(pnt.first) > Math.round(prevPos)){
+                prevPos = pnt.first;
+
+                if (stype != tBool)
+                  pnt.second = rd.vals[i] / valScale - valPosMem;
+                else
+                  pnt.second = rd.vals[i];
+                
+                backZone.push(pnt);
+              }           
+          }
+          tmZnEndPrev = tmZnEnd;
+
+          ++iBuf;
+          if (iBuf == buffSz) break;
+
+          tmZnBegin = buffVals[iBuf].beginTime;
+          tmZnEnd = tmZnBegin + packetTimeMs;
+        }
+      }
+
+      resPnts[sign] = zonePnts;
     }
 
-    ctx.stroke();
+    return resPnts;
   }
 
   drawAxisMark(width, height, ctx){
