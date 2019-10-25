@@ -32,6 +32,9 @@ class Graph extends React.Component {
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
     this.handleAxisValueChange = this.handleAxisValueChange.bind(this);    
     
+    this.handleAddSignal = this.handleAddSignal.bind(this); 
+    this.handleDelSignal = this.handleDelSignal.bind(this);    
+   
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
@@ -49,6 +52,22 @@ class Graph extends React.Component {
     this.setState({tmInterval, valInterval, axisParams});
   }
 
+  handleAddSignal(name, module){
+
+    this.props.onAddSignal(this.props.id, name, module);
+  }
+
+  handleDelSignal(name, module){
+
+    let map = new Map(Object.entries(this._signParams));
+
+    map.delete(name + module);
+
+    this._signParams = Object.fromEntries(map.entries());
+   
+    this.props.onDelSignal(this.props.id, name, module);
+  }
+
   render(){
     
     let signals = this.props.signals,
@@ -63,11 +82,11 @@ class Graph extends React.Component {
       
       legend.push(
         <p key = {legend.length} 
-           onClick = {() => this.props.onDelSignal(this.props.id, signals[k].name, signals[k].module) } 
+           onClick = { () => this.handleDelSignal(signals[k].name, signals[k].module) } 
            style = {{ marginLeft : 10,
-             marginTop : 20 * legend.length,                                  
-             position : "absolute",                                               
-             color : this._signParams[k].color }}>
+                      marginTop : 20 * legend.length,                                  
+                      position : "absolute",                                               
+                      color : this._signParams[k].color }}>
           {signals[k].name}
         </p>
       );
@@ -103,7 +122,7 @@ class Graph extends React.Component {
                   dataParams = {this.props.dataParams}
                   signParams = { this._signParams }
                   onChange = { this.handlePlotChange }
-                  onDrop = { (name, module) => this.props.onAddSignal(this.props.id, name, module) } />            
+                  onDrop = { this.handleAddSignal } />            
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey" }}>
