@@ -5,14 +5,13 @@ import { UPDATE_FROM_SERVER,
          SET_SIGNALS_FROM_SERVER,
          SIGNAL_BUFFER_ENABLE } from "./actions.jsx";
 import { combineReducers } from 'redux'
-import _ from "lodash";
 
 function signals(curSignals = {}, action){
 
   switch (action.type) {
     case UPDATE_FROM_SERVER:{     
      
-      let signalsCpy = _.cloneDeep(curSignals);
+      let signalsCpy = Object.assign({}, curSignals);// no deep clone
 
       for (let k in action.newSignData){
 
@@ -27,10 +26,14 @@ function signals(curSignals = {}, action){
 
     case SIGNAL_BUFFER_ENABLE:{
 
-      let signalsCpy = _.cloneDeep(curSignals);
+      let signalsCpy = Object.assign({}, curSignals),// no deep clone
+          sname = action.name + action.module;
 
-      signalsCpy[action.name + action.module].isBuffEna = action.set;
+      signalsCpy[sname].isBuffEna = action.set;
       
+      if (!action.set)
+        signalsCpy[sname].buffVals = [];
+
       return signalsCpy;
     }
 

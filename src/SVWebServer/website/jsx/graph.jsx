@@ -58,12 +58,8 @@ class Graph extends React.Component {
   }
 
   handleDelSignal(name, module){
-
-    let map = new Map(Object.entries(this._signParams));
-
-    map.delete(name + module);
-
-    this._signParams = Object.fromEntries(map.entries());
+    
+    delete this._signParams[name + module]
    
     this.props.onDelSignal(this.props.id, name, module);
   }

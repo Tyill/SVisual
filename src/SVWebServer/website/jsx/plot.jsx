@@ -11,59 +11,135 @@ class Plot extends React.Component {
     super(props);
 
     this._canvasRef = null;
-   
+
+    this._rect = { x : 0, y : 0, width : 0, height : 0};
+    this._memMDown = {};
+
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleWheel = this.handleWheel.bind(this);  
+    this.handleResizeByRect = this.handleResizeByRect.bind(this);
   }
    
   handleMouseMove(event) {
-    
-    const canvas = this._canvasRef;
+   
+    // left mouse button
+    if (event.nativeEvent.which === 1){
 
-    if (!canvas || !event.buttons) return;
+      const canvas = this._canvasRef;
+
+      const cpos = { x : event.clientX, y : event.clientY};
+     
+      let rct = this._rect;
+      if ((rct.width == 0) && (rct.height == 0)){
+        rct.width = 1;
+        rct.height = 1;
+        this._memMDown = cpos;
+      }
+
+      const presPnt = this._memMDown,
+            dw = cpos.x - presPnt.x,
+            dh = cpos.y - presPnt.y;
+      
+    
+      const w = canvas.clientWidth,
+            h = canvas.clientHeight;
+
+      if ((dw > 0) && (dh > 0))
+        rct = { x : presPnt.x, y : presPnt.y, width : dw, height : dh};
+      // else if ((dw < 0) && (dh > 0))
+      //   rct = { x : cpos.x, y : presPnt.y, width : Math.abs(dw), height : dh};
+      // else if ((dw > 0) && (dh < 0))
+      //   rct = { x : presPnt.x, y : cpos.y, widht : dw, height : Math.abs(dh)};
+      // else if ((dw < 0) && (dh < 0))
+      //   rct = { x : cpos.x, y : cpos.y, width : Math.abs(dw), height : Math.abs(dh)};
+
+      this._rect = rct;
+      
+      this.drawCanvas(); 
+    } 
+
+    // right mouse button
+    else if (event.nativeEvent.which === 3){
+   
+      const canvas = this._canvasRef;
+
+      let valInterval = this.props.valInterval,
+          {valOffsPos, valDashStep, tmOffsPos, tmDashStep, ...exParams} = this.props.axisParams;
+
+      const height = canvas.clientHeight,
+            valScale = (valInterval.end - valInterval.begin) / height,
+            valDiff = event.nativeEvent.movementY;          
+      
+      valOffsPos += valDiff;
+
+      if (valOffsPos > valDashStep) 
+        valOffsPos = 0;
+      else if (valOffsPos < 0) 
+        valOffsPos = valDashStep; 
+
+      valInterval.begin += valScale * valDiff;
+      valInterval.end += valScale * valDiff;   
+      
+      //////////////////////////////////////
+
+      let tmInterval = this.props.tmInterval;
+
+      const width = canvas.clientWidth,
+            tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
+            tmDiff = event.nativeEvent.movementX;
         
-    let valInterval = this.props.valInterval,
-        {valOffsPos, valDashStep, tmOffsPos, tmDashStep, ...exParams} = this.props.axisParams;
+      tmOffsPos += tmDiff;
 
-    const height = canvas.clientHeight,
-          valScale = (valInterval.end - valInterval.begin) / height,
-          valDiff = event.nativeEvent.movementY;          
+      if (tmOffsPos > tmDashStep) 
+        tmOffsPos = 0;
+      else if (tmOffsPos < 0) 
+        tmOffsPos = tmDashStep; 
+
+      let offs = -tmScale * tmDiff - 1;
+      if (tmDiff < 0) 
+        offs = -tmScale * tmDiff + 1;
     
-    valOffsPos += valDiff;
+      tmInterval.beginMs += offs;
+      tmInterval.endMs += offs;    
+        
+      this.props.onChange(tmInterval, valInterval, 
+        {tmOffsPos, tmDashStep, valOffsPos, valDashStep, ...exParams});
+    }
+  }
 
-    if (valOffsPos > valDashStep) 
-      valOffsPos = 0;
-    else if (valOffsPos < 0) 
-      valOffsPos = valDashStep; 
+  handleResizeByRect(event){
+   
+    if (event.nativeEvent.which !== 1)
+      return;
 
-    valInterval.begin += valScale * valDiff;
-    valInterval.end += valScale * valDiff;   
-    
-    //////////////////////////////////////
+    const rct = Object.assign({}, this._rect);
 
-    let tmInterval = this.props.tmInterval;
-
-    const width = canvas.clientWidth,
-          tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
-          tmDiff = event.nativeEvent.movementX;
-      
-    tmOffsPos += tmDiff;
-
-    if (tmOffsPos > tmDashStep) 
-      tmOffsPos = 0;
-    else if (tmOffsPos < 0) 
-      tmOffsPos = tmDashStep; 
-
-    let offs = -tmScale * tmDiff - 1;
-    if (tmDiff < 0) 
-       offs = -tmScale * tmDiff + 1;
-
+    this._rect = {x : 0, y : 0, width : 0, height : 0};
   
-    tmInterval.beginMs += offs;
-    tmInterval.endMs += offs;    
+    if ((rct.width < 30) || (rct.height < 30)){
+
+      if ((rct.width > 0) || (rct.height > 0)) 
+        this.drawCanvas();
       
-    this.props.onChange(tmInterval, valInterval, 
-      {tmOffsPos, tmDashStep, valOffsPos, valDashStep, ...exParams});
+      return;
+    }
+      
+    const canvas = this._canvasRef;
+    
+    const w = canvas.clientWidth,
+          h = canvas.clientHeight;
+    
+    let tmIntl = this.props.tmInterval,
+        tmScale = (tmIntl.endMs - tmIntl.beginMs) / w,
+        tmBegin = tmIntl.beginMs + rct.x * tmScale,
+        tmEnd = tmIntl.beginMs + (rct.x + rct.width) * tmScale;
+        
+    let valIntl = this.props.valInterval,
+        valScale = (valIntl.end - valIntl.begin) / h,
+        valBegin = valIntl.begin + (h - rct.y - rct.height) * valScale;
+        valEnd = valIntl.begin + (h - rct.y) * valScale;
+      
+    this.props.onChange({tmBegin, tmEnd}, {valBegin, valEnd}, this.props.axisParams);
   }
 
   handleWheel(e){
@@ -78,8 +154,7 @@ class Plot extends React.Component {
     
     ({tmInterval, tmDashStep} = this.scaleByTime(delta, tmInterval, tmDashStep));
 
-    this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams});
-      
+    this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams});      
   }
 
   scaleByValue(delta, valInterval, valDashStep){
@@ -187,12 +262,29 @@ class Plot extends React.Component {
       this.drawAxisMark(w, h, ctx);
       
       this.drawSignals(w, h, ctx);   
+
+      // draw rect
+      const rct = this._rect;
+      if ((rct.width > 0) || (rct.height > 0)){ 
+  
+        ctx.beginPath();
+  
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 1;
+  
+        ctx.rect(rct.x, rct.y, rct.width, rct.height);
+  
+        ctx.closePath();
+
+        ctx.stroke();
+      }
     }
   }
 
   drawSignals(width, height, ctx){
       
-    let signPnts = this.getSignalPoints(width, height);
+    const signPnts = this.getSignalPoints(width, height);
    
     const valInterval = this.props.valInterval,
           tmInterval = this.props.tmInterval,
@@ -517,9 +609,11 @@ class Plot extends React.Component {
 
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
-                   onMouseMove={ this.handleMouseMove } 
+                   onMouseMove={ this.handleMouseMove }
+                   onMouseUp = { this.handleResizeByRect }  
                    onWheel={ this.handleWheel } 
                    onDragOver = { (e) => e.preventDefault() }
+                   onContextMenu = { (e) => e.preventDefault() }
                    onDrop = { (e) => { e.preventDefault();
                                        let module = e.dataTransfer.getData('text').split('.')[0],
                                            name = e.dataTransfer.getData('text').split('.')[1];
