@@ -29,7 +29,7 @@ function signals(curSignals = {}, action){
 
       let signalsCpy = _.cloneDeep(curSignals);
 
-      signalsCpy[action.name + action.module].isBuffEna = true;
+      signalsCpy[action.name + action.module].isBuffEna = action.set;
       
       return signalsCpy;
     }

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import React from "react"
+const RDom = require('react-dom');
 import PropTypes from "prop-types";
 
 export default 
@@ -67,7 +68,7 @@ class Plot extends React.Component {
 
   handleWheel(e){
 
-    const delta = e.deltaY || e.detail || e.wheelDelta;
+    const delta = -(e.deltaY || e.detail || e.wheelDelta);
 
     let {tmDashStep, valDashStep, ...exParams} = this.props.axisParams,
         valInterval = this.props.valInterval,
@@ -78,7 +79,7 @@ class Plot extends React.Component {
     ({tmInterval, tmDashStep} = this.scaleByTime(delta, tmInterval, tmDashStep));
 
     this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams});
-   
+      
   }
 
   scaleByValue(delta, valInterval, valDashStep){
@@ -101,15 +102,15 @@ class Plot extends React.Component {
     else if (curInterval < 100) offs /= 10;
           
     if (delta > 0){ 
-      valInterval.first += offs;
-      valInterval.second -= offs;
+      valInterval.begin += offs;
+      valInterval.end -= offs;
 
-      if (valInterval.first >= valInterval.second)
-        valInterval.first = valInterval.second - 0.1;
+      if (valInterval.begin >= valInterval.end)
+        valInterval.begin = valInterval.end - 0.1;
     }
     else{ 
-      valInterval.first -= offs;
-      valInterval.second += offs;
+      valInterval.begin -= offs;
+      valInterval.end += offs;
     }
 
     return {valInterval, valDashStep};
@@ -185,8 +186,7 @@ class Plot extends React.Component {
 
       this.drawAxisMark(w, h, ctx);
       
-      this.drawSignals(w, h, ctx);
-   
+      this.drawSignals(w, h, ctx);   
     }
   }
 
@@ -194,26 +194,145 @@ class Plot extends React.Component {
       
     let signPnts = this.getSignalPoints(width, height);
    
-    ctx.beginPath();
+    const valInterval = this.props.valInterval,
+          tmInterval = this.props.tmInterval,
+          packetSize = this.props.dataParams.packetSize,
+          cycleTimeMs = this.props.dataParams.cycleTimeMs,
+          packetTimeMs = packetSize * cycleTimeMs,
+          valScale = (valInterval.end - valInterval.begin) / height;
 
+    // int, float
     for (let k in signPnts){
+          
+      // pass bool 
+      if (this.props.signals[k].type == 0) continue; 
 
-      ctx.lineWidth = this.props.signals[k].lineWidth;
-      ctx.strokeStyle = this.props.signals[k].color;
+      ctx.strokeStyle = this.props.signParams[k].color;
+      ctx.fillStyle = this.props.signParams[k].color;
+      
+      let isFillGraph = this.props.signParams[k].transparent < 1,
+          isPaintPnt = (tmInterval.endMs - tmInterval.beginMs) < (packetTimeMs * 5);
 
       const zonePnts = signPnts[k]; 
      
       for (const pnts of zonePnts){
         
         if (pnts.length == 0) continue; 
-     
+
+        ctx.beginPath();
+
+        ctx.lineWidth = this.props.signParams[k].lineWidth;
+        ctx.globalAlpha = 1;
+       
         ctx.moveTo(pnts[0].pos, height - pnts[0].value);
         for (let i = 1; i < pnts.length; ++i)
           ctx.lineTo(pnts[i].pos, height - pnts[i].value);
-      }
+       
+        ctx.stroke();    
+        
+        if (isPaintPnt){
+          for (let i = 0; i < pnts.length; ++i){
+            ctx.beginPath();
+            ctx.arc(pnts[i].pos, height - pnts[i].value, 3, 0, 360);
+            ctx.closePath();
+            ctx.fill();   
+            ctx.stroke();             
+          }
+        }
+
+        if (isFillGraph){
+          
+          ctx.beginPath();
+
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = this.props.signParams[k].transparent;
+      
+          let yPos = height;
+
+          if ((valInterval.begin < 0) && (valInterval.end > 0))
+            yPos = valInterval.end / valScale;
+          else if ((valInterval.begin < 0) && (valInterval.end < 0))
+            yPos = 0;
+      
+          ctx.moveTo(pnts[0].pos, yPos);
+          
+          let step = 1024.0 / pnts.length,
+              cxPos = 0,
+              prevxPos = -1;
+
+          for (let i = 0; i < pnts.length; ++i){
+                                                              
+              if (Math.round(cxPos) > prevxPos){
+                  prevxPos = Math.round(cxPos);
+                  ctx.lineTo(pnts[i].pos, height - pnts[i].value);
+              }
+              cxPos += step;
+          }
+
+          ctx.lineTo(pnts[pnts.length - 1].pos, yPos);
+
+          ctx.fill();
+
+          ctx.stroke();   
+        }
+      }     
     }
+
+
+    // bool
+    let signBoolCnt = 0;
+    for (let k in signPnts){
+          
+      // pass int, float 
+      if (this.props.signals[k].type != 0) continue;
     
-    ctx.stroke();    
+      ctx.strokeStyle = this.props.signParams[k].color;
+      ctx.fillStyle = this.props.signParams[k].color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 1;
+
+      const zonePnts = signPnts[k]; 
+     
+      for (const pnts of zonePnts){
+        
+        if (pnts.length == 0) continue; 
+
+        ctx.beginPath();
+       
+        const psz = pnts.length,
+              sDist = 15, 
+              sH = 10;
+              
+        let prevPos = 1, 
+            prevVal = pnts[0].value; 
+        for (let i = 1; i < psz; ++i){
+
+          if ((prevVal == 0) && ((pnts[i].value > 0) || (i == (psz - 1)))){
+           
+            ctx.moveTo(pnts[prevPos - 1].pos, height - signBoolCnt * sDist - 1);
+
+            ctx.lineTo(pnts[i].pos, height - signBoolCnt * sDist - 1);
+
+            prevVal = 1;
+            prevPos = i;
+          }
+          else if ((prevVal > 0) && ((pnts[i].value == 0) || (i == (psz - 1)))){
+                        
+            ctx.rect(pnts[prevPos - 1].pos,
+                     height - signBoolCnt * sDist - sH - 1, 
+                     pnts[i - 1].pos - pnts[prevPos - 1].pos,
+                     sH + 1);
+            
+            ctx.fill();   
+
+            prevVal = 0;
+            prevPos = i;
+          }
+        }
+        ctx.stroke();   
+      } 
+      ++signBoolCnt;     
+    }
   }
 
   getSignalPoints(width, height){
@@ -310,11 +429,12 @@ class Plot extends React.Component {
 
   drawAxisMark(width, height, ctx){
     
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#000000';        
-
     ctx.beginPath();  
 
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#000000';        
+    ctx.globalAlpha = 0.1;
+  
     const tmAxisMark = this.getTimePosMark();    
     for(let pos of tmAxisMark){
 
@@ -410,7 +530,6 @@ class Plot extends React.Component {
 }
 
 const style = {  
-  border: "1px solid blue",
   height: "100%",
   width: "100%",
 }

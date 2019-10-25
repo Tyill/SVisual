@@ -21,6 +21,8 @@ class App extends React.Component {
     super(props);
     
     this.state = { navScheme: [] };
+
+    document.body.style.overflow = "hidden";
         
   }
 

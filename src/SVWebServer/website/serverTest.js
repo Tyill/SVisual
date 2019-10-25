@@ -61,16 +61,31 @@ app.get("/api/lastSignalData", function(request, response){
         vals : [],             
     };
 
-    for (let i = 0; i < dataParams.packetSize; ++i){
-        signData.vals.push(counter + i);
+    if ((name + module) !== "s3threeModule"){   // int, float
+
+      for (let i = 0; i < dataParams.packetSize; ++i){
+          signData.vals.push(counter + i);
+      }
+
+      counter += dataParams.packetSize;
+
+      if (counter >= 100)
+        counter = -100; 
+     
+      counterMain[name + module] = counter;
     }
+    else{                                       // bool
+          
+      counter++;
 
-    counter += dataParams.packetSize;
+      let v = ((counter % 2) === 0);
 
-    if (counter >= 300)
-      counter = -300; 
-   
-    counterMain[name + module] = counter;
+      for (let i = 0; i < dataParams.packetSize; ++i){
+        signData.vals.push(v);
+      }
+
+      counterMain[name + module] = counter;
+    }
 
     response.send(signData);
 });

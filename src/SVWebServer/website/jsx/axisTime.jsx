@@ -51,7 +51,7 @@ class AxisTime extends React.Component {
 
   handleWheel(e){
 
-    const delta = e.deltaY || e.detail || e.wheelDelta;
+    const delta = -(e.deltaY || e.detail || e.wheelDelta);
 
     const canvas = this._canvasRef,
           width = canvas.clientWidth,

@@ -19,13 +19,13 @@ class Graph extends React.Component {
                        tmDashStep : 100,
                        minValDashStep : 50,
                        maxValDashStep : 100}
-   
-    this.props.signParams = {};
 
-    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e5}, 
+    this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 
                   valInterval : { begin : 0, end : 1000},
                   axisParams, 
                  };   
+
+    this._signParams = {};
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
@@ -50,14 +50,26 @@ class Graph extends React.Component {
 
   render(){
     
-    let signals = this.props.signals;
+    let signals = this.props.signals,
+        legend = [];
     for (let k in signals){
 
-      let signParams = { lineWidth : 1,
-        color : '#'+Math.floor(Math.random()*16777215).toString(16) }
-
-      signals[k].lineWidth = signals[k].lineWidth || 1;
-      signals[k].color = signals[k].color || ;
+      if (!this._signParams[k]){ 
+        this._signParams[k] = { lineWidth : 2,
+                                transparent : 0.5,
+                                color : '#'+Math.floor(Math.random()*16777215).toString(16) };
+      }
+      
+      legend.push(
+        <p key = {legend.length} 
+           onClick = {() => this.props.onDelSignal(this.props.id, signals[k].name, signals[k].module) } 
+           style = {{ marginLeft : 10,
+             marginTop : 20 * legend.length,                                  
+             position : "absolute",                                               
+             color : this._signParams[k].color }}>
+          {signals[k].name}
+        </p>
+      );
     }
     
     return (
@@ -68,17 +80,19 @@ class Graph extends React.Component {
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
-          <Col className="col-1" >
+          <Col className="col-1">
             <AxisValue valInterval= { this.state.valInterval}
                        axisParams= { this.state.axisParams}
                        onChange = { this.handleAxisValueChange } />    
           </Col>
-          <Col className="col-11" style={{ border: "1px solid green" }}>
+          <Col className="col-11">
+            {legend}
             <Plot tmInterval= { this.state.tmInterval}
                   valInterval= { this.state.valInterval}
+                  signals = { this.props.signals}
                   axisParams= { this.state.axisParams}
                   dataParams = {this.props.dataParams}
-                  signals = { this.props.signals}
+                  signParams = { this._signParams }
                   onChange = { this.handlePlotChange }
                   onDrop = { (name, module) => this.props.onAddSignal(this.props.id, name, module) } />            
           </Col>

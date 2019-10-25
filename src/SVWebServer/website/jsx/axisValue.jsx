@@ -46,7 +46,7 @@ class AxisValue extends React.Component {
 
   handleWheel(e){
 
-    const delta = e.deltaY || e.detail || e.wheelDelta;
+    const delta = -(e.deltaY || e.detail || e.wheelDelta);
 
     let {valDashStep, minValDashStep, maxValDashStep, ...exParams} = this.props.axisParams;
 
@@ -67,15 +67,15 @@ class AxisValue extends React.Component {
     else if (curInterval < 100) offs /= 10;
           
     if (delta > 0){ 
-      valInterval.first += offs;
-      valInterval.second -= offs;
+      valInterval.begin += offs;
+      valInterval.end -= offs;
 
-      if (valInterval.first >= valInterval.second)
-        valInterval.first = valInterval.second - 0.1;
+      if (valInterval.begin >= valInterval.end)
+        valInterval.begin = valInterval.end - 0.1;
     }
     else{ 
-      valInterval.first -= offs;
-      valInterval.second += offs;
+      valInterval.begin -= offs;
+      valInterval.end += offs;
     }
 
     this.props.onChange(valInterval, {valDashStep, minValDashStep, maxValDashStep, ...exParams});
