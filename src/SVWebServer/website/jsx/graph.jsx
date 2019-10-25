@@ -2,10 +2,11 @@
 
 import React from "react"
 import PropTypes from "prop-types";
-import {Container, Row, Col} from "react-bootstrap";
+import {Container, Row, Col, Button } from "react-bootstrap";
 import AxisValue from "./axisValue.jsx"
 import AxisTime from "./axisTime.jsx"
 import Plot from "./plot.jsx"
+import "../css/fontello.css";
 
 export default
 class Graph extends React.Component {
@@ -74,9 +75,17 @@ class Graph extends React.Component {
     
     return (
       <Container-fluid >
-        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
-          <Col style={{ border: "1px solid green" }}>
-            header           
+        <Row noGutters={true} style={{ padding : "5px", backgroundColor : "grey"}}>
+          <Col className="col-1"/>
+          <Col className="col-10">
+           <Button size="sm" className= { "icon-resize-full-alt"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="sm" className= { "icon-resize-vertical"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="sm" className= { "icon-resize-horizontal"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="sm" className= { "icon-brush"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="sm" className= { "icon-font"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+          </Col>
+          <Col className="col-1">
+           <Button size="sm" className= { "icon-cancel"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>

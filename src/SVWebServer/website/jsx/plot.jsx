@@ -432,8 +432,8 @@ class Plot extends React.Component {
     ctx.beginPath();  
 
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#000000';        
-    ctx.globalAlpha = 0.1;
+    ctx.strokeStyle = '#808080';        
+    ctx.globalAlpha = 0.2;
   
     const tmAxisMark = this.getTimePosMark();    
     for(let pos of tmAxisMark){
@@ -530,6 +530,7 @@ class Plot extends React.Component {
 }
 
 const style = {  
+  backgroundColor : "white",
   height: "100%",
   width: "100%",
 }

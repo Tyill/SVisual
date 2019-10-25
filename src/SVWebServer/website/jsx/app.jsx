@@ -2,9 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { connect, Provider } from "react-redux";
-import {Container, Row, Col} from "react-bootstrap";
-import Header from "./header.jsx"; 
-import Footer from "./footer.jsx"; 
+import {Container, Row, Col, Button} from "react-bootstrap";
 import TreeNav from "./treeNav.jsx";
 import GraphPanelRedux from "./graphPanel.jsx";
  
@@ -120,8 +118,9 @@ class App extends React.Component {
     return (
       <Container style={containerStyle}>
         <Row style={headerStyle}>
-          <Col>
-            <Header/>
+          <Col>   
+           <Button size="md" className= { "icon-cog"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="md" className= { "icon-doc"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
           </Col>
         </Row>
         
@@ -135,8 +134,7 @@ class App extends React.Component {
         </Row>
   
         <Row style={footerStyle}>
-          <Col> 
-            <Footer/>
+          <Col>            
           </Col>
         </Row>
       </Container>
@@ -145,14 +143,14 @@ class App extends React.Component {
 }
 
 const containerStyle = {   
-  height: document.documentElement.clientHeight - 150,
+  height: document.documentElement.clientHeight - 100,
 }
 
 const headerStyle = {  
   border: "1px solid black",
   boxSizing: "border-box",
   backgroundColor : "yellow",
-  height : "100px",
+ // height : "100px",
 }
 
 const articleStyle = {  
