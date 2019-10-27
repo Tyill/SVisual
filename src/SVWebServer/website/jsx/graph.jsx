@@ -34,6 +34,13 @@ class Graph extends React.Component {
     
     this.handleAddSignal = this.handleAddSignal.bind(this); 
     this.handleDelSignal = this.handleDelSignal.bind(this);    
+
+    this.handleResizeFull = this.handleResizeFull.bind(this);    
+    this.handleResizeVertical = this.handleResizeVertical.bind(this);    
+    this.handleResizeHorizontal = this.handleResizeHorizontal.bind(this);    
+    this.handleChangeColor = this.handleChangeColor.bind(this);    
+    this.handleAutoResize = this.handleAutoResize.bind(this);    
+    this.handleClose = this.handleClose.bind(this);    
    
   }
 
@@ -62,6 +69,54 @@ class Graph extends React.Component {
     delete this._signParams[name + module]
    
     this.props.onDelSignal(this.props.id, name, module);
+  }
+
+  handleResizeFull(){
+
+    const signals = this.props.signals;
+
+    let minValue = Number.MAX_VALUE, 
+        maxValue = Number.MIN_VALUE;
+    for (const k in signals){
+
+      const sign = signals[k];
+
+      for (const vals of sign.buffVals){
+        
+        for (const v of vals){
+          if (v < minValue)
+            minValue = v;
+          if (v > maxValue)
+            maxValue = v;
+        }
+      }
+    }
+
+    
+  }
+
+  handleResizeVertical(){
+
+  }
+  
+  handleResizeHorizontal(){
+
+
+  }
+
+  handleChangeColor(){
+
+
+  }
+
+  handleAutoResize(){
+
+
+  }
+
+  handleClose(){
+
+
   }
 
   render(){
@@ -93,14 +148,20 @@ class Graph extends React.Component {
         <Row noGutters={true} style={{ padding : "5px", backgroundColor : "grey"}}>
           <Col className="col-1"/>
           <Col className="col-10">
-           <Button size="sm" className= { "icon-resize-full-alt"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
-           <Button size="sm" className= { "icon-resize-vertical"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
-           <Button size="sm" className= { "icon-resize-horizontal"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
-           <Button size="sm" className= { "icon-brush"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
-           <Button size="sm" className= { "icon-font"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
+                   onClick = {this.handleResizeFull} />
+           <Button size="sm" className= { "icon-resize-vertical"} style = {buttonStyle}
+                   onClick = {this.handleResizeVertical} />
+           <Button size="sm" className= { "icon-resize-horizontal"} style = {buttonStyle}
+                   onClick = {this.handleResizeHorizontal} />
+           <Button size="sm" className= { "icon-brush"} style = {buttonStyle}
+                   onClick = {this.handleChangeColor} />
+           <Button size="sm" className= { "icon-font"} style = {buttonStyle}
+                   onClick = {this.handleAutoResize} />
           </Col>
           <Col className="col-1">
-           <Button size="sm" className= { "icon-cancel"} style = {{ marginLeft : "5px", backgroundColor: "#747F74ff"}}/>
+           <Button size="sm" className= { "icon-cancel"} style = {buttonStyle}
+                   onClick = {this.handleClose} />
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
@@ -133,5 +194,10 @@ class Graph extends React.Component {
       </Container-fluid>
     )
   }
+}
+
+const buttonStyle = {
+  marginLeft : "5px", 
+  backgroundColor: "#747F74ff",
 }
 

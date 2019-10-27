@@ -27,7 +27,9 @@ class Plot extends React.Component {
 
       const canvas = this._canvasRef;
 
-      const cpos = { x : event.clientX, y : event.clientY};
+      let brect = event.target.getBoundingClientRect();
+      const cpos = { x : event.clientX - brect.left,
+                     y : event.clientY - brect.top};
      
       let rct = this._rect;
       if ((rct.width == 0) && (rct.height == 0)){
@@ -39,19 +41,15 @@ class Plot extends React.Component {
       const presPnt = this._memMDown,
             dw = cpos.x - presPnt.x,
             dh = cpos.y - presPnt.y;
-      
     
-      const w = canvas.clientWidth,
-            h = canvas.clientHeight;
-
       if ((dw > 0) && (dh > 0))
         rct = { x : presPnt.x, y : presPnt.y, width : dw, height : dh};
-      // else if ((dw < 0) && (dh > 0))
-      //   rct = { x : cpos.x, y : presPnt.y, width : Math.abs(dw), height : dh};
-      // else if ((dw > 0) && (dh < 0))
-      //   rct = { x : presPnt.x, y : cpos.y, widht : dw, height : Math.abs(dh)};
-      // else if ((dw < 0) && (dh < 0))
-      //   rct = { x : cpos.x, y : cpos.y, width : Math.abs(dw), height : Math.abs(dh)};
+      else if ((dw < 0) && (dh > 0))
+        rct = { x : cpos.x, y : presPnt.y, width : Math.abs(dw), height : dh};
+      else if ((dw > 0) && (dh < 0))
+        rct = { x : presPnt.x, y : cpos.y, widht : dw, height : Math.abs(dh)};
+      else if ((dw < 0) && (dh < 0))
+        rct = { x : cpos.x, y : cpos.y, width : Math.abs(dw), height : Math.abs(dh)};
 
       this._rect = rct;
       
@@ -129,17 +127,18 @@ class Plot extends React.Component {
     const w = canvas.clientWidth,
           h = canvas.clientHeight;
     
-    let tmIntl = this.props.tmInterval,
-        tmScale = (tmIntl.endMs - tmIntl.beginMs) / w,
-        tmBegin = tmIntl.beginMs + rct.x * tmScale,
-        tmEnd = tmIntl.beginMs + (rct.x + rct.width) * tmScale;
+    const tmIntl = this.props.tmInterval,
+          tmScale = (tmIntl.endMs - tmIntl.beginMs) / w,
+          tmBegin = tmIntl.beginMs + rct.x * tmScale,
+          tmEnd = tmIntl.beginMs + (rct.x + rct.width) * tmScale;
         
-    let valIntl = this.props.valInterval,
-        valScale = (valIntl.end - valIntl.begin) / h,
-        valBegin = valIntl.begin + (h - rct.y - rct.height) * valScale;
-        valEnd = valIntl.begin + (h - rct.y) * valScale;
+    const valIntl = this.props.valInterval,
+          valScale = (valIntl.end - valIntl.begin) / h,
+          valBegin = valIntl.begin + (h - rct.y - rct.height) * valScale, 
+          valEnd = valIntl.begin + (h - rct.y) * valScale;
       
-    this.props.onChange({tmBegin, tmEnd}, {valBegin, valEnd}, this.props.axisParams);
+    this.props.onChange({beginMs : tmBegin, endMs : tmEnd},
+                        {begin : valBegin, end : valEnd}, this.props.axisParams);
   }
 
   handleWheel(e){

@@ -11,6 +11,7 @@ import { updateFromServer,
          setSignalsFromServer } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
 
+import "../css/app.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
@@ -116,25 +117,17 @@ class App extends React.Component {
   render(){
 
     return (
-      <Container style={containerStyle}>
-        <Row style={headerStyle}>
-          <Col>   
-           <Button size="md" className= { "icon-cog"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
-           <Button size="md" className= { "icon-doc"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
-          </Col>
-        </Row>
-        
-        <Row className="row h-100" style={articleStyle}>
+      <Container className="app-article-container"
+                 style={{ height: document.documentElement.clientHeight,}}>
+        <Row className="row h-100"
+             style = {{ border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
+            <Button size="md" className= { "icon-cog"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
+            <Button size="md" className= { "icon-doc"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
             <TreeNav scheme={this.state.navScheme} />
           </Col>
           <Col className="col-auto"> 
             <GraphPanelRedux/>
-          </Col>
-        </Row>
-  
-        <Row style={footerStyle}>
-          <Col>            
           </Col>
         </Row>
       </Container>
@@ -143,27 +136,7 @@ class App extends React.Component {
 }
 
 const containerStyle = {   
-  height: document.documentElement.clientHeight - 100,
-}
-
-const headerStyle = {  
-  border: "1px solid black",
-  boxSizing: "border-box",
-  backgroundColor : "yellow",
- // height : "100px",
-}
-
-const articleStyle = {  
-  border: "1px solid black",
-  boxSizing: "border-box",
-  backgroundColor : "brown",
-}
-
-const footerStyle = {  
-  border: "1px solid black",
-  boxSizing: "border-box",
-  backgroundColor : "#898b8f",
-  height : "50px",
+ 
 }
 
 //////////////////////////////////////////////////
