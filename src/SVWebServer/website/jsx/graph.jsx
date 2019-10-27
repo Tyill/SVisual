@@ -36,8 +36,8 @@ class Graph extends React.Component {
     this.handleDelSignal = this.handleDelSignal.bind(this);    
 
     this.handleResizeFull = this.handleResizeFull.bind(this);    
-    this.handleResizeVertical = this.handleResizeVertical.bind(this);    
-    this.handleResizeHorizontal = this.handleResizeHorizontal.bind(this);    
+    this.handleResizeByValue = this.handleResizeByValue.bind(this);    
+    this.handleResizeByTime = this.handleResizeByTime.bind(this);    
     this.handleChangeColor = this.handleChangeColor.bind(this);    
     this.handleAutoResize = this.handleAutoResize.bind(this);    
     this.handleClose = this.handleClose.bind(this);    
@@ -73,40 +73,105 @@ class Graph extends React.Component {
 
   handleResizeFull(){
 
+    const tmInterval = this.calcTimeInterval();
+
+    const valInterval = this.calcValueInterval();
+
+    this.setState( { tmInterval,
+                     valInterval, 
+                     axisParams : this.state.axisParams});
+  }
+  
+  handleResizeByValue(){
+
+    const valInterval = this.calcValueInterval();
+
+    this.setState( { tmInterval : this.state.tmInterval,
+                     valInterval, 
+                     axisParams : this.state.axisParams});
+  }
+  
+  handleResizeByTime(){
+
+    const tmInterval = this.calcTimeInterval();
+
+    this.setState( { tmInterval,
+                     valInterval : this.state.valInterval, 
+                     axisParams : this.state.axisParams});
+  }
+
+  calcTimeInterval(){
+
     const signals = this.props.signals;
 
+    let minTime = Number.MAX_VALUE,
+        maxTime = Number.MIN_VALUE;
+    for (const k in signals){
+
+      const sign = signals[k];
+      
+      if (!sign.buffVals.length) continue;
+
+      if (sign.buffVals[0].beginTime < minTime)
+        minTime = sign.buffVals[0].beginTime;
+
+      if (sign.buffVals[sign.buffVals.length - 1].beginTime > maxTime)
+        maxTime = sign.buffVals[sign.buffVals.length - 1].beginTime;
+    }
+
+    const cyclePacket = this.props.dataParams.packetSize * this.props.dataParams.cycleTimeMs;
+    
+    let tmInterval = { beginMs : minTime, endMs : maxTime + cyclePacket};
+    if ((minTime == Number.MAX_VALUE) || (maxTime == Number.MIN_VALUE))
+      tmInterval = this.state.tmInterval;
+
+    return tmInterval;
+  }
+
+  calcValueInterval(){
+
+    const signals = this.props.signals;
+
+    const tmInterval = this.state.tmInterval;
+
     let minValue = Number.MAX_VALUE, 
-        maxValue = Number.MIN_VALUE;
+        maxValue = Number.MIN_VALUE;        
     for (const k in signals){
 
       const sign = signals[k];
 
+      if (sign.type == 0) continue; // bool pass
+
       for (const vals of sign.buffVals){
         
-        for (const v of vals){
-          if (v < minValue)
-            minValue = v;
-          if (v > maxValue)
-            maxValue = v;
+        if ((tmInterval.beginMs < vals.beginTime) &&
+            (vals.beginTime < tmInterval.endMs)){
+
+          for (const v of vals.vals){
+  
+            if (v < minValue)
+              minValue = v;
+            if (v > maxValue)
+              maxValue = v;
+          }
         }
       }
     }
 
-    
-  }
+    let valInterval = { begin : minValue, end : maxValue };
+    if ((minValue == Number.MAX_VALUE) || (maxValue == Number.MIN_VALUE))
+      valInterval = this.state.valInterval;
 
-  handleResizeVertical(){
-
+    return valInterval;
   }
   
-  handleResizeHorizontal(){
-
-
-  }
-
   handleChangeColor(){
 
-
+    for (let k in this._signParams){
+    
+      let prms = this._signParams[k];
+      prms.color = '#'+Math.floor(Math.random()*16777215).toString(16);
+    }
   }
 
   handleAutoResize(){
@@ -142,7 +207,21 @@ class Graph extends React.Component {
         </p>
       );
     }
-    
+
+    if (legend.length){
+               
+      const tmInterval = this.calcTimeInterval();
+
+      const valInterval = this.calcValueInterval();
+
+      const cyclePacket = this.props.dataParams.packetSize * this.props.dataParams.cycleTimeMs;
+     
+      this.state.tmInterval.beginMs += cyclePacket;
+      this.state.tmInterval.endMs = tmInterval.endMs;
+      
+      this.state.valInterval = valInterval;
+    }
+
     return (
       <Container-fluid >
         <Row noGutters={true} style={{ padding : "5px", backgroundColor : "grey"}}>
@@ -151,9 +230,9 @@ class Graph extends React.Component {
            <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
                    onClick = {this.handleResizeFull} />
            <Button size="sm" className= { "icon-resize-vertical"} style = {buttonStyle}
-                   onClick = {this.handleResizeVertical} />
+                   onClick = {this.handleResizeByValue} />
            <Button size="sm" className= { "icon-resize-horizontal"} style = {buttonStyle}
-                   onClick = {this.handleResizeHorizontal} />
+                   onClick = {this.handleResizeByTime} />
            <Button size="sm" className= { "icon-brush"} style = {buttonStyle}
                    onClick = {this.handleChangeColor} />
            <Button size="sm" className= { "icon-font"} style = {buttonStyle}
