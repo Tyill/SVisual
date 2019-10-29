@@ -2,7 +2,7 @@
 
 import React from "react"
 import PropTypes from "prop-types";
-import {Container, Row, Col, Button } from "react-bootstrap";
+import {Container, Row, Col, Button, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import AxisValue from "./axisValue.jsx"
 import AxisTime from "./axisTime.jsx"
 import Plot from "./plot.jsx"
@@ -27,6 +27,8 @@ class Graph extends React.Component {
                  };   
 
     this._signParams = {};
+    this._isPlay = true;
+    this._isAutoResize = true;
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
@@ -39,23 +41,30 @@ class Graph extends React.Component {
     this.handleResizeByValue = this.handleResizeByValue.bind(this);    
     this.handleResizeByTime = this.handleResizeByTime.bind(this);    
     this.handleChangeColor = this.handleChangeColor.bind(this);    
-    this.handleAutoResize = this.handleAutoResize.bind(this);    
+    this.handleAutoResize = this.handleAutoResize.bind(this);   
+    this.handlePlay = this.handlePlay.bind(this); 
     this.handleClose = this.handleClose.bind(this);    
    
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
     
+    this._isPlay = false;
+
     this.setState({tmInterval, axisParams });
   }
 
   handleAxisValueChange(valInterval, axisParams){
     
+    this._isPlay = false;
+
     this.setState({valInterval, axisParams });
   }
 
   handlePlotChange(tmInterval, valInterval, axisParams){
         
+    this._isPlay = false;
+
     this.setState({tmInterval, valInterval, axisParams});
   }
 
@@ -69,6 +78,11 @@ class Graph extends React.Component {
     delete this._signParams[name + module]
    
     this.props.onDelSignal(this.props.id, name, module);
+  }
+
+  handlePlay(){
+
+    this._isPlay = !this._isPlay; 
   }
 
   handleResizeFull(){
@@ -176,7 +190,7 @@ class Graph extends React.Component {
 
   handleAutoResize(){
 
-
+    this._isAutoResize = !this._isAutoResize;
   }
 
   handleClose(){
@@ -201,30 +215,32 @@ class Graph extends React.Component {
            onClick = { () => this.handleDelSignal(signals[k].name, signals[k].module) } 
            style = {{ marginLeft : 10,
                       marginTop : 20 * legend.length,                                  
-                      position : "absolute",                                               
+                      position : "absolute", 
+                      cursor: "default",                                              
                       color : this._signParams[k].color }}>
           {signals[k].name}
         </p>
       );
     }
 
-    if (legend.length){
+    if (this._isPlay && legend.length){
                
       const tmInterval = this.calcTimeInterval();
-
-      const valInterval = this.calcValueInterval();
-
+     
       const cyclePacket = this.props.dataParams.packetSize * this.props.dataParams.cycleTimeMs;
      
       this.state.tmInterval.beginMs += cyclePacket;
       this.state.tmInterval.endMs = tmInterval.endMs;
-      
-      this.state.valInterval = valInterval;
+
+      if (this._isAutoResize){
+        const valInterval = this.calcValueInterval();
+        this.state.valInterval = valInterval;
+      }
     }
 
     return (
       <Container-fluid >
-        <Row noGutters={true} style={{ padding : "5px", backgroundColor : "grey"}}>
+        <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "grey"}}>
           <Col className="col-1"/>
           <Col className="col-10">
            <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
@@ -235,8 +251,12 @@ class Graph extends React.Component {
                    onClick = {this.handleResizeByTime} />
            <Button size="sm" className= { "icon-brush"} style = {buttonStyle}
                    onClick = {this.handleChangeColor} />
-           <Button size="sm" className= { "icon-font"} style = {buttonStyle}
-                   onClick = {this.handleAutoResize} />
+           <ToggleButtonGroup type="checkbox" defaultValue={[1, 2]}>
+             <ToggleButton value={1} size="sm" className= { "icon-font"} style = {buttonStyle}
+                   onChange = {this.handleAutoResize} />
+             <ToggleButton value={2} size="sm" style = {buttonStyle}
+                   onChange = {this.handlePlay} > PLAY </ToggleButton>
+           </ToggleButtonGroup>
           </Col>
           <Col className="col-1">
            <Button size="sm" className= { "icon-cancel"} style = {buttonStyle}
@@ -261,7 +281,9 @@ class Graph extends React.Component {
                   onDrop = { this.handleAddSignal } />            
           </Col>
         </Row>
-        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey" }}>
+        <Row noGutters={true} style={{ borderRadius: "0px 0px 3px 3px",
+                                       paddingRight : "5px",
+                                       backgroundColor : "grey" }}>
           <Col className="col-1" >
           </Col>
           <Col>                
@@ -277,6 +299,6 @@ class Graph extends React.Component {
 
 const buttonStyle = {
   marginLeft : "5px", 
-  backgroundColor: "#747F74ff",
+  //backgroundColor: "#747F74ff",
 }
 

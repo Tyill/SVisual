@@ -21,7 +21,7 @@ class TreeNav extends React.Component {
       outObjList.push(<section key={level + "." + obj} 
                                className="treeNav-leaf-container"
                                draggable="true"
-                               style={{paddingLeft: 10 + level * 5}}
+                               style={{ cursor: "default", paddingLeft: 10 + level * 5}}
                                onDragStart = {(e) => e.dataTransfer.setData('text', submenu + obj) } >
                                {obj}
                       </section>);      
@@ -30,7 +30,7 @@ class TreeNav extends React.Component {
 
       outObjList.push(<section key={level + "." + obj.submenu}
                                className="treeNav-node-container"
-                               style={{paddingLeft: 10 + level * 5}}
+                               style={{ cursor: "default", paddingLeft: 10 + level * 5}}
                                onClick= { (e) => {obj.isShow = !obj.isShow;
                                                  this.setState({ scheme : this.props.scheme});} }> 
                                {obj.submenu} 
@@ -52,7 +52,7 @@ class TreeNav extends React.Component {
     for(let obj of this.props.scheme)
       this.renderSubmenu(0, "", obj, outObjList);
 
-    return <div style={{ overflow: "auto"}}> {outObjList}  </div>
+    return <div style={{ borderRadius: "3px 3px 3px 3px", overflow: "auto"}}> {outObjList}  </div>
   }
 }
 
