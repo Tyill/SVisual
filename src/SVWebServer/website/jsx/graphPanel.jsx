@@ -12,52 +12,72 @@ class GraphPanel extends React.Component {
     super(props);   
    
     this.handleAddSignal = this.handleAddSignal.bind(this); 
-    this.handleDelSignal = this.handleDelSignal.bind(this); 
-
-    this._listGraph = [[]];
+    this.handleDelSignal = this.handleDelSignal.bind(this);  
+    this.handleCloseGraph = this.handleCloseGraph.bind(this);   
   }
    
-  handleAddSignal(id, name, module){
+  handleAddSignal(iGraph, sname){
 
-    if ((id < this._listGraph.length) && name && module){ 
+    if ((iGraph < this.props.listGraph.length) && sname){ 
+           
+      let it = this.props.listGraph.find((v) => {
+        return sname == v;
+      });
 
-      this._listGraph[id].push(name + module);
-     
-      this.props.onSignalBufferEnable(name, module, true);
+      if (!it){ 
+        this.props.listGraph[iGraph].push(sname);
+       
+        this.props.onSignalBufferEnable(sname, true);
+      }
     }
     else
-     console.log("graphPanel::handleAddSignal error (id < this._listGraph.length) && name && module");
+     console.log("graphPanel::handleAddSignal error (iGraph < this.props.listGraph.length) && sname");
   }
 
-  handleDelSignal(id, name, module){
+  handleDelSignal(iGraph, sname){
 
-    if ((id < this._listGraph.length) && name && module){ 
+    if ((iGraph < this.props.listGraph.length) && sname){ 
 
-      let idx = this._listGraph[id].indexOf(name + module);
+      let idx = this.props.listGraph[iGraph].indexOf(sname);
   
-      this._listGraph[id].splice(idx, 1);
+      this.props.listGraph[iGraph].splice(idx, 1);
   
-      this.props.onSignalBufferEnable(name, module, false);
+      this.props.onSignalBufferEnable(sname, false);
     }
     else
-     console.log("graphPanel::handleDelSignal error (id < this._listGraph.length) && name && module");
+     console.log("graphPanel::handleDelSignal error (iGraph < this.props.listGraph.length) && sname");
+  }
+
+  handleCloseGraph(iGraph){
+
+    if (iGraph < this.props.listGraph.length){ 
+   
+      for (const sname of this.props.listGraph[iGraph])  
+        this.props.onSignalBufferEnable(sname, false);
+
+      this.props.onCloseGraph(iGraph);  
+    }
+    else
+     console.log("graphPanel::handleCloseGraph error (iGraph < this.props.listGraph.length)");
+
   }
 
   render(){
     
     let objList = [];
-    for (let i = 0; i < this._listGraph.length; ++i){
+    for (let i = 0; i < this.props.listGraph.length; ++i){
      
       let signals = {};
-      for (let s of this._listGraph[i]) 
+      for (let s of this.props.listGraph[i]) 
         signals[s] = this.props.signals[s];
         
-      objList.push(<Graph key = {i} id = {i}
+      objList.push(<Graph key = {i} iGraph = {i}
                           dataParams = {this.props.dataParams}
                           signals = {signals}  
                                               
                           onAddSignal = {this.handleAddSignal}
-                          onDelSignal = {this.handleDelSignal} ></Graph>);
+                          onDelSignal = {this.handleDelSignal} 
+                          onCloseGraph = {this.handleCloseGraph} ></Graph>);
     }
 
     return(

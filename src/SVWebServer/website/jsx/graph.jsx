@@ -70,14 +70,14 @@ class Graph extends React.Component {
 
   handleAddSignal(name, module){
 
-    this.props.onAddSignal(this.props.id, name, module);
+    this.props.onAddSignal(this.props.iGraph, name + module);
   }
 
   handleDelSignal(name, module){
     
     delete this._signParams[name + module]
    
-    this.props.onDelSignal(this.props.id, name, module);
+    this.props.onDelSignal(this.props.iGraph, name + module);
   }
  
   handleResizeFull(){
@@ -197,7 +197,7 @@ class Graph extends React.Component {
 
   handleClose(){
 
-
+    this.props.onCloseGraph(this.props.iGraph);
   }
 
   render(){
@@ -262,7 +262,7 @@ class Graph extends React.Component {
           </Col>
           <Col className="col-1">
            <Button size="sm" className= { "icon-cancel"} style = {buttonStyle}
-                   onClick = {this.handleClose} />
+                   onClick = { this.handleClose } />
           </Col>
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>

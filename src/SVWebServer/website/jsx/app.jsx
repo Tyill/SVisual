@@ -19,10 +19,38 @@ class App extends React.Component {
   constructor(props){
     super(props);
     
-    this.state = { navScheme: [] };
+    this.state = { navScheme: [], 
+                   listGraph: [[]] };
 
     document.body.style.overflow = "hidden";
         
+    this.handleAddGraph = this.handleAddGraph.bind(this);
+    this.handleCloseGraph = this.handleCloseGraph.bind(this);   
+  }
+
+  handleAddGraph(){
+
+    this.setState((oldState, props) => (
+       { listGraph : [...oldState.listGraph, []] } 
+       ));
+  }
+
+  handleCloseGraph(iGraph){
+   
+    if (iGraph < this.state.listGraph.length){ 
+
+      this.setState((oldState, props) => { 
+        
+        let listGraph = [...oldState.listGraph];
+
+        listGraph.splice(iGraph, 1);  
+
+        return { listGraph };
+      });     
+    }
+    else
+     console.log("app::handleCloseGraph error (iGraph < this.state.listGraph.length)");
+
   }
 
   componentDidMount() {
@@ -158,12 +186,15 @@ class App extends React.Component {
         <Row className="row h-100"
              style = {{ border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
-            <Button size="md" className = {"icon-cog"} style = {buttonStyle}/>
-            <Button size="md" className = {"icon-doc"} style = {buttonStyle}/>
+            <Button size="md" className = {"icon-cog"} style = {buttonStyle}
+                    onClick = {this.handleAddGraph}/>
+            <Button size="md" className = {"icon-doc"} style = {buttonStyle}
+                    onClick = {this.handleAddGraph}/>
             <TreeNav scheme={this.state.navScheme} />
           </Col>
           <Col className="col-auto"> 
-            <GraphPanelRedux/>
+            <GraphPanelRedux listGraph = { this.state.listGraph } 
+                             onCloseGraph = { this.handleCloseGraph } />
           </Col>
         </Row>
       </Container>

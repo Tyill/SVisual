@@ -41,11 +41,10 @@ function setDataParams(dispatch){
 export
 function signalBufferEnable(dispatch){
     
-    return function(name, module, set){
+    return function(sname, set){
     
       dispatch({ type : SIGNAL_BUFFER_ENABLE,
-                 name,
-                 module,
+                 sname,
                  set,
                });
     }

@@ -27,7 +27,7 @@ function signals(curSignals = {}, action){
     case SIGNAL_BUFFER_ENABLE:{
 
       let signalsCpy = Object.assign({}, curSignals),// no deep clone
-          sname = action.name + action.module;
+          sname = action.sname;
 
       signalsCpy[sname].isBuffEna = action.set;
       
