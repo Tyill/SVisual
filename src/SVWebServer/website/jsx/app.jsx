@@ -181,10 +181,10 @@ class App extends React.Component {
   render(){
 
     return (
-      <Container className="app-container"
-                 style={{ height: document.documentElement.clientHeight,}}>
+      <Container className="col-auto app-container"
+                 style={{overflow: "auto", height: document.documentElement.clientHeight}}>
         <Row className="row h-100"
-             style = {{ border: "1px solid #dbdbdb", borderRadius: "5px"}}>
+             style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
             <Button size="md" className = {"icon-cog"} style = {buttonStyle}
                     onClick = {this.handleAddGraph}/>

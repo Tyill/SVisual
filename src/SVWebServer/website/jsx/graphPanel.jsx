@@ -18,14 +18,12 @@ class GraphPanel extends React.Component {
    
   handleAddSignal(iGraph, sname){
 
-    if ((iGraph < this.props.listGraph.length) && sname){ 
-           
-      let it = this.props.listGraph.find((v) => {
-        return sname == v;
-      });
+    let listGraph = this.props.listGraph;
 
-      if (!it){ 
-        this.props.listGraph[iGraph].push(sname);
+    if ((iGraph < listGraph.length) && sname){ 
+      
+      if (!listGraph[iGraph].includes(sname)){ 
+        listGraph[iGraph].push(sname);
        
         this.props.onSignalBufferEnable(sname, true);
       }
@@ -36,13 +34,27 @@ class GraphPanel extends React.Component {
 
   handleDelSignal(iGraph, sname){
 
-    if ((iGraph < this.props.listGraph.length) && sname){ 
+    let listGraph = this.props.listGraph;
 
-      let idx = this.props.listGraph[iGraph].indexOf(sname);
+    if ((iGraph < listGraph.length) && sname){ 
+
+      let idx = listGraph[iGraph].indexOf(sname);
   
-      this.props.listGraph[iGraph].splice(idx, 1);
-  
-      this.props.onSignalBufferEnable(sname, false);
+      listGraph[iGraph].splice(idx, 1);
+
+      let isOtherGraph = false;
+      for (let i = 0; i < listGraph.length; ++i){
+
+        if (i == iGraph) continue;
+
+        if (listGraph[i].includes(sname)){
+            isOtherGraph = true;
+            break;
+        }
+      }
+        
+      if (!isOtherGraph)
+        this.props.onSignalBufferEnable(sname, false);
     }
     else
      console.log("graphPanel::handleDelSignal error (iGraph < this.props.listGraph.length) && sname");
@@ -50,10 +62,26 @@ class GraphPanel extends React.Component {
 
   handleCloseGraph(iGraph){
 
-    if (iGraph < this.props.listGraph.length){ 
+    let listGraph = this.props.listGraph;
+
+    if (iGraph < listGraph.length){ 
    
-      for (const sname of this.props.listGraph[iGraph])  
-        this.props.onSignalBufferEnable(sname, false);
+      for (const sname of listGraph[iGraph]){  
+
+        let isOtherGraph = false;
+        for (let i = 0; i < listGraph.length; ++i){
+
+          if (i == iGraph) continue;
+
+          if (listGraph[i].includes(sname)){
+              isOtherGraph = true;
+              break;
+          }
+        }
+        
+        if (!isOtherGraph)
+          this.props.onSignalBufferEnable(sname, false);
+      }
 
       this.props.onCloseGraph(iGraph);  
     }
@@ -81,7 +109,7 @@ class GraphPanel extends React.Component {
     }
 
     return(
-      <div  style={{ margin : "5px"}}> {objList} </div>
+      <div style={{ margin : "5px"}}> {objList} </div>
     )  
   }
 }
