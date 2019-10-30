@@ -30,7 +30,9 @@ class TreeNav extends React.Component {
 
       outObjList.push(<section key={level + "." + obj.submenu}
                                className="treeNav-node-container"
-                               style={{ cursor: "default", paddingLeft: 10 + level * 5}}
+                               style={{ cursor: "default", 
+                                        paddingLeft: 10 + level * 5,
+                                        backgroundColor : (obj.isActive ? "rgb(137, 139, 143)" : "rgb(137, 0, 143)") }}
                                onClick= { (e) => {obj.isShow = !obj.isShow;
                                                  this.setState({ scheme : this.props.scheme});} }> 
                                {obj.submenu} 

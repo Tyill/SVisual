@@ -38,7 +38,7 @@ class App extends React.Component {
           //            time : 0,
           //            vals : []
           //          }
-                     ]    
+        ]    
       }
       
       this.props.onSetSignalsFromServer(signs);
@@ -67,6 +67,7 @@ class App extends React.Component {
   
           it = { submenu : s.module,
                  isShow : true,
+                 iActive : true,
                  items : []};
   
           navScheme.push(it);
@@ -83,6 +84,8 @@ class App extends React.Component {
 
   updateSignalData(dataParams){
 
+    let count = 0;
+
     let update = async function () {
       
       let signs = this.props.signals;
@@ -96,15 +99,48 @@ class App extends React.Component {
           let name = signs[k].name,
               module = signs[k].module; 
           
-          let response = await fetch(`api/lastSignalData?name=${name}&module=${module}`),          
-              data = await response.json();         
-                    
-          buffVals[k] = data;
+          try{
+            let response = await fetch(`api/lastSignalData?name=${name}&module=${module}`),          
+                data = await response.json();         
+                      
+            buffVals[k] = data;
+
+          }catch(err){
+            console.log('api/lastSignalData error');
+          }
         }
       }
       
       if (Object.keys(buffVals).length > 0) 
         this.props.onUpdateFromServer(buffVals);
+
+      if ((count % 10) == 0){
+        try{
+          
+          let response = await fetch('api/allModules'),          
+              modState = await response.json();  
+          
+          let navScheme = this.state.navScheme;
+
+          for (let k in modState){    
+            
+            let module = k;
+            
+            let it = navScheme.find((it) => {
+              return module == it.submenu;
+            });
+  
+            if (it)  
+               it.isActive = modState[k].isActive; 
+          }
+
+          this.setState(navScheme);
+
+        }catch(err){
+          console.log('api/allModules error');              
+        }
+      }
+      ++count;
 
       setTimeout(update, dataParams.cycleTimeMs * dataParams.packetSize);
     };
@@ -117,13 +153,13 @@ class App extends React.Component {
   render(){
 
     return (
-      <Container className="app-article-container"
+      <Container className="app-container"
                  style={{ height: document.documentElement.clientHeight,}}>
         <Row className="row h-100"
              style = {{ border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
-            <Button size="md" className= { "icon-cog"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
-            <Button size="md" className= { "icon-doc"} style = {{ fontSize : "16pt", margin : "5px", backgroundColor: "#747F74ff"}}/>
+            <Button size="md" className = {"icon-cog"} style = {buttonStyle}/>
+            <Button size="md" className = {"icon-doc"} style = {buttonStyle}/>
             <TreeNav scheme={this.state.navScheme} />
           </Col>
           <Col className="col-auto"> 
@@ -135,8 +171,10 @@ class App extends React.Component {
   } 
 }
 
-const containerStyle = {   
- 
+const buttonStyle = {   
+  fontSize : "16pt", 
+  margin : "5px", 
+  backgroundColor: "#747F74ff",
 }
 
 //////////////////////////////////////////////////

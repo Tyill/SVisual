@@ -45,6 +45,23 @@ app.get("/api/allSignals", function(request, response){
     response.send(signals);
 });
 
+app.get("/api/allModules", function(request, response){
+
+    let modules = {
+        oneModule : {
+            isActive: true, 
+        },
+        twoModule : {
+            isActive: true, 
+        },
+        threeModule : {
+            isActive: true, 
+        },        
+    };
+   
+    response.send(modules);
+});
+
 let counterMain = { s1oneModule : 0,
                     s2twoModule : 0,
                     s3threeModule : 0,
