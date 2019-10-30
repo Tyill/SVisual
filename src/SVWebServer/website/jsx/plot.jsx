@@ -14,6 +14,8 @@ class Plot extends React.Component {
 
     this._rect = { x : 0, y : 0, width : 0, height : 0};
     this._memMDown = {};
+    this._memMPos = {};
+    this._signPnts = {};
 
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleWheel = this.handleWheel.bind(this);  
@@ -21,35 +23,36 @@ class Plot extends React.Component {
   }
    
   handleMouseMove(event) {
-   
+       
+    let brect = event.target.getBoundingClientRect();
+     
+    const mpos = { x : event.clientX - brect.left,
+                   y : event.clientY - brect.top};
+
+    this._memMPos = mpos;
+
     // left mouse button
     if (event.nativeEvent.which === 1){
-
-      const canvas = this._canvasRef;
-
-      let brect = event.target.getBoundingClientRect();
-      const cpos = { x : event.clientX - brect.left,
-                     y : event.clientY - brect.top};
      
       let rct = this._rect;
       if ((rct.width == 0) && (rct.height == 0)){
         rct.width = 1;
         rct.height = 1;
-        this._memMDown = cpos;
+        this._memMDown = mpos;
       }
 
       const presPnt = this._memMDown,
-            dw = cpos.x - presPnt.x,
-            dh = cpos.y - presPnt.y;
+            dw = mpos.x - presPnt.x,
+            dh = mpos.y - presPnt.y;
     
       if ((dw > 0) && (dh > 0))
         rct = { x : presPnt.x, y : presPnt.y, width : dw, height : dh};
       else if ((dw < 0) && (dh > 0))
-        rct = { x : cpos.x, y : presPnt.y, width : Math.abs(dw), height : dh};
+        rct = { x : mpos.x, y : presPnt.y, width : Math.abs(dw), height : dh};
       else if ((dw > 0) && (dh < 0))
-        rct = { x : presPnt.x, y : cpos.y, widht : dw, height : Math.abs(dh)};
+        rct = { x : presPnt.x, y : mpos.y, widht : dw, height : Math.abs(dh)};
       else if ((dw < 0) && (dh < 0))
-        rct = { x : cpos.x, y : cpos.y, width : Math.abs(dw), height : Math.abs(dh)};
+        rct = { x : mpos.x, y : mpos.y, width : Math.abs(dw), height : Math.abs(dh)};
 
       this._rect = rct;
       
@@ -102,7 +105,11 @@ class Plot extends React.Component {
         
       this.props.onChange(tmInterval, valInterval, 
         {tmOffsPos, tmDashStep, valOffsPos, valDashStep, ...exParams});
-    }
+    } 
+    
+    else{
+      this.drawCanvas(); 
+    }   
   }
 
   handleResizeByRect(event){
@@ -262,22 +269,9 @@ class Plot extends React.Component {
       
       this.drawSignals(w, h, ctx);   
 
-      // draw rect
-      const rct = this._rect;
-      if ((rct.width > 0) || (rct.height > 0)){ 
-  
-        ctx.beginPath();
-  
-        ctx.strokeStyle = "green";
-        ctx.lineWidth = 2;
-        ctx.globalAlpha = 1;
-  
-        ctx.rect(rct.x, rct.y, rct.width, rct.height);
-  
-        ctx.closePath();
+      this.drawRect(ctx);
 
-        ctx.stroke();
-      }
+      this.drawMousePos(h, ctx);
     }
   }
 
@@ -285,6 +279,8 @@ class Plot extends React.Component {
       
     const signPnts = this.getSignalPoints(width, height);
    
+    this._signPnts = signPnts;
+
     const valInterval = this.props.valInterval,
           tmInterval = this.props.tmInterval,
           packetSize = this.props.dataParams.packetSize,
@@ -543,6 +539,78 @@ class Plot extends React.Component {
     ctx.stroke();
   }
     
+  drawRect(ctx){
+
+    // draw rect
+    const rct = this._rect;
+    if ((rct.width > 0) || (rct.height > 0)){ 
+  
+      ctx.beginPath();
+  
+      ctx.strokeStyle = "green";
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 1;
+  
+      ctx.rect(rct.x, rct.y, rct.width, rct.height);
+  
+      ctx.closePath();
+  
+      ctx.stroke();
+    }
+  }
+
+  drawMousePos(h, ctx){
+         
+    const mpos = this._memMPos;
+
+    const valInterval = this.props.valInterval,
+          valScale = (valInterval.end - valInterval.begin) / h,
+          valMinInterval = valInterval.begin,
+          valPosMem = valMinInterval / valScale;
+            
+    ctx.globalAlpha = 1;
+    
+    // int, float
+    for (let k in this._signPnts){
+          
+      // pass bool 
+      if (this.props.signals[k].type == 0) continue; 
+   
+      ctx.fillStyle = this.props.signParams[k].color;
+      ctx.strokeStyle = this.props.signParams[k].color;
+   
+      const zonePnts = this._signPnts[k]; 
+   
+      let point = { pos : -1, value : -1};
+      for (const pnts of zonePnts){
+        
+        if (pnts.length == 0) continue; 
+   
+        for (let i = 0; i < pnts.length; ++i){
+         
+          if (Math.abs(mpos.x - pnts[i].pos) < 5){
+            point = pnts[i];
+            break;
+          }
+        }
+        if (point.pos != -1) break; 
+      }
+   
+      if (point.pos != -1){
+       
+        const val = ((point.value + valPosMem) * valScale);
+        ctx.strokeText(val.toFixed(1), point.pos, h - point.value - 7);
+
+       
+        ctx.beginPath();
+        ctx.arc(point.pos, h - point.value, 3, 0, 360);
+        ctx.closePath();
+        ctx.fill();   
+        ctx.stroke();      
+      }              
+    }
+  }
+
   getTimeMark(width, offs){
       
     const tmInterval = this.props.tmInterval,

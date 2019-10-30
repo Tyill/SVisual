@@ -1,7 +1,6 @@
 .treeNav-node-container {
 	background-color: rgb(137, 139, 143);
 	color: rgb(255, 255, 255);
-	border-bottom: solid 1px rgb(73, 73, 73);    
 }
 
 .treeNav-node-container:hover {
@@ -11,7 +10,6 @@
 .treeNav-leaf-container {
 	background-color: rgb(94, 96, 99);
 	color: rgb(255, 255, 255);
-	border-bottom: solid 1px rgb(73, 73 ,73);
 }
 
 .treeNav-leaf-container:hover {

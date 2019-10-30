@@ -54,7 +54,7 @@ class GraphPanel extends React.Component {
         
       objList.push(<Graph key = {i} id = {i}
                           dataParams = {this.props.dataParams}
-                          signals = {signals}   
+                          signals = {signals}  
                                               
                           onAddSignal = {this.handleAddSignal}
                           onDelSignal = {this.handleDelSignal} ></Graph>);

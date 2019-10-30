@@ -2,7 +2,7 @@
 
 import React from "react"
 import PropTypes from "prop-types";
-import {Container, Row, Col, Button, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import {Container, Row, Col, Button } from "react-bootstrap";
 import AxisValue from "./axisValue.jsx"
 import AxisTime from "./axisTime.jsx"
 import Plot from "./plot.jsx"
@@ -79,15 +79,12 @@ class Graph extends React.Component {
    
     this.props.onDelSignal(this.props.id, name, module);
   }
-
-  handlePlay(){
-
-    this._isPlay = !this._isPlay; 
-  }
-
+ 
   handleResizeFull(){
 
     const tmInterval = this.calcTimeInterval();
+
+    this.state.tmInterval = tmInterval;
 
     const valInterval = this.calcValueInterval();
 
@@ -119,7 +116,7 @@ class Graph extends React.Component {
     const signals = this.props.signals;
 
     let minTime = Number.MAX_VALUE,
-        maxTime = Number.MIN_VALUE;
+        maxTime = -Number.MAX_VALUE;
     for (const k in signals){
 
       const sign = signals[k];
@@ -136,7 +133,7 @@ class Graph extends React.Component {
     const cyclePacket = this.props.dataParams.packetSize * this.props.dataParams.cycleTimeMs;
     
     let tmInterval = { beginMs : minTime, endMs : maxTime + cyclePacket};
-    if ((minTime == Number.MAX_VALUE) || (maxTime == Number.MIN_VALUE))
+    if ((minTime == Number.MAX_VALUE) || (maxTime == -Number.MAX_VALUE))
       tmInterval = this.state.tmInterval;
 
     return tmInterval;
@@ -149,7 +146,7 @@ class Graph extends React.Component {
     const tmInterval = this.state.tmInterval;
 
     let minValue = Number.MAX_VALUE, 
-        maxValue = Number.MIN_VALUE;        
+        maxValue = -Number.MAX_VALUE;        
     for (const k in signals){
 
       const sign = signals[k];
@@ -173,7 +170,7 @@ class Graph extends React.Component {
     }
 
     let valInterval = { begin : minValue, end : maxValue };
-    if ((minValue == Number.MAX_VALUE) || (maxValue == Number.MIN_VALUE))
+    if ((minValue == Number.MAX_VALUE) || (maxValue == -Number.MAX_VALUE))
       valInterval = this.state.valInterval;
 
     return valInterval;
@@ -188,9 +185,14 @@ class Graph extends React.Component {
     }
   }
 
-  handleAutoResize(){
+  handleAutoResize(e){
 
     this._isAutoResize = !this._isAutoResize;
+  }
+  
+  handlePlay(e){
+
+    this._isPlay = !this._isPlay; 
   }
 
   handleClose(){
@@ -251,12 +253,12 @@ class Graph extends React.Component {
                    onClick = {this.handleResizeByTime} />
            <Button size="sm" className= { "icon-brush"} style = {buttonStyle}
                    onClick = {this.handleChangeColor} />
-           <ToggleButtonGroup type="checkbox" defaultValue={[1, 2]}>
-             <ToggleButton value={1} size="sm" className= { "icon-font"} style = {buttonStyle}
-                   onChange = {this.handleAutoResize} />
-             <ToggleButton value={2} size="sm" style = {buttonStyle}
-                   onChange = {this.handlePlay} > PLAY </ToggleButton>
-           </ToggleButtonGroup>
+           <Button size="sm" variant = { this._isAutoResize ? "light" : "primary" } 
+                   className= { "icon-font"} style = {buttonStyle}
+                   onClick = {this.handleAutoResize} />
+           <Button size="sm" variant = { this._isPlay ? "light" : "primary" }
+                   className= { this._isPlay ? "icon-pause" : "icon-play" } style = {buttonStyle}
+                   onClick = {this.handlePlay} /> 
           </Col>
           <Col className="col-1">
            <Button size="sm" className= { "icon-cancel"} style = {buttonStyle}
