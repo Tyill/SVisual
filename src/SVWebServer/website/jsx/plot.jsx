@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import React from "react"
-const RDom = require('react-dom');
+import React from "react";
 import PropTypes from "prop-types";
 
 export default 
@@ -21,7 +20,7 @@ class Plot extends React.Component {
     this.handleWheel = this.handleWheel.bind(this);  
     this.handleResizeByRect = this.handleResizeByRect.bind(this);
   }
-   
+ 
   handleMouseMove(event) {
        
     let brect = event.target.getBoundingClientRect();
@@ -160,7 +159,7 @@ class Plot extends React.Component {
     
     ({tmInterval, tmDashStep} = this.scaleByTime(delta, tmInterval, tmDashStep));
 
-    this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams});      
+    this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams}); 
   }
 
   scaleByValue(delta, valInterval, valDashStep){
@@ -192,7 +191,7 @@ class Plot extends React.Component {
     else{ 
       valInterval.begin -= offs;
       valInterval.end += offs;
-    }
+    }    
 
     return {valInterval, valDashStep};
   }
@@ -240,12 +239,32 @@ class Plot extends React.Component {
   
   componentDidMount() {
    
-    this.drawCanvas();
+    const canvas = this._canvasRef;
+    
+    if (canvas) {
+      
+      const w = canvas.clientWidth,
+            h = canvas.clientHeight;
+
+      this._signPnts = this.getSignalPoints(w, h);
+          
+      this.drawCanvas();
+    }
   }
 
   componentDidUpdate() {
    
-    this.drawCanvas();
+    const canvas = this._canvasRef;
+    
+    if (canvas) {
+      
+      const w = canvas.clientWidth,
+            h = canvas.clientHeight;
+
+      this._signPnts = this.getSignalPoints(w, h);
+          
+      this.drawCanvas();
+    }
   }
 
   drawCanvas(){    
@@ -277,9 +296,7 @@ class Plot extends React.Component {
 
   drawSignals(width, height, ctx){
       
-    const signPnts = this.getSignalPoints(width, height);
-   
-    this._signPnts = signPnts;
+    const signPnts = this._signPnts;
 
     const valInterval = this.props.valInterval,
           tmInterval = this.props.tmInterval,
@@ -599,8 +616,8 @@ class Plot extends React.Component {
       if (point.pos != -1){
        
         const val = ((point.value + valPosMem) * valScale);
+        ctx.font = "normal 9pt Arial";
         ctx.strokeText(val.toFixed(1), point.pos, h - point.value - 7);
-
        
         ctx.beginPath();
         ctx.arc(point.pos, h - point.value, 3, 0, 360);

@@ -5,6 +5,7 @@ import { connect, Provider } from "react-redux";
 import {Container, Row, Col, Button} from "react-bootstrap";
 import TreeNav from "./treeNav.jsx";
 import GraphPanelRedux from "./graphPanel.jsx";
+import PropTypes from 'prop-types';
  
 import { updateFromServer, 
          setDataParams, 
@@ -14,8 +15,9 @@ import Store from "./redux/store.jsx";
 import "../css/app.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
+
 class App extends React.Component {
-    
+  
   constructor(props){
     super(props);
     
@@ -24,7 +26,7 @@ class App extends React.Component {
 
     document.body.style.overflow = "hidden";
         
-    this.handleAddGraph = this.handleAddGraph.bind(this);
+    this.handleAddGraph = this.handleAddGraph.bind(this); 
     this.handleCloseGraph = this.handleCloseGraph.bind(this);   
   }
 
@@ -55,6 +57,10 @@ class App extends React.Component {
 
   componentDidMount() {
    
+     ReactDOM.findDOMNode(this).addEventListener('wheel', (event) => {
+       event.preventDefault();
+     }, false);
+    
     (async () => {
       let response = await fetch('api/allSignals');
       let signs = await response.json();     
@@ -116,32 +122,32 @@ class App extends React.Component {
 
     let update = async function () {
       
-      let signs = this.props.signals;
+      const signs = this.props.signals,       
+            snames = Object.values(signs).filter(it => it.isBuffEna)
+                                         .map(it => it.name + it.module);
+     
+      if (snames.length > 0){
 
-      let buffVals = {};
-      
-      for (let k in signs){
+        let req = "api/lastSignalData?";
+        for (let i = 0; i < snames.length; ++i){
+          req += "sname" + i + "=" + snames[i];
         
-        if (signs[k].isBuffEna){
-          
-          let name = signs[k].name,
-              module = signs[k].module; 
-          
-          try{
-            let response = await fetch(`api/lastSignalData?name=${name}&module=${module}`),          
-                data = await response.json();         
-                      
-            buffVals[k] = data;
-
-          }catch(err){
-            console.log('api/lastSignalData error');
-          }
+          if (i < snames.length - 1)
+            req += "&";
         }
-      }
+       
+        try{
+          let response = await fetch(req),          
+              buffVals = await response.json();         
+        
+          if (Object.keys(buffVals).length > 0) 
+            this.props.onUpdateFromServer(buffVals);
+  
+        }catch(err){
+          console.log('api/lastSignalData error');
+        }
+      } 
       
-      if (Object.keys(buffVals).length > 0) 
-        this.props.onUpdateFromServer(buffVals);
-
       if ((count % 10) == 0){
         try{
           
@@ -159,7 +165,7 @@ class App extends React.Component {
             });
   
             if (it)  
-               it.isActive = modState[k].isActive; 
+              it.isActive = modState[k].isActive; 
           }
 
           this.setState(navScheme);
@@ -189,7 +195,7 @@ class App extends React.Component {
             <Button size="md" className = {"icon-cog"} style = {buttonStyle}
                     onClick = {this.handleAddGraph}/>
             <Button size="md" className = {"icon-doc"} style = {buttonStyle}
-                    onClick = {this.handleAddGraph}/>
+                    onClick = {this.handleAddGraph} />
             <TreeNav scheme={this.state.navScheme} />
           </Col>
           <Col className="col-auto"> 
@@ -201,6 +207,29 @@ class App extends React.Component {
     )
   } 
 }
+
+
+App.propTypes = {
+  state : PropTypes.shape({
+    //{ submenu : s.module,
+    //  isShow : true,
+    //  iActive : true,
+    //  items : [string]};
+    navScheme : PropTypes.arrayOf(
+      PropTypes.shape({
+        submenu : PropTypes.string,
+        isShow : PropTypes.bool,
+        iActive : PropTypes.bool,
+        items : PropTypes.arrayOf(PropTypes.string),
+      })
+    ),
+    // [[string]]
+    listGraph : PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  }),
+  handleAddGraph: PropTypes.func,
+  handleCloseGraph: PropTypes.func,
+}
+
 
 const buttonStyle = {   
   fontSize : "16pt", 

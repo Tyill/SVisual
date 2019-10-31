@@ -68,43 +68,52 @@ let counterMain = { s1oneModule : 0,
                   };
 
 app.get("/api/lastSignalData", function(request, response){
-    
-    let name = request.query.name,
-        module = request.query.module,
-        counter = counterMain[name + module];
    
-    let signData = { 
-        beginTime : Date.now(),
-        vals : [],             
-    };
+    let sname = request.query.sname0,
+        result = {}, 
+        cnt = 0;
+    while(sname){
+    
+      let counter = counterMain[sname];
+   
+      let signData = { 
+          beginTime : Date.now(),
+          vals : [],             
+      };
 
-    if ((name + module) !== "s3threeModule"){   // int, float
+      if ((sname) !== "s3threeModule"){   // int, float
 
-      for (let i = 0; i < dataParams.packetSize; ++i){
+        for (let i = 0; i < dataParams.packetSize; ++i)
           signData.vals.push(counter + i);
+        
+        counter += dataParams.packetSize;
+  
+        if (counter >= 100)
+          counter = -100; 
+       
+        counterMain[sname] = counter;
+      }
+      else{                                       // bool
+            
+        counter++;
+  
+        let v = ((counter % 2) === 0);
+  
+        for (let i = 0; i < dataParams.packetSize; ++i){
+          signData.vals.push(v);
+        }
+  
+        counterMain[sname] = counter;
       }
 
-      counter += dataParams.packetSize;
 
-      if (counter >= 100)
-        counter = -100; 
-     
-      counterMain[name + module] = counter;
-    }
-    else{                                       // bool
-          
-      counter++;
+      result[sname] = signData;
 
-      let v = ((counter % 2) === 0);
-
-      for (let i = 0; i < dataParams.packetSize; ++i){
-        signData.vals.push(v);
-      }
-
-      counterMain[name + module] = counter;
+      ++cnt;
+      sname =  request.query["sname" + cnt];
     }
 
-    response.send(signData);
+    response.send(result);
 });
 
 app.listen(3000);

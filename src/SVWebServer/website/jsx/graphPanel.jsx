@@ -105,7 +105,8 @@ class GraphPanel extends React.Component {
                                               
                           onAddSignal = {this.handleAddSignal}
                           onDelSignal = {this.handleDelSignal} 
-                          onCloseGraph = {this.handleCloseGraph} ></Graph>);
+                          onCloseGraph = {this.handleCloseGraph} />
+                  );
     }
 
     return(
