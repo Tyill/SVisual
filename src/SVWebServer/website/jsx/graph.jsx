@@ -241,9 +241,9 @@ class Graph extends React.Component {
 
     return (
       <Container >
-        <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "grey"}} >
+        <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "silver"}} >
           <Col className="col-1"/>
-          <Col className="col-10">
+          <Col className="col-11">
            <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
                    onClick = {this.handleResizeFull} />
            <Button size="sm" className= { "icon-resize-vertical"} style = {buttonStyle}
@@ -258,13 +258,11 @@ class Graph extends React.Component {
            <Button size="sm" variant = { this._isPlay ? "light" : "primary" }
                    className= { this._isPlay ? "icon-pause" : "icon-play" } style = {buttonStyle}
                    onClick = {this.handlePlay} /> 
-          </Col>
-          <Col className="col-1">
-           <Button size="sm" className= { "icon-cancel"} style = {buttonStyle}
+           <Button size="sm" className= { "icon-cancel"} style = {{...buttonStyle, float: "right"}}
                    onClick = { this.handleClose } />
-          </Col>
+           </Col>          
         </Row>
-        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "grey"}}>
+        <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
           <Col className="col-1">
             <AxisValue valInterval= { this.state.valInterval}
                        axisParams= { this.state.axisParams}
@@ -284,7 +282,7 @@ class Graph extends React.Component {
         </Row>
         <Row noGutters={true} style={{ borderRadius: "0px 0px 3px 3px",
                                        paddingRight : "5px",
-                                       backgroundColor : "grey" }}>
+                                       backgroundColor : "silver" }}>
           <Col className="col-1" >
           </Col>
           <Col>                
@@ -299,7 +297,7 @@ class Graph extends React.Component {
 }
 
 const buttonStyle = {
-  marginLeft : "5px", 
+  margin : ".1em", 
   //backgroundColor: "#747F74ff",
 }
 

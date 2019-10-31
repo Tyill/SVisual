@@ -29,7 +29,7 @@
   display: inline-block;
   text-decoration: inherit;
   width: 1em;
-  margin-right: .2em;
+  margin-right: .0em;
   text-align: center;
   /* opacity: .8; */
  
@@ -42,7 +42,7 @@
  
   /* Animation center compensation - margins should be symmetric */
   /* remove if not needed */
-  margin-left: .2em;
+  margin-left: .0em;
 
   /* you can be more comfortable with increased icons size */
   /* font-size: 120%; */
@@ -66,5 +66,5 @@
 .icon-resize-full-alt:before { content: '\f0b2'; } /* '' */
 .icon-brush:before { content: '\f1fc'; } /* '' */
   
-.icon-left-dir:before { content: '\e804'; float: right; margin-top: .2em; } /* '' */
-.icon-down-dir:before { content: '\e805'; float: right; margin-top: .2em; } /* '' */
+.icon-left-dir:before { content: '\e804'; float: right; margin-top: .3em; } /* '' */
+.icon-down-dir:before { content: '\e805'; float: right; margin-top: .3em; } /* '' */

@@ -187,9 +187,9 @@ class App extends React.Component {
   render(){
 
     return (
-      <Container className="col-auto app-container"
+      <Container className="col app-container"
                  style={{overflow: "auto", height: document.documentElement.clientHeight}}>
-        <Row noGutters={true} className="m-2 p-2"
+        <Row noGutters={true} className="m-1 p-2"
              style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
             <Button size="md" className = {"icon-cog"} style = {buttonStyle}
@@ -198,7 +198,7 @@ class App extends React.Component {
                     onClick = {this.handleAddGraph} />
             <TreeNav scheme={this.state.navScheme} />
           </Col>
-          <Col className="col-auto"> 
+          <Col className="col"> 
             <GraphPanelRedux listGraph = { this.state.listGraph } 
                              onCloseGraph = { this.handleCloseGraph } />
           </Col>
@@ -233,8 +233,7 @@ App.propTypes = {
 
 const buttonStyle = {   
   fontSize : "16pt", 
-  margin : "5px", 
-  backgroundColor: "#747F74ff",
+  margin : "5px",
 }
 
 //////////////////////////////////////////////////

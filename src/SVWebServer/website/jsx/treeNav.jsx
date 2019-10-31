@@ -32,7 +32,7 @@ class TreeNav extends React.Component {
                                className="treeNav-node-container"
                                style={{ cursor: "default", 
                                         paddingLeft: 10 + level * 5,
-                                        backgroundColor : (obj.isActive ? "rgb(137, 139, 143)" : "rgb(137, 0, 143)") }}
+                                        backgroundColor : (obj.isActive ? "silver" : "rgb(137, 0, 143)") }}
                                onClick= { (e) => {obj.isShow = !obj.isShow;
                                                  this.setState({ scheme : this.props.scheme});} }> 
                                {obj.submenu} 

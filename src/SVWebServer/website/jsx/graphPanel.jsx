@@ -101,8 +101,12 @@ class GraphPanel extends React.Component {
       for (let s of this.props.listGraph[i]) 
         signals[s] = this.props.signals[s];
 
-      objList.push(
-        <Col key = {i} xs={ sz == 1 ? 12 : 6} className = "p-2">
+      const xs = 12,
+            md = (sz == 1) ? 12 : 6,
+            xl = (sz == 1) ? 12 : (sz == 2) ? 6 : 4;
+
+      objList.push( 
+      <Col key = {i} className = {`pb-2 col-${xs} col-md-${md} col-xl-${xl} `}>
           <Graph iGraph = {i}
                  dataParams = {this.props.dataParams}
                  signals = {signals}  
@@ -114,8 +118,8 @@ class GraphPanel extends React.Component {
     }
     
     return(
-      <Container > 
-        <Row>
+      <Container> 
+        <Row noGutters={true} >
           {objList} 
         </Row>
       </Container>
