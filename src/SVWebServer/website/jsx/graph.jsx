@@ -23,7 +23,7 @@ class Graph extends React.Component {
 
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 
                   valInterval : { begin : 0, end : 1000},
-                  axisParams, 
+                  axisParams,                  
                  };   
 
     this._signParams = {};
@@ -43,8 +43,7 @@ class Graph extends React.Component {
     this.handleChangeColor = this.handleChangeColor.bind(this);    
     this.handleAutoResize = this.handleAutoResize.bind(this);   
     this.handlePlay = this.handlePlay.bind(this); 
-    this.handleClose = this.handleClose.bind(this);    
-   
+    this.handleClose = this.handleClose.bind(this);
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
@@ -241,8 +240,8 @@ class Graph extends React.Component {
     }
 
     return (
-      <Container-fluid >
-        <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "grey"}}>
+      <Container >
+        <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "grey"}} >
           <Col className="col-1"/>
           <Col className="col-10">
            <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
@@ -294,7 +293,7 @@ class Graph extends React.Component {
                       onChange = { this.handleAxisTimeChange } /> 
           </Col>
         </Row>       
-      </Container-fluid>
+      </Container>
     )
   }
 }

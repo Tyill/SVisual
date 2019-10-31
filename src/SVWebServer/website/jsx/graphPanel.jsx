@@ -2,6 +2,7 @@
 
 import React from "react"
 import { connect } from "react-redux";
+import {Container, Row, Col } from "react-bootstrap";
 import PropTypes from "prop-types";
 import Graph from "./graph.jsx";
 import { signalBufferEnable } from "./redux/actions.jsx";
@@ -57,7 +58,7 @@ class GraphPanel extends React.Component {
         this.props.onSignalBufferEnable(sname, false);
     }
     else
-     console.log("graphPanel::handleDelSignal error (iGraph < this.props.listGraph.length) && sname");
+      console.log("graphPanel::handleDelSignal error (iGraph < this.props.listGraph.length) && sname");
   }
 
   handleCloseGraph(iGraph){
@@ -92,25 +93,32 @@ class GraphPanel extends React.Component {
 
   render(){
     
-    let objList = [];
-    for (let i = 0; i < this.props.listGraph.length; ++i){
-     
+    let objList = [],
+        sz = this.props.listGraph.length;
+    for (let i = 0; i < sz; ++i){
+         
       let signals = {};
       for (let s of this.props.listGraph[i]) 
         signals[s] = this.props.signals[s];
-        
-      objList.push(<Graph key = {i} iGraph = {i}
-                          dataParams = {this.props.dataParams}
-                          signals = {signals}  
-                                              
-                          onAddSignal = {this.handleAddSignal}
-                          onDelSignal = {this.handleDelSignal} 
-                          onCloseGraph = {this.handleCloseGraph} />
-                  );
-    }
 
+      objList.push(
+        <Col key = {i} xs={ sz == 1 ? 12 : 6} className = "p-2">
+          <Graph iGraph = {i}
+                 dataParams = {this.props.dataParams}
+                 signals = {signals}  
+                 onAddSignal = {this.handleAddSignal}
+                 onDelSignal = {this.handleDelSignal} 
+                 onCloseGraph = {this.handleCloseGraph} />
+        </Col>   
+      );
+    }
+    
     return(
-      <div style={{ margin : "5px"}}> {objList} </div>
+      <Container > 
+        <Row>
+          {objList} 
+        </Row>
+      </Container>
     )  
   }
 }

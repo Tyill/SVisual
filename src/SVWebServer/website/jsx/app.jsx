@@ -13,7 +13,7 @@ import { updateFromServer,
 import Store from "./redux/store.jsx"; 
 
 import "../css/app.css";
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 
 class App extends React.Component {
@@ -189,7 +189,7 @@ class App extends React.Component {
     return (
       <Container className="col-auto app-container"
                  style={{overflow: "auto", height: document.documentElement.clientHeight}}>
-        <Row className="row h-100"
+        <Row noGutters={true} className="m-2 p-2"
              style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
             <Button size="md" className = {"icon-cog"} style = {buttonStyle}
