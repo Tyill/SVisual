@@ -683,6 +683,12 @@ class Plot extends React.Component {
 
   render(){
    
+    const style = {  
+      backgroundColor : this.props.backgroundColor,
+      height: "100%",
+      width: "100%",
+    }
+
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
                    onMouseMove={ this.handleMouseMove }
@@ -699,11 +705,6 @@ class Plot extends React.Component {
  }
 }
 
-const style = {  
-  backgroundColor : "white",
-  height: "100%",
-  width: "100%",
-}
 
 Plot.propTypes = { 
 

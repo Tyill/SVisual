@@ -258,8 +258,9 @@ class Graph extends React.Component {
            <Button size="sm" variant = { this._isPlay ? "light" : "primary" }
                    className= { this._isPlay ? "icon-pause" : "icon-play" } style = {buttonStyle}
                    onClick = {this.handlePlay} /> 
-           <Button size="sm" className= { "icon-cancel"} style = {{...buttonStyle, float: "right"}}
-                   onClick = { this.handleClose } />
+            <Button className="close" onClick = { this.handleClose } > 
+                <span>&times;</span>
+            </Button>
            </Col>          
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
@@ -276,6 +277,7 @@ class Graph extends React.Component {
                   axisParams= { this.state.axisParams}
                   dataParams = {this.props.dataParams}
                   signParams = { this._signParams }
+                  backgroundColor = { this.props.backgroundColor}
                   onChange = { this.handlePlotChange }
                   onDrop = { this.handleAddSignal } />            
           </Col>

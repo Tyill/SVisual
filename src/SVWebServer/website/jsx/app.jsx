@@ -2,7 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { connect, Provider } from "react-redux";
-import {Container, Row, Col, Button} from "react-bootstrap";
+import {Container, Row, Col, Button, Modal} from "react-bootstrap";
 import TreeNav from "./treeNav.jsx";
 import GraphPanelRedux from "./graphPanel.jsx";
 import PropTypes from 'prop-types';
@@ -10,7 +10,8 @@ import PropTypes from 'prop-types';
 import { updateFromServer, 
          setDataParams, 
          setSignalsFromServer,
-         signalBufferEnable } from "./redux/actions.jsx"; 
+         signalBufferEnable,
+         changeConfig } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
 
 import "../css/app.css";
@@ -23,16 +24,20 @@ class App extends React.Component {
     super(props);
     
     this.state = { navScheme: [], 
-                   listGraph: [[]] };
+                   listGraph: [[]],
+                   isShowConfig : false,
+                   isDarkThemeConfig : false };
 
     document.body.style.overflow = "hidden";
         
     this.handleAddGraph = this.handleAddGraph.bind(this); 
     this.handleCloseGraph = this.handleCloseGraph.bind(this);  
-    
+    this.handleShowConfig = this.handleShowConfig.bind(this); 
+    this.handleChangeConfig = this.handleChangeConfig.bind(this); 
+  
     this.handleAddSignalOnGraph = this.handleAddSignalOnGraph.bind(this); 
   }
-
+  
   handleAddGraph(){
 
     this.setState((oldState, props) => (
@@ -73,6 +78,35 @@ class App extends React.Component {
         return { listGraph };
       });  
     }  
+  }
+
+  handleShowConfig(){
+
+    this.setState((oldState, props)=>{
+
+      let isShowConfig = !oldState.isShowConfig;
+
+      return {isShowConfig}
+    });
+  }
+
+  handleChangeConfig(e){
+    
+    let config = {
+      backgroundColor : "white",
+    };
+
+    if (!this.state.isDarkThemeConfig) 
+      config.backgroundColor = "black";
+
+    this.props.onChangeConfig(config)
+
+    this.setState((oldState, props)=>{
+
+      let isDarkThemeConfig = !oldState.isDarkThemeConfig;
+
+      return {isDarkThemeConfig}
+    });
   }
 
   componentDidMount() {
@@ -207,13 +241,14 @@ class App extends React.Component {
   render(){
 
     return (
+      <div>
       <Container className="col app-container"
                  style={{overflow: "auto", height: document.documentElement.clientHeight}}>
         <Row noGutters={true} className="m-1 p-2"
              style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
             <Button size="md" className = {"icon-cog"} style = {buttonStyle}
-                    onClick = {this.handleAddGraph}/>
+                    onClick = {this.handleShowConfig}/>
             <Button size="md" className = {"icon-doc"} style = {buttonStyle}
                     onClick = {this.handleAddGraph} />
             <TreeNav scheme={this.state.navScheme}
@@ -224,10 +259,25 @@ class App extends React.Component {
                              onCloseGraph = { this.handleCloseGraph } />
           </Col>
         </Row>
-      </Container>
+      </Container>  
+
+      <Modal show = {this.state.isShowConfig} onHide={this.handleShowConfig} >
+        <Modal.Header closeButton>
+          <Modal.Title>Settings</Modal.Title>
+        </Modal.Header>      
+        <Modal.Body>        
+         <Checkbox checked={this.state.isDarkThemeConfig}
+                   onChange={this.handleChangeConfig}/> dark theme        
+        </Modal.Body>            
+      </Modal>
+      </div>
     )
   } 
 }
+
+const Checkbox = props => (
+   <input type="checkbox" {...props} />
+)
 
 
 App.propTypes = {
@@ -265,13 +315,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-      onSetSignalsFromServer: setSignalsFromServer(dispatch),    
-
+      onSetSignalsFromServer: setSignalsFromServer(dispatch),
       onUpdateFromServer: updateFromServer(dispatch),
-        
       onSetDataParams: setDataParams(dispatch),
-
-      onSignalBufferEnable: signalBufferEnable(dispatch),    
+      onSignalBufferEnable: signalBufferEnable(dispatch),
+      onChangeConfig: changeConfig(dispatch),  
   }
 }
 

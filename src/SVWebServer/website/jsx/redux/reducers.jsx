@@ -3,8 +3,11 @@
 import { UPDATE_FROM_SERVER,
          SET_DATA_PARAMS,
          SET_SIGNALS_FROM_SERVER,
-         SIGNAL_BUFFER_ENABLE } from "./actions.jsx";
+         SIGNAL_BUFFER_ENABLE,
+         CHANGE_CONFIG } from "./actions.jsx";
 import { combineReducers } from 'redux'
+
+
 
 function signals(curSignals = {}, action){
 
@@ -57,6 +60,19 @@ function dataParams(curParams, action){
  }
 }
 
-const ComboReducer = combineReducers({signals, dataParams});
+function config(curConfig, action){
+
+  switch (action.type) {
+    case CHANGE_CONFIG:     
+      return action.config;
+    
+    default: 
+      return curConfig ? curConfig : { 
+        backgroundColor : "white",
+      };
+ }
+}
+
+const ComboReducer = combineReducers({config, signals, dataParams});
 
 export default ComboReducer;

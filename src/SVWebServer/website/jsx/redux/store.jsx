@@ -4,10 +4,13 @@ import ComboReducer from "./reducers.jsx";
 import { createStore } from 'redux'
 
 const initialState = {
+  config : {
+    backgroundColor : "white",
+  },
   dataParams : { 
     packetSize : 10,
     cycleTimeMs : 100,
-  },
+  },  
   signals: { 
     // name + module : {
     //                  name : "s1",

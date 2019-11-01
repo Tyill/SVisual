@@ -110,6 +110,7 @@ class GraphPanel extends React.Component {
           <Graph iGraph = {i}                 
                  dataParams = {this.props.dataParams}
                  signals = {signals}  
+                 backgroundColor = {this.props.config.backgroundColor}
                  onAddSignal = {this.handleAddSignal}
                  onDelSignal = {this.handleDelSignal} 
                  onCloseGraph = {this.handleCloseGraph} />
@@ -118,7 +119,7 @@ class GraphPanel extends React.Component {
     }
     
     return(
-      <Container> 
+      <Container className="col"> 
         <Row noGutters={true} >
           {objList} 
         </Row>
