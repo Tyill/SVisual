@@ -22,7 +22,8 @@ class TreeNav extends React.Component {
                                className="treeNav-leaf-container"
                                draggable="true"
                                style={{ cursor: "default", paddingLeft: 10 + level * 5}}
-                               onDragStart = {(e) => e.dataTransfer.setData('text', submenu + obj) } >
+                               onDragStart = {(e) => e.dataTransfer.setData('text', submenu + obj) }
+                               onDoubleClick = { (e) => this.props.onDoubleClick(obj + submenu.slice(0, -1)) } >
                                {obj}
                       </section>);      
     }  

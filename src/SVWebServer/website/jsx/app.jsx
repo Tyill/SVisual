@@ -9,7 +9,8 @@ import PropTypes from 'prop-types';
  
 import { updateFromServer, 
          setDataParams, 
-         setSignalsFromServer } from "./redux/actions.jsx"; 
+         setSignalsFromServer,
+         signalBufferEnable } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
 
 import "../css/app.css";
@@ -27,7 +28,9 @@ class App extends React.Component {
     document.body.style.overflow = "hidden";
         
     this.handleAddGraph = this.handleAddGraph.bind(this); 
-    this.handleCloseGraph = this.handleCloseGraph.bind(this);   
+    this.handleCloseGraph = this.handleCloseGraph.bind(this);  
+    
+    this.handleAddSignalOnGraph = this.handleAddSignalOnGraph.bind(this); 
   }
 
   handleAddGraph(){
@@ -53,6 +56,23 @@ class App extends React.Component {
     else
      console.log("app::handleCloseGraph error (iGraph < this.state.listGraph.length)");
 
+  }
+
+  handleAddSignalOnGraph(sname){
+
+    if (this.state.listGraph.length && !this.state.listGraph[0].includes(sname)){ 
+
+      this.props.onSignalBufferEnable(sname, true);
+
+      this.setState((oldState, props) => { 
+        
+        let listGraph = [...oldState.listGraph];
+       
+        listGraph[0].push(sname);
+       
+        return { listGraph };
+      });  
+    }  
   }
 
   componentDidMount() {
@@ -196,7 +216,8 @@ class App extends React.Component {
                     onClick = {this.handleAddGraph}/>
             <Button size="md" className = {"icon-doc"} style = {buttonStyle}
                     onClick = {this.handleAddGraph} />
-            <TreeNav scheme={this.state.navScheme} />
+            <TreeNav scheme={this.state.navScheme}
+                     onDoubleClick = { this.handleAddSignalOnGraph } />
           </Col>
           <Col className="col"> 
             <GraphPanelRedux listGraph = { this.state.listGraph } 
@@ -249,6 +270,8 @@ const mapDispatchToProps = (dispatch) => {
       onUpdateFromServer: updateFromServer(dispatch),
         
       onSetDataParams: setDataParams(dispatch),
+
+      onSignalBufferEnable: signalBufferEnable(dispatch),    
   }
 }
 
