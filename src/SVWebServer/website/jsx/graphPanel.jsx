@@ -106,8 +106,8 @@ class GraphPanel extends React.Component {
             xl = (sz == 1) ? 12 : (sz == 2) ? 6 : 4;
 
       objList.push( 
-      <Col key = {i} className = {`pb-2 col-${xs} col-md-${md} col-xl-${xl} `}>
-          <Graph iGraph = {i}
+        <Col key = {i} className = {`pb-2 col-${xs} col-md-${md} col-xl-${xl} `}>
+          <Graph iGraph = {i}                 
                  dataParams = {this.props.dataParams}
                  signals = {signals}  
                  onAddSignal = {this.handleAddSignal}

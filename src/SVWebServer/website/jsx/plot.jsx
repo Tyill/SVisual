@@ -14,7 +14,7 @@ class Plot extends React.Component {
     this._rect = { x : 0, y : 0, width : 0, height : 0};
     this._memMDown = {};
     this._memMPos = {};
-    this._signPnts = {};
+    this._signPnts = {};  
 
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleWheel = this.handleWheel.bind(this);  
@@ -240,58 +240,50 @@ class Plot extends React.Component {
   componentDidMount() {
    
     const canvas = this._canvasRef;
-    
-    if (canvas) {
-      
-      const w = canvas.clientWidth,
-            h = canvas.clientHeight;
-
-      this._signPnts = this.getSignalPoints(w, h);
           
-      this.drawCanvas();
-    }
+    const w = canvas.clientWidth,
+          h = canvas.clientHeight;
+
+    this._signPnts = this.getSignalPoints(w, h);
+    
+    this.drawCanvas();  
   }
 
   componentDidUpdate() {
    
     const canvas = this._canvasRef;
-    
-    if (canvas) {
-      
-      const w = canvas.clientWidth,
-            h = canvas.clientHeight;
-
-      this._signPnts = this.getSignalPoints(w, h);
           
-      this.drawCanvas();
-    }
+    const w = canvas.clientWidth,
+          h = canvas.clientHeight;
+     
+    this._signPnts = this.getSignalPoints(w, h);
+          
+    this.drawCanvas();
+    
   }
 
   drawCanvas(){    
     
     const canvas = this._canvasRef;
-    
-    if (canvas) {
-      
-      const w = canvas.clientWidth,
-            h = canvas.clientHeight,
-            ctx = canvas.getContext("2d");
- 
-      if ((canvas.width != w) || (canvas.height != h)){
-        canvas.width = w;
-        canvas.height = h;
-      }
-    
-      ctx.clearRect(0, 0, w, h);
 
-      this.drawAxisMark(w, h, ctx);
-      
-      this.drawSignals(w, h, ctx);   
+    const w = canvas.clientWidth,
+          h = canvas.clientHeight,
+          ctx = canvas.getContext("2d");
 
-      this.drawRect(ctx);
-
-      this.drawMousePos(h, ctx);
+    if ((canvas.width != w) || (canvas.height != h)){
+      canvas.width = w;
+      canvas.height = h;
     }
+  
+    ctx.clearRect(0, 0, w, h);
+
+    this.drawAxisMark(w, h, ctx);
+    
+    this.drawSignals(w, h, ctx);   
+
+    this.drawRect(ctx);
+
+    this.drawMousePos(h, ctx);
   }
 
   drawSignals(width, height, ctx){
@@ -690,7 +682,7 @@ class Plot extends React.Component {
   }
 
   render(){
-
+   
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
                    onMouseMove={ this.handleMouseMove }
@@ -703,8 +695,8 @@ class Plot extends React.Component {
                                            name = e.dataTransfer.getData('text').split('.')[1];
                                        this.props.onDrop(name, module);
                                      } } >
-           </canvas>
-  }
+           </canvas> 
+ }
 }
 
 const style = {  

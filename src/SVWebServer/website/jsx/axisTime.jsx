@@ -203,7 +203,7 @@ class AxisTime extends React.Component {
 }
 
 const style = {  
-  height: "50px",
+  height: "100%",
   width: "100%",
 }
 

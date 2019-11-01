@@ -240,10 +240,10 @@ class Graph extends React.Component {
     }
 
     return (
-      <Container >
+      <Container>
         <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "silver"}} >
-          <Col className="col-1"/>
-          <Col className="col-11">
+          <Col style = {{ maxWidth : "50px" }} />
+          <Col className="col">
            <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
                    onClick = {this.handleResizeFull} />
            <Button size="sm" className= { "icon-resize-vertical"} style = {buttonStyle}
@@ -263,13 +263,13 @@ class Graph extends React.Component {
            </Col>          
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
-          <Col className="col-1">
+          <Col style = {{ maxWidth : "50px", height: "300px" }}>
             <AxisValue valInterval= { this.state.valInterval}
                        axisParams= { this.state.axisParams}
                        onChange = { this.handleAxisValueChange } />    
           </Col>
-          <Col className="col-11">
-            {legend}
+          <Col className="col" style={{height: "300px"}}>
+            {legend} 
             <Plot tmInterval= { this.state.tmInterval}
                   valInterval= { this.state.valInterval}
                   signals = { this.props.signals}
@@ -283,9 +283,9 @@ class Graph extends React.Component {
         <Row noGutters={true} style={{ borderRadius: "0px 0px 3px 3px",
                                        paddingRight : "5px",
                                        backgroundColor : "silver" }}>
-          <Col className="col-1" >
+          <Col style = {{ maxWidth : "50px" }} >
           </Col>
-          <Col>                
+          <Col className="col" style = {{ height : "50px" }}>                
             <AxisTime tmInterval={ this.state.tmInterval}
                       axisParams={ this.state.axisParams}
                       onChange = { this.handleAxisTimeChange } /> 
@@ -298,6 +298,5 @@ class Graph extends React.Component {
 
 const buttonStyle = {
   margin : ".1em", 
-  //backgroundColor: "#747F74ff",
 }
 
