@@ -68,6 +68,12 @@ public:
 		// связь по TCP
 		QString tcp_addr;          ///< ip
 		int tcp_port;              ///< port
+
+        // web
+        bool web_ena;              
+        QString web_addr;          ///< ip
+        int web_port;              ///< port
+
         
         SV_Graph::graphSetting graphSett;
 	};

@@ -31,6 +31,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
+#include "SVWebServer/SVWebServer.h"
+
 class webServer : public QTcpServer{
     
     Q_OBJECT
@@ -40,9 +42,20 @@ public:
     webServer(QObject *parent = nullptr) : QTcpServer(parent){}
 
     ~webServer() = default;
+        
+    SV_Web::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+
+    SV_Web::pf_getModuleData pfGetModuleData = nullptr;
+
+    SV_Web::pf_getSignalData pfGetSignalData = nullptr;
+
+    SV_Web::pf_loadSignalData pfLoadSignalData = nullptr;
+    
+    QByteArray jsonGetAllSignals();
 
 private:
     void incomingConnection(qintptr handle) override;
+
 
 };
 
@@ -53,16 +66,19 @@ class clientSocket : public QTcpSocket
     friend int response(http_parser*);
 
 public:
+       
+    clientSocket(QObject *parent = nullptr);
+
+private: 
+    http_parser parser_;
 
     QString cField_;
     QMap<QString, QString> reqFields_;
 
     QString reqPage_;
 
-    clientSocket(QObject *parent = nullptr);
+    webServer* server_ = nullptr;
 
-private: 
-    http_parser parser_;
 
 private slots:
     void readData();

@@ -25,6 +25,9 @@
 
 #include "stdafx.h"
 #include "webServer.h"
+#include "SVConfig/SVConfigData.h"
+#include <QJsonDocument>
+
 
 void webServer::incomingConnection(qintptr handle){
 
@@ -41,6 +44,8 @@ clientSocket::clientSocket(QObject* parent)
     http_parser_init(&parser_, HTTP_REQUEST);
 
     parser_.data = this;
+
+    server_ = (webServer*)parent;
 }
 
 void clientSocket::readData(){
@@ -96,44 +101,100 @@ void clientSocket::readData(){
 
 int response(http_parser* parser){
       
-    QString& page = ((clientSocket*)parser->data)->reqPage_;
-    auto& fields = ((clientSocket*)parser->data)->reqFields_;
+    clientSocket* socket = (clientSocket*)parser->data;
 
-    if (!fields.contains("Accept") || fields["Accept"].contains("text/html"))
-        fields["Accept"] = "text/html";
-    else if (fields["Accept"].contains("text/css"))
-        fields["Accept"] = "text/css";
+    QString& page = socket->reqPage_;
+      
+    if (page.startsWith("/api")){
 
-    if (page == "/")
-        page = "/index.html";
+        QByteArray json;
 
-    QFile file(QApplication::applicationDirPath() + "/web" + page);
+        if (page == "/api/allSignals")
+            json = socket->server_->jsonGetAllSignals();
+   
+        /*"HTTP/1.1 200 OK\r\n
+            "X-Powered-By: Express\r\n"
+            "Content-Type: application/json; charset=utf-8\r\n"
+            "Content-Length: 325\r\n"
+        "ETag: W/"145 - 45gKJ / zJh / ykuS + KpUcKOTMYlKY"\r\n"
+    "Date: Sun, 03 Nov 2019 14:35:29 GMT\r\n"
+"Connection: close\r\n\r\n"*/
 
-    QByteArray html;
-    if (file.exists()){
-        
-        file.open(QIODevice::ReadOnly);
-              
-        html = file.readAll();
+        QByteArray resp;
+        resp += QString("HTTP/1.1 200 OK\r\n")
+            + "Content-Type: application/json; charset=utf-8\r\n"
+            + "Accept: application/json\r\n"
+            + "Content-Length: " + QString::number(json.size()) + "\r\n"
+            + "Connection: keep-alive\r\n"           
+            + "\r\n";
 
-        file.close();
+        resp += json;
 
-        if (fields["Accept"] == "text/html"){
-            QTextCodec* codec = QTextCodec::codecForName("utf8");
-            html = qPrintable(codec->toUnicode(html));
+        socket->writeData(resp.data(), resp.size());
+    }
+    else{
+
+        if (page == "/")
+            page = "/index.html";
+
+        auto& fields = socket->reqFields_;
+
+        if (!fields.contains("Accept") || fields["Accept"].contains("text/html"))
+            fields["Accept"] = "text/html";
+        else if (fields["Accept"].contains("text/css"))
+            fields["Accept"] = "text/css";
+
+        QByteArray html;
+
+        QFile file(QApplication::applicationDirPath() + "/web" + page);
+        if (file.exists()){
+
+            file.open(QIODevice::ReadOnly);
+
+            html = file.readAll();
+
+            file.close();
+
+            if (fields["Accept"] == "text/html"){
+                QTextCodec* codec = QTextCodec::codecForName("utf8");
+                html = qPrintable(codec->toUnicode(html));
+            }
         }
-    }  
-        
-    QByteArray resp;
-    resp += QString("HTTP/1.1 200 OK\r\n")
-         + "Content-Type: " + fields["Accept"] + "\r\n"
-         + "Connection: keep-alive\r\n"
-         + "Content-Length: " + QString::number(html.size()) + "\r\n"
-         + "\r\n";
-    
-    resp += html;
 
-    ((clientSocket*)parser->data)->writeData(resp.data(), resp.size());
+        QByteArray resp;
+        resp += QString("HTTP/1.1 200 OK\r\n")
+            + "Content-Type: " + fields["Accept"] + "\r\n"
+            + "Connection: keep-alive\r\n"
+            + "Content-Length: " + QString::number(html.size()) + "\r\n"
+            + "\r\n";
+
+        resp += html;
+
+        socket->writeData(resp.data(), resp.size());
+    }
 
     return 0;
+}
+
+QByteArray webServer::jsonGetAllSignals(){
+       
+    QJsonObject jnObject;
+        
+    auto sref = pfGetCopySignalRef();
+    for (auto& sign : sref){
+            
+        QJsonObject jnSign;
+        jnSign["name"] = sign->name.c_str();
+        jnSign["module"] = sign->module.c_str();
+        jnSign["type"] = int(sign->type);
+        jnSign["group"] = sign->group.c_str();
+        jnSign["comment"] = sign->comment.c_str();
+        jnSign["isActive"] = sign->isActive;
+
+        jnObject[(sign->name + sign->module).c_str()] = jnSign;     
+    }
+
+    QJsonDocument jsDoc(jnObject);
+   
+    return jsDoc.toJson();
 }

@@ -70,11 +70,14 @@ settingsPanel::settingsPanel(QWidget *parent){
 		ui.btnArchPath->setEnabled(isSel);
 		paramChange();
 	});
+    connect(ui.chbWebActive, SIGNAL(toggled), this, SLOT(paramChange()));
     connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
     connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
 
 	connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtWebIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtWebPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
     connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
@@ -95,6 +98,10 @@ void settingsPanel::showEvent(QShowEvent * event){
 	ui.txtIPAddr->setText(cng.tcp_addr);
 	ui.txtTCPPort->setText(QString::number(cng.tcp_port));
 	
+    ui.chbWebActive->setChecked(cng.web_ena);
+    ui.txtWebIPAddr->setText(cng.web_addr);
+    ui.txtWebPort->setText(QString::number(cng.web_port));
+
 	ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
 	
     ui.rbtnArchEna->setChecked(cng.outArchiveEna);
@@ -197,6 +204,10 @@ void settingsPanel::saveChange(){
 
 	cng.tcp_addr = ui.txtIPAddr->text();
 	cng.tcp_port = ui.txtTCPPort->text().toInt();
+
+    cng.web_ena = ui.chbWebActive->isChecked();
+    cng.web_addr = ui.txtWebIPAddr->text();
+    cng.web_port = ui.txtWebPort->text().toInt();
 
     cng.outArchiveEna = ui.rbtnArchEna->isChecked();
     cng.outArchivePath = ui.txtArchPath->text();

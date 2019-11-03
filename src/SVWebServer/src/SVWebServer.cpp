@@ -37,32 +37,28 @@ namespace SV_Web {
 
     void stopServer(){
 
-
+        if (wServer.isListening())
+          wServer.close();
     }
     	
 	void setGetCopySignalRef(pf_getCopySignalRef f) {
 
-		/*if (stp)
-            ((scriptPanel *)stp)->pfGetCopySignalRef = f;*/
+        wServer.pfGetCopySignalRef = f; 
 	}
 
     void setGetModuleData(pf_getModuleData f){
 
-       /* if (stp)
-            ((scriptPanel *)stp)->pfGetModuleData = f;*/
+        wServer.pfGetModuleData = f;
     }
 
 	void setGetSignalData(pf_getSignalData f) {
 
-		/*if (stp)
-            ((scriptPanel *)stp)->pfGetSignalData = f;*/
+        wServer.pfGetSignalData = f;
 	}
 
 	void setLoadSignalData(pf_loadSignalData f) {
-/*
-		if (stp)
-            ((scriptPanel *)stp)->pfLoadSignalData = f;
-	*/}
-    
+
+		wServer.pfLoadSignalData = f;
+    }   
     
 }

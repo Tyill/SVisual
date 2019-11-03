@@ -131,6 +131,8 @@ class App extends React.Component {
       
       this.props.onSetSignalsFromServer(signs);
 
+       /////////////////////////////////////
+      
       response = await fetch('api/dataParams');
       let dataParams = await response.json();     
             

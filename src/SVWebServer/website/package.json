@@ -1,7 +1,7 @@
 {
   "name": "svisual",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.4",
+  "description": "monitoring and recording of data for Arduino and STM32",
   "main": "bundle.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.prod.config.js",
