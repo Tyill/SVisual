@@ -1,19 +1,15 @@
 module.exports = {
   entry: './jsx/app.jsx',  
   output: {
+    publicPath: 'js/',
     path: __dirname + '/js/',
     filename: 'bundle.js'
   },
-  devtool: '#sourcemap',
-  mode: 'development',
-  stats: {
-   colors: true,
-   reasons: true
-  },
-  module: {
+  mode: 'production',
+    module: {
     rules: [
-      { test: /\.css$/, use: 'style-loader!css-loader'},
+      { test: /\.css$/, loader: 'style-loader!css-loader'},
       { test: /\.jsx?$/, exclude: /(node_modules)/, use: 'babel-loader' }
-    ]
+    ],    
   },  
 }
