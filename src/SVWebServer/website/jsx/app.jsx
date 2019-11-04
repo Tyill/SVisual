@@ -181,7 +181,7 @@ class App extends React.Component {
       const signs = this.props.signals,       
             snames = Object.values(signs).filter(it => it.isBuffEna)
                                          .map(it => it.name + it.module);
-     
+
       if (snames.length > 0){
 
         let req = "api/lastSignalData?";

@@ -232,7 +232,10 @@ class Graph extends React.Component {
      
       this.state.tmInterval.beginMs += cyclePacket;
       this.state.tmInterval.endMs = tmInterval.endMs;
-
+     
+      if ((this.state.tmInterval.endMs -  this.state.tmInterval.beginMs) < 1000)
+        this.state.tmInterval.beginMs = this.state.tmInterval.endMs - 1000;
+        
       if (this._isAutoResize){
         const valInterval = this.calcValueInterval();
         this.state.valInterval = valInterval;
@@ -264,12 +267,12 @@ class Graph extends React.Component {
            </Col>          
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
-          <Col style = {{ maxWidth : "50px", height: "300px" }}>
+          <Col style = {{ maxWidth : "50px", height: "250px" }}>
             <AxisValue valInterval= { this.state.valInterval}
                        axisParams= { this.state.axisParams}
                        onChange = { this.handleAxisValueChange } />    
           </Col>
-          <Col className="col" style={{height: "300px"}}>
+          <Col className="col" style={{height: "250px"}}>
             {legend} 
             <Plot tmInterval= { this.state.tmInterval}
                   valInterval= { this.state.valInterval}

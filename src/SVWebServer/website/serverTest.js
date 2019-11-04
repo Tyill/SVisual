@@ -8,6 +8,13 @@ const dataParams = {
     cycleTimeMs : 100, 
 };
 
+//app.use(express.static(__dirname + "/js"));
+
+// app.use(function(request, response){
+      
+//     response.sendFile(__dirname + "/index.html");
+// });
+
 app.get("/api/dataParams", function(request, response){
       
     response.send(dataParams);
@@ -34,6 +41,14 @@ app.get("/api/allSignals", function(request, response){
         },
         s3threeModule : {
             name : "s3",
+            module: "threeModule",
+            type : 0,
+            group: "threeGroup",
+            comment: "",
+            isActive: true, 
+        },   
+        s4threeModule : {
+            name : "s4",
             module: "threeModule",
             type : 0,
             group: "threeGroup",

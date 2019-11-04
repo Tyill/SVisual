@@ -150,7 +150,7 @@ void MainWin::load(){
     SV_Web::setLoadSignalData(loadSignalDataSrv);
     SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
     SV_Web::setGetSignalData(getSignalDataSrv);
-    SV_Web::setGetModuleData(getModuleDataSrv);
+    SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
 	bool err = false;
 	db = new sql(qUtf8Printable(cng.dbPath), err);

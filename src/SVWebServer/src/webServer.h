@@ -45,17 +45,26 @@ public:
         
     SV_Web::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
 
-    SV_Web::pf_getModuleData pfGetModuleData = nullptr;
+    SV_Web::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
 
     SV_Web::pf_getSignalData pfGetSignalData = nullptr;
 
     SV_Web::pf_loadSignalData pfLoadSignalData = nullptr;
     
+    void setConfig(const SV_Web::config& cng);
+
     QByteArray jsonGetAllSignals();
+    
+    QByteArray jsonGetDataParams();
+
+    QByteArray jsonGetLastSignalData(const QStringList& snames);
+
+    QByteArray jsonGetAllModules();
 
 private:
     void incomingConnection(qintptr handle) override;
 
+    SV_Web::config cng;
 
 };
 
@@ -73,9 +82,10 @@ private:
     http_parser parser_;
 
     QString cField_;
-    QMap<QString, QString> reqFields_;
-
     QString reqPage_;
+
+    QMap<QString, QString> reqFields_;
+    QStringList reqSignals_;
 
     webServer* server_ = nullptr;
 

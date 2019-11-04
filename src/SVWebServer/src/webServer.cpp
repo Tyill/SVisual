@@ -26,8 +26,14 @@
 #include "stdafx.h"
 #include "webServer.h"
 #include "SVConfig/SVConfigData.h"
+#include "SVConfig/SVConfigLimits.h"
 #include <QJsonDocument>
+#include <QUrl>
 
+void webServer::setConfig(const SV_Web::config& cng_){
+
+    cng = cng_;
+}
 
 void webServer::incomingConnection(qintptr handle){
 
@@ -56,15 +62,22 @@ void clientSocket::readData(){
     
         struct http_parser_url u{ 0 };
         if (http_parser_parse_url(url, length, 0, &u) != 0)
-            return -1;
-        
+            return -1;        
+
+        auto socket = (clientSocket*)parser->data;
+        socket->reqSignals_.clear();
+
         if (u.field_set & (1 << UF_PATH)) {
             for (int i = 0; i < UF_MAX; ++i){
 
                 QString fld = QString(url).mid(u.field_data[i].off, u.field_data[i].len);
 
-                if (!fld.isEmpty() && (fld[0] == '/'))
-                    ((clientSocket*)parser->data)->reqPage_ = fld;
+                if (fld.isEmpty()) continue;
+
+                if (fld[0] == '/')
+                    socket->reqPage_ = fld;
+                else if (fld.startsWith("sname"))
+                    socket->reqSignals_ = fld.split('&');
             }
         }
         return 0;
@@ -95,7 +108,13 @@ void clientSocket::readData(){
 
     if (parsed < nread) {
 
-        bool ok = false;
+        clientSocket* socket = (clientSocket*)parser_.data;
+
+        QByteArray resp;
+        resp += QString("HTTP/1.1 400 Bad Request\r\n")
+            + "\r\n";
+
+        socket->writeData(resp.data(), resp.size());
     }
 }
 
@@ -111,19 +130,16 @@ int response(http_parser* parser){
 
         if (page == "/api/allSignals")
             json = socket->server_->jsonGetAllSignals();
-   
-        /*"HTTP/1.1 200 OK\r\n
-            "X-Powered-By: Express\r\n"
-            "Content-Type: application/json; charset=utf-8\r\n"
-            "Content-Length: 325\r\n"
-        "ETag: W/"145 - 45gKJ / zJh / ykuS + KpUcKOTMYlKY"\r\n"
-    "Date: Sun, 03 Nov 2019 14:35:29 GMT\r\n"
-"Connection: close\r\n\r\n"*/
+        else if (page == "/api/dataParams")
+            json = socket->server_->jsonGetDataParams();
+        else if (page == "/api/lastSignalData")
+            json = socket->server_->jsonGetLastSignalData(socket->reqSignals_);
+        else if (page == "/api/allModules")
+            json = socket->server_->jsonGetAllModules();
 
         QByteArray resp;
         resp += QString("HTTP/1.1 200 OK\r\n")
             + "Content-Type: application/json; charset=utf-8\r\n"
-            + "Accept: application/json\r\n"
             + "Content-Length: " + QString::number(json.size()) + "\r\n"
             + "Connection: keep-alive\r\n"           
             + "\r\n";
@@ -154,11 +170,6 @@ int response(http_parser* parser){
             html = file.readAll();
 
             file.close();
-
-            if (fields["Accept"] == "text/html"){
-                QTextCodec* codec = QTextCodec::codecForName("utf8");
-                html = qPrintable(codec->toUnicode(html));
-            }
         }
 
         QByteArray resp;
@@ -181,20 +192,86 @@ QByteArray webServer::jsonGetAllSignals(){
     QJsonObject jnObject;
         
     auto sref = pfGetCopySignalRef();
-    for (auto& sign : sref){
+    for (auto sign : sref){
             
         QJsonObject jnSign;
-        jnSign["name"] = sign->name.c_str();
-        jnSign["module"] = sign->module.c_str();
+        jnSign["name"] = QString::fromStdString(sign->name);
+        jnSign["module"] = QString::fromStdString(sign->module);
         jnSign["type"] = int(sign->type);
-        jnSign["group"] = sign->group.c_str();
-        jnSign["comment"] = sign->comment.c_str();
+        jnSign["group"] = QString::fromStdString(sign->group);
+        jnSign["comment"] = QString::fromStdString(sign->comment);
         jnSign["isActive"] = sign->isActive;
 
-        jnObject[(sign->name + sign->module).c_str()] = jnSign;     
+        jnObject[QString::fromStdString(sign->name + sign->module)] = jnSign;
     }
 
     QJsonDocument jsDoc(jnObject);
    
+    return jsDoc.toJson();
+}
+
+QByteArray webServer::jsonGetDataParams(){
+
+    QJsonObject jnParams;
+    jnParams["packetSize"] = SV_PACKETSZ;
+    jnParams["cycleTimeMs"] = SV_CYCLEREC_MS;
+
+    QJsonDocument jsDoc(jnParams);
+
+    return jsDoc.toJson();
+}
+
+QByteArray webServer::jsonGetLastSignalData(const QStringList& snames){
+        
+    QJsonObject jnObject;
+            
+    for (auto& spair : snames){
+        
+        auto sname = spair.split("=")[1];
+
+        sname = QUrl(sname).toString();
+
+        auto sd = pfGetSignalData(sname);
+
+        if (!sd) continue;
+
+        QJsonObject jnSign;
+        jnSign["beginTime"] = qint64(sd->lastData.beginTime);
+                
+        QJsonArray jnVals;
+        for (int i = 0; i < SV_PACKETSZ; ++i){
+
+            switch (sd->type){
+              case SV_Cng::valueType::tBool: jnVals.append(sd->lastData.vals[i].tBool); break;
+              case SV_Cng::valueType::tInt: jnVals.append(sd->lastData.vals[i].tInt); break;
+              case SV_Cng::valueType::tFloat: jnVals.append(sd->lastData.vals[i].tFloat); break;
+            }
+        }
+        jnSign["vals"] = jnVals;
+
+        jnObject[sname] = jnSign;
+    }
+
+    QJsonDocument jsDoc(jnObject);
+
+    return jsDoc.toJson();
+}
+
+QByteArray webServer::jsonGetAllModules(){
+        
+    QJsonObject jnObject;
+
+    auto& mref = pfGetCopyModuleRef();
+    
+    for (auto m : mref){
+
+        QJsonObject jnMod;
+        jnMod["isActive"] = m->isActive;
+
+        jnObject[QString::fromStdString(m->module)] = jnMod;
+    }
+
+    QJsonDocument jsDoc(jnObject);
+
     return jsDoc.toJson();
 }
