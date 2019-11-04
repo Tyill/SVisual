@@ -21,14 +21,31 @@ class Graph extends React.Component {
                        minValDashStep : 50,
                        maxValDashStep : 100}
 
+    this._graphRef = null;
+
+    let offsPos = {
+      left : 0,
+      top : 0, 
+      right : 0,
+      bottom : 0,     
+    }
+
+    let csize = {
+      width : 0,
+      height : 0,
+    }
+
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 
                   valInterval : { begin : 0, end : 1000},
-                  axisParams,                  
+                  axisParams, 
+                  offsPos, 
+                  csize,                
                  };   
 
     this._signParams = {};
     this._isPlay = true;
     this._isAutoResize = true;
+    this._isResizePos = false;
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
@@ -44,6 +61,26 @@ class Graph extends React.Component {
     this.handleAutoResize = this.handleAutoResize.bind(this);   
     this.handlePlay = this.handlePlay.bind(this); 
     this.handleClose = this.handleClose.bind(this);
+
+    this.handleChangePosContainer = this.handleChangePosContainer.bind(this);
+    this.handleResizeContainer = this.handleResizeContainer.bind(this);
+  }
+
+  componentDidMount() {
+   
+    const graph = this._graphRef;
+          
+    this.state.csize.width = graph.clientWidth,
+    this.state.csize.height = graph.clientHeight;
+  }
+
+
+  componentDidUpdate() {
+   
+    const graph = this._graphRef;
+          
+    this.state.csize.width = graph.clientWidth,
+    this.state.csize.height = graph.clientHeight;    
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
@@ -79,6 +116,55 @@ class Graph extends React.Component {
     this.props.onDelSignal(this.props.iGraph, name + module);
   }
  
+  handleChangePosContainer(event){
+   
+    // left mouse button
+    if (event.nativeEvent.which === 1){
+  
+      let distX = event.nativeEvent.movementX,
+          distY = event.nativeEvent.movementY;
+
+      this.setState((cState, props) => {
+
+        let offsPos = {
+          left : cState.offsPos.left + distX,
+          top : cState.offsPos.top + distY,
+          right : cState.offsPos.right,
+          bottom : cState.offsPos.bottom,
+        }
+        return {offsPos};
+      })
+    }
+  }
+
+  handleResizeContainer(event){
+
+    // left mouse button
+    if (event.nativeEvent.which === 1){
+      
+      this._isResizePos = true;
+
+      let distX = event.nativeEvent.movementX,
+          distY = event.nativeEvent.movementY;
+
+      this.setState((cState, props) => {
+
+        let offsPos = {
+          left : cState.offsPos.left,
+          top : cState.offsPos.top,
+          right : cState.offsPos.right  + distX,
+          bottom : cState.offsPos.bottom  + distY,
+        }
+
+        let csize = {
+          width : cState.csize.width + distX,
+          height : cState.csize.height + distY,
+        }
+        return {offsPos, csize};
+      })
+    }
+  }
+
   handleResizeFull(){
 
     const tmInterval = this.calcTimeInterval();
@@ -242,9 +328,22 @@ class Graph extends React.Component {
       }
     }
 
+    let style = {
+      position : "relative",
+      ...this.state.offsPos,
+    }
+
+    if (this._isResizePos){
+      style.width = this.state.csize.width;
+      style.minHeight = this.state.csize.height;
+      style.maxHeight = this.state.csize.height;
+    }
+
     return (
-      <Container>
-        <Row noGutters={true} style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "silver"}} >
+      <Container style = {style} ref={ el => this._graphRef = el }>
+        <Row noGutters={true} 
+             style={{ borderRadius: "3px 3px 0px 0px", padding : "5px", backgroundColor : "silver"}}
+             onMouseMove = {this.handleChangePosContainer} >
           <Col style = {{ maxWidth : "50px" }} />
           <Col className="col">
            <Button size="sm" className= { "icon-resize-full-alt"} style = {buttonStyle}
@@ -261,9 +360,9 @@ class Graph extends React.Component {
            <Button size="sm" variant = { this._isPlay ? "light" : "primary" }
                    className= { this._isPlay ? "icon-pause" : "icon-play" } style = {buttonStyle}
                    onClick = {this.handlePlay} /> 
-            <Button className="close" dataDismiss="modal" ariaLabel="Close" onClick = { this.handleClose } > 
-                <span ariaHidden="true">&times;</span>
-            </Button>
+           <button type="button" className="close" aria-label="Close" onClick = { this.handleClose }>
+              <span aria-hidden="true">&times;</span>
+           </button>
            </Col>          
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
@@ -294,6 +393,9 @@ class Graph extends React.Component {
             <AxisTime tmInterval={ this.state.tmInterval}
                       axisParams={ this.state.axisParams}
                       onChange = { this.handleAxisTimeChange } /> 
+            <a style = {{ position : "absolute", right : -45, top : 25, cursor: "default", 
+                          width : "50px", height : "50px" }} 
+                onMouseMove = {this.handleResizeContainer}>&#8250;</a>
           </Col>
         </Row>       
       </Container>
