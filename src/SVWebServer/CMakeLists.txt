@@ -14,4 +14,4 @@ add_library(SVWebServer SHARED ${SRC_Web})
 
 target_link_libraries(SVWebServer SVConfig SVAuxFunc)
 
-qt5_use_modules(SVWebServer Core)
+qt5_use_modules(SVWebServer Core Network)

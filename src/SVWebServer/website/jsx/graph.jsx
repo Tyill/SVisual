@@ -261,8 +261,8 @@ class Graph extends React.Component {
            <Button size="sm" variant = { this._isPlay ? "light" : "primary" }
                    className= { this._isPlay ? "icon-pause" : "icon-play" } style = {buttonStyle}
                    onClick = {this.handlePlay} /> 
-            <Button className="close" onClick = { this.handleClose } > 
-                <span>&times;</span>
+            <Button className="close" dataDismiss="modal" ariaLabel="Close" onClick = { this.handleClose } > 
+                <span ariaHidden="true">&times;</span>
             </Button>
            </Col>          
         </Row>

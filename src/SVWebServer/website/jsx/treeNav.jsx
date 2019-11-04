@@ -33,7 +33,7 @@ class TreeNav extends React.Component {
                                className="treeNav-node-container"
                                style={{ cursor: "default", 
                                         paddingLeft: 10 + level * 5,
-                                        backgroundColor : (obj.isActive ? "silver" : "rgb(137, 0, 143)") }}
+                                        backgroundColor : (obj.isActive ? "silver" : "rgb(200, 20, 20)") }}
                                onClick= { (e) => {obj.isShow = !obj.isShow;
                                                  this.setState({ scheme : this.props.scheme});} }> 
                                {obj.submenu} 
@@ -55,7 +55,11 @@ class TreeNav extends React.Component {
     for(let obj of this.props.scheme)
       this.renderSubmenu(0, "", obj, outObjList);
 
-    return <div style={{ borderRadius: "3px 3px 3px 3px", overflow: "auto"}}> {outObjList}  </div>
+    return <div style={{ borderRadius: "3px 3px 3px 3px", 
+                         overflow: "auto",
+                         maxHeight : document.documentElement.clientHeight * 0.8 + "px"}}>
+            {outObjList}
+           </div>
   }
 }
 

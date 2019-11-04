@@ -11,7 +11,7 @@ if (UNIX)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif(UNIX)
 
-add_executable(SVMonitor ${SRC_Mon} src/structurs.h)
+add_executable(SVMonitor ${SRC_Mon})
 
 if(MSVC) 
    set_target_properties (SVMonitor PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /NODEFAULTLIB:LIBCMT")
@@ -31,6 +31,6 @@ if(WIN32)
 
 endif()
 
-target_link_libraries(SVMonitor SVConfig SVAuxFunc SVGraphPanel SVTriggerPanel SVExportPanel SVScriptPanel SVServer)
+target_link_libraries(SVMonitor SVConfig SVAuxFunc SVGraphPanel SVTriggerPanel SVExportPanel SVScriptPanel SVServer SVWebServer)
 
 qt5_use_modules(SVMonitor Core Widgets Network Gui SerialPort PrintSupport)

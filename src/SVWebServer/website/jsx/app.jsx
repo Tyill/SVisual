@@ -178,6 +178,8 @@ class App extends React.Component {
 
     let update = async function () {
       
+      let tmStart = Date.now();
+      
       const signs = this.props.signals,       
             snames = Object.values(signs).filter(it => it.isBuffEna)
                                          .map(it => it.name + it.module);
@@ -227,12 +229,23 @@ class App extends React.Component {
           this.setState(navScheme);
 
         }catch(err){
-          console.log('api/allModules error');              
+          console.log('api/allModules error'); 
+          
+          let navScheme = this.state.navScheme;
+
+          for (let it of navScheme)    
+            it.isActive = false; 
+
+          this.setState(navScheme);
         }
       }
       ++count;
 
-      setTimeout(update, dataParams.cycleTimeMs * dataParams.packetSize);
+      let tout = Date.now() - tmStart;
+     
+      tout = Math.max(0, dataParams.cycleTimeMs * dataParams.packetSize * 0.9 - tout);
+      
+      setTimeout(update, tout);
     };
 
     update = update.bind(this);
