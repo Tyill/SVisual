@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-
+// @flow
 import React from "react"
 import PropTypes from "prop-types";
 import {Container, Row, Col, Button } from "react-bootstrap";
@@ -7,6 +7,29 @@ import AxisValue from "./axisValue.jsx"
 import AxisTime from "./axisTime.jsx"
 import Plot from "./plot.jsx"
 import "../css/fontello.css";
+
+/*:: import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; */
+/*:: import type {signalBufferEnableType} from "./redux/actions.jsx"; */
+
+// iGraph = {i}                 
+// dataParams = {this.props.dataParams}
+// signals = {signals}  
+// backgroundColor = {this.props.config.backgroundColor
+// onAddSignal = {this.handleAddSignal}
+// onDelSignal = {this.handleDelSignal} 
+// onCloseGraph = {this.handleCloseGraph} />
+
+/*::   
+type Props = {
+  signals : { obj: signalType },
+  config : configType,
+  dataParams : dataParamsType,  
+  listGraph : Array<Array<string>>,
+  onCloseGraph : (iGraph : number) => void,
+  onSignalBufferEnable: signalBufferEnableType,
+};
+
+*/
 
 export default
 class Graph extends React.Component {

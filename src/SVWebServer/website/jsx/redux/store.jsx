@@ -6,6 +6,9 @@ import { createStore } from 'redux'
 /*::
 
 export 
+type snameType = string
+
+export 
 type signalDataType = Array<{ beginTime : number,
                               vals : Array<number> }>
 

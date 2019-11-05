@@ -15,7 +15,7 @@ import { updateFromServer,
 import Store from "./redux/store.jsx"; 
 
 /*::
-import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; 
+import type {snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; 
 import type {changeConfigType, setSignalsFromServerType,
                   setDataParamsType, updateFromServerType, signalBufferEnableType} from "./redux/actions.jsx";
 import type {navSchemeType} from "./treeNav.jsx";
@@ -38,7 +38,7 @@ type Props = {
 
 type State = {
   navScheme: Array<string | navSchemeType>,
-  listGraph: Array<Array<string>>,
+  listGraph: Array<Array<snameType>>,
   isShowConfig : boolean,
   isDarkThemeConfig : boolean,
 }
@@ -62,8 +62,9 @@ class App extends React.Component/*::<Props, State>*/{
                    listGraph: [[]],
                    isShowConfig : false,
                    isDarkThemeConfig : false };
-                             
-    document.body.style.overflow = "hidden";   
+
+    if (document.body)                       
+      document.body.style.overflow = "hidden";   
 
     this.handleAddGraph = this.handleAddGraph.bind(this); 
     this.handleCloseGraph = this.handleCloseGraph.bind(this);  
@@ -146,10 +147,12 @@ class App extends React.Component/*::<Props, State>*/{
 
   componentDidMount() {
    
-     ReactDOM.findDOMNode(this).addEventListener('wheel', (event) => {
-       event.preventDefault();
-     }, false);
-    
+    let nd = ReactDOM.findDOMNode(this);
+    if (nd){
+      nd.addEventListener('wheel', (event /*:: : any*/) => {
+        event.preventDefault();
+      }, false);
+    }
    
     (async () => {
       let response = await fetch('api/allSignals');
@@ -190,7 +193,7 @@ class App extends React.Component/*::<Props, State>*/{
   
           it = { submenu : s.module,
                            isShow : true,
-                           iActive : true,
+                           isActive : true,
                            items : []};
   
           navScheme.push(it);
@@ -289,10 +292,12 @@ class App extends React.Component/*::<Props, State>*/{
     
   render(){
 
+    let clientHeight = document.documentElement ? document.documentElement.clientHeight : 300;
+
     return (
       <div>
       <Container className="col app-container"
-                 style={{overflow: "auto", height: document.documentElement.clientHeight}}>
+                 style={{overflow: "auto", height: clientHeight}}>
         <Row noGutters={true} className="m-1 p-2"
              style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
           <Col className="col-auto"> 
@@ -328,9 +333,6 @@ const Checkbox = props => (
    <input type="checkbox" {...props} />
 )
 
-
-
-
 const buttonStyle = {   
   fontSize : "16pt", 
   margin : "5px",
@@ -354,9 +356,13 @@ const mapDispatchToProps = (dispatch) => {
 
 let AppRedux = connect(mapStateToProps, mapDispatchToProps)(App);
 
-ReactDOM.render(
-  <Provider store={Store}>
-     <AppRedux /> ,
-  </Provider>,
-  document.getElementById('root')
-);
+const root = document.getElementById('root')
+
+if (root){
+  ReactDOM.render(
+    <Provider store={Store}>
+       <AppRedux /> ,
+    </Provider>,
+    root
+  );
+}

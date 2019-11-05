@@ -8,7 +8,7 @@ import "../css/fontello.css";
 export
 type navSchemeType = { submenu : string,
                        isShow : boolean,
-                       iActive : boolean,
+                       isActive : boolean,
                        items : Array<string | navSchemeType>
 }
 
@@ -22,18 +22,19 @@ type State = {
 }
 */
 
-export default 
-class TreeNav extends React.Component/*:: <Props, State>*/ {
- 
-  constructor(props){
+export default
+class TreeNav extends React.Component/*::<Props, State>*/{
+   
+  constructor(props /*:: : any */){
     super(props);   
   
     this.state = { scheme : this.props.scheme};
   }
 
-  renderSubmenu(level /*:: : number*/, submenu/*:: : string*/, obj, outObjList){
+  renderSubmenu(level /*:: : number*/, submenu/*:: : string*/, 
+     obj /*:: : string | navSchemeType*/, outObjList /*:: : any*/){
    
-    if (typeof(obj) == "string"){
+    if (typeof(obj) === "string"){
 
       outObjList.push(<section key={level + "." + obj} 
                                className="treeNav-leaf-container"
@@ -72,9 +73,11 @@ class TreeNav extends React.Component/*:: <Props, State>*/ {
     for(let obj of this.props.scheme)
       this.renderSubmenu(0, "", obj, outObjList);
 
+    const clientHeight = document.documentElement ? document.documentElement.clientHeight : 300;
+
     return <div style={{ borderRadius: "3px 3px 3px 3px", 
                          overflow: "auto",
-                         maxHeight : document.documentElement.clientHeight * 0.8 + "px"}}>
+                         maxHeight : clientHeight * 0.8 + "px"}}>
             {outObjList}
            </div>
   }

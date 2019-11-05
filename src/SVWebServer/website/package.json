@@ -22,12 +22,17 @@
   "babel": {
     "presets": [
       "@babel/preset-react",
-      "@babel/preset-flow"
+      "@babel/preset-flow",
+      "@babel/preset-env"
     ]
   },
+  "browserslist": [
+    "defaults"
+  ],
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.3",
@@ -37,6 +42,7 @@
     "eslint": "^6.6.0",
     "eslint-plugin-react": "^7.16.0",
     "express": "^4.17.1",
+    "flow": "^0.2.3",
     "flow-bin": "^0.111.1",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.12",

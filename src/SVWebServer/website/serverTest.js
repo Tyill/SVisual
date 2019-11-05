@@ -8,11 +8,14 @@ const dataParams = {
     cycleTimeMs : 100, 
 };
 
-//app.use(express.static(__dirname + "/js"));
+// app.use(express.static(__dirname + "/js"));
 
 // app.use(function(request, response){
-      
-//     response.sendFile(__dirname + "/index.html");
+    
+//     let path = request.path;
+//     if (path == '/') path = "/index.html";
+
+//     response.sendFile(__dirname + path);
 // });
 
 app.get("/api/dataParams", function(request, response){
