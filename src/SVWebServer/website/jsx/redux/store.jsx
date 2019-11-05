@@ -4,6 +4,11 @@ import ComboReducer from "./reducers.jsx";
 import { createStore } from 'redux'
 
 /*::
+
+export 
+type signalDataType = Array<{ beginTime : number,
+                              vals : Array<number> }>
+
 export
 type signalType = { name : string,   
                     module : string, 
@@ -11,8 +16,7 @@ type signalType = { name : string,
                     group : string,  
                     comment : string,
                     isBuffEna : boolean,
-                    buffVals : Array<{ beginTime : number, 
-                                       vals : Array<number> }>
+                    buffVals : signalDataType,
 }
 
 export
@@ -23,9 +27,15 @@ export
 type dataParamsType = { packetSize : number,
                         cycleTimeMs : number,
 }
+
+export
+type storeType = { config : configType,
+                   dataParams : dataParamsType,
+                   signals : {obj : signalType},
+}
 */
 
-const initialState = {
+const initialState /*:: : storeType */ = {
   config : {
     backgroundColor : "white",
   },

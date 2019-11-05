@@ -13,37 +13,48 @@ import { updateFromServer,
          signalBufferEnable,
          changeConfig } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
-/*:: import type {signalType, configType, dataParamsType} from "./redux/store.jsx"; */
+
+/*::
+import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; 
+import type {changeConfigType, setSignalsFromServerType,
+                  setDataParamsType, updateFromServerType, signalBufferEnableType} from "./redux/actions.jsx";
+import type {navSchemeType} from "./treeNav.jsx";
+*/
 
 import "../css/app.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 /*::   
 type Props = {
-  signals : signalType,
-  onSignalBufferEnable: Function,
-  onChangeConfig: Function,
-  onSetSignalsFromServer: Function,
-  onSetDataParams: Function,
-  onUpdateFromServer: Function,
+  signals : { obj: signalType },
+  config : configType,
+  dataParams : dataParamsType,
+  onSignalBufferEnable: signalBufferEnableType,
+  onChangeConfig: changeConfigType,
+  onSetSignalsFromServer: setSignalsFromServerType,
+  onSetDataParams: setDataParamsType,
+  onUpdateFromServer: updateFromServerType,
 };
 
-type navSchemeType = { submenu : string,
-                       isShow : boolean,
-                       iActive : boolean,
-                       items : Array<string>
-}
-
 type State = {
-  navScheme: Array<navSchemeType>,
+  navScheme: Array<string | navSchemeType>,
   listGraph: Array<Array<string>>,
   isShowConfig : boolean,
   isDarkThemeConfig : boolean,
 }
+
 */
 
 class App extends React.Component/*::<Props, State>*/{
   
+  /*::
+  handleAddGraph: () => void;
+  handleCloseGraph: (iGraph : number) => void;
+  handleShowConfig: () => void;
+  handleChangeConfig: (event : any) => void;
+  handleAddSignalOnGraph: (sname : string) => void;
+  */
+
   constructor(props){
     super(props);
     
@@ -51,9 +62,9 @@ class App extends React.Component/*::<Props, State>*/{
                    listGraph: [[]],
                    isShowConfig : false,
                    isDarkThemeConfig : false };
-                   
-    document.body.style.overflow = "hidden";
-   
+                             
+    document.body.style.overflow = "hidden";   
+
     this.handleAddGraph = this.handleAddGraph.bind(this); 
     this.handleCloseGraph = this.handleCloseGraph.bind(this);  
     this.handleShowConfig = this.handleShowConfig.bind(this); 
@@ -69,7 +80,7 @@ class App extends React.Component/*::<Props, State>*/{
        ));
   }
 
-  handleCloseGraph(iGraph){
+  handleCloseGraph(iGraph /*:: : number*/){
    
     if (iGraph < this.state.listGraph.length){ 
 
@@ -87,7 +98,7 @@ class App extends React.Component/*::<Props, State>*/{
 
   }
 
-  handleAddSignalOnGraph(sname){
+  handleAddSignalOnGraph(sname /*:: : string*/){
 
     if (this.state.listGraph.length && !this.state.listGraph[0].includes(sname)){ 
 
@@ -116,7 +127,7 @@ class App extends React.Component/*::<Props, State>*/{
 
   handleChangeConfig(e){
     
-    let config = {
+    let config /*:: : configType */=  {
       backgroundColor : "white",
     };
 
@@ -139,18 +150,14 @@ class App extends React.Component/*::<Props, State>*/{
        event.preventDefault();
      }, false);
     
+   
     (async () => {
       let response = await fetch('api/allSignals');
-      let signs = await response.json();     
+      let signs /*:: : {obj : signalType}*/ = await response.json();     
 
       for (let k in signs){
         signs[k].isBuffEna = false,
-        signs[k].buffVals = [
-          //          {
-          //            time : 0,
-          //            vals : []
-          //          }
-        ]    
+        signs[k].buffVals = []    
       }
       
       this.props.onSetSignalsFromServer(signs);
@@ -168,45 +175,47 @@ class App extends React.Component/*::<Props, State>*/{
 
       /////////////////////////////////////
 
-      let navScheme = [];
+      let navScheme /*:: : Array<navSchemeType | string> */ = [];
       for (let k in signs){
     
         let s = signs[k];
 
-        let it = navScheme.find((it) => {
-          return s.module == it.submenu;
+        let it /*:: : any */ = navScheme.find((it) => {
+
+          return (typeof it === 'object') && (typeof it.submenu === 'string') ?
+                    s.module == it.submenu : false;
         });
   
         if (!it){ 
   
           it = { submenu : s.module,
-                 isShow : true,
-                 iActive : true,
-                 items : []};
+                           isShow : true,
+                           iActive : true,
+                           items : []};
   
           navScheme.push(it);
         }
-  
+        
         it.items.push(s.name);
       }
-    
+          
       this.setState({navScheme});
 
     })().catch(() => console.log('api/allSignals error'));
 
   }
 
-  updateSignalData(dataParams){
+  updateSignalData(dataParams /*:: : dataParamsType */){
 
     let count = 0;
 
     let update = async function () {
       
-      let tmStart = Date.now();
+      let tmStart /*:: : number */ = Date.now();
       
       const signs = this.props.signals,       
-            snames = Object.values(signs).filter(it => it.isBuffEna)
-                                         .map(it => it.name + it.module);
+            snames = Object.values(signs).filter((it /*:: : any */)  => it.isBuffEna)
+                                         .map((it /*:: : any */) => it.name + it.module);
 
       if (snames.length > 0){
 
@@ -242,25 +251,26 @@ class App extends React.Component/*::<Props, State>*/{
             
             let module = k;
             
-            let it = navScheme.find((it) => {
-              return module == it.submenu;
+            let it /*:: : any */ = navScheme.find((it) => {
+              return (typeof it === 'object') && (typeof it.submenu === 'string') ?
+                    module == it.submenu : false;
             });
   
             if (it)  
               it.isActive = modState[k].isActive; 
           }
 
-          this.setState(navScheme);
+          this.setState({navScheme});
 
         }catch(err){
           console.log('api/allModules error'); 
           
           let navScheme = this.state.navScheme;
 
-          for (let it of navScheme)    
+          for (let it /*:: : any */ of navScheme)    
             it.isActive = false; 
 
-          this.setState(navScheme);
+          this.setState({navScheme});
         }
       }
       ++count;

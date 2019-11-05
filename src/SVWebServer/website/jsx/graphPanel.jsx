@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-
+// @flow
 import React from "react"
 import { connect } from "react-redux";
 import {Container, Row, Col } from "react-bootstrap";
@@ -7,7 +7,28 @@ import PropTypes from "prop-types";
 import Graph from "./graph.jsx";
 import { signalBufferEnable } from "./redux/actions.jsx";
 
-class GraphPanel extends React.Component {
+/*:: import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; */
+/*:: import type {signalBufferEnableType} from "./redux/actions.jsx"; */
+
+/*::   
+type Props = {
+  signals : { obj: signalType },
+  config : configType,
+  dataParams : dataParamsType,  
+  listGraph : Array<Array<string>>,
+  onCloseGraph : (iGraph : number) => void,
+  onSignalBufferEnable: signalBufferEnableType,
+};
+
+*/
+
+class GraphPanel extends React.Component/*::<Props>*/ {
+
+  /*::
+  handleAddSignal: (iGraph : number, sname : string) => void;
+  handleDelSignal: (iGraph : number, sname : string) => void;
+  handleCloseGraph: (iGraph : number) => void;
+  */
 
   constructor(props){
     super(props);   

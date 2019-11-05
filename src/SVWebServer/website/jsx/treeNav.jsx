@@ -1,20 +1,37 @@
 /* eslint-disable no-unused-vars */
-
+// @flow
 import React from "react"
-import PropTypes from "prop-types";
 import "../css/treeNav.css";
 import "../css/fontello.css";
 
-export default 
-class TreeNav extends React.Component {
+/*::   
+export
+type navSchemeType = { submenu : string,
+                       isShow : boolean,
+                       iActive : boolean,
+                       items : Array<string | navSchemeType>
+}
 
+type Props = {
+  scheme : Array<string | navSchemeType>,
+  onDoubleClick : (sname : string) => void
+}
+
+type State = {
+  scheme: Array<string | navSchemeType>, 
+}
+*/
+
+export default 
+class TreeNav extends React.Component/*:: <Props, State>*/ {
+ 
   constructor(props){
     super(props);   
   
     this.state = { scheme : this.props.scheme};
   }
 
-  renderSubmenu(level, submenu, obj, outObjList){
+  renderSubmenu(level /*:: : number*/, submenu/*:: : string*/, obj, outObjList){
    
     if (typeof(obj) == "string"){
 
@@ -62,7 +79,3 @@ class TreeNav extends React.Component {
            </div>
   }
 }
-
-TreeNav.propTypes = {
-   // scheme_: PropTypes.object,
-};
