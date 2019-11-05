@@ -26,13 +26,11 @@ class Graph extends React.Component {
     let offsPos = {
       left : 0,
       top : 0, 
-      right : 0,
-      bottom : 0,     
     }
 
     let csize = {
       width : 0,
-      height : 0,
+      height : 250,
     }
 
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 
@@ -45,7 +43,7 @@ class Graph extends React.Component {
     this._signParams = {};
     this._isPlay = true;
     this._isAutoResize = true;
-    this._isResizePos = false;
+    this._isResizeComponent = false;
 
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
@@ -70,8 +68,7 @@ class Graph extends React.Component {
    
     const graph = this._graphRef;
           
-    this.state.csize.width = graph.clientWidth,
-    this.state.csize.height = graph.clientHeight;
+    this.state.csize.width = graph.clientWidth;
   }
 
 
@@ -79,8 +76,7 @@ class Graph extends React.Component {
    
     const graph = this._graphRef;
           
-    this.state.csize.width = graph.clientWidth,
-    this.state.csize.height = graph.clientHeight;    
+    this.state.csize.width = graph.clientWidth;    
   }
 
   handleAxisTimeChange(tmInterval, axisParams){
@@ -129,8 +125,6 @@ class Graph extends React.Component {
         let offsPos = {
           left : cState.offsPos.left + distX,
           top : cState.offsPos.top + distY,
-          right : cState.offsPos.right,
-          bottom : cState.offsPos.bottom,
         }
         return {offsPos};
       })
@@ -142,25 +136,18 @@ class Graph extends React.Component {
     // left mouse button
     if (event.nativeEvent.which === 1){
       
-      this._isResizePos = true;
+      this._isResizeComponent = true;
 
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
 
       this.setState((cState, props) => {
 
-        let offsPos = {
-          left : cState.offsPos.left,
-          top : cState.offsPos.top,
-          right : cState.offsPos.right  + distX,
-          bottom : cState.offsPos.bottom  + distY,
-        }
-
         let csize = {
           width : cState.csize.width + distX,
           height : cState.csize.height + distY,
         }
-        return {offsPos, csize};
+        return {csize};
       })
     }
   }
@@ -329,15 +316,13 @@ class Graph extends React.Component {
     }
 
     let style = {
-      position : "relative",
+      position : this._isResizeComponent ? "absolute" : "relative",
       ...this.state.offsPos,
     }
 
-    if (this._isResizePos){
+    if (this._isResizeComponent)
       style.width = this.state.csize.width;
-      style.minHeight = this.state.csize.height;
-      style.maxHeight = this.state.csize.height;
-    }
+    
 
     return (
       <Container style = {style} ref={ el => this._graphRef = el }>
@@ -366,12 +351,12 @@ class Graph extends React.Component {
            </Col>          
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
-          <Col style = {{ maxWidth : "50px", height: "250px" }}>
+          <Col style = {{ maxWidth : "50px", height: this.state.csize.height }}>
             <AxisValue valInterval= { this.state.valInterval}
                        axisParams= { this.state.axisParams}
                        onChange = { this.handleAxisValueChange } />    
           </Col>
-          <Col className="col" style={{height: "250px"}}>
+          <Col className="col" style={{height: this.state.csize.height}}>
             {legend} 
             <Plot tmInterval= { this.state.tmInterval}
                   valInterval= { this.state.valInterval}
@@ -393,8 +378,8 @@ class Graph extends React.Component {
             <AxisTime tmInterval={ this.state.tmInterval}
                       axisParams={ this.state.axisParams}
                       onChange = { this.handleAxisTimeChange } /> 
-            <a style = {{ position : "absolute", right : -45, top : 25, cursor: "default", 
-                          width : "50px", height : "50px" }} 
+            <a style = {{ position : "absolute", right : -20, top : 10, cursor: "default", 
+                          width : "50px", height : "50px", paddingLeft : 25, paddingTop : 15 }} 
                 onMouseMove = {this.handleResizeContainer}>&#8250;</a>
           </Col>
         </Row>       
