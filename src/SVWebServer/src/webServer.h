@@ -65,7 +65,7 @@ private:
     void incomingConnection(qintptr handle) override;
 
     SV_Web::config cng;
-
+    
 };
 
 class clientSocket : public QTcpSocket

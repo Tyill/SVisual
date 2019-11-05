@@ -46,15 +46,7 @@ app.get("/api/allSignals", function(request, response){
             group: "threeGroup",
             comment: "",
             isActive: true, 
-        },   
-        s4threeModule : {
-            name : "s4",
-            module: "threeModule",
-            type : 0,
-            group: "threeGroup",
-            comment: "",
-            isActive: true, 
-        },        
+        },    
     };
    
     response.send(signals);

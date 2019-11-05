@@ -36,7 +36,7 @@ settingsPanel::settingsPanel(QWidget *parent){
 	ui.setupUi(this);
 	
 	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveChange()));
-    connect(ui.btnArchPath, SIGNAL(clicked()), this, SLOT(selDirArch()));
+  connect(ui.btnArchPath, SIGNAL(clicked()), this, SLOT(selDirArch()));
 	connect(ui.rbtnConnectByCom, &QRadioButton::toggled, this, [this] (){
 		
 		bool isSel = ui.rbtnConnectByCom->isChecked();
@@ -70,15 +70,15 @@ settingsPanel::settingsPanel(QWidget *parent){
 		ui.btnArchPath->setEnabled(isSel);
 		paramChange();
 	});
-    connect(ui.chbWebActive, SIGNAL(toggled), this, SLOT(paramChange()));
-    connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
-    connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
+  connect(ui.chbWebActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
+  connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
+  connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
 
 	connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-    connect(ui.txtWebIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-    connect(ui.txtWebPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-    connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtWebIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtWebPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	

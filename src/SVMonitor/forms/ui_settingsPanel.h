@@ -82,7 +82,7 @@ public:
     {
         if (settingsPanelClass->objectName().isEmpty())
             settingsPanelClass->setObjectName(QStringLiteral("settingsPanelClass"));
-        settingsPanelClass->resize(665, 553);
+        settingsPanelClass->resize(603, 486);
         settingsPanelClass->setMinimumSize(QSize(550, 350));
         settingsPanelClass->setMaximumSize(QSize(700, 16777215));
         verticalLayout_3 = new QVBoxLayout(settingsPanelClass);
