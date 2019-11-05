@@ -1,8 +1,7 @@
-{
+module.exports = {
     "env": {
         "browser": true,
-        "es6": true,
-        "node": true
+        "es6": true
     },
     "extends": "eslint:recommended",
     "globals": {
@@ -16,9 +15,11 @@
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
+    "parser": "babel-eslint",
     "plugins": [
         "react"
     ],
     "rules": {
+        
     }
-}
+};

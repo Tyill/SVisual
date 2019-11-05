@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
+// @flow
 import React from "react";
 import ReactDOM from "react-dom";
 import { connect, Provider } from "react-redux";
 import {Container, Row, Col, Button, Modal} from "react-bootstrap";
 import TreeNav from "./treeNav.jsx";
 import GraphPanelRedux from "./graphPanel.jsx";
-import PropTypes from 'prop-types';
  
 import { updateFromServer, 
          setDataParams, 
@@ -13,12 +13,36 @@ import { updateFromServer,
          signalBufferEnable,
          changeConfig } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
+/*:: import type {signalType, configType, dataParamsType} from "./redux/store.jsx"; */
 
 import "../css/app.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+/*::   
+type Props = {
+  signals : signalType,
+  onSignalBufferEnable: Function,
+  onChangeConfig: Function,
+  onSetSignalsFromServer: Function,
+  onSetDataParams: Function,
+  onUpdateFromServer: Function,
+};
 
-class App extends React.Component {
+type navSchemeType = { submenu : string,
+                       isShow : boolean,
+                       iActive : boolean,
+                       items : Array<string>
+}
+
+type State = {
+  navScheme: Array<navSchemeType>,
+  listGraph: Array<Array<string>>,
+  isShowConfig : boolean,
+  isDarkThemeConfig : boolean,
+}
+*/
+
+class App extends React.Component/*::<Props, State>*/{
   
   constructor(props){
     super(props);
@@ -27,9 +51,9 @@ class App extends React.Component {
                    listGraph: [[]],
                    isShowConfig : false,
                    isDarkThemeConfig : false };
-
+                   
     document.body.style.overflow = "hidden";
-        
+   
     this.handleAddGraph = this.handleAddGraph.bind(this); 
     this.handleCloseGraph = this.handleCloseGraph.bind(this);  
     this.handleShowConfig = this.handleShowConfig.bind(this); 
@@ -295,26 +319,6 @@ const Checkbox = props => (
 )
 
 
-App.propTypes = {
-  state : PropTypes.shape({
-    //{ submenu : s.module,
-    //  isShow : true,
-    //  iActive : true,
-    //  items : [string]};
-    navScheme : PropTypes.arrayOf(
-      PropTypes.shape({
-        submenu : PropTypes.string,
-        isShow : PropTypes.bool,
-        iActive : PropTypes.bool,
-        items : PropTypes.arrayOf(PropTypes.string),
-      })
-    ),
-    // [[string]]
-    listGraph : PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
-  }),
-  handleAddGraph: PropTypes.func,
-  handleCloseGraph: PropTypes.func,
-}
 
 
 const buttonStyle = {   

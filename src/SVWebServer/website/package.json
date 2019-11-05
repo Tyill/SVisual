@@ -6,7 +6,8 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.prod.config.js",
     "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js",
-    "serverTest": "nodemon serverTest.js"
+    "serverTest": "nodemon serverTest.js",
+    "flow": "flow"
   },
   "repository": {
     "type": "git",
@@ -20,19 +21,23 @@
   "license": "MIT",
   "babel": {
     "presets": [
-      "@babel/preset-react"
+      "@babel/preset-react",
+      "@babel/preset-flow"
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "bootstrap": "^4.3.1",
     "css-loader": "^3.2.0",
-    "eslint": "^6.2.1",
-    "eslint-plugin-react": "^7.14.3",
+    "eslint": "^6.6.0",
+    "eslint-plugin-react": "^7.16.0",
     "express": "^4.17.1",
-    "prop-types": "^15.7.2",
+    "flow-bin": "^0.111.1",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.12",
     "react-dom": "^16.9.0",

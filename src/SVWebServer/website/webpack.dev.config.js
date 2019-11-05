@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const webpack = require('webpack');
 
 module.exports = {

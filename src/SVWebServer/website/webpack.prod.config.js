@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 module.exports = {
   entry: './jsx/app.jsx',  
   output: {
