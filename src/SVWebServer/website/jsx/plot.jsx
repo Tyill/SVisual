@@ -11,7 +11,7 @@ import type { axisParamsType, signColorParamsType } from "./graph.jsx";
 type Props = {
   tmInterval : tmIntervalType,
   valInterval : valIntervalType,
-  signals : {obj : signalType},
+  signals : {sname : signalType},
   axisParams : axisParamsType,
   dataParams : dataParamsType,
   signColorParams : signColorParamsType, 

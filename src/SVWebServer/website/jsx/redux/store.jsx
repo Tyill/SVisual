@@ -34,7 +34,7 @@ type dataParamsType = { packetSize : number,
 export
 type storeType = { config : configType,
                    dataParams : dataParamsType,
-                   signals : {obj : signalType},
+                   signals : {sname : signalType},
 }
 */
 

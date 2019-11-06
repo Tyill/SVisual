@@ -12,7 +12,7 @@ import type {signalType, configType, dataParamsType, signalDataType } from "./re
 import type {signalBufferEnableType} from "./redux/actions.jsx";
 
 type Props = {
-  signals : { obj: signalType },
+  signals : { sname: signalType },
   config : configType,
   dataParams : dataParamsType,  
   listGraph : Array<Array<string>>,
@@ -118,7 +118,7 @@ class GraphPanel extends React.Component/*::<Props>*/ {
         sz = this.props.listGraph.length;
     for (let i = 0; i < sz; ++i){
          
-      let signals /*:: : {obj : signalType} */ = {};
+      let signals /*:: : {sname : signalType} */ = {};
       for (let s of this.props.listGraph[i]) 
         signals[s] = this.props.signals[s];
 

@@ -33,7 +33,7 @@ type signColorParamsType = {
 type Props = {
   iGraph : number,                 
   dataParams : dataParamsType,
-  signals : {obj : signalType},  
+  signals : {sname : signalType},  
   backgroundColor : string,
   onAddSignal : (iGraph : number, sname : snameType) => void,
   onDelSignal : (iGraph : number, sname : snameType) => void,

@@ -24,7 +24,7 @@ import type {changeConfigType, setSignalsFromServerType,
 import type {navSchemeType} from "./treeNav.jsx";
 
 type Props = {
-  signals : { obj: signalType },
+  signals : { sname: signalType },
   config : configType,
   dataParams : dataParamsType,
   onSignalBufferEnable: signalBufferEnableType,
