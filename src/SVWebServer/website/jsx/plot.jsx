@@ -1,12 +1,56 @@
 /* eslint-disable no-unused-vars */
-
+// @flow
 import React from "react";
-import PropTypes from "prop-types";
+
+/*::
+import type { snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx";
+import type { tmIntervalType } from "./axisTime.jsx"; 
+import type { valIntervalType } from "./axisValue.jsx"; 
+import type { axisParamsType, signColorParamsType } from "./graph.jsx"; 
+
+type Props = {
+  tmInterval : tmIntervalType,
+  valInterval : valIntervalType,
+  signals : {obj : signalType},
+  axisParams : axisParamsType,
+  dataParams : dataParamsType,
+  signColorParams : signColorParamsType, 
+  backgroundColor : string,
+  onChange : (tmIntervalType, valIntervalType, axisParamsType) => void;
+  onDrop : (sname : string) => void;
+}
+  
+type pointType = {
+    x : number,
+    y : number,
+}
+
+type rectType = {
+    x : number,
+    y : number,
+    width : number,
+    height : number,
+}
+
+*/
 
 export default 
-class Plot extends React.Component {
+class Plot extends React.Component/*::<Props>*/ {
   
-  constructor(props){
+  /*::
+  _canvasRef : any;
+  _rect : rectType;
+  _memMDown : pointType;
+  _memMPos : pointType;
+   
+  _signPnts : {sname : Array<Array<pointType>>};
+
+  handleMouseMove : (event : any) => void;
+  handleWheel : (event : any) => void;
+  handleResizeByRect : (event : any) => void;
+  */
+
+  constructor(props/*:: : Props*/){
     super(props);
 
     this._canvasRef = null;
@@ -21,7 +65,7 @@ class Plot extends React.Component {
     this.handleResizeByRect = this.handleResizeByRect.bind(this);
   }
  
-  handleMouseMove(event) {
+  handleMouseMove(event /*:: : any */) {
        
     let brect = event.target.getBoundingClientRect();
      
@@ -33,7 +77,7 @@ class Plot extends React.Component {
     // left mouse button
     if (event.nativeEvent.which === 1){
      
-      let rct = this._rect;
+      let rct /*:: : rectType */ = this._rect;
       if ((rct.width == 0) && (rct.height == 0)){
         rct.width = 1;
         rct.height = 1;
@@ -49,7 +93,7 @@ class Plot extends React.Component {
       else if ((dw < 0) && (dh > 0))
         rct = { x : mpos.x, y : presPnt.y, width : Math.abs(dw), height : dh};
       else if ((dw > 0) && (dh < 0))
-        rct = { x : presPnt.x, y : mpos.y, widht : dw, height : Math.abs(dh)};
+        rct = { x : presPnt.x, y : mpos.y, width : dw, height : Math.abs(dh)};
       else if ((dw < 0) && (dh < 0))
         rct = { x : mpos.x, y : mpos.y, width : Math.abs(dw), height : Math.abs(dh)};
 
@@ -102,8 +146,10 @@ class Plot extends React.Component {
       tmInterval.beginMs += offs;
       tmInterval.endMs += offs;    
         
+      const {maxValDashStep, minValDashStep} = exParams;
+
       this.props.onChange(tmInterval, valInterval, 
-        {tmOffsPos, tmDashStep, valOffsPos, valDashStep, ...exParams});
+        {tmOffsPos, tmDashStep, valOffsPos, valDashStep, maxValDashStep, minValDashStep});
     } 
     
     else{
@@ -111,7 +157,7 @@ class Plot extends React.Component {
     }   
   }
 
-  handleResizeByRect(event){
+  handleResizeByRect(event /*:: : any */){
    
     if (event.nativeEvent.which !== 1)
       return;
@@ -147,9 +193,9 @@ class Plot extends React.Component {
                         {begin : valBegin, end : valEnd}, this.props.axisParams);
   }
 
-  handleWheel(e){
+  handleWheel(event /*:: : any */){
 
-    const delta = -(e.deltaY || e.detail || e.wheelDelta);
+    const delta = -(event.deltaY || event.detail || event.wheelDelta);
 
     let {tmDashStep, valDashStep, ...exParams} = this.props.axisParams,
         valInterval = this.props.valInterval,
@@ -159,10 +205,13 @@ class Plot extends React.Component {
     
     ({tmInterval, tmDashStep} = this.scaleByTime(delta, tmInterval, tmDashStep));
 
-    this.props.onChange(tmInterval, valInterval, {tmDashStep, valDashStep, ...exParams}); 
+    const {maxValDashStep, minValDashStep, tmOffsPos, valOffsPos} = exParams;
+
+    this.props.onChange(tmInterval, valInterval, 
+    {tmDashStep, valDashStep, maxValDashStep, minValDashStep, tmOffsPos, valOffsPos}); 
   }
 
-  scaleByValue(delta, valInterval, valDashStep){
+  scaleByValue(delta /*:: :number*/, valInterval/*:: :valIntervalType*/, valDashStep /*:: :number*/ ){
 
     if (delta > 0) valDashStep++;
     else valDashStep--;
@@ -196,7 +245,7 @@ class Plot extends React.Component {
     return {valInterval, valDashStep};
   }
 
-  scaleByTime(delta, tmInterval, tmDashStep){
+  scaleByTime(delta/*:: :number*/, tmInterval/*:: :tmIntervalType*/, tmDashStep/*:: :number*/){
 
     const canvas = this._canvasRef,
     width = canvas.clientWidth,
@@ -286,7 +335,7 @@ class Plot extends React.Component {
     this.drawMousePos(h, ctx);
   }
 
-  drawSignals(width, height, ctx){
+  drawSignals(width/*:: :number*/, height/*:: :number*/, ctx/*:: :any*/){
       
     const signPnts = this._signPnts;
 
@@ -303,10 +352,10 @@ class Plot extends React.Component {
       // pass bool 
       if (this.props.signals[k].type == 0) continue; 
 
-      ctx.strokeStyle = this.props.signParams[k].color;
-      ctx.fillStyle = this.props.signParams[k].color;
+      ctx.strokeStyle = this.props.signColorParams[k].color;
+      ctx.fillStyle = this.props.signColorParams[k].color;
       
-      let isFillGraph = this.props.signParams[k].transparent < 1,
+      let isFillGraph = this.props.signColorParams[k].transparent < 1,
           isPaintPnt = (tmInterval.endMs - tmInterval.beginMs) < (packetTimeMs * 5);
 
       const zonePnts = signPnts[k]; 
@@ -317,7 +366,7 @@ class Plot extends React.Component {
 
         ctx.beginPath();
 
-        ctx.lineWidth = this.props.signParams[k].lineWidth;
+        ctx.lineWidth = this.props.signColorParams[k].lineWidth;
         ctx.globalAlpha = 1;
        
         ctx.moveTo(pnts[0].pos, height - pnts[0].value);
@@ -341,7 +390,7 @@ class Plot extends React.Component {
           ctx.beginPath();
 
           ctx.lineWidth = 1;
-          ctx.globalAlpha = this.props.signParams[k].transparent;
+          ctx.globalAlpha = this.props.signColorParams[k].transparent;
       
           let yPos = height;
 
@@ -382,8 +431,8 @@ class Plot extends React.Component {
       // pass int, float 
       if (this.props.signals[k].type != 0) continue;
     
-      ctx.strokeStyle = this.props.signParams[k].color;
-      ctx.fillStyle = this.props.signParams[k].color;
+      ctx.strokeStyle = this.props.signColorParams[k].color;
+      ctx.fillStyle = this.props.signColorParams[k].color;
       ctx.lineWidth = 1;
       ctx.globalAlpha = 1;
 
@@ -431,7 +480,7 @@ class Plot extends React.Component {
     }
   }
 
-  getSignalPoints(width, height){
+  getSignalPoints(width /*:: : number */, height/*:: : number */){
          
       const tmInterval = this.props.tmInterval,
             valInterval = this.props.valInterval,
@@ -523,7 +572,7 @@ class Plot extends React.Component {
     return resPnts;
   }
 
-  drawAxisMark(width, height, ctx){
+  drawAxisMark(width /*:: : number */, height/*:: : number */, ctx/*:: : any */){
     
     ctx.beginPath();  
 
@@ -548,7 +597,7 @@ class Plot extends React.Component {
     ctx.stroke();
   }
     
-  drawRect(ctx){
+  drawRect(ctx/*:: : any */){
 
     // draw rect
     const rct = this._rect;
@@ -568,7 +617,7 @@ class Plot extends React.Component {
     }
   }
 
-  drawMousePos(h, ctx){
+  drawMousePos(h/*:: : number */, ctx/*:: : any */){
          
     const mpos = this._memMPos;
 
@@ -585,8 +634,8 @@ class Plot extends React.Component {
       // pass bool 
       if (this.props.signals[k].type == 0) continue; 
    
-      ctx.fillStyle = this.props.signParams[k].color;
-      ctx.strokeStyle = this.props.signParams[k].color;
+      ctx.fillStyle = this.props.signColorParams[k].color;
+      ctx.strokeStyle = this.props.signColorParams[k].color;
    
       const zonePnts = this._signPnts[k]; 
    
@@ -620,7 +669,7 @@ class Plot extends React.Component {
     }
   }
 
-  getTimeMark(width, offs){
+  getTimeMark(width /*:: : number */, offs/*:: : number */){
       
     const tmInterval = this.props.tmInterval,
           curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000,
@@ -699,13 +748,8 @@ class Plot extends React.Component {
                    onDrop = { (e) => { e.preventDefault();
                                        let module = e.dataTransfer.getData('text').split('.')[0],
                                            name = e.dataTransfer.getData('text').split('.')[1];
-                                       this.props.onDrop(name, module);
+                                       this.props.onDrop(name + module);
                                      } } >
            </canvas> 
  }
 }
-
-
-Plot.propTypes = { 
-
-};

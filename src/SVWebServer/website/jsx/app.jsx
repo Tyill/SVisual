@@ -14,17 +14,15 @@ import { updateFromServer,
          changeConfig } from "./redux/actions.jsx"; 
 import Store from "./redux/store.jsx"; 
 
-/*::
-import type {snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; 
-import type {changeConfigType, setSignalsFromServerType,
-                  setDataParamsType, updateFromServerType, signalBufferEnableType} from "./redux/actions.jsx";
-import type {navSchemeType} from "./treeNav.jsx";
-*/
-
 import "../css/app.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 /*::   
+import type {snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; 
+import type {changeConfigType, setSignalsFromServerType,
+             setDataParamsType, updateFromServerType, signalBufferEnableType} from "./redux/actions.jsx";
+import type {navSchemeType} from "./treeNav.jsx";
+
 type Props = {
   signals : { obj: signalType },
   config : configType,
@@ -42,7 +40,6 @@ type State = {
   isShowConfig : boolean,
   isDarkThemeConfig : boolean,
 }
-
 */
 
 class App extends React.Component/*::<Props, State>*/{

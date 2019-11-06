@@ -25,7 +25,7 @@ type State = {
 export default
 class TreeNav extends React.Component/*::<Props, State>*/{
    
-  constructor(props /*:: : any */){
+  constructor(props /*:: : Props*/){
     super(props);   
   
     this.state = { scheme : this.props.scheme};

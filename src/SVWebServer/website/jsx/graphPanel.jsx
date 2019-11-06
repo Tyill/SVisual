@@ -7,10 +7,10 @@ import PropTypes from "prop-types";
 import Graph from "./graph.jsx";
 import { signalBufferEnable } from "./redux/actions.jsx";
 
-/*:: import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; */
-/*:: import type {signalBufferEnableType} from "./redux/actions.jsx"; */
-
 /*::   
+import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx";
+import type {signalBufferEnableType} from "./redux/actions.jsx";
+
 type Props = {
   signals : { obj: signalType },
   config : configType,
@@ -118,7 +118,7 @@ class GraphPanel extends React.Component/*::<Props>*/ {
         sz = this.props.listGraph.length;
     for (let i = 0; i < sz; ++i){
          
-      let signals = {};
+      let signals /*:: : {obj : signalType} */ = {};
       for (let s of this.props.listGraph[i]) 
         signals[s] = this.props.signals[s];
 

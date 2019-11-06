@@ -1,14 +1,31 @@
 /* eslint-disable no-unused-vars */
-
+// @flow
 import React from "react"
-import PropTypes from "prop-types";
 
+/*::
+import type { axisParamsType } from "./graph.jsx";
+
+export
+type tmIntervalType = {beginMs : number, endMs : number}
+
+type Props = {
+  tmInterval : tmIntervalType,
+  axisParams : axisParamsType,
+  onChange : (tmIntervalType, axisParamsType) => void; 
+}
+*/
 
 export default 
-class AxisTime extends React.Component {
+class AxisTime extends React.Component/*::<Props>*/ {
 
-  constructor(props){
-    super(props);
+  /*::
+  _canvasRef : any;
+  handleMouseMove: (event : any) => void;
+  handleWheel: (iGraph : number) => void;
+  */
+
+  constructor(props/*:: : Props*/){
+    super(props );
 
     this._canvasRef = null;
    
@@ -17,7 +34,7 @@ class AxisTime extends React.Component {
   
   }
     
-  handleMouseMove(event) {
+  handleMouseMove(event /*:: : any*/) {
     
     const canvas = this._canvasRef;
 
@@ -28,8 +45,8 @@ class AxisTime extends React.Component {
     const width = canvas.clientWidth,
           tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,
           diffPos = event.nativeEvent.movementX;
-      
-    let {tmOffsPos, tmDashStep, ...exPrms} = this.props.axisParams;
+
+    let {tmOffsPos, tmDashStep, ...exPrms} /*:: : any*/ = this.props.axisParams;
 
     tmOffsPos += diffPos;
     
@@ -49,9 +66,9 @@ class AxisTime extends React.Component {
 
   }
 
-  handleWheel(e){
+  handleWheel(event /*:: : any*/){
 
-    const delta = -(e.deltaY || e.detail || e.wheelDelta);
+    const delta = -(event.deltaY || event.detail || event.wheelDelta);
 
     const canvas = this._canvasRef,
           width = canvas.clientWidth,
@@ -59,7 +76,7 @@ class AxisTime extends React.Component {
           timeMark = this.getTimeMark(width, 0),
           fontMetr = ctx.measureText(timeMark).width;
     
-    let {tmDashStep, ...exParams} = this.props.axisParams;
+    let {tmDashStep, ...exParams} /*:: : any*/ = this.props.axisParams;
 
     if (delta > 0) tmDashStep++;
     else tmDashStep--;
@@ -129,7 +146,7 @@ class AxisTime extends React.Component {
 
   }
 
-  drawDashLines(width, ctx){
+  drawDashLines(width /*:: : number*/, ctx/*:: : any*/){
 
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#000000';        
@@ -151,7 +168,7 @@ class AxisTime extends React.Component {
     ctx.stroke();
   }
   
-  drawTimeMark(width, height, ctx){
+  drawTimeMark(width /*:: : number*/, height /*:: : number*/, ctx /*:: : any*/){
       
     ctx.font = "normal 9pt Arial";
 
@@ -168,7 +185,7 @@ class AxisTime extends React.Component {
     }
   }
   
-  getTimeMark(width, offs){
+  getTimeMark(width /*:: : number*/, offs /*:: : number*/){
       
     const tmInterval = this.props.tmInterval,
           curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000,
@@ -194,6 +211,11 @@ class AxisTime extends React.Component {
 
   render(){
 
+    const style = {  
+      height: "100%",
+      width: "100%",
+    }
+
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
                    onMouseMove={ this.handleMouseMove } 
@@ -202,12 +224,3 @@ class AxisTime extends React.Component {
   }
 }
 
-const style = {  
-  height: "100%",
-  width: "100%",
-}
-
-AxisTime.propTypes = { 
-  _curOffsPos : PropTypes.number,
-  _curDashStep : PropTypes.number,
-};

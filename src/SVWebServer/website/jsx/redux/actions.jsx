@@ -6,9 +6,9 @@ export const SET_DATA_PARAMS = "SET_DATA_PARAMS";
 export const SIGNAL_BUFFER_ENABLE = "SIGNAL_BUFFER_ENABLE";
 export const CHANGE_CONFIG = "CHANGE_CONFIG";
 
-/*:: import type {signalType, configType, dataParamsType, signalDataType} from "./store.jsx"; */
-
 /*::
+import type {signalType, configType, dataParamsType, signalDataType} from "./store.jsx";
+
 export 
 type changeConfigType = (configType) => void
 

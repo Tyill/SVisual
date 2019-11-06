@@ -8,33 +8,77 @@ import AxisTime from "./axisTime.jsx"
 import Plot from "./plot.jsx"
 import "../css/fontello.css";
 
-/*:: import type {signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; */
-/*:: import type {signalBufferEnableType} from "./redux/actions.jsx"; */
+/*::
+import type { snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx";
+import type { tmIntervalType } from "./axisTime.jsx"; 
+import type { valIntervalType } from "./axisValue.jsx"; 
 
-// iGraph = {i}                 
-// dataParams = {this.props.dataParams}
-// signals = {signals}  
-// backgroundColor = {this.props.config.backgroundColor
-// onAddSignal = {this.handleAddSignal}
-// onDelSignal = {this.handleDelSignal} 
-// onCloseGraph = {this.handleCloseGraph} />
+export
+type axisParamsType = {
+  valOffsPos : number,
+  valDashStep : number, 
+  tmOffsPos : number,
+  tmDashStep : number,
+  minValDashStep : number,
+  maxValDashStep : number,
+}
 
-/*::   
+export
+type signColorParamsType = {
+  lineWidth : number,
+  transparent : number,
+  color : number,
+}
+
 type Props = {
-  signals : { obj: signalType },
-  config : configType,
-  dataParams : dataParamsType,  
-  listGraph : Array<Array<string>>,
-  onCloseGraph : (iGraph : number) => void,
-  onSignalBufferEnable: signalBufferEnableType,
+  iGraph : number,                 
+  dataParams : dataParamsType,
+  signals : {obj : signalType},  
+  backgroundColor : string,
+  onAddSignal : (iGraph : number, sname : snameType) => void,
+  onDelSignal : (iGraph : number, sname : snameType) => void,
+  onCloseGraph : (iGraph : number) => void
+}
+  
+type State = {
+  tmInterval : tmIntervalType,
+  valInterval : valIntervalType,
+  axisParams : axisParamsType,
+  offsPosContainer : {left : number, top : number},
+  csizeContainer : {width : number, height : number},
 };
 
 */
 
 export default
-class Graph extends React.Component {
+class Graph extends React.Component/*::<Props, State>*/ {
 
-  constructor(props){
+  /*::
+  _graphRef : any;
+  _signColorParams : signColorParamsType;
+  _isPlay : boolean;
+  _isAutoResize : boolean;
+  _isResizeComponent : boolean;
+
+  handlePlotChange: (tmIntervalType, valIntervalType, axisParamsType) => void;
+  handleAxisTimeChange: (tmIntervalType, axisParamsType) => void;
+  handleAxisValueChange: (valIntervalType, axisParamsType) => void;
+  handleAddSignal: (snameType) => void;
+  handleDelSignal: (snameType) => void;
+
+  handleResizeFull : () => void;   
+  handleResizeByValue : () => void;    
+  handleResizeByTime : () => void;   
+  handleChangeColor : () => void;  
+  handleAutoResize : () => void;  
+  handlePlay : () => void; 
+  handleClose : () => void; 
+
+  handleChangePosContainer : (event : any) => void; 
+  handleResizeContainer : (event : any) => void; 
+  */
+
+  constructor(props /*:: : Props */){
     super(props);   
      
     let axisParams = { valOffsPos : 0,
@@ -43,15 +87,13 @@ class Graph extends React.Component {
                        tmDashStep : 100,
                        minValDashStep : 50,
                        maxValDashStep : 100}
-
-    this._graphRef = null;
-
-    let offsPos = {
+   
+    const offsPosContainer = {
       left : 0,
       top : 0, 
     }
 
-    let csize = {
+    const csizeContainer = {
       width : 0,
       height : 250,
     }
@@ -59,11 +101,12 @@ class Graph extends React.Component {
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 
                   valInterval : { begin : 0, end : 1000},
                   axisParams, 
-                  offsPos, 
-                  csize,                
+                  offsPosContainer, 
+                  csizeContainer,                
                  };   
 
-    this._signParams = {};
+    this._graphRef = null;
+    this._signColorParams = {};
     this._isPlay = true;
     this._isAutoResize = true;
     this._isResizeComponent = false;
@@ -91,7 +134,7 @@ class Graph extends React.Component {
    
     const graph = this._graphRef;
           
-    this.state.csize.width = graph.clientWidth;
+    this.state.csizeContainer.width = graph.clientWidth;
   }
 
 
@@ -99,43 +142,45 @@ class Graph extends React.Component {
    
     const graph = this._graphRef;
           
-    this.state.csize.width = graph.clientWidth;    
+    this.state.csizeContainer.width = graph.clientWidth;    
   }
 
-  handleAxisTimeChange(tmInterval, axisParams){
+  handleAxisTimeChange(tmInterval /*:: : tmIntervalType*/, axisParams /*:: : axisParamsType*/){
     
     this._isPlay = false;
 
     this.setState({tmInterval, axisParams });
   }
 
-  handleAxisValueChange(valInterval, axisParams){
+  handleAxisValueChange(valInterval/*:: : valIntervalType*/, axisParams /*:: : axisParamsType*/){
     
     this._isPlay = false;
 
     this.setState({valInterval, axisParams });
   }
 
-  handlePlotChange(tmInterval, valInterval, axisParams){
+  handlePlotChange(tmInterval /*:: : tmIntervalType*/,
+                   valInterval/*:: : valIntervalType*/, 
+                   axisParams/*:: : axisParamsType*/){
         
     this._isPlay = false;
 
     this.setState({tmInterval, valInterval, axisParams});
   }
 
-  handleAddSignal(name, module){
+  handleAddSignal(sname /*:: : string*/){
 
-    this.props.onAddSignal(this.props.iGraph, name + module);
+    this.props.onAddSignal(this.props.iGraph, sname);
   }
 
-  handleDelSignal(name, module){
+  handleDelSignal(sname /*:: : string*/){
     
-    delete this._signParams[name + module]
+    delete this._signColorParams[sname]
    
-    this.props.onDelSignal(this.props.iGraph, name + module);
+    this.props.onDelSignal(this.props.iGraph, sname);
   }
  
-  handleChangePosContainer(event){
+  handleChangePosContainer(event /*:: : any*/){
    
     // left mouse button
     if (event.nativeEvent.which === 1){
@@ -143,18 +188,18 @@ class Graph extends React.Component {
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
 
-      this.setState((cState, props) => {
+      this.setState((cState /*:: : State*/, props /*:: : Props*/) => {
 
-        let offsPos = {
-          left : cState.offsPos.left + distX,
-          top : cState.offsPos.top + distY,
+        let offsPosContainer = {
+          left : cState.offsPosContainer.left + distX,
+          top : cState.offsPosContainer.top + distY,
         }
-        return {offsPos};
+        return {offsPosContainer};
       })
     }
   }
 
-  handleResizeContainer(event){
+  handleResizeContainer(event/*:: : any*/){
 
     // left mouse button
     if (event.nativeEvent.which === 1){
@@ -164,13 +209,13 @@ class Graph extends React.Component {
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
 
-      this.setState((cState, props) => {
+      this.setState((cState/*:: : State*/, props/*:: : Props*/) => {
 
-        let csize = {
-          width : cState.csize.width + distX,
-          height : cState.csize.height + distY,
+        let csizeContainer = {
+          width : cState.csizeContainer.width + distX,
+          height : cState.csizeContainer.height + distY,
         }
-        return {csize};
+        return {csizeContainer};
       })
     }
   }
@@ -273,19 +318,19 @@ class Graph extends React.Component {
   
   handleChangeColor(){
 
-    for (let k in this._signParams){
+    for (let k in this._signColorParams){
     
-      let prms = this._signParams[k];
+      let prms = this._signColorParams[k];
       prms.color = '#'+Math.floor(Math.random()*16777215).toString(16);
     }
   }
 
-  handleAutoResize(e){
+  handleAutoResize(){
 
     this._isAutoResize = !this._isAutoResize;
   }
   
-  handlePlay(e){
+  handlePlay(){
 
     this._isPlay = !this._isPlay; 
   }
@@ -301,20 +346,20 @@ class Graph extends React.Component {
         legend = [];
     for (let k in signals){
 
-      if (!this._signParams[k]){ 
-        this._signParams[k] = { lineWidth : 2,
+      if (!this._signColorParams[k]){ 
+        this._signColorParams[k] = { lineWidth : 2,
                                 transparent : 0.5,
                                 color : '#'+Math.floor(Math.random()*16777215).toString(16) };
       }
       
       legend.push(
         <p key = {legend.length} 
-           onClick = { () => this.handleDelSignal(signals[k].name, signals[k].module) } 
+           onClick = { () => this.handleDelSignal(k) } 
            style = {{ marginLeft : 10,
                       marginTop : 20 * legend.length,                                  
                       position : "absolute", 
                       cursor: "default",                                              
-                      color : this._signParams[k].color }}>
+                      color : this._signColorParams[k].color }}>
           {signals[k].name}
         </p>
       );
@@ -338,14 +383,19 @@ class Graph extends React.Component {
       }
     }
 
-    let style = {
+    let {left, top} = this.state.offsPosContainer; 
+
+    let style /*:: : any */ = {
       position : this._isResizeComponent ? "absolute" : "relative",
-      ...this.state.offsPos,
+      left, top,
     }
 
     if (this._isResizeComponent)
-      style.width = this.state.csize.width;
+      style.width = this.state.csizeContainer.width;
     
+    const buttonStyle = {
+      margin : ".1em", 
+    }
 
     return (
       <Container style = {style} ref={ el => this._graphRef = el }>
@@ -374,19 +424,19 @@ class Graph extends React.Component {
            </Col>          
         </Row>
         <Row noGutters={true} style={{ paddingRight : "5px", backgroundColor : "silver"}}>
-          <Col style = {{ maxWidth : "50px", height: this.state.csize.height }}>
+          <Col style = {{ maxWidth : "50px", height: this.state.csizeContainer.height }}>
             <AxisValue valInterval= { this.state.valInterval}
                        axisParams= { this.state.axisParams}
                        onChange = { this.handleAxisValueChange } />    
           </Col>
-          <Col className="col" style={{height: this.state.csize.height}}>
+          <Col className="col" style={{height: this.state.csizeContainer.height}}>
             {legend} 
             <Plot tmInterval= { this.state.tmInterval}
                   valInterval= { this.state.valInterval}
                   signals = { this.props.signals}
                   axisParams= { this.state.axisParams}
                   dataParams = {this.props.dataParams}
-                  signParams = { this._signParams }
+                  signColorParams = { this._signColorParams }
                   backgroundColor = { this.props.backgroundColor}
                   onChange = { this.handlePlotChange }
                   onDrop = { this.handleAddSignal } />            
@@ -411,7 +461,4 @@ class Graph extends React.Component {
   }
 }
 
-const buttonStyle = {
-  margin : ".1em", 
-}
 
