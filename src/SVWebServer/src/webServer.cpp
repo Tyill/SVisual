@@ -107,14 +107,12 @@ void clientSocket::readData(){
            parsed = http_parser_execute(&parser_, &parser_settings, buff.data(), nread);
 
     if (parsed < nread) {
-
-        clientSocket* socket = (clientSocket*)parser_.data;
-
+               
         QByteArray resp;
         resp += QString("HTTP/1.1 400 Bad Request\r\n")
             + "\r\n";
 
-        socket->writeData(resp.data(), resp.size());
+        this->writeData(resp.data(), resp.size());
     }
 }
 

@@ -39,7 +39,7 @@
 
 namespace SV_Web {
     
-	struct config {
+	  struct config {
 
 		int cycleRecMs;
 		int packetSz;
@@ -47,7 +47,7 @@ namespace SV_Web {
 		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
 				cycleRecMs(cycleRecMs_),
 				packetSz(packetSz_) {}
-	};
+	  };
 
     SVWEBSERVER_API bool startServer(const QString& addr, int port, const config&);
 
@@ -60,9 +60,6 @@ namespace SV_Web {
     SVWEBSERVER_API void setGetCopyModuleRef(pf_getCopyModuleRef f);
 
     typedef SV_Cng::signalData* (*pf_getSignalData)(const QString &sign);
-    SVWEBSERVER_API void setGetSignalData(pf_getSignalData f);
-        
-    typedef bool(*pf_loadSignalData)(const QString& sign);
-    SVWEBSERVER_API void setLoadSignalData(pf_loadSignalData f);
+    SVWEBSERVER_API void setGetSignalData(pf_getSignalData f);        
     
 }

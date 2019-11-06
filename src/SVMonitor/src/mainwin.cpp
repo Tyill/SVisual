@@ -146,8 +146,7 @@ void MainWin::load(){
 	SV_Srv::setOnModuleDisconnectCBack([](const std::string& module){
         QMetaObject::invokeMethod(mainWin, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
 	});
-
-    SV_Web::setLoadSignalData(loadSignalDataSrv);
+      
     SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
     SV_Web::setGetSignalData(getSignalDataSrv);
     SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
@@ -389,11 +388,11 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "tcp_addr = " << cng.tcp_addr << endl;
     txtStream << "tcp_port = " << cng.tcp_port << endl;
     txtStream << endl;
-    txtStream << "web_ena = " << cng.web_ena << endl;
+    txtStream << "web_ena = " << (cng.web_ena ? "1" : "0") << endl;
     txtStream << "web_addr = " << cng.web_addr << endl;
     txtStream << "web_port = " << cng.web_port << endl;
     txtStream << endl;
-    txtStream << "com_ena = " << (cng.com_ena ? 1 : 0) << endl;
+    txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << endl;
     
     for (int i = 0; i < cng.com_ports.size(); ++i){
         txtStream << "com" << i << "_name = " << cng.com_ports[i].first << endl;

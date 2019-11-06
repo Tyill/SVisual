@@ -48,9 +48,7 @@ public:
     SV_Web::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
 
     SV_Web::pf_getSignalData pfGetSignalData = nullptr;
-
-    SV_Web::pf_loadSignalData pfLoadSignalData = nullptr;
-    
+        
     void setConfig(const SV_Web::config& cng);
 
     QByteArray jsonGetAllSignals();
