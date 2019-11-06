@@ -18,6 +18,13 @@ const dataParams = {
 //     response.sendFile(__dirname + path);
 // });
 
+app.get("/api/log", function(request, response){
+
+    console.log(request.query.mess)
+
+    response.send("");
+});
+
 app.get("/api/dataParams", function(request, response){
       
     response.send(dataParams);

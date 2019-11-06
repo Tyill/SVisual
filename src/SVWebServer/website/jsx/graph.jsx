@@ -8,6 +8,7 @@ import AxisTime from "./axisTime.jsx"
 import Plot from "./plot.jsx"
 import "../css/fontello.css";
 
+
 /*::
 import type { snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx";
 import type { tmIntervalType } from "./axisTime.jsx"; 
@@ -95,7 +96,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
 
     const csizeContainer = {
       width : 0,
-      height : 250,
+      height : Math.min(250, document.documentElement ? document.documentElement.clientHeight * 0.7 : 250)
     }
 
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 

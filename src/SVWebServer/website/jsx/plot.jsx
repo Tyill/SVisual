@@ -2,6 +2,12 @@
 // @flow
 import React from "react";
 
+// let logMess = (mess) =>{
+               
+//   fetch("api/log?mess=" + mess)
+//   .then(response => "");
+// }
+
 /*::
 import type { snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx";
 import type { tmIntervalType } from "./axisTime.jsx"; 
@@ -32,6 +38,12 @@ type rectType = {
     height : number,
 }
 
+type touchType = {
+  identifier : number,
+  pageX : number,
+  pageY : number,
+}
+
 */
 
 export default 
@@ -45,9 +57,18 @@ class Plot extends React.Component/*::<Props>*/ {
    
   _signPnts : {sname : Array<Array<pointType>>};
 
+  _ongoingTouches : Array<touchType>;
+ 
   handleMouseMove : (event : any) => void;
   handleWheel : (event : any) => void;
   handleResizeByRect : (event : any) => void;
+  
+  handleTouchMove : (event : any) => void;
+  handleTouchStart : (event : any) => void;
+  handleTouchEnd : (event : any) => void;
+
+  onMove : (distX : number, distY : number) => void;
+  onWheel : (deltaX : number, deltaY : number) => void;
   */
 
   constructor(props/*:: : Props*/){
@@ -59,10 +80,119 @@ class Plot extends React.Component/*::<Props>*/ {
     this._memMDown = {};
     this._memMPos = {};
     this._signPnts = {};  
-
+    this._ongoingTouches = [];  
+    
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleWheel = this.handleWheel.bind(this);  
     this.handleResizeByRect = this.handleResizeByRect.bind(this);
+
+    this.handleTouchMove = this.handleTouchMove.bind(this);
+    this.handleTouchStart = this.handleTouchStart.bind(this);
+    this.handleTouchEnd = this.handleTouchEnd.bind(this);
+
+    this.onMove = this.onMove.bind(this);
+    this.onWheel = this.onWheel.bind(this);
+  }
+
+  handleTouchMove(event /*:: : any */){
+        
+    event.preventDefault();
+    
+    if (event.changedTouches.length == 1) {
+
+      const eTouch = event.changedTouches[0],
+            idx = this._ongoingTouches.findIndex(it => it.identifier == eTouch.identifier);
+  
+      if (idx >= 0) {
+            
+        const distX = eTouch.pageX - this._ongoingTouches[idx].pageX,
+              distY = eTouch.pageY - this._ongoingTouches[idx].pageY;
+
+        this.onMove(distX, distY);
+       
+        this._ongoingTouches.splice(idx, 1, { identifier : eTouch.identifier,
+                                              pageX : eTouch.pageX,
+                                              pageY : eTouch.pageY});   
+
+      } 
+    }
+    else {
+      
+      const eTouch0 = event.changedTouches[0],
+            idx0 = this._ongoingTouches.findIndex(it => it.identifier == eTouch0.identifier),
+            eTouch1 = event.changedTouches[1],
+            idx1 = this._ongoingTouches.findIndex(it => it.identifier == eTouch1.identifier);
+  
+      if ((idx0 >= 0) && (idx1 >= 0)) {
+            
+        const deltaX0 = eTouch0.pageX - this._ongoingTouches[idx0].pageX,
+              deltaX1 = eTouch1.pageX - this._ongoingTouches[idx1].pageX,
+              deltaY0 = eTouch0.pageY - this._ongoingTouches[idx0].pageY,
+              deltaY1 = eTouch1.pageY - this._ongoingTouches[idx1].pageY;
+
+        let deltaX = 0; 
+
+         if ((deltaX0 > 0) && (deltaX1 < 0))
+          deltaX = (eTouch0.pageX > eTouch1.pageX) ? 1 : -1;
+       
+        else if ((deltaX0 < 0) && (deltaX1 > 0))
+          deltaX = (eTouch0.pageX > eTouch1.pageX) ? -1 : 1;
+
+        let deltaY = 0; 
+
+        if ((deltaY0 > 0) && (deltaY1 < 0))
+          deltaY = (eTouch0.pageY > eTouch1.pageY) ? 1 : -1;
+       
+        else if ((deltaY0 < 0) && (deltaY1 > 0))
+          deltaY = (eTouch0.pageY > eTouch1.pageY) ? -1 : 1;
+       
+        if (deltaX || deltaY)
+          this.onWheel(deltaX, deltaY);
+       
+        this._ongoingTouches.splice(idx0, 1, { identifier : eTouch0.identifier,
+                                               pageX : eTouch0.pageX,
+                                               pageY : eTouch0.pageY});
+
+        idx1 = this._ongoingTouches.findIndex(it => it.identifier == eTouch1.identifier)
+        this._ongoingTouches.splice(idx1, 1, { identifier : eTouch1.identifier,
+                                               pageX : eTouch1.pageX,
+                                               pageY : eTouch1.pageY});
+      }
+    }        
+  }
+
+  handleTouchStart(event /*:: : any */){
+                      
+    for (const eTouch of event.changedTouches) {
+      
+      this._ongoingTouches.push({ identifier : eTouch.identifier,
+                                  pageX : eTouch.pageX,
+                                  pageY : eTouch.pageY});     
+    }
+
+    let brect = event.target.getBoundingClientRect();
+     
+    const mpos = { x : event.clientX - brect.left,
+                   y : event.clientY - brect.top};
+
+    this._memMPos = mpos;
+
+    this.drawCanvas();
+
+    event.preventDefault();
+  }
+      
+  handleTouchEnd(event /*:: : any */){
+
+    event.preventDefault();
+       
+    for (const eTouch of event.changedTouches) {
+
+      let idx = this._ongoingTouches.findIndex(it => it.identifier == eTouch.identifier);
+      
+      if (idx >= 0)
+        this._ongoingTouches.splice(idx, 1);
+    }
   }
  
   handleMouseMove(event /*:: : any */) {
@@ -105,56 +235,61 @@ class Plot extends React.Component/*::<Props>*/ {
     // right mouse button
     else if (event.nativeEvent.which === 3){
    
-      const canvas = this._canvasRef;
-
-      let valInterval = this.props.valInterval,
-          {valOffsPos, valDashStep, tmOffsPos, tmDashStep, ...exParams} = this.props.axisParams;
-
-      const height = canvas.clientHeight,
-            valScale = (valInterval.end - valInterval.begin) / height,
-            valDiff = event.nativeEvent.movementY;          
-      
-      valOffsPos += valDiff;
-
-      if (valOffsPos > valDashStep) 
-        valOffsPos = 0;
-      else if (valOffsPos < 0) 
-        valOffsPos = valDashStep; 
-
-      valInterval.begin += valScale * valDiff;
-      valInterval.end += valScale * valDiff;   
-      
-      //////////////////////////////////////
-
-      let tmInterval = this.props.tmInterval;
-
-      const width = canvas.clientWidth,
-            tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
-            tmDiff = event.nativeEvent.movementX;
-        
-      tmOffsPos += tmDiff;
-
-      if (tmOffsPos > tmDashStep) 
-        tmOffsPos = 0;
-      else if (tmOffsPos < 0) 
-        tmOffsPos = tmDashStep; 
-
-      let offs = -tmScale * tmDiff - 1;
-      if (tmDiff < 0) 
-        offs = -tmScale * tmDiff + 1;
-    
-      tmInterval.beginMs += offs;
-      tmInterval.endMs += offs;    
-        
-      const {maxValDashStep, minValDashStep} = exParams;
-
-      this.props.onChange(tmInterval, valInterval, 
-        {tmOffsPos, tmDashStep, valOffsPos, valDashStep, maxValDashStep, minValDashStep});
+      this.onMove(event.nativeEvent.movementX, event.nativeEvent.movementY);
     } 
     
     else{
       this.drawCanvas(); 
     }   
+  }
+
+  onMove(distX /*:: : number */, distY /*:: : number */){
+    
+    const canvas = this._canvasRef;
+
+    let valInterval = this.props.valInterval,
+        {valOffsPos, valDashStep, tmOffsPos, tmDashStep, ...exParams} = this.props.axisParams;
+
+    const height = canvas.clientHeight,
+          valScale = (valInterval.end - valInterval.begin) / height,
+          valDiff = distY;          
+    
+    valOffsPos += valDiff;
+
+    if (valOffsPos > valDashStep) 
+      valOffsPos = 0;
+    else if (valOffsPos < 0) 
+      valOffsPos = valDashStep; 
+
+    valInterval.begin += valScale * valDiff;
+    valInterval.end += valScale * valDiff;   
+    
+    //////////////////////////////////////
+
+    let tmInterval = this.props.tmInterval;
+
+    const width = canvas.clientWidth,
+          tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
+          tmDiff = distX;
+      
+    tmOffsPos += tmDiff;
+
+    if (tmOffsPos > tmDashStep) 
+      tmOffsPos = 0;
+    else if (tmOffsPos < 0) 
+      tmOffsPos = tmDashStep; 
+
+    let offs = -tmScale * tmDiff - 1;
+    if (tmDiff < 0) 
+      offs = -tmScale * tmDiff + 1;
+     
+    tmInterval.beginMs += offs;
+    tmInterval.endMs += offs;    
+      
+    const {maxValDashStep, minValDashStep} = exParams;
+
+    this.props.onChange(tmInterval, valInterval, 
+      {tmOffsPos, tmDashStep, valOffsPos, valDashStep, maxValDashStep, minValDashStep});
   }
 
   handleResizeByRect(event /*:: : any */){
@@ -197,21 +332,30 @@ class Plot extends React.Component/*::<Props>*/ {
 
     const delta = -(event.deltaY || event.detail || event.wheelDelta);
 
+    this.onWheel(delta, delta);
+  }
+
+  onWheel(deltaX /*:: : number */, deltaY /*:: : number */){
+    
     let {tmDashStep, valDashStep, ...exParams} = this.props.axisParams,
         valInterval = this.props.valInterval,
         tmInterval = this.props.tmInterval;
 
-    ({valInterval, valDashStep} = this.scaleByValue(delta, valInterval, valDashStep));
+    ({valInterval, valDashStep} = this.scaleByValue(deltaY, valInterval, valDashStep));
     
-    ({tmInterval, tmDashStep} = this.scaleByTime(delta, tmInterval, tmDashStep));
+    ({tmInterval, tmDashStep} = this.scaleByTime(deltaX, tmInterval, tmDashStep));
 
     const {maxValDashStep, minValDashStep, tmOffsPos, valOffsPos} = exParams;
 
     this.props.onChange(tmInterval, valInterval, 
     {tmDashStep, valDashStep, maxValDashStep, minValDashStep, tmOffsPos, valOffsPos}); 
+
   }
 
   scaleByValue(delta /*:: :number*/, valInterval/*:: :valIntervalType*/, valDashStep /*:: :number*/ ){
+
+    if (delta == 0)
+      return {valInterval, valDashStep};
 
     if (delta > 0) valDashStep++;
     else valDashStep--;
@@ -247,6 +391,9 @@ class Plot extends React.Component/*::<Props>*/ {
 
   scaleByTime(delta/*:: :number*/, tmInterval/*:: :tmIntervalType*/, tmDashStep/*:: :number*/){
 
+    if (delta == 0)
+      return {tmInterval, tmDashStep};
+    
     const canvas = this._canvasRef,
     width = canvas.clientWidth,
     ctx = canvas.getContext("2d"),
@@ -740,9 +887,13 @@ class Plot extends React.Component/*::<Props>*/ {
 
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
-                   onMouseMove={ this.handleMouseMove }
+                   onMouseMove = { this.handleMouseMove }
                    onMouseUp = { this.handleResizeByRect }  
                    onWheel={ this.handleWheel } 
+                   onTouchMove = { this.handleTouchMove }
+                   onTouchStart = { this.handleTouchStart }
+                   onTouchEnd = { this.handleTouchEnd }
+                   onTouchCancel = { this.handleTouchEnd }
                    onDragOver = { (e) => e.preventDefault() }
                    onContextMenu = { (e) => e.preventDefault() }
                    onDrop = { (e) => { e.preventDefault();

@@ -60,8 +60,10 @@ class App extends React.Component/*::<Props, State>*/{
                    isShowConfig : false,
                    isDarkThemeConfig : false };
 
-    if (document.body)                       
-      document.body.style.overflow = "hidden";   
+    if (document.body){                       
+      document.body.style.overflow = "hidden"; 
+      document.body.style.touchAction = "none";
+    }  
 
     this.handleAddGraph = this.handleAddGraph.bind(this); 
     this.handleCloseGraph = this.handleCloseGraph.bind(this);  
