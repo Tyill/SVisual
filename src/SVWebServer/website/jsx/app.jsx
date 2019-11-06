@@ -150,31 +150,36 @@ class App extends React.Component/*::<Props, State>*/{
         event.preventDefault();
       }, false);
     }
-   
-    (async () => {
-      let response = await fetch('api/allSignals');
-      let signs /*:: : {obj : signalType}*/ = await response.json();     
-
+      
+    fetch('api/allSignals')
+    .then(response => response.json())    
+    .then(signs =>{ 
+        
       for (let k in signs){
         signs[k].isBuffEna = false,
         signs[k].buffVals = []    
       }
       
       this.props.onSetSignalsFromServer(signs);
+    
+      setNavScheme(signs);
+    })
+    .catch(() => console.log('api/allSignals error'))  
 
-       /////////////////////////////////////
-      
-      response = await fetch('api/dataParams');
-      let dataParams = await response.json();     
-            
-      this.props.onSetDataParams(dataParams);
+
+    fetch('api/dataParams')
+    .then(response => response.json())    
+    .then(dataParams => {
      
-      /////////////////////////////////////
+      this.props.onSetDataParams(dataParams);
       
       this.updateSignalData(dataParams);
+    })    
+    .catch(() => console.log('api/dataParams error'));    
 
-      /////////////////////////////////////
 
+    let setNavScheme = (signs /*:: : {obj : signalType} */) => {
+      
       let navScheme /*:: : Array<navSchemeType | string> */ = [];
       for (let k in signs){
     
@@ -185,14 +190,14 @@ class App extends React.Component/*::<Props, State>*/{
           return (typeof it === 'object') && (typeof it.submenu === 'string') ?
                     s.module == it.submenu : false;
         });
-  
+
         if (!it){ 
-  
+
           it = { submenu : s.module,
-                           isShow : true,
-                           isActive : true,
-                           items : []};
-  
+                            isShow : true,
+                            isActive : true,
+                            items : []};
+
           navScheme.push(it);
         }
         
@@ -200,8 +205,7 @@ class App extends React.Component/*::<Props, State>*/{
       }
           
       this.setState({navScheme});
-
-    })().catch(() => console.log('api/allSignals error'));
+    } 
 
   }
 
@@ -209,9 +213,9 @@ class App extends React.Component/*::<Props, State>*/{
 
     let count = 0;
 
-    let update = async function () {
+    let updateFunc = () => {
       
-      let tmStart /*:: : number */ = Date.now();
+      let tmStart = Date.now();
       
       const signs = this.props.signals,       
             snames = Object.values(signs).filter((it /*:: : any */)  => it.isBuffEna)
@@ -226,24 +230,22 @@ class App extends React.Component/*::<Props, State>*/{
           if (i < snames.length - 1)
             req += "&";
         }
-       
-        try{
-          let response = await fetch(req),          
-              buffVals = await response.json();         
-        
+               
+        fetch(req)
+        .then(response => response.json())
+        .then(buffVals => {         
+          
           if (Object.keys(buffVals).length > 0) 
             this.props.onUpdateFromServer(buffVals);
-  
-        }catch(err){
-          console.log('api/lastSignalData error');
-        }
+        })
+        .catch(() => console.log('api/lastSignalData error'));
       } 
       
       if ((count % 10) == 0){
-        try{
-          
-          let response = await fetch('api/allModules'),          
-              modState = await response.json();  
+                 
+        fetch('api/allModules')
+        .then(response => response.json())
+        .then(modState => {  
           
           let navScheme = this.state.navScheme;
 
@@ -262,34 +264,41 @@ class App extends React.Component/*::<Props, State>*/{
 
           this.setState({navScheme});
 
-        }catch(err){
-          console.log('api/allModules error'); 
+        })
+        .catch(() => console.log('api/allModules error')); 
           
-          let navScheme = this.state.navScheme;
+        let navScheme = this.state.navScheme;
 
-          for (let it /*:: : any */ of navScheme)    
-            it.isActive = false; 
+        for (let it /*:: : any */ of navScheme)    
+          it.isActive = false; 
 
-          this.setState({navScheme});
-        }
+        this.setState({navScheme});
       }
+
       ++count;
 
       let tout = Date.now() - tmStart;
-     
+       
       tout = Math.max(0, dataParams.cycleTimeMs * dataParams.packetSize * 0.9 - tout);
-      
-      setTimeout(update, tout);
-    };
-
-    update = update.bind(this);
-
-    update();
-  }    
+        
+      setTimeout(updateFunc, tout);
+    }
+        
+    updateFunc();
+  }
     
   render(){
 
     let clientHeight = document.documentElement ? document.documentElement.clientHeight : 300;
+
+    const Checkbox = props => (
+      <input type="checkbox" {...props} />
+    )
+
+    const buttonStyle = {   
+      fontSize : "16pt", 
+      margin : "5px",
+    }
 
     return (
       <div>
@@ -326,14 +335,6 @@ class App extends React.Component/*::<Props, State>*/{
   } 
 }
 
-const Checkbox = props => (
-   <input type="checkbox" {...props} />
-)
-
-const buttonStyle = {   
-  fontSize : "16pt", 
-  margin : "5px",
-}
 
 //////////////////////////////////////////////////
 
@@ -358,7 +359,7 @@ const root = document.getElementById('root')
 if (root){
   ReactDOM.render(
     <Provider store={Store}>
-       <AppRedux /> ,
+       <AppRedux/>,
     </Provider>,
     root
   );
