@@ -254,8 +254,8 @@ class App extends React.Component/*::<Props, State>*/{
             let module = k;
             
             let it /*:: : any */ = navScheme.find((it) => {
-              return (typeof it === 'object') && (typeof it.submenu === 'string') ?
-                    module == it.submenu : false;
+              return ((typeof it === 'object') && (typeof it.submenu === 'string')) ?
+                (module == it.submenu) : false;
             });
   
             if (it)  
@@ -265,14 +265,17 @@ class App extends React.Component/*::<Props, State>*/{
           this.setState({navScheme});
 
         })
-        .catch(() => console.log('api/allModules error')); 
+        .catch(() => {
           
-        let navScheme = this.state.navScheme;
-
-        for (let it /*:: : any */ of navScheme)    
-          it.isActive = false; 
-
-        this.setState({navScheme});
+          console.log('api/allModules error'); 
+          
+          let navScheme = this.state.navScheme;
+  
+          for (let it /*:: : any */ of navScheme)    
+            it.isActive = false; 
+  
+          this.setState({navScheme});
+        });
       }
 
       ++count;
