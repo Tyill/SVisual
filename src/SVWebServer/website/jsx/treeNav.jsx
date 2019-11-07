@@ -40,7 +40,7 @@ class TreeNav extends React.Component/*::<Props, State>*/{
       outObjList[submenu].push(<section key={level + "." + obj} 
                                  className="treeNav-row"
                                  draggable="true"
-                                 style={{ cursor: "default", paddingLeft: 10 + level * 5 }}
+                                 style={{ paddingLeft: 10 + level * 5 }}
                                  onDragStart = {(e) => e.dataTransfer.setData('text', submenu + obj) }
                                  onDoubleClick = { (e) => this.props.onDoubleClick(obj + submenu.slice(0, -1)) } >
                                    {obj}
@@ -53,8 +53,7 @@ class TreeNav extends React.Component/*::<Props, State>*/{
 
       outMenuList[submenu] = (<section key={level + "." + obj.submenu}
                                className="treeNav-head"
-                               style={{ cursor: "default", 
-                                        paddingLeft: 10 + level * 5,
+                               style={{ paddingLeft: 10 + level * 5,
                                         backgroundColor : (obj.isActive ? "silver" : "rgb(200, 20, 20)") }}
                                onClick= { (e) => {obj.isShow = !obj.isShow;
                                                  this.setState({ scheme : this.props.scheme});} }> 
@@ -91,7 +90,7 @@ class TreeNav extends React.Component/*::<Props, State>*/{
         );
     }
      
-    return <div style={{ borderRadius: "3px 3px 3px 3px", overflow: "auto" }}> 
+    return <div style={{ borderRadius: "3px", overflow: "auto" }}> 
               {renderObj}          
            </div>
   }

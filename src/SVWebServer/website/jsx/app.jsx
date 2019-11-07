@@ -316,7 +316,9 @@ class App extends React.Component/*::<Props, State>*/{
 
     const buttonStyle = {   
       fontSize : "16pt", 
-      margin : "5px",
+      marginRight : "5px",
+      marginLeft : "5px",
+      marginBottom : "5px",
     }
 
     return (

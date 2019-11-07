@@ -410,7 +410,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
       style.width = this.state.csizeContainer.width;
     
     const buttonStyle = {
-      margin : ".1em", 
+      margin : ".2em", 
     }
 
     return (

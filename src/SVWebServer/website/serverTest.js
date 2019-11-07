@@ -58,6 +58,30 @@ app.get("/api/allSignals", function(request, response){
             comment: "",
             isActive: true, 
         },    
+        s4forModule : {
+            name : "s4",
+            module: "forModule",
+            type : 0,
+            group: "forGroup",
+            comment: "",
+            isActive: true, 
+        }, 
+        s5forModule : {
+            name : "s5",
+            module: "forModule",
+            type : 0,
+            group: "forGroup",
+            comment: "",
+            isActive: true, 
+        }, 
+        s6forModule : {
+            name : "s6",
+            module: "forModule",
+            type : 0,
+            group: "forGroup",
+            comment: "",
+            isActive: true, 
+        },   
     };
    
     response.send(signals);
