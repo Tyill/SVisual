@@ -43,3 +43,4 @@ src/SVWriterExample/Makefile
 src/SVWriterExample/cmake_install.cmake
 src/cmake_install.cmake
 src/SVWebServer/website/node_modules
+src/SVWebServer/website/.vscode
