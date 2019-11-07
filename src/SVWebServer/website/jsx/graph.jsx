@@ -61,6 +61,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
   _isPlay : boolean;
   _isAutoResize : boolean;
   _isResizeComponent : boolean;
+  _zIndex : number;
   
   handlePlotChange: (tmIntervalType, valIntervalType, axisParamsType) => void;
   handleAxisTimeChange: (tmIntervalType, axisParamsType) => void;
@@ -97,7 +98,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
 
     const csizeContainer = {
       width : 0,
-      height : Math.min(250, document.documentElement ? document.documentElement.clientHeight * 0.7 : 250)
+      height : Math.min(250, document.documentElement ? document.documentElement.clientHeight * 0.65 : 250)
     }
 
     this.state = {tmInterval : { beginMs : Date.now(), endMs : Date.now() + 3.6e4}, 
@@ -112,6 +113,9 @@ class Graph extends React.Component/*::<Props, State>*/ {
     this._isPlay = true;
     this._isAutoResize = true;
     this._isResizeComponent = false;
+
+    this.props.zIndex.val += 1; 
+    this._zIndex = this.props.zIndex.val + 1;
    
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
@@ -167,6 +171,9 @@ class Graph extends React.Component/*::<Props, State>*/ {
         
     this._isPlay = false;
 
+    this.props.zIndex.val += 1;      
+    this._zIndex = this.props.zIndex.val + 1;    
+
     this.setState({tmInterval, valInterval, axisParams});
   }
 
@@ -188,7 +195,8 @@ class Graph extends React.Component/*::<Props, State>*/ {
     if (event.nativeEvent.which === 1){
   
       this.props.zIndex.val += 1;
-
+      this._zIndex = this.props.zIndex.val + 1;
+      
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
 
@@ -211,6 +219,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
       this._isResizeComponent = true;
 
       this.props.zIndex.val += 1;
+      this._zIndex = this.props.zIndex.val + 1;
 
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
@@ -393,7 +402,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
 
     let style /*:: : any */ = {
       position : this._isResizeComponent ? "absolute" : "relative",
-      zIndex : this.props.zIndex.val,
+      zIndex : this._zIndex,
       left, top,
     }
 

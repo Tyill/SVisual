@@ -28,17 +28,17 @@ class GraphPanel extends React.Component/*::<Props>*/ {
   handleAddSignal: (iGraph : number, sname : string) => void;
   handleDelSignal: (iGraph : number, sname : string) => void;
   handleCloseGraph: (iGraph : number) => void;
-
+  
   _zIndexGraph : {val : number};
   */
-
+  
   constructor(props){
     super(props);   
    
     this.handleAddSignal = this.handleAddSignal.bind(this); 
     this.handleDelSignal = this.handleDelSignal.bind(this);  
-    this.handleCloseGraph = this.handleCloseGraph.bind(this);  
-
+    this.handleCloseGraph = this.handleCloseGraph.bind(this);
+    
     this._zIndexGraph = {val : 1}; 
   }
    

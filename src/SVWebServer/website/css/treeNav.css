@@ -1,17 +1,18 @@
-.treeNav-node-container {
+.treeNav-head {
 	background-color: rgb(137, 139, 143);
 	color: rgb(255, 255, 255);
 }
 
-.treeNav-node-container:hover {
-	background-color: rgb(236, 42, 42);
+.treeNav-row:nth-child(odd){
+	background: rgb(94, 96, 99);
+	color: rgb(255, 255, 255);
 }
-
-.treeNav-leaf-container {
-	background-color: rgb(94, 96, 99);
+ 
+.treeNav-row:nth-child(even){
+	background: rgb(105, 107, 109);
 	color: rgb(255, 255, 255);
 }
 
-.treeNav-leaf-container:hover {
+.treeNav-row:hover {
 	background-color: rgb(116, 161, 64);
 }

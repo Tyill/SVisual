@@ -338,7 +338,8 @@ class App extends React.Component/*::<Props, State>*/{
             : ""
           }
           <Col className="col-auto" > 
-              <Button size="md" style = {buttonStyle} variant = "info"
+              <Button size="md" style = {{ paddingLeft : "0px", paddingRight : "0px",
+                                           width : "25px", ...buttonStyle}} variant = "info"
                       onClick = {this.handleCollapseNav}> 
                       {this.state.isCollapseNav ? String.fromCharCode(187) : String.fromCharCode(171)}
               </Button>
