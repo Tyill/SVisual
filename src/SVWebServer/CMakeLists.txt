@@ -8,7 +8,7 @@ if(WIN32)
     add_definitions(-DSVWEBSERVER_EXPORTS)
 endif(WIN32)
 
-FILE(GLOB_RECURSE SRC_Web"*.cpp" "*.h" "*.ui" "*.qrc")
+FILE(GLOB_RECURSE SRC_Web "*.cpp" "*.c" "*.h" "*.ui" "*.qrc")
 
 add_library(SVWebServer SHARED ${SRC_Web})
 
