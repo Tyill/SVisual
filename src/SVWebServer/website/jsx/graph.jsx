@@ -32,7 +32,8 @@ type signColorParamsType = {
 }
 
 type Props = {
-  iGraph : number,                 
+  iGraph : number,   
+  zIndex : {val : number},              
   dataParams : dataParamsType,
   signals : {sname : signalType},  
   backgroundColor : string,
@@ -60,7 +61,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
   _isPlay : boolean;
   _isAutoResize : boolean;
   _isResizeComponent : boolean;
-
+  
   handlePlotChange: (tmIntervalType, valIntervalType, axisParamsType) => void;
   handleAxisTimeChange: (tmIntervalType, axisParamsType) => void;
   handleAxisValueChange: (valIntervalType, axisParamsType) => void;
@@ -111,7 +112,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
     this._isPlay = true;
     this._isAutoResize = true;
     this._isResizeComponent = false;
-
+   
     this.handlePlotChange = this.handlePlotChange.bind(this); 
     this.handleAxisTimeChange = this.handleAxisTimeChange.bind(this);    
     this.handleAxisValueChange = this.handleAxisValueChange.bind(this);    
@@ -186,6 +187,8 @@ class Graph extends React.Component/*::<Props, State>*/ {
     // left mouse button
     if (event.nativeEvent.which === 1){
   
+      this.props.zIndex.val += 1;
+
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
 
@@ -206,6 +209,8 @@ class Graph extends React.Component/*::<Props, State>*/ {
     if (event.nativeEvent.which === 1){
       
       this._isResizeComponent = true;
+
+      this.props.zIndex.val += 1;
 
       let distX = event.nativeEvent.movementX,
           distY = event.nativeEvent.movementY;
@@ -388,6 +393,7 @@ class Graph extends React.Component/*::<Props, State>*/ {
 
     let style /*:: : any */ = {
       position : this._isResizeComponent ? "absolute" : "relative",
+      zIndex : this.props.zIndex.val,
       left, top,
     }
 

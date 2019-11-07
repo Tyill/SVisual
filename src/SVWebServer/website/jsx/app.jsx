@@ -39,6 +39,7 @@ type State = {
   listGraph: Array<Array<snameType>>,
   isShowConfig : boolean,
   isDarkThemeConfig : boolean,
+  isCollapseNav : boolean,
 }
 */
 
@@ -50,6 +51,7 @@ class App extends React.Component/*::<Props, State>*/{
   handleShowConfig: () => void;
   handleChangeConfig: (event : any) => void;
   handleAddSignalOnGraph: (sname : string) => void;
+  handleCollapseNav: () => void;
   */
 
   constructor(props){
@@ -58,7 +60,8 @@ class App extends React.Component/*::<Props, State>*/{
     this.state = { navScheme: [], 
                    listGraph: [[]],
                    isShowConfig : false,
-                   isDarkThemeConfig : false };
+                   isDarkThemeConfig : false,
+                   isCollapseNav : false, };
 
     if (document.body){                       
       document.body.style.overflow = "hidden"; 
@@ -69,7 +72,8 @@ class App extends React.Component/*::<Props, State>*/{
     this.handleCloseGraph = this.handleCloseGraph.bind(this);  
     this.handleShowConfig = this.handleShowConfig.bind(this); 
     this.handleChangeConfig = this.handleChangeConfig.bind(this); 
-  
+    this.handleCollapseNav = this.handleCollapseNav.bind(this); 
+
     this.handleAddSignalOnGraph = this.handleAddSignalOnGraph.bind(this); 
   }
   
@@ -141,6 +145,16 @@ class App extends React.Component/*::<Props, State>*/{
       let isDarkThemeConfig = !oldState.isDarkThemeConfig;
 
       return {isDarkThemeConfig}
+    });
+  }
+
+  handleCollapseNav(){
+
+    this.setState((oldState, props)=>{
+
+      let isCollapseNav = !oldState.isCollapseNav;
+
+      return {isCollapseNav}
     });
   }
 
@@ -311,13 +325,23 @@ class App extends React.Component/*::<Props, State>*/{
                  style={{overflow: "auto", height: clientHeight}}>
         <Row noGutters={true} className="m-1 p-2"
              style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
-          <Col className="col-auto"> 
-            <Button size="md" className = {"icon-cog"} style = {buttonStyle}
-                    onClick = {this.handleShowConfig}/>
-            <Button size="md" className = {"icon-doc"} style = {buttonStyle}
-                    onClick = {this.handleAddGraph} />
-            <TreeNav scheme={this.state.navScheme}
-                     onDoubleClick = { this.handleAddSignalOnGraph } />
+          {
+          !this.state.isCollapseNav ? 
+            <Col className="col-auto"> 
+              <Button size="md" className = {"icon-cog"} style = {buttonStyle}
+                      onClick = {this.handleShowConfig}/>
+              <Button size="md" className = {"icon-doc"} style = {buttonStyle}
+                      onClick = {this.handleAddGraph} />
+              <TreeNav scheme={this.state.navScheme}
+                       onDoubleClick = { this.handleAddSignalOnGraph } />            
+            </Col>            
+            : ""
+          }
+          <Col className="col-auto" > 
+              <Button size="md" style = {buttonStyle} variant = "info"
+                      onClick = {this.handleCollapseNav}> 
+                      {this.state.isCollapseNav ? String.fromCharCode(187) : String.fromCharCode(171)}
+              </Button>
           </Col>
           <Col className="col"> 
             <GraphPanelRedux listGraph = { this.state.listGraph } 

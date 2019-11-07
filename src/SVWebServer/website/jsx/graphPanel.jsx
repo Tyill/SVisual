@@ -28,6 +28,8 @@ class GraphPanel extends React.Component/*::<Props>*/ {
   handleAddSignal: (iGraph : number, sname : string) => void;
   handleDelSignal: (iGraph : number, sname : string) => void;
   handleCloseGraph: (iGraph : number) => void;
+
+  _zIndexGraph : {val : number};
   */
 
   constructor(props){
@@ -35,7 +37,9 @@ class GraphPanel extends React.Component/*::<Props>*/ {
    
     this.handleAddSignal = this.handleAddSignal.bind(this); 
     this.handleDelSignal = this.handleDelSignal.bind(this);  
-    this.handleCloseGraph = this.handleCloseGraph.bind(this);   
+    this.handleCloseGraph = this.handleCloseGraph.bind(this);  
+
+    this._zIndexGraph = {val : 1}; 
   }
    
   handleAddSignal(iGraph, sname){
@@ -128,7 +132,8 @@ class GraphPanel extends React.Component/*::<Props>*/ {
 
       objList.push( 
         <Col key = {i} className = {`pb-2 col-${xs} col-md-${md} col-xl-${xl} `}>
-          <Graph iGraph = {i}                 
+          <Graph iGraph = {i}
+                 zIndex = {this._zIndexGraph}                 
                  dataParams = {this.props.dataParams}
                  signals = {signals}  
                  backgroundColor = {this.props.config.backgroundColor}
@@ -138,13 +143,13 @@ class GraphPanel extends React.Component/*::<Props>*/ {
         </Col>   
       );
     }
-    
+        
     return(
-      <Container className="col"> 
+      <Container-fluid> 
         <Row noGutters={true} >
           {objList} 
         </Row>
-      </Container>
+      </Container-fluid>
     )  
   }
 }

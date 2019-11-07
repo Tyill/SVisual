@@ -153,8 +153,8 @@ class Plot extends React.Component/*::<Props>*/ {
                                                pageX : eTouch0.pageX,
                                                pageY : eTouch0.pageY});
 
-        idx1 = this._ongoingTouches.findIndex(it => it.identifier == eTouch1.identifier)
-        this._ongoingTouches.splice(idx1, 1, { identifier : eTouch1.identifier,
+        const idx = this._ongoingTouches.findIndex(it => it.identifier == eTouch1.identifier)
+        this._ongoingTouches.splice(idx, 1, { identifier : eTouch1.identifier,
                                                pageX : eTouch1.pageX,
                                                pageY : eTouch1.pageY});
       }
