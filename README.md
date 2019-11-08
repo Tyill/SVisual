@@ -6,7 +6,7 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 <p float="left">
 <img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-video.gif" width="400" height="300"/>
- &emsp
+ &emsp;
 <img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-web.gif" width="400" height="300"/>
 </p>
 
