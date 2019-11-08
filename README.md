@@ -4,8 +4,11 @@
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
-<img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-video.gif" width="400" height="300" />
-<img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-web.gif" width="400" height="300" />
+<p float="left">
+<img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-video.gif" width="400" height="300"/>
+ &emsp
+<img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-web.gif" width="400" height="300"/>
+</p>
 
 ## Features
 
