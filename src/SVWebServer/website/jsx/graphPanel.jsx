@@ -145,11 +145,11 @@ class GraphPanel extends React.Component/*::<Props>*/ {
     }
         
     return(
-      <Container-fluid> 
+      <Container bsPrefix = "fluid"> 
         <Row noGutters={true} >
           {objList} 
         </Row>
-      </Container-fluid>
+      </Container>
     )  
   }
 }
