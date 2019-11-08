@@ -600,6 +600,9 @@ MainWin::~MainWin(){
             comReader->stopServer();
     }
 
+    if (cng.web_ena)
+        SV_Web::stopServer();
+
 	if (db){
 		if (!db->saveSignals(SV_Srv::getCopySignalRef()))
 			statusMess(tr("Ошибка сохранения сигналов в БД"));

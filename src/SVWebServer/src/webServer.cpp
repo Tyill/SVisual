@@ -27,7 +27,9 @@
 #include "webServer.h"
 #include "SVConfig/SVConfigData.h"
 #include "SVConfig/SVConfigLimits.h"
+#include "http_parser.h"
 #include <QJsonDocument>
+#include <QDir>
 #include <QUrl>
 
 void webServer::setConfig(const SV_Web::config& cng_){
@@ -53,6 +55,8 @@ clientSocket::clientSocket(QObject* parent)
 
     server_ = (webServer*)parent;
 }
+
+int response(http_parser* parser);
 
 void clientSocket::readData(){
        
@@ -160,7 +164,7 @@ int response(http_parser* parser){
 
         QByteArray html;
 
-        QFile file(QApplication::applicationDirPath() + "/web" + page);
+        QFile file(QDir::currentPath() + "/web" + page);
         if (file.exists()){
 
             file.open(QIODevice::ReadOnly);
@@ -259,7 +263,7 @@ QByteArray webServer::jsonGetAllModules(){
         
     QJsonObject jnObject;
 
-    auto& mref = pfGetCopyModuleRef();
+    auto mref = pfGetCopyModuleRef();
     
     for (auto m : mref){
 
