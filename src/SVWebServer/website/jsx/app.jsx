@@ -353,7 +353,7 @@ class App extends React.Component/*::<Props, State>*/{
         </Row>
       </Container>  
 
-      <Modal show = {this.state.isShowConfig} onHide={this.handleShowConfig} >
+      <Modal show = {this.state.isShowConfig} onHide={this.handleShowConfig} style ={{ zIndex : 1e5 }} >
         <Modal.Header closeButton>
           <Modal.Title>Settings</Modal.Title>
         </Modal.Header>      
