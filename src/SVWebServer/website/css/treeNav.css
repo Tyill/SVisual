@@ -1,19 +1,24 @@
-.treeNav-node-container {
+.treeNav-head {
+	cursor: default;
+	text-align: left;
 	background-color: rgb(137, 139, 143);
 	color: rgb(255, 255, 255);
-	border-bottom: solid 1px rgb(73, 73, 73);
 }
 
-.treeNav-node-container:hover {
-	background-color: rgb(236, 42, 42);
-}
-
-.treeNav-leaf-container {
-	background-color: rgb(94, 96, 99);
+.treeNav-row{
+	cursor: default;
+	text-align: left;
 	color: rgb(255, 255, 255);
-	border-bottom: solid 1px rgb(73, 73 ,73);
 }
 
-.treeNav-leaf-container:hover {
-	background-color: rgb(43, 247, 25);
+.treeNav-row:nth-child(odd){
+	background: rgb(94, 96, 99);	
+}
+ 
+.treeNav-row:nth-child(even){
+	background: rgb(105, 107, 109);
+}
+
+.treeNav-row:hover {
+	background-color: rgb(116, 161, 64);
 }

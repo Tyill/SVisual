@@ -1,11 +1,13 @@
 {
   "name": "svisual",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.4",
+  "description": "monitoring and recording of data for Arduino and STM32",
   "main": "bundle.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack -w",
-    "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js"
+    "build": "./node_modules/.bin/webpack --config webpack.prod.config.js",
+    "wds": "./node_modules/.bin/webpack-dev-server --config webpack.dev.config.js",
+    "serverTest": "nodemon serverTest.js",
+    "flow": "flow"
   },
   "repository": {
     "type": "git",
@@ -19,20 +21,27 @@
   "license": "MIT",
   "babel": {
     "presets": [
-      "@babel/preset-react"
+      "@babel/preset-react",
+      "@babel/preset-env"
     ]
   },
+  "browserslist": [
+    "defaults"
+  ],
   "devDependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
     "@babel/preset-react": "^7.0.0",
-    "@material-ui/icons": "^4.2.1",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "bootstrap": "^4.3.1",
     "css-loader": "^3.2.0",
-    "eslint": "^6.2.1",
-    "eslint-plugin-react": "^7.14.3",
+    "eslint": "^6.6.0",
+    "eslint-plugin-react": "^7.16.0",
     "express": "^4.17.1",
-    "prop-types": "^15.7.2",
+    "flow": "^0.2.3",
+    "flow-bin": "^0.111.1",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.12",
     "react-dom": "^16.9.0",

@@ -1,0 +1,4 @@
+.app-container {
+	border-radius: 9px 9px 9px 9px;
+	background: radial-gradient(ellipse at center, rgba(223,232,241,1) 0%, rgba(255,255,255,1) 100%);
+}

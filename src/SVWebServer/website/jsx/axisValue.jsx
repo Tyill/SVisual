@@ -1,12 +1,30 @@
 /* eslint-disable no-unused-vars */
-
+// @flow
 import React from "react"
-import PropTypes from "prop-types";
+
+/*::
+import type { axisParamsType } from "./graph.jsx";
+
+export
+type valIntervalType = {begin : number, end : number}
+
+type Props = {
+  valInterval : valIntervalType,
+  axisParams : axisParamsType,
+  onChange : (valIntervalType, axisParamsType) => void; 
+}
+*/
 
 export default
-class AxisValue extends React.Component {
+class AxisValue extends React.Component/*::<Props>*/ {
     
-  constructor(props){
+  /*::
+  _canvasRef : any;
+  handleMouseMove: (event : any) => void;
+  handleWheel: (event : any) => void;
+  */
+
+  constructor(props/*:: : Props*/){
     super(props);
 
     this._canvasRef = null;
@@ -16,7 +34,7 @@ class AxisValue extends React.Component {
   
   }
    
-  handleMouseMove(event) {
+  handleMouseMove(event/*:: : any*/) {
     
     const canvas = this._canvasRef;
 
@@ -24,7 +42,7 @@ class AxisValue extends React.Component {
 
     const diff = event.nativeEvent.movementY;
       
-    let {valOffsPos, valDashStep, ...exPrms} = this.props.axisParams;
+    let {valOffsPos, valDashStep, ...exPrms} /*:: : any */ = this.props.axisParams;
 
     valOffsPos += diff;
 
@@ -44,11 +62,11 @@ class AxisValue extends React.Component {
     this.props.onChange(valInterval, {valOffsPos, valDashStep, ...exPrms});
   }
 
-  handleWheel(e){
+  handleWheel(event/*:: : any*/){
 
-    const delta = e.deltaY || e.detail || e.wheelDelta;
+    const delta = -(event.deltaY || event.detail || event.wheelDelta);
 
-    let {valDashStep, minValDashStep, maxValDashStep, ...exParams} = this.props.axisParams;
+    let {valDashStep, minValDashStep, maxValDashStep, ...exParams}  /*:: : any */ = this.props.axisParams;
 
     if (delta > 0) valDashStep++;
     else valDashStep--;
@@ -67,15 +85,15 @@ class AxisValue extends React.Component {
     else if (curInterval < 100) offs /= 10;
           
     if (delta > 0){ 
-      valInterval.first += offs;
-      valInterval.second -= offs;
+      valInterval.begin += offs;
+      valInterval.end -= offs;
 
-      if (valInterval.first >= valInterval.second)
-        valInterval.first = valInterval.second - 0.1;
+      if (valInterval.begin >= valInterval.end)
+        valInterval.begin = valInterval.end - 0.1;
     }
     else{ 
-      valInterval.first -= offs;
-      valInterval.second += offs;
+      valInterval.begin -= offs;
+      valInterval.end += offs;
     }
 
     this.props.onChange(valInterval, {valDashStep, minValDashStep, maxValDashStep, ...exParams});
@@ -115,7 +133,7 @@ class AxisValue extends React.Component {
 
   }
 
-  drawDashLines(width, height, ctx){
+  drawDashLines(width/*:: : number*/, height/*:: : number*/, ctx/*:: : any*/){
     
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#000000';        
@@ -137,7 +155,7 @@ class AxisValue extends React.Component {
     ctx.stroke();
   }
   
-  drawValMark(width, height, ctx){
+  drawValMark(width/*:: : number*/, height/*:: : number*/, ctx/*:: : any*/){
    
     ctx.font = "normal 9pt Arial";
 
@@ -155,7 +173,7 @@ class AxisValue extends React.Component {
     }
   }
   
-  getValMark(height, offs){
+  getValMark(height/*:: : number*/, offs/*:: : number*/){
      
     let valInterval = this.props.valInterval,
         scale = (valInterval.end - valInterval.begin) / height,
@@ -176,6 +194,11 @@ class AxisValue extends React.Component {
 
   render(){
 
+    const style = {  
+      height: "100%",
+      width: "100%",
+    }
+    
     return <canvas style={ style }
                    ref={ el => this._canvasRef = el }
                    onMouseMove={ this.handleMouseMove } 
@@ -184,14 +207,3 @@ class AxisValue extends React.Component {
   }
 }
 
-const style = {  
-  height: "100%",
-  width: "100%",
-}
-
-AxisValue.propTypes = { 
-  // _curOffsPos : PropTypes.number,
-  // _curDashStep : PropTypes.number,
-  // _maxDashStep : PropTypes.number,
-  // _minDashStep : PropTypes.number,
-};

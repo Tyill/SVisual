@@ -43,11 +43,14 @@
 #include "SVTriggerPanel/SVTriggerPanel.h"
 #include "SVScriptPanel/SVScriptPanel.h"
 #include "SVServer/SVServer.h"
+#include "SVWebServer/SVWebServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.3";
-// reading from additional COM ports
+const QString VERSION = "1.1.4";
+// added web browse
 
+//const QString VERSION = "1.1.3";
+// reading from additional COM ports
 // const QString VERSION = "1.1.2";
 // patch for prev release: repair view graph
 //const QString VERSION = "1.1.1";
@@ -143,7 +146,11 @@ void MainWin::load(){
 	SV_Srv::setOnModuleDisconnectCBack([](const std::string& module){
         QMetaObject::invokeMethod(mainWin, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
 	});
-  
+      
+    SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
+    SV_Web::setGetSignalData(getSignalDataSrv);
+    SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+
 	bool err = false;
 	db = new sql(qUtf8Printable(cng.dbPath), err);
 
@@ -381,7 +388,11 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "tcp_addr = " << cng.tcp_addr << endl;
     txtStream << "tcp_port = " << cng.tcp_port << endl;
     txtStream << endl;
-    txtStream << "com_ena = " << (cng.com_ena ? 1 : 0) << endl;
+    txtStream << "web_ena = " << (cng.web_ena ? "1" : "0") << endl;
+    txtStream << "web_addr = " << cng.web_addr << endl;
+    txtStream << "web_port = " << cng.web_port << endl;
+    txtStream << endl;
+    txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << endl;
     
     for (int i = 0; i < cng.com_ports.size(); ++i){
         txtStream << "com" << i << "_name = " << cng.com_ports[i].first << endl;
@@ -459,6 +470,11 @@ bool MainWin::init(QString initPath){
     // связь по TCP
     cng.tcp_addr = settings.value("tcp_addr", "127.0.0.1").toString();
     cng.tcp_port = settings.value("tcp_port", "2144").toInt();
+
+    // web
+    cng.web_ena = settings.value("web_ena", "0").toInt() == 1;
+    cng.web_addr = settings.value("web_addr", "127.0.0.1").toString();
+    cng.web_port = settings.value("web_port", "2145").toInt();
 
     // копир на диск
     cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
@@ -548,14 +564,25 @@ MainWin::MainWin(QWidget *parent)
 
         if (SV_TcpSrv::runServer(cng.tcp_addr.toStdString(), cng.tcp_port, true)){
 
-            statusMess(QString(tr("Сервер tcp запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
+            statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
 
 			SV_Srv::startServer(srvCng);
 
 			SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
 		}
         else
-            statusMess(QString(tr("Не удалось запустить tcp сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
+            statusMess(QString(tr("Не удалось запустить TCP сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
+    }
+
+    // web
+    if (cng.web_ena){        
+
+        if (SV_Web::startServer(cng.web_addr, cng.web_port, SV_Web::config(SV_CYCLEREC_MS, SV_PACKETSZ))){
+
+            statusMess(QString(tr("WEB cервер запущен: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));
+        }
+        else
+            statusMess(QString(tr("Не удалось запустить WEB сервер: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));
     }
 
     SV_Script::startUpdateThread(scriptPanel_);
@@ -572,6 +599,9 @@ MainWin::~MainWin(){
         if (comReader && comReader->isRunning())
             comReader->stopServer();
     }
+
+    if (cng.web_ena)
+        SV_Web::stopServer();
 
 	if (db){
 		if (!db->saveSignals(SV_Srv::getCopySignalRef()))

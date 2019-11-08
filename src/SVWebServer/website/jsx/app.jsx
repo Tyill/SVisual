@@ -1,108 +1,398 @@
 /* eslint-disable no-unused-vars */
+// @flow
 import React from "react";
 import ReactDOM from "react-dom";
-import {Container, Row, Col} from "react-bootstrap";
-import Header from "./header.jsx"; 
-import GraphPanel from "./graphPanel.jsx"; 
-import Footer from "./footer.jsx"; 
+import { connect, Provider } from "react-redux";
+import {Container, Row, Col, Button, Modal} from "react-bootstrap";
 import TreeNav from "./treeNav.jsx";
-
-const { Provider } = require('react-redux')
-const { createStore } = require('react-redux')
-//const reducers = require('./modules')
-
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import GraphPanelRedux from "./graphPanel.jsx";
  
-function App() {
+import { updateFromServer, 
+         setDataParams, 
+         setSignalsFromServer,
+         signalBufferEnable,
+         changeConfig } from "./redux/actions.jsx"; 
+import Store from "./redux/store.jsx"; 
+
+import "../css/app.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+/*::   
+import type {snameType, signalType, configType, dataParamsType, signalDataType } from "./redux/store.jsx"; 
+import type {changeConfigType, setSignalsFromServerType,
+             setDataParamsType, updateFromServerType, signalBufferEnableType} from "./redux/actions.jsx";
+import type {navSchemeType} from "./treeNav.jsx";
+
+type Props = {
+  signals : { sname: signalType },
+  config : configType,
+  dataParams : dataParamsType,
+  onSignalBufferEnable: signalBufferEnableType,
+  onChangeConfig: changeConfigType,
+  onSetSignalsFromServer: setSignalsFromServerType,
+  onSetDataParams: setDataParamsType,
+  onUpdateFromServer: updateFromServerType,
+};
+
+type State = {
+  navScheme: Array<string | navSchemeType>,
+  listGraph: Array<Array<snameType>>,
+  isShowConfig : boolean,
+  isDarkThemeConfig : boolean,
+  isCollapseNav : boolean,
+}
+*/
+
+class App extends React.Component/*::<Props, State>*/{
+  
+  /*::
+  handleAddGraph: () => void;
+  handleCloseGraph: (iGraph : number) => void;
+  handleShowConfig: () => void;
+  handleChangeConfig: (event : any) => void;
+  handleAddSignalOnGraph: (sname : string) => void;
+  handleCollapseNav: () => void;
+  */
+
+  constructor(props){
+    super(props);
     
-    let scheme = [
-      "patch",
-      { submenu : "users",
-        isShow : true,
-        items : [
-          "Ivan",
-          "Petrov",
-          { submenu : "address",
-            isShow : true,
-            items : [
-              "Московское ш., 101, кв.101",
-              {
-                submenu: "index",
-                isShow : true,
-                items: [ "101101" ],
-              },
-              "Ленинград"
-             ],
-          },
-          { submenu : "phoneNumbers",
-            isShow : true,
-            items : [
-              "812 123-1234",
-              "916 123-4567"
-            ]
-          }
-        ]
+    this.state = { navScheme: [], 
+                   listGraph: [[]],
+                   isShowConfig : false,
+                   isDarkThemeConfig : false,
+                   isCollapseNav : false, };
+
+    if (document.body){                       
+      document.body.style.overflow = "hidden"; 
+      document.body.style.touchAction = "none";
+    }  
+
+    this.handleAddGraph = this.handleAddGraph.bind(this); 
+    this.handleCloseGraph = this.handleCloseGraph.bind(this);  
+    this.handleShowConfig = this.handleShowConfig.bind(this); 
+    this.handleChangeConfig = this.handleChangeConfig.bind(this); 
+    this.handleCollapseNav = this.handleCollapseNav.bind(this); 
+
+    this.handleAddSignalOnGraph = this.handleAddSignalOnGraph.bind(this); 
+  }
+  
+  handleAddGraph(){
+
+    this.setState((oldState, props) => (
+       { listGraph : [...oldState.listGraph, []] } 
+       ));
+  }
+
+  handleCloseGraph(iGraph /*:: : number*/){
+   
+    if (iGraph < this.state.listGraph.length){ 
+
+      this.setState((oldState, props) => { 
+        
+        let listGraph = [...oldState.listGraph];
+
+        listGraph.splice(iGraph, 1);  
+
+        return { listGraph };
+      });     
+    }
+    else
+     console.log("app::handleCloseGraph error (iGraph < this.state.listGraph.length)");
+
+  }
+
+  handleAddSignalOnGraph(sname /*:: : string*/){
+
+    if (this.state.listGraph.length && !this.state.listGraph[0].includes(sname)){ 
+
+      this.props.onSignalBufferEnable(sname, true);
+
+      this.setState((oldState, props) => { 
+        
+        let listGraph = [...oldState.listGraph];
+       
+        listGraph[0].push(sname);
+       
+        return { listGraph };
+      });  
+    }  
+  }
+
+  handleShowConfig(){
+
+    this.setState((oldState, props)=>{
+
+      let isShowConfig = !oldState.isShowConfig;
+
+      return {isShowConfig}
+    });
+  }
+
+  handleChangeConfig(e){
+    
+    let config /*:: : configType */=  {
+      backgroundColor : "white",
+    };
+
+    if (!this.state.isDarkThemeConfig) 
+      config.backgroundColor = "black";
+
+    this.props.onChangeConfig(config)
+
+    this.setState((oldState, props)=>{
+
+      let isDarkThemeConfig = !oldState.isDarkThemeConfig;
+
+      return {isDarkThemeConfig}
+    });
+  }
+
+  handleCollapseNav(){
+
+    this.setState((oldState, props)=>{
+
+      let isCollapseNav = !oldState.isCollapseNav;
+
+      return {isCollapseNav}
+    });
+  }
+
+  componentDidMount() {
+   
+    let nd = ReactDOM.findDOMNode(this);
+    if (nd){
+      nd.addEventListener('wheel', (event /*:: : any*/) => {
+        event.preventDefault();
+      }, false);
+    }
+      
+    fetch('api/allSignals')
+    .then(response => response.json())    
+    .then(signs =>{ 
+        
+      for (let k in signs){
+        signs[k].isBuffEna = false,
+        signs[k].buffVals = []    
       }
-    ]
+      
+      this.props.onSetSignalsFromServer(signs);
+    
+      setNavScheme(signs);
+    })
+    .catch(() => console.log('api/allSignals error'))  
 
-  return (
-    <Container style={containerStyle}>
-      <Row style={headerStyle}>
-        <Col>
-         <Header/>
-        </Col>
-      </Row>
+
+    fetch('api/dataParams')
+    .then(response => response.json())    
+    .then(dataParams => {
      
-      <Row className="row h-100" style={articleStyle}>
-        <Col className="col-auto"> 
-         <TreeNav scheme={scheme} />
-        </Col>
-        <Col className="col-auto"> 
-         <GraphPanel/>
-        </Col>
-      </Row>
+      this.props.onSetDataParams(dataParams);
+      
+      this.updateSignalData(dataParams);
+    })    
+    .catch(() => console.log('api/dataParams error'));    
 
-      <Row style={footerStyle}>
-        <Col> 
-         <Footer/>
-        </Col>
-      </Row>
-    </Container>
-  )
+
+    let setNavScheme = (signs /*:: : {obj : signalType} */) => {
+      
+      let navScheme /*:: : Array<navSchemeType | string> */ = [];
+      for (let k in signs){
+    
+        let s = signs[k];
+
+        let it /*:: : any */ = navScheme.find((it) => {
+
+          return (typeof it === 'object') && (typeof it.submenu === 'string') ?
+                    s.module == it.submenu : false;
+        });
+
+        if (!it){ 
+
+          it = { submenu : s.module,
+                            isShow : true,
+                            isActive : true,
+                            items : []};
+
+          navScheme.push(it);
+        }
+        
+        it.items.push(s.name);
+      }
+          
+      this.setState({navScheme});
+    } 
+
+  }
+
+  updateSignalData(dataParams /*:: : dataParamsType */){
+
+    let count = 0;
+
+    let updateFunc = () => {
+      
+      let tmStart = Date.now();
+      
+      const signs = this.props.signals,       
+            snames = Object.values(signs).filter((it /*:: : any */)  => it.isBuffEna)
+                                         .map((it /*:: : any */) => it.name + it.module);
+
+      if (snames.length > 0){
+
+        let req = "api/lastSignalData?";
+        for (let i = 0; i < snames.length; ++i){
+          req += "sname" + i + "=" + snames[i];
+        
+          if (i < snames.length - 1)
+            req += "&";
+        }
+               
+        fetch(req)
+        .then(response => response.json())
+        .then(buffVals => {         
+          
+          if (Object.keys(buffVals).length > 0) 
+            this.props.onUpdateFromServer(buffVals);
+        })
+        .catch(() => console.log('api/lastSignalData error'));
+      } 
+      
+      if ((count % 10) == 0){
+                 
+        fetch('api/allModules')
+        .then(response => response.json())
+        .then(modState => {  
+          
+          let navScheme = this.state.navScheme;
+
+          for (let k in modState){    
+            
+            let module = k;
+            
+            let it /*:: : any */ = navScheme.find((it) => {
+              return ((typeof it === 'object') && (typeof it.submenu === 'string')) ?
+                (module == it.submenu) : false;
+            });
+  
+            if (it)  
+              it.isActive = modState[k].isActive; 
+          }
+
+          this.setState({navScheme});
+
+        })
+        .catch(() => {
+          
+          console.log('api/allModules error'); 
+          
+          let navScheme = this.state.navScheme;
+  
+          for (let it /*:: : any */ of navScheme)    
+            it.isActive = false; 
+  
+          this.setState({navScheme});
+        });
+      }
+
+      ++count;
+
+      let tout = Date.now() - tmStart;
+       
+      tout = Math.max(0, dataParams.cycleTimeMs * dataParams.packetSize * 0.9 - tout);
+        
+      setTimeout(updateFunc, tout);
+    }
+        
+    updateFunc();
+  }
+    
+  render(){
+
+    let clientHeight = document.documentElement ? document.documentElement.clientHeight : 300;
+
+    const Checkbox = props => (
+      <input type="checkbox" {...props} />
+    )
+
+    const buttonStyle = {   
+      fontSize : "16pt", 
+      marginRight : "5px",
+      marginLeft : "5px",
+      marginBottom : "5px",
+    }
+
+    return (
+      <div>
+      <Container className="col app-container"
+                 style={{overflow: "auto", height: clientHeight}}>
+        <Row noGutters={true} className="m-1 p-2"
+             style = {{  border: "1px solid #dbdbdb", borderRadius: "5px"}}>
+          {
+          !this.state.isCollapseNav ? 
+            <Col className="col-auto"> 
+              <Button size="md" className = {"icon-cog"} style = {buttonStyle}
+                      onClick = {this.handleShowConfig}/>
+              <Button size="md" className = {"icon-doc"} style = {buttonStyle}
+                      onClick = {this.handleAddGraph} />
+              <TreeNav scheme={this.state.navScheme}
+                       onDoubleClick = { this.handleAddSignalOnGraph } />            
+            </Col>            
+            : ""
+          }
+          <Col className="col-auto" > 
+              <Button size="md" style = {{ paddingLeft : "0px", paddingRight : "0px",
+                                           width : "25px", ...buttonStyle}} variant = "info"
+                      onClick = {this.handleCollapseNav}> 
+                      {this.state.isCollapseNav ? String.fromCharCode(187) : String.fromCharCode(171)}
+              </Button>
+          </Col>
+          <Col className="col"> 
+            <GraphPanelRedux listGraph = { this.state.listGraph } 
+                             onCloseGraph = { this.handleCloseGraph } />
+          </Col>
+        </Row>
+      </Container>  
+
+      <Modal show = {this.state.isShowConfig} onHide={this.handleShowConfig} style ={{ zIndex : 1e5 }} >
+        <Modal.Header closeButton>
+          <Modal.Title>Settings</Modal.Title>
+        </Modal.Header>      
+        <Modal.Body>        
+         <Checkbox checked={this.state.isDarkThemeConfig}
+                   onChange={this.handleChangeConfig}/> dark theme        
+        </Modal.Body>            
+      </Modal>
+      </div>
+    )
+  } 
 }
 
-const containerStyle = {   
-  height: document.documentElement.clientHeight - 150,
+
+//////////////////////////////////////////////////
+
+const mapStateToProps = (state) => {
+  return state;
 }
 
-const headerStyle = {  
-  border: "1px solid black",
-  boxSizing: "border-box",
-  backgroundColor : "yellow",
-  height : "100px",
+const mapDispatchToProps = (dispatch) => {
+  return {
+      onSetSignalsFromServer: setSignalsFromServer(dispatch),
+      onUpdateFromServer: updateFromServer(dispatch),
+      onSetDataParams: setDataParams(dispatch),
+      onSignalBufferEnable: signalBufferEnable(dispatch),
+      onChangeConfig: changeConfig(dispatch),  
+  }
 }
 
-const articleStyle = {  
-  border: "1px solid black",
-  boxSizing: "border-box",
-  backgroundColor : "brown",
+let AppRedux = connect(mapStateToProps, mapDispatchToProps)(App);
+
+const root = document.getElementById('root')
+
+if (root){
+  ReactDOM.render(
+    <Provider store={Store}>
+       <AppRedux/>,
+    </Provider>,
+    root
+  );
 }
-
-const footerStyle = {  
-  border: "1px solid black",
-  boxSizing: "border-box",
-  backgroundColor : "#898b8f",
-  height : "50px",
-}
-
-
-// ReactDOM.render(
-//   <App />, 
-//   document.getElementById('root')
-// );
-
-ReactDOM.render((
-  <Provider store={createStore()}>
-    <App />
-  </Provider>
-), document.getElementById('root'))

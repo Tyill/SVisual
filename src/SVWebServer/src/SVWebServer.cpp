@@ -30,39 +30,35 @@ webServer wServer;
 
 namespace SV_Web {
 
-    bool startServer(const QString& addr, int port, const config&){
+    bool startServer(const QString& addr, int port, const config& cng){
                
+        if (wServer.isListening()) return true;
+
+        wServer.setConfig(cng);
+
         return wServer.listen(QHostAddress(addr), port);
     }
 
     void stopServer(){
 
-
+        if (wServer.isListening())
+          wServer.close();
     }
     	
-	void setGetCopySignalRef(pf_getCopySignalRef f) {
+	  void setGetCopySignalRef(pf_getCopySignalRef f) {
 
-		/*if (stp)
-            ((scriptPanel *)stp)->pfGetCopySignalRef = f;*/
-	}
+        wServer.pfGetCopySignalRef = f; 
+  	}
 
-    void setGetModuleData(pf_getModuleData f){
+    void setGetCopyModuleRef(pf_getCopyModuleRef f){
 
-       /* if (stp)
-            ((scriptPanel *)stp)->pfGetModuleData = f;*/
+        wServer.pfGetCopyModuleRef = f;
     }
 
-	void setGetSignalData(pf_getSignalData f) {
+	  void setGetSignalData(pf_getSignalData f) {
 
-		/*if (stp)
-            ((scriptPanel *)stp)->pfGetSignalData = f;*/
-	}
+        wServer.pfGetSignalData = f;
+	  }
 
-	void setLoadSignalData(pf_loadSignalData f) {
-/*
-		if (stp)
-            ((scriptPanel *)stp)->pfLoadSignalData = f;
-	*/}
-    
     
 }

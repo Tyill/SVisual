@@ -48,6 +48,16 @@ public:
     QPushButton *btnAddCOM;
     QPushButton *btnDelCOM;
     QSpacerItem *horizontalSpacer_5;
+    QGroupBox *groupBox_3;
+    QVBoxLayout *verticalLayout_5;
+    QCheckBox *chbWebActive;
+    QHBoxLayout *horizontalLayout;
+    QLabel *label_2;
+    QLineEdit *txtWebIPAddr;
+    QSpacerItem *horizontalSpacer_7;
+    QLabel *label_6;
+    QLineEdit *txtWebPort;
+    QSpacerItem *horizontalSpacer_6;
     QGroupBox *grbSaveData;
     QVBoxLayout *verticalLayout_2;
     QCheckBox *rbtnArchEna;
@@ -72,7 +82,7 @@ public:
     {
         if (settingsPanelClass->objectName().isEmpty())
             settingsPanelClass->setObjectName(QStringLiteral("settingsPanelClass"));
-        settingsPanelClass->resize(700, 429);
+        settingsPanelClass->resize(603, 486);
         settingsPanelClass->setMinimumSize(QSize(550, 350));
         settingsPanelClass->setMaximumSize(QSize(700, 16777215));
         verticalLayout_3 = new QVBoxLayout(settingsPanelClass);
@@ -154,6 +164,58 @@ public:
 
 
         verticalLayout_3->addWidget(groupBox);
+
+        groupBox_3 = new QGroupBox(settingsPanelClass);
+        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        groupBox_3->setMinimumSize(QSize(0, 111));
+        verticalLayout_5 = new QVBoxLayout(groupBox_3);
+        verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
+        chbWebActive = new QCheckBox(groupBox_3);
+        chbWebActive->setObjectName(QStringLiteral("chbWebActive"));
+
+        verticalLayout_5->addWidget(chbWebActive);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        label_2 = new QLabel(groupBox_3);
+        label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setMinimumSize(QSize(50, 0));
+
+        horizontalLayout->addWidget(label_2);
+
+        txtWebIPAddr = new QLineEdit(groupBox_3);
+        txtWebIPAddr->setObjectName(QStringLiteral("txtWebIPAddr"));
+        txtWebIPAddr->setEnabled(true);
+        txtWebIPAddr->setMinimumSize(QSize(100, 0));
+        txtWebIPAddr->setMaximumSize(QSize(100, 16777215));
+
+        horizontalLayout->addWidget(txtWebIPAddr);
+
+        horizontalSpacer_7 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer_7);
+
+        label_6 = new QLabel(groupBox_3);
+        label_6->setObjectName(QStringLiteral("label_6"));
+
+        horizontalLayout->addWidget(label_6);
+
+        txtWebPort = new QLineEdit(groupBox_3);
+        txtWebPort->setObjectName(QStringLiteral("txtWebPort"));
+        txtWebPort->setEnabled(true);
+        txtWebPort->setMaximumSize(QSize(70, 16777215));
+
+        horizontalLayout->addWidget(txtWebPort);
+
+        horizontalSpacer_6 = new QSpacerItem(10, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer_6);
+
+
+        verticalLayout_5->addLayout(horizontalLayout);
+
+
+        verticalLayout_3->addWidget(groupBox_3);
 
         grbSaveData = new QGroupBox(settingsPanelClass);
         grbSaveData->setObjectName(QStringLiteral("grbSaveData"));
@@ -277,10 +339,14 @@ public:
         groupBox->setTitle(QApplication::translate("settingsPanelClass", "\320\237\320\276\320\273\321\203\321\207\320\265\320\275\320\270\320\265 \320\264\320\260\320\275\320\275\321\213\321\205", 0));
         rbtnConnectByEthernet->setText(QApplication::translate("settingsPanelClass", "\321\201\320\276\320\265\320\264\320\270\320\275\320\265\320\275\320\270\320\265 \320\277\320\276 Ethernet", 0));
         label_5->setText(QApplication::translate("settingsPanelClass", "\320\277\320\276\321\200\321\202", 0));
-        label->setText(QApplication::translate("settingsPanelClass", "ip \320\260\320\264\321\200\320\265\321\201", 0));
+        label->setText(QApplication::translate("settingsPanelClass", "IP \320\260\320\264\321\200\320\265\321\201", 0));
         rbtnConnectByCom->setText(QApplication::translate("settingsPanelClass", "\321\201\320\276\320\265\320\264\320\270\320\275\320\265\320\275\320\270\320\265 \320\277\320\276 COM/UART", 0));
         btnAddCOM->setText(QApplication::translate("settingsPanelClass", "\320\224\320\276\320\261\320\260\320\262\320\270\321\202\321\214 COM/UART", 0));
         btnDelCOM->setText(QApplication::translate("settingsPanelClass", "\320\243\320\264\320\260\320\273\320\270\321\202\321\214 COM/UART", 0));
+        groupBox_3->setTitle(QApplication::translate("settingsPanelClass", "Web \321\201\320\265\321\200\320\262\320\265\321\200", 0));
+        chbWebActive->setText(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
+        label_2->setText(QApplication::translate("settingsPanelClass", "IP \320\260\320\264\321\200\320\265\321\201", 0));
+        label_6->setText(QApplication::translate("settingsPanelClass", "\320\277\320\276\321\200\321\202", 0));
         grbSaveData->setTitle(QApplication::translate("settingsPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\265\320\275\320\270\320\265 \320\264\320\260\320\275\320\275\321\213\321\205", 0));
 #ifndef QT_NO_TOOLTIP
         rbtnArchEna->setToolTip(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));

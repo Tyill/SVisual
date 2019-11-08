@@ -34,9 +34,12 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
-const QString VERSION = "1.1.3";
-// reading from additional COM ports
 
+const QString VERSION = "1.1.4";
+// added web browse
+
+//const QString VERSION = "1.1.3";
+// reading from additional COM ports
 //const QString VERSION = "1.1.2";
 // patch for prev release: repair view graph
 //const QString VERSION = "1.1.1";
