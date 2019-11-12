@@ -63,41 +63,53 @@ class AxisTime extends React.Component/*::<Props>*/ {
     tmInterval.endMs += offs;  
     
     this.props.onChange(tmInterval, {tmOffsPos, tmDashStep, ...exPrms});
-
   }
 
   handleWheel(event /*:: : any*/){
 
     const delta = -(event.deltaY || event.detail || event.wheelDelta);
 
+    let {tmDashStep, ...exParams} /*:: : any*/ = this.props.axisParams,        
+        tmInterval = this.props.tmInterval;
+    
     const canvas = this._canvasRef,
           width = canvas.clientWidth,
           ctx = canvas.getContext("2d"),
-          timeMark = this.getTimeMark(width, 0),
+          timeMark = AxisTime.getTimeMark(width, 0, tmInterval),
           fontMetr = ctx.measureText(timeMark).width;
-    
-    let {tmDashStep, ...exParams} /*:: : any*/ = this.props.axisParams;
 
+    ({tmInterval, tmDashStep} = AxisTime.scaleByTime(fontMetr, delta, this.props.axisParams, tmInterval));
+      
+    this.props.onChange(tmInterval, {tmDashStep, ...exParams});
+  }
+  
+  static scaleByTime(fontMetr/*:: :number*/, delta/*:: :number*/, axisParams/*:: :axisParamsType*/, tmInterval/*:: :tmIntervalType*/)
+  /*:: : {tmInterval : tmIntervalType, tmDashStep : number } */
+  {
+    let tmDashStep = axisParams.tmDashStep;
+
+    if (delta == 0)
+      return {tmInterval, tmDashStep};
+      
     if (delta > 0) tmDashStep++;
     else tmDashStep--;
 
     if (tmDashStep > 3 * fontMetr) tmDashStep = 2 * fontMetr;
     else if (tmDashStep < fontMetr * 1.1) tmDashStep = 2 * fontMetr;
 
-    let tmInterval = this.props.tmInterval,
-        offs = 10000,
+    let offs = 10000,
         curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000;
-     
+
     if (curIntervSec > 86400) offs *= 1000;
     else if (curIntervSec > 3600) offs *= 100;
     else if (curIntervSec < 1) offs /= 1000;
     else if (curIntervSec < 60) offs /= 10;
-     
+
     if (delta > 0){ 
 
       tmInterval.beginMs += offs;
       tmInterval.endMs += -offs;
-
+  
       if (tmInterval.beginMs >= tmInterval.endMs){
         let mdl = Math.abs(tmInterval.beginMs + tmInterval.endMs) / 2;
         tmInterval.beginMs = mdl - 10;
@@ -108,10 +120,10 @@ class AxisTime extends React.Component/*::<Props>*/ {
       tmInterval.beginMs += -offs;
       tmInterval.endMs += offs;
     }
-    
-    this.props.onChange(tmInterval, {tmDashStep, ...exParams});
+
+    return {tmInterval, tmDashStep};
   }
-  
+
   componentDidMount() {
    
     this.drawCanvas();
@@ -176,7 +188,7 @@ class AxisTime extends React.Component/*::<Props>*/ {
         offs = tmOffsPos % tmDashStep;
     while (offs < width){
    
-      let timeMark = this.getTimeMark(width, offs),
+      let timeMark = AxisTime.getTimeMark(width, offs, this.props.tmInterval),
           fontMetr = ctx.measureText(timeMark).width;
 
       ctx.fillText(timeMark, offs - fontMetr / 2, height / 2);
@@ -185,10 +197,9 @@ class AxisTime extends React.Component/*::<Props>*/ {
     }
   }
   
-  getTimeMark(width /*:: : number*/, offs /*:: : number*/){
+  static getTimeMark(width /*:: : number*/, offs /*:: : number*/, tmInterval/*:: : tmIntervalType*/){
       
-    const tmInterval = this.props.tmInterval,
-          curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000,
+    const curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000,
           tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
           dt = new Date(tmInterval.beginMs + tmScale * offs);
   

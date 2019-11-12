@@ -65,19 +65,33 @@ class AxisValue extends React.Component/*::<Props>*/ {
   handleWheel(event/*:: : any*/){
 
     const delta = -(event.deltaY || event.detail || event.wheelDelta);
+   
+    let {valDashStep, ...exParams}/*:: : any*/ = this.props.axisParams,
+        valInterval = this.props.valInterval;
 
-    let {valDashStep, minValDashStep, maxValDashStep, ...exParams}  /*:: : any */ = this.props.axisParams;
+    ({valInterval, valDashStep} = AxisValue.scaleByValue(delta, this.props.axisParams, valInterval));
+    
+    this.props.onChange(valInterval, {valDashStep, ...exParams});
+  }
+  
+  static scaleByValue(delta /*:: :number*/, axisParams /*:: :axisParamsType*/, valInterval/*:: :valIntervalType*/)
+  /*:: : {valInterval : valIntervalType, valDashStep : number} */
+  {
+
+    let {valDashStep, minValDashStep, maxValDashStep, ...exParams} = axisParams;
+
+    if (delta == 0)
+      return {valInterval, valDashStep};
 
     if (delta > 0) valDashStep++;
     else valDashStep--;
-
+    
     if (valDashStep > maxValDashStep) 
       valDashStep = minValDashStep;
     else if (valDashStep < minValDashStep) 
       valDashStep = maxValDashStep;
    
-    let valInterval = this.props.valInterval,
-        curInterval = valInterval.end - valInterval.begin,
+    let curInterval = valInterval.end - valInterval.begin,
         offs = 10;
   
     if (curInterval > 1000) offs *= 10;
@@ -94,11 +108,11 @@ class AxisValue extends React.Component/*::<Props>*/ {
     else{ 
       valInterval.begin -= offs;
       valInterval.end += offs;
-    }
+    }    
 
-    this.props.onChange(valInterval, {valDashStep, minValDashStep, maxValDashStep, ...exParams});
+    return {valInterval, valDashStep};
   }
-  
+
   componentDidMount() {
    
     this.drawCanvas();

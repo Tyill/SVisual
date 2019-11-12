@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 // @flow
 import React from "react";
+import AxisValue from "./axisValue.jsx"
+import AxisTime from "./axisTime.jsx"
 
 // let logMess = (mess) =>{
                
@@ -337,100 +339,22 @@ class Plot extends React.Component/*::<Props>*/ {
 
   onWheel(deltaX /*:: : number */, deltaY /*:: : number */){
     
-    let {tmDashStep, valDashStep, ...exParams} = this.props.axisParams,
+    let {tmDashStep, valDashStep, ...exParams} /*:: : any */= this.props.axisParams,
         valInterval = this.props.valInterval,
         tmInterval = this.props.tmInterval;
 
-    ({valInterval, valDashStep} = this.scaleByValue(deltaY, valInterval, valDashStep));
-    
-    ({tmInterval, tmDashStep} = this.scaleByTime(deltaX, tmInterval, tmDashStep));
-
-    const {maxValDashStep, minValDashStep, tmOffsPos, valOffsPos} = exParams;
-
-    this.props.onChange(tmInterval, valInterval, 
-    {tmDashStep, valDashStep, maxValDashStep, minValDashStep, tmOffsPos, valOffsPos}); 
-
-  }
-
-  scaleByValue(delta /*:: :number*/, valInterval/*:: :valIntervalType*/, valDashStep /*:: :number*/ ){
-
-    if (delta == 0)
-      return {valInterval, valDashStep};
-
-    if (delta > 0) valDashStep++;
-    else valDashStep--;
-
-    const {minValDashStep, maxValDashStep} = this.props.axisParams;
-
-    if (valDashStep > maxValDashStep) 
-      valDashStep = minValDashStep;
-    else if (valDashStep < minValDashStep) 
-      valDashStep = maxValDashStep;
-   
-    let curInterval = valInterval.end - valInterval.begin,
-        offs = 10;
-  
-    if (curInterval > 1000) offs *= 10;
-    else if (curInterval > 10000) offs *= 100;
-    else if (curInterval < 100) offs /= 10;
-          
-    if (delta > 0){ 
-      valInterval.begin += offs;
-      valInterval.end -= offs;
-
-      if (valInterval.begin >= valInterval.end)
-        valInterval.begin = valInterval.end - 0.1;
-    }
-    else{ 
-      valInterval.begin -= offs;
-      valInterval.end += offs;
-    }    
-
-    return {valInterval, valDashStep};
-  }
-
-  scaleByTime(delta/*:: :number*/, tmInterval/*:: :tmIntervalType*/, tmDashStep/*:: :number*/){
-
-    if (delta == 0)
-      return {tmInterval, tmDashStep};
+    ({valInterval, valDashStep} = AxisValue.scaleByValue(deltaY, this.props.axisParams, valInterval));
     
     const canvas = this._canvasRef,
-    width = canvas.clientWidth,
-    ctx = canvas.getContext("2d"),
-    timeMark = this.getTimeMark(width, 0),
-    fontMetr = ctx.measureText(timeMark).width;
-   
-    if (delta > 0) tmDashStep++;
-    else tmDashStep--;
+          width = canvas.clientWidth,
+          ctx = canvas.getContext("2d"),
+          timeMark = AxisTime.getTimeMark(width, 0, tmInterval),
+          fontMetr = ctx.measureText(timeMark).width;
 
-    if (tmDashStep > 3 * fontMetr) tmDashStep = 2 * fontMetr;
-    else if (tmDashStep < fontMetr * 1.1) tmDashStep = 2 * fontMetr;
-
-    let offs = 10000,
-        curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000;
-
-    if (curIntervSec > 86400) offs *= 1000;
-    else if (curIntervSec > 3600) offs *= 100;
-    else if (curIntervSec < 1) offs /= 1000;
-    else if (curIntervSec < 60) offs /= 10;
-
-    if (delta > 0){ 
-
-      tmInterval.beginMs += offs;
-      tmInterval.endMs += -offs;
-  
-      if (tmInterval.beginMs >= tmInterval.endMs){
-        let mdl = Math.abs(tmInterval.beginMs + tmInterval.endMs) / 2;
-        tmInterval.beginMs = mdl - 10;
-        tmInterval.endMs = mdl + 10;
-      }
-    }
-    else{ 
-      tmInterval.beginMs += -offs;
-      tmInterval.endMs += offs;
-    }
-
-    return {tmInterval, tmDashStep};
+    ({tmInterval, tmDashStep} = AxisTime.scaleByTime(fontMetr, deltaX, this.props.axisParams, tmInterval));
+    
+    this.props.onChange(tmInterval, valInterval, 
+                        {tmDashStep, valDashStep, ...exParams}); 
   }
   
   componentDidMount() {
@@ -814,31 +738,7 @@ class Plot extends React.Component/*::<Props>*/ {
         ctx.stroke();      
       }              
     }
-  }
-
-  getTimeMark(width /*:: : number */, offs/*:: : number */){
-      
-    const tmInterval = this.props.tmInterval,
-          curIntervSec = (tmInterval.endMs - tmInterval.beginMs) / 1000,
-          tmScale = (tmInterval.endMs - tmInterval.beginMs) / width,   
-          dt = new Date(tmInterval.beginMs + tmScale * offs);
-  
-    let timeMark = '';
-
-    if (curIntervSec > 86400){     
-      let options = { hour12 : false, day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
-      timeMark = dt.toLocaleTimeString('en-US', options);
-    }
-    else{
-      let options = { hour12 : false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      timeMark = dt.toLocaleTimeString('en-US', options).split(' ')[0];  
-    
-      if (curIntervSec < 60)
-        timeMark += ":" + dt.getMilliseconds();
-    }
-        
-     return timeMark;
-  }
+  }  
 
   getTimePosMark(){
 
