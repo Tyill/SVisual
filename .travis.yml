@@ -61,9 +61,9 @@ script:
   #   make -j2;
   #  fi
   
- # - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
- ##     cmake --build . --config Release;
- #   fi
+  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
+      cmake --build . --config Release;
+    fi
 
 after_success:
   
