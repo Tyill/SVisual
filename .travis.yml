@@ -50,7 +50,9 @@ before_script:
   #  fi
     
   - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-     curl -vLO http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe ./qt-unified-windows-x86-online.exe --verbose;
+     curl -vLO http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe;
+     ./qt-unified-windows-x86-online.exe --verbose --script tools/qt-installer-windows.qs;
+     
      cd src;
      cmake -G "Visual Studio 15 2017" -A x64 .;
     fi
