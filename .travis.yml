@@ -42,7 +42,7 @@ matrix:
 before_install:  
 
 install:   
-  - bash -x .travis/install.sh
+  #- bash -x .travis/install.sh
   
 before_script:
   #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -52,8 +52,8 @@ before_script:
   - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
       curl -vLO http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe
        ./qt-unified-windows-x86-online.exe --verbose
-      cd src;
-      cmake -G "Visual Studio 15 2017" -A x64 .;
+     ## cd src;
+     # cmake -G "Visual Studio 15 2017" -A x64 .;
     fi
  
 script:
@@ -61,9 +61,9 @@ script:
   #   make -j2;
   #  fi
   
-  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      cmake --build . --config Release;
-    fi
+ # - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
+ ##     cmake --build . --config Release;
+ #   fi
 
 after_success:
   
