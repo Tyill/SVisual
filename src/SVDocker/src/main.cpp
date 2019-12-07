@@ -98,7 +98,7 @@ void init(const std::string& initPath, config& cng){
 	cng.tcp_port = settings.value("tcp_port", "2144").toInt();
 
 	// web
-	cng.web_ena = settings.value("web_ena", "0").toInt() == 1;
+	cng.web_ena = settings.value("web_ena", "1").toInt() == 1;
 	cng.web_addr = settings.value("web_addr", "0.0.0.0").toString().toStdString();
 	cng.web_port = settings.value("web_port", "2145").toInt();
 
@@ -121,6 +121,8 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
+  QCoreApplication a(argc, argv);
+
     SV_TcpSrv::setErrorCBack(statusMess);
     SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
 
@@ -128,9 +130,9 @@ int main(int argc, char* argv[]){
 
 	config cng;
 
-	init(argv[1], cng);
+  init(argv[1], cng);
 
-    SV_Srv::config scng;
+  SV_Srv::config scng;
 
 	scng.cycleRecMs = cng.cycleRecMs;
 	scng.packetSz = cng.packetSz;
@@ -138,9 +140,8 @@ int main(int argc, char* argv[]){
 	scng.outArchiveHourCnt = cng.outArchiveHourCnt;
 	scng.outArchiveName = cng.outArchiveName;
 	scng.outArchivePath = cng.outArchivePath;
-
-
-	if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer(cng.tcp_addr, cng.tcp_port)){
+  	
+  if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer(cng.tcp_addr, cng.tcp_port)){
 		statusMess("TCP server run: " + cng.tcp_addr + " " + std::to_string(cng.tcp_port));
 	}
 	else{
@@ -148,23 +149,18 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
-
 	if (cng.web_ena){
 
 		SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
 		SV_Web::setGetSignalData(getSignalDataSrv);
 		SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-		if (SV_Web::startServer("127.0.0.1", 2146, SV_Web::config(SV_CYCLEREC_MS, SV_PACKETSZ)))
-			statusMess("WEB server run: " + cng.web_addr + " " + std::to_string(2146));
+    if (SV_Web::startServer(QString::fromStdString(cng.web_addr), cng.web_port, SV_Web::config(SV_CYCLEREC_MS, SV_PACKETSZ)))
+      statusMess("WEB server run: " + cng.web_addr + " " + std::to_string(cng.web_port));
 		else
 			statusMess("WEB server not run: " + cng.web_addr + " " + std::to_string(cng.web_port));
 	}
 
-
-	while (true)
-		SV_Aux::SleepMs(1000);
-
-	return 0;
+  return a.exec();
 }
 
