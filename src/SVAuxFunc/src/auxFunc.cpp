@@ -89,7 +89,7 @@ namespace SV_Aux {
         char curDate[32];
         strftime(curDate, 32, "%Y-%m-%d %H:%M:%S:", lct);
 
-        sprintf(curDate, "%s%03d", curDate, int(ms));
+        (sprintf)(curDate, "%s%03d", curDate, int(ms));
 
         return curDate;
     }

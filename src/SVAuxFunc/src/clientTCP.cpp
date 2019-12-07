@@ -76,7 +76,7 @@ namespace SV_TcpCln {
 
 			// Resolve the server address and port
 			char cport[11];
-			sprintf(cport, "%d", port);
+			(sprintf)(cport, "%d", port);
 			iResult = getaddrinfo(addr.c_str(), cport, &hints, &adInfo);
 			if (iResult != 0) {
 				WSACleanup();
