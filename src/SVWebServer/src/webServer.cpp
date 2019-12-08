@@ -164,7 +164,7 @@ int response(http_parser* parser){
 
         QByteArray html;
 
-        QFile file(QDir::currentPath() + "/web" + page);
+        QFile file(QCoreApplication::applicationDirPath() + "/web" + page);
         if (file.exists()){
 
             file.open(QIODevice::ReadOnly);

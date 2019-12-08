@@ -72,12 +72,9 @@ struct config{
 	int packetSz;              ///< размер пакета - задает пользователь
 
 	// связь по TCP
-	std::string tcp_addr;          ///< ip
 	int tcp_port;              ///< port
 
 	// web
-	bool web_ena;
-	std::string web_addr;          ///< ip
 	int web_port;              ///< port
 
 };
@@ -94,17 +91,14 @@ void init(const std::string& initPath, config& cng){
 	cng.packetSz = qMax(cng.packetSz, 1);
 
 	// связь по TCP
-	cng.tcp_addr = settings.value("tcp_addr", "0.0.0.0").toString().toStdString();
 	cng.tcp_port = settings.value("tcp_port", "2144").toInt();
 
 	// web
-	cng.web_ena = settings.value("web_ena", "1").toInt() == 1;
-	cng.web_addr = settings.value("web_addr", "0.0.0.0").toString().toStdString();
 	cng.web_port = settings.value("web_port", "2145").toInt();
 
 	// копир на диск
 	cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
-	cng.outArchivePath = settings.value("outArchivePath", "").toString().toStdString();
+	cng.outArchivePath = settings.value("outArchivePath", "/home/").toString().toStdString();
 
 	cng.outArchiveName = settings.value("outFileName", "svrec").toString().toStdString();
 	cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
@@ -116,12 +110,7 @@ void init(const std::string& initPath, config& cng){
 
 int main(int argc, char* argv[]){
 
-	if (argc == 1){
-		statusMess("No ini path - arg[1]");
-		return -1;
-	}
-
-  QCoreApplication a(argc, argv);
+    QCoreApplication a(argc, argv);
 
     SV_TcpSrv::setErrorCBack(statusMess);
     SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
@@ -130,9 +119,10 @@ int main(int argc, char* argv[]){
 
 	config cng;
 
-  init(argv[1], cng);
+	std::string iniPath = argc > 1 ? argv[1] : "";
+    init(iniPath, cng);
 
-  SV_Srv::config scng;
+    SV_Srv::config scng;
 
 	scng.cycleRecMs = cng.cycleRecMs;
 	scng.packetSz = cng.packetSz;
@@ -141,25 +131,26 @@ int main(int argc, char* argv[]){
 	scng.outArchiveName = cng.outArchiveName;
 	scng.outArchivePath = cng.outArchivePath;
   	
-  if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer(cng.tcp_addr, cng.tcp_port)){
-		statusMess("TCP server run: " + cng.tcp_addr + " " + std::to_string(cng.tcp_port));
+    if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer("0.0.0.0", cng.tcp_port)){
+		statusMess("TCP server run port: " + std::to_string(cng.tcp_port));
 	}
 	else{
-		statusMess("TCP server not run: " + cng.tcp_addr + " " + std::to_string(cng.tcp_port));
+		statusMess("TCP server not run port: " + std::to_string(cng.tcp_port));
 		return -1;
 	}
 
-	if (cng.web_ena){
+	SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
+	SV_Web::setGetSignalData(getSignalDataSrv);
+	SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-		SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
-		SV_Web::setGetSignalData(getSignalDataSrv);
-		SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+    if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::config(SV_CYCLEREC_MS, SV_PACKETSZ)))
+      statusMess("WEB server run port: " + std::to_string(cng.web_port));
+	else
+	  statusMess("WEB server not run port: " + std::to_string(cng.web_port));
 
-    if (SV_Web::startServer(QString::fromStdString(cng.web_addr), cng.web_port, SV_Web::config(SV_CYCLEREC_MS, SV_PACKETSZ)))
-      statusMess("WEB server run: " + cng.web_addr + " " + std::to_string(cng.web_port));
-		else
-			statusMess("WEB server not run: " + cng.web_addr + " " + std::to_string(cng.web_port));
-	}
+    statusMess("runPath " + QCoreApplication::applicationDirPath().toStdString());
+    statusMess("outArchivePath " + cng.outArchivePath);
+
 
   return a.exec();
 }
