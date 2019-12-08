@@ -119,7 +119,7 @@ int main(int argc, char* argv[]){
 
 	config cng;
 
-	std::string iniPath = argc > 1 ? argv[1] : "";
+	std::string iniPath = argc > 1 ? argv[1] : a.applicationDirPath().toStdString() + "/svdocker.ini";
     init(iniPath, cng);
 
     SV_Srv::config scng;
