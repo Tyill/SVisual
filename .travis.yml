@@ -10,7 +10,7 @@ services:
 
 branches:
   only:
-   #- master
+   - master
   
 before_install:  
   - docker pull tyiler/svdocker:1.0
