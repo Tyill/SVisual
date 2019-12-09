@@ -1,10 +1,11 @@
 <div align="left">
-  <a><img src="docs/SVLabel.png" width = 150 height = 50 ></a><br>
-</div>
+  <p><img src="docs/SVLabel.png" width = 150 height = 50 ></p>
 
 | **`Docker`** | **`License`** |
 |------------------|------------------|
 |[![Build Status](https://travis-ci.com/Tyill/SVisual.svg?branch=master)](https://travis-ci.com/Tyill/SVisual)|[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)|
+
+</div>
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
