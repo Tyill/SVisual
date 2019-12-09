@@ -1,7 +1,6 @@
-<p float="left">
-<img src="docs/SVLabel.png" width = 150 height = 50 />
-&emsp;
-</p>
+<div align="left">
+  <a><img src="docs/SVLabel.png" width = 150 height = 50 ></a><br>
+</div>
 
 | **`Docker`** | **`License`** |
 |------------------|------------------|
