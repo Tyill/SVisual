@@ -14,9 +14,10 @@ branches:
   
 before_install:  
   - docker pull tyiler/svdocker:1.0
-  
+  - docker run -p 2144:2144 -p 2145:2145 tyiler/svdocker:1.0   
+ 
 script:
-  - docker run -it -p 2144:2144 -p 2145:2145 tyiler/svdocker:1.0   
-       
+  - docker stop tyiler/svdocker:1.0
+    
 after_success:
   
