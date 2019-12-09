@@ -4,6 +4,10 @@
 
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
+| **`Docker`** | **`License`** |
+|------------------|------------------|
+|[![Build Status](https://travis-ci.com/Tyill/svisual.svg?branch=master)](https://travis-ci.com/Tyill/svisual)|[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)|
+
 <p float="left">
 <img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-video.gif" width="400" height="300"/>
  &emsp;
