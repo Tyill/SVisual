@@ -34,6 +34,8 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * client UART+DMA for stm32f1 https://github.com/burrbull/svisual-stm32f1
 
+* docker image https://hub.docker.com/r/tyiler/svdocker
+
 ## Demo
 
 https://www.youtube.com/watch?v=LR0Rb964DLA&feature=youtu.be
