@@ -1,67 +1,23 @@
 sudo: true
-#dist: xenial
 
 language: cpp
 
 os:
-  #- linux
-  - windows  
-
-compiler:
-  #- gcc
-  #- clang
-  - msvc
-
-cache:
-    
-addons:
-  apt:
-    sources:
-    
-    packages:
+  - linux 
+  
+services:
+  - docker
 
 branches:
   only:
-    - master
-    
-env:
-  global:
-    
-  matrix:
-    
-        
-matrix:  
-  exclude:
-        #- os: windows
-        #  compiler: gcc
-        #- os: windows
-        #  compiler: clang
-        #- os: linux
-        #  compiler: msvc          
+   - master
   
 before_install:  
-
-install:   
-  - bash -x .travis/install.sh
-  
-before_script:
-  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-  #    
-  #  fi
-    
-  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      cd src;
-      cmake -G "Visual Studio 15 2017" -A x64 .;
-    fi
+  - docker pull tyiler/svdocker:1.0
+  - docker run -d -p 2144:2144 -p 2145:2145 tyiler/svdocker:1.0   
  
 script:
-  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then 
-  #   make -j2;
-  #  fi
+  - docker stop -t=10 $(docker ps -a -q)
   
-  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      cmake --build . --config Release;
-    fi
-
 after_success:
   
