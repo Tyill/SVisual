@@ -209,8 +209,12 @@
         <translation type="vanished">&lt;h2&gt;SVisualMonitor &lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2017 SVisual.&lt;p&gt;Software designed to analyze signals from devices.&lt;p&gt; www.s-visual.com </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="157"/>
         <source>Подключение БД успешно: </source>
+        <translation type="vanished">Database Connection successful</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwin.cpp" line="157"/>
+        <source>Подключение БД успешно</source>
         <translation>Database Connection successful</translation>
     </message>
     <message>

@@ -154,7 +154,7 @@ void MainWin::load(){
 	bool isOk = false;
     db_ = new dbProvider(qUtf8Printable(cng.dbPath), isOk);
 
-    if (isOk) statusMess(tr("Подключение БД успешно: ") + cng.dbPath);
+    if (isOk) statusMess(tr("Подключение БД успешно"));
 	else{
 		statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
 		
