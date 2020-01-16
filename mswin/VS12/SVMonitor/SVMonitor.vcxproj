@@ -26,7 +26,7 @@
     <ClCompile Include="..\..\..\src\SVMonitor\src\mainwin.cpp" />
     <ClCompile Include="..\..\..\src\SVMonitor\src\serverAPI.cpp" />
     <ClCompile Include="..\..\..\src\SVMonitor\src\settingsPanel.cpp" />
-    <ClCompile Include="..\..\..\src\SVMonitor\src\sql.cpp" />
+    <ClCompile Include="..\..\..\src\SVMonitor\src\dbProvider.cpp" />
     <ClCompile Include="..\..\..\src\SVMonitor\src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -198,7 +198,7 @@
     </CustomBuild>
     <ClInclude Include="..\..\..\src\SVMonitor\src\resource.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\src\serverAPI.h" />
-    <ClInclude Include="..\..\..\src\SVMonitor\src\sql.h" />
+    <ClInclude Include="..\..\..\src\SVMonitor\src\dbProvider.h" />
     <ClInclude Include="..\..\..\src\SVMonitor\src\stdafx.h" />
     <CustomBuild Include="..\..\..\src\SVMonitor\src\treeWidgetExt.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

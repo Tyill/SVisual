@@ -74,7 +74,7 @@ MainWin* mainWin = nullptr;
 
 using namespace SV_Cng;
 
-void statusMess(QString mess){
+void statusMess(const QString& mess){
 
     QMetaObject::invokeMethod(mainWin->ui.txtStatusMess, "append", Qt::AutoConnection,
         Q_ARG(QString, QString::fromStdString(SV_Aux::CurrDateTime()) + " " + mess));
@@ -151,13 +151,15 @@ void MainWin::load(){
     SV_Web::setGetSignalData(getSignalDataSrv);
     SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-	bool err = false;
-	db = new sql(qUtf8Printable(cng.dbPath), err);
+	bool isOk = false;
+    db_ = new dbProvider(qUtf8Printable(cng.dbPath), isOk);
 
-	if (!err) statusMess(tr("Подключение базы данных успешно"));
+    if (isOk) statusMess(tr("Подключение БД успешно: ") + cng.dbPath);
 	else{
-		statusMess(tr("Подключение базы данных ошибка: ") + cng.dbPath);
-		db = nullptr;
+		statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
+		
+        delete db_;
+        db_ = nullptr;
 	}
 
 	/////////////////////
@@ -603,10 +605,10 @@ MainWin::~MainWin(){
     if (cng.web_ena)
         SV_Web::stopServer();
 
-	if (db){
-		if (!db->saveSignals(SV_Srv::getCopySignalRef()))
+	if (db_){
+		if (!db_->saveSignals(SV_Srv::getCopySignalRef()))
 			statusMess(tr("Ошибка сохранения сигналов в БД"));
-		if (!db->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
+		if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
 			statusMess(tr("Ошибка сохранения триггеров в БД"));
 	}
 
@@ -832,20 +834,20 @@ void MainWin::updateTblSignal(){
                     arg(SV_VALUE_MAX_CNT));
 
 	// посмотрим в БД что есть
-	if (db){
+	if (db_){
 		
 		for (auto& s : sref){
 
 			// только тех, которые еще не видел
 			if (!signExist_.contains(s.first.c_str())){
 
-				signalData sd = db->getSignal(s.second->name.c_str(), s.second->module.c_str());
+				signalData sd = db_->getSignal(s.second->name.c_str(), s.second->module.c_str());
 				if (!sd.name.empty()){
 					s.second->group = sd.group;
 					s.second->comment = sd.comment;
 				}
 
-				auto trg = db->getTrigger(s.second->name.c_str(), s.second->module.c_str());
+				auto trg = db_->getTrigger(s.second->name.c_str(), s.second->module.c_str());
 				int sz = trg.size();
 				for (int i = 0; i < sz; ++i)
 					SV_Trigger::addTrigger(triggerPanel_, trg[i]->name, trg[i]);
@@ -878,7 +880,7 @@ void MainWin::moduleConnect(QString module){
 	// только тех, которые еще не видел
     if (!signExist_.contains(module)){
 				            				
-        auto trgOn = db ? db->getTrigger(module + "On") : nullptr;
+        auto trgOn = db_ ? db_->getTrigger(module + "On") : nullptr;
 		if (!trgOn)	{				
             trgOn = new SV_Trigger::triggerData();
             trgOn->name = module + "On";
@@ -891,7 +893,7 @@ void MainWin::moduleConnect(QString module){
         }
         SV_Trigger::addTrigger(triggerPanel_, module + "On", trgOn);
 							
-        auto trgOff = db ? db->getTrigger(module + "Off") : nullptr;
+        auto trgOff = db_ ? db_->getTrigger(module + "Off") : nullptr;
         if (!trgOff){
             trgOff = new  SV_Trigger::triggerData();
             trgOff->name = module + "Off";
@@ -941,8 +943,8 @@ void MainWin::onTrigger(QString trigger){
 
 	statusMess(QObject::tr("Событие: ") + name);
 
-	if (db) 
-        db->saveEvent(trigger, QDateTime::currentDateTime());
+	if (db_) 
+        db_->saveEvent(trigger, QDateTime::currentDateTime());
 
     if (!td->userProcPath.isEmpty()){
         QFile f(td->userProcPath);
@@ -1019,7 +1021,7 @@ void MainWin::updateConfig(MainWin::config cng_){
 
 QVector<uEvent> MainWin::getEvents(QDateTime bg, QDateTime en){
 
-	return db ? db->getEvents(bg, en) : QVector<uEvent>();
+	return db_ ? db_->getEvents(bg, en) : QVector<uEvent>();
 }
 
 QDialog* MainWin::addNewWindow(const QRect& pos){

@@ -31,7 +31,7 @@
 #include "SVServer/SVServer.h"
 #include "SVAuxFunc/mt_log.h"
 #include "SVGraphPanel/SVGraphPanel.h" 
-#include "src/sql.h"
+#include "src/dbProvider.h"
 #include "src/comReader.h"
 
 class settingsPanel;
@@ -42,7 +42,7 @@ class MainWin : public QMainWindow
 {
     Q_OBJECT
 
-        friend void statusMess(QString mess);
+        friend void statusMess(const QString& mess);
 
 public:
 
@@ -112,7 +112,7 @@ private:
     graphSettingPanel* graphSettPanel_ = nullptr;
 	QSystemTrayIcon* trayIcon_ = nullptr;
 
-	sql* db = nullptr;
+	dbProvider* db_ = nullptr;
     
     QNetworkAccessManager* netManager_ = nullptr;
 

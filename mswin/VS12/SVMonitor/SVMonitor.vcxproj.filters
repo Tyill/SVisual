@@ -53,9 +53,6 @@
     <ClCompile Include="..\..\..\src\SVMonitor\src\settingsPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVMonitor\src\sql.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\SVMonitor\src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,6 +101,9 @@
     <ClCompile Include="..\..\..\src\SVMonitor\src\graphSettingPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\SVMonitor\src\dbProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\src\SVMonitor\src\comReader.h">
@@ -147,9 +147,6 @@
     <ClInclude Include="..\..\..\src\SVMonitor\src\serverAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVMonitor\src\sql.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\SVMonitor\src\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -181,6 +178,9 @@
       <Filter>Form Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\SVMonitor\resources\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\SVMonitor\src\dbProvider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

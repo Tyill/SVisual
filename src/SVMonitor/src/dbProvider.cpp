@@ -23,40 +23,44 @@
 // THE SOFTWARE.
 //
 #include "stdafx.h"
-#include "sql.h"
+#include "dbProvider.h"
 #include <sstream>
 
 using namespace std;
 using namespace SV_Cng;
 using namespace SV_Trigger;
 
-void statusMess(QString);
-
-bool sql::Init(){
+bool dbProvider::init(){
 
 		sqlite3_shutdown();
 		sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
 		sqlite3_initialize();
 
-		if (!Open()){ return false; }
+		if (!open()){ return false; }
 
 		string req = "PRAGMA journal_mode = WAL;";
 	    vector<vector<string>> results;
-		if (!Query(req, results)) return false;
+		if (!query(req, results)) return false;
 
 		req = "PRAGMA synchronous = NORMAL;";
-		if (!Query(req, results)) return false;
+		if (!query(req, results)) return false;
 				
 		sqlite3_busy_timeout(db_, 5000); 
 
 		return true;
 	}
 
-bool sql::Open(){
+bool dbProvider::open(){
 	return (sqlite3_open(qPrintable(pathDB_), &db_) == SQLITE_OK);
 }
-	
-bool sql::Query(const string& query, vector<vector<string>>& results){
+
+void dbProvider::close(){
+
+    if (db_)
+      sqlite3_close(db_);
+}
+
+bool dbProvider::query(const string& query, vector<vector<string>>& results){
 	
     QMutexLocker locker(&mtx_);
 
@@ -88,21 +92,18 @@ bool sql::Query(const string& query, vector<vector<string>>& results){
 		else res = false;
 
 	}
-	catch (std::exception ex){ statusMess(QString("SQL::Query Exception ") + ex.what()); res = false; }
+	catch (std::exception ex){ statusMess(QString("SQL::query Exception ") + ex.what()); res = false; }
     	
 	return res;
 }
 
-void sql::Close(){
-		
-	sqlite3_close(db_);
-}
-
-sql::sql(QString filename, bool& err){
+dbProvider::dbProvider(const QString& filename, bool& isOk){
 		
 	pathDB_ = filename;
 
-	if (!Init()) { err = true; return; }
+    isOk = false;
+
+	if (!init()) return;
 
 	stringstream ss;
 
@@ -115,7 +116,7 @@ sql::sql(QString filename, bool& err){
 		"'comment' TEXT,"
 		"'type' INTEGER);";
 	
-	if (!Query(ss.str(), results)){ err = true; return; }
+	if (!query(ss.str(), results)) return;
 
 	ss.str(""); ss.clear();
 	ss << "CREATE TABLE IF NOT EXISTS 'Trigger' ("
@@ -128,7 +129,7 @@ sql::sql(QString filename, bool& err){
 		"'condValue' INTEGER,"
 		"'condTOut' INTEGER);";
 		
-	if (!Query(ss.str(), results)){ err = true; return; }
+	if (!query(ss.str(), results)) return;
 
 	ss.str(""); ss.clear();
 	ss << "CREATE TABLE IF NOT EXISTS 'UserEventData' ("
@@ -137,7 +138,7 @@ sql::sql(QString filename, bool& err){
 		"'userProcPath' TEXT,"
 		"'userProcArgs' TEXT);";
 
-	if (!Query(ss.str(), results)){ err = true; return; }
+	if (!query(ss.str(), results)) return;
 
 	
 	ss.str(""); ss.clear();
@@ -146,28 +147,28 @@ sql::sql(QString filename, bool& err){
 		"'trigger' TEXT,"
 		"'sendDateTime' DATETIME);";
 	
-	if (!Query(ss.str(), results)){ err = true; return; }
+	if (!query(ss.str(), results)) return;
 
 
-	err = false;
+    isOk = true;
 }
 
-sql::~sql(){
+dbProvider::~dbProvider(){
 
-	Close();
+	close();
 
 }
 
-bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
+bool dbProvider::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 
 	stringstream ss;vector<vector<string>> res;
 		
     ss << "DELETE FROM Trigger;";
-    if (!Query(ss.str(), res)) return false;
+    if (!query(ss.str(), res)) return false;
 
     ss.str(""); ss.clear();
     ss << "DELETE FROM UserEventData;";
-    if (!Query(ss.str(), res)) return false;
+    if (!query(ss.str(), res)) return false;
 
 	for (auto& tr : trgData){
 	
@@ -181,7 +182,7 @@ bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 			"'" << tr->condValue << "',"
 			"'" << tr->condTOut << "');";
 		
-		if (!Query(ss.str(), res)) return false;
+		if (!query(ss.str(), res)) return false;
 		
         /////////////////////////////////////////////////
         ss.str(""); ss.clear();
@@ -190,13 +191,13 @@ bool sql::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
             "'" << tr->userProcPath.toUtf8().constData() << "',"
             "'" << tr->userProcArgs.toUtf8().constData() << "');";
 
-        if (!Query(ss.str(), res)) return false;        
+        if (!query(ss.str(), res)) return false;        
 	}
 	
 	return true;
 }
 
-QVector<triggerData*> sql::getTrigger(const QString& signal, const QString& module){
+QVector<triggerData*> dbProvider::getTrigger(const QString& signal, const QString& module){
 
 	stringstream ss;
 
@@ -204,7 +205,7 @@ QVector<triggerData*> sql::getTrigger(const QString& signal, const QString& modu
 		"' AND module = '" << module.toUtf8().data() << "'; ";
 
 	vector<vector<string>> trg; QVector<triggerData*> res;
-	if (!Query(ss.str(), trg)) return res;
+	if (!query(ss.str(), trg)) return res;
         
 	int sz = trg.size();
 	for (int i = 0; i < sz; ++i){
@@ -223,7 +224,7 @@ QVector<triggerData*> sql::getTrigger(const QString& signal, const QString& modu
         ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
 
         vector<vector<string>> evData;
-        if (!Query(ss.str(), evData)) return res;
+        if (!query(ss.str(), evData)) return res;
 
         td->userProcPath = evData[i][2].c_str();
         td->userProcArgs = evData[i][3].c_str();
@@ -234,14 +235,14 @@ QVector<triggerData*> sql::getTrigger(const QString& signal, const QString& modu
 	return res;
 }
 
-triggerData* sql::getTrigger(const QString& trname){
+triggerData* dbProvider::getTrigger(const QString& trname){
 
 	stringstream ss;
 
 	ss << "SELECT * FROM Trigger WHERE name = '" << trname.toUtf8().data() << "';";
 
 	vector<vector<string>> trg; triggerData* td = nullptr;
-	if (!Query(ss.str(), trg)) return td;
+	if (!query(ss.str(), trg)) return td;
 
 	if (!trg.empty()){
 
@@ -259,7 +260,7 @@ triggerData* sql::getTrigger(const QString& trname){
         ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
 
         vector<vector<string>> evData;
-        if (!Query(ss.str(), evData)) return td;
+        if (!query(ss.str(), evData)) return td;
 
         td->userProcPath = evData[0][2].c_str();
         td->userProcArgs = evData[0][3].c_str();
@@ -268,7 +269,7 @@ triggerData* sql::getTrigger(const QString& trname){
 	return td;
 }
 
-bool sql::saveSignals(const std::map<std::string, signalData*>& signs){
+bool dbProvider::saveSignals(const std::map<std::string, signalData*>& signs){
 
 	stringstream ss; vector<vector<string>> res;
 
@@ -277,7 +278,7 @@ bool sql::saveSignals(const std::map<std::string, signalData*>& signs){
 		ss << "SELECT * FROM Signal WHERE name = '" << s.second->name << "' AND module = '" << s.second->module << "';";
 
 		res.clear();
-		if (!Query(ss.str(), res)) return false;
+		if (!query(ss.str(), res)) return false;
         ss.str(""); ss.clear();
 		
 		if (res.empty()){
@@ -294,21 +295,21 @@ bool sql::saveSignals(const std::map<std::string, signalData*>& signs){
 				"comment = '" << s.second->comment << "' "
 				"WHERE name = '" << s.second->name << "' AND module = '" << s.second->module << "';";
 		}
-		if (!Query(ss.str(), res)) return false;
+		if (!query(ss.str(), res)) return false;
 		ss.str(""); ss.clear();
 	}
 
 	return true;
 }
 
-signalData sql::getSignal(const QString& signal, const QString& module){
+signalData dbProvider::getSignal(const QString& signal, const QString& module){
 
 	stringstream ss;
 
 	ss << "SELECT * FROM Signal WHERE name = '" << signal.toUtf8().data() << "' AND module = '" << module.toUtf8().data() << "';";
 
 	vector<vector<string>> signs; signalData sd;
-	if (!Query(ss.str(), signs)) return sd;
+	if (!query(ss.str(), signs)) return sd;
 
 	if (!signs.empty()){
 
@@ -323,7 +324,7 @@ signalData sql::getSignal(const QString& signal, const QString& module){
 
 }
 
-void sql::saveEvent(QString trg, QDateTime dt){
+void dbProvider::saveEvent(QString trg, QDateTime dt){
 
 	stringstream ss;
 		
@@ -332,15 +333,15 @@ void sql::saveEvent(QString trg, QDateTime dt){
 		"'" << qPrintable(dt.toString("yyyy-MM-dd HH:mm:ss")) << "');";
 
 	vector<vector<string>> ret;
-	Query(ss.str(), ret);
+	query(ss.str(), ret);
 }
 
-QVector<uEvent> sql::getEvents(QDateTime beginDT, QDateTime endDT){
+QVector<uEvent> dbProvider::getEvents(QDateTime beginDT, QDateTime endDT){
 
 	QString cmd = "SELECT * FROM Events WHERE sendDateTime BETWEEN '" + beginDT.toString("yyyy-MM-dd HH:mm:ss") + "' AND '" + endDT.toString("yyyy-MM-dd HH:mm:ss") + "';";
 
 	vector<vector<string>> evt; QVector<uEvent> res;
-	if (!Query(cmd.toStdString(), evt)) return res;
+	if (!query(cmd.toStdString(), evt)) return res;
 
 	int sz = evt.size(); res.reserve(sz); QSet<QString> trgs;
 	for (int i = 0; i < sz; ++i){
@@ -359,7 +360,7 @@ QVector<uEvent> sql::getEvents(QDateTime beginDT, QDateTime endDT){
 		QString cmd = "SELECT * FROM Trigger WHERE name = '" + t + "';";
 
 		vector<vector<string>> tr;
-		if (!Query(cmd.toStdString(), tr)) return res;
+		if (!query(cmd.toStdString(), tr)) return res;
 				
 		if (!tr.empty()){
 			for (auto& r : res){

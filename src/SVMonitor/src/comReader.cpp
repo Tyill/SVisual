@@ -30,8 +30,6 @@
 #include "SVConfig/SVConfigLimits.h"
 
 
-void statusMess(QString mess);
-
 SerialPortReader::SerialPortReader(SerialPortReader::config cng_) : cng(cng_)
 {
 			

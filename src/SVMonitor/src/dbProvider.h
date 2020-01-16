@@ -30,39 +30,40 @@
 #include "SVConfig/SVConfigData.h"
 #include "SVTriggerPanel/SVTriggerPanel.h"
 
-class sql
+class dbProvider
 {
-private:
-	
-	sqlite3* db_;
 
-	QString pathDB_;
-
-	QMutex mtx_;
-			
-	bool Init();
-
-	bool Open();
-
-	void Close();
-
-	bool Query(const std::string& query,
-		std::vector<std::vector<std::string>>& result);
-	
 public:
-		
-	sql(QString path, bool& err);
 
-	~sql();
-	
-	bool saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trg);
+    dbProvider(const QString& path, bool& isOk);
+
+    ~dbProvider();
+
+    bool saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trg);
 
     QVector<SV_Trigger::triggerData*> getTrigger(const QString& signal, const QString& module);
     SV_Trigger::triggerData* getTrigger(const QString& trname);
-	
-	bool saveSignals(const std::map<std::string, SV_Cng::signalData*>& signs);
-	SV_Cng::signalData getSignal(const QString& signal, const QString& module);
-    	
-	void saveEvent(QString trigger, QDateTime dt);
-	QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);
+
+    bool saveSignals(const std::map<std::string, SV_Cng::signalData*>& signs);
+    SV_Cng::signalData getSignal(const QString& signal, const QString& module);
+
+    void saveEvent(QString trigger, QDateTime dt);
+    QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);
+
+private:
+
+    sqlite3* db_ = nullptr;
+
+    QString pathDB_;
+
+    QMutex mtx_;
+
+    bool init();
+
+    bool open();
+
+    void close();
+
+    bool query(const std::string& query,
+        std::vector<std::vector<std::string>>& result);
 };
