@@ -86,7 +86,7 @@ void init(const std::string& initPath, config& cng){
 	settings.beginGroup("Param");
 
 	cng.cycleRecMs =  settings.value("cycleRecMs", 100).toInt();
-	cng.cycleRecMs = qMax(cng.cycleRecMs, 10);
+	cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
 	cng.packetSz = settings.value("packetSz", 10).toInt();
 	cng.packetSz = qMax(cng.packetSz, 1);
 
