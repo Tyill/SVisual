@@ -880,11 +880,7 @@ void MainWin::moduleConnect(QString module){
 	statusMess(tr("Подключен модуль: ") + module);
 
 	auto mref = SV_Srv::getCopyModuleRef();
-
-	if (mref.size() > SV_MODULE_MAX_CNT)
-		statusMess(tr("Превышен лимит количества модулей: %1. Стабильная работа не гарантирована.").
-		arg(SV_MODULE_MAX_CNT));
-
+    
 	// только тех, которые еще не видел
     if (!signExist_.contains(module)){
 				            				

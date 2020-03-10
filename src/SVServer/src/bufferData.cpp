@@ -50,7 +50,7 @@ void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 	
 	string module = in.c_str();
 
-	int valCnt = std::max(0, std::min(int(sz - cPos) / clSz, SV_VALUE_MAX_CNT));
+    int valCnt = std::max(0, std::min(int(sz - cPos) / clSz, SV_VALUE_MAX_CNT * 10)); // 10 - запас
 
 	mtx_.lock();
 
