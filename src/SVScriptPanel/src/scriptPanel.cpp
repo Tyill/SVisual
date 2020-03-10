@@ -317,15 +317,15 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, 
     }
     else{
 
-        if (!pfGetCopySignalRef || !pfLoadSignalData)
+        if (!pfLoadSignalData)
             return false;
 
-        auto signRef = pfGetCopySignalRef();
+        auto sdata = pfGetSignalData(sign);
 
-        if (!signRef.contains(sign) || !pfLoadSignalData(sign))
+        if (!sdata || !pfLoadSignalData(sign))
             return false;
 
-        signBuff_[sign] = signRef[sign];
+        signBuff_[sign] = sdata;
     }
 
     return true;

@@ -27,10 +27,7 @@
 #include <string>
 #include <vector>
 #include <map>
-
-#ifdef WIN32
-#include <stdInt.h>
-#endif
+#include <cstdint>
 
 namespace SV_Cng {
 
@@ -107,7 +104,7 @@ namespace SV_Cng {
 
 		/// модуль
 		/// \param modul название модуля
-		moduleData(std::string modul) {
+		moduleData(const std::string& modul) {
 
 			isActive = false;
 			isEnable = false;
@@ -127,7 +124,7 @@ namespace SV_Cng {
 
 		/// группа сигналов
 		/// \param grp имя
-		groupData(std::string grp) {
+        groupData(const std::string& grp) {
 			isActive = true;
 			group = grp;
 		}
@@ -136,7 +133,7 @@ namespace SV_Cng {
     /// вернуть тип сигнала как значение
     /// \param str
     /// \return
-	valueType getSVType(std::string str);
+	valueType getSVType(const std::string& str);
 
     /// вернуть тип сигнала как строку
     /// \param type

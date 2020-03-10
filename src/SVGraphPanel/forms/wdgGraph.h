@@ -48,6 +48,7 @@ private:
 		QLabel* lb;
 		QLabel* lbLeftMarkVal;
 		QLabel* lbRightMarkVal;
+        SV_Cng::signalData* sdata;
 		QVector<QVector<QPair<int, int>>> pnts;
 	};
 
@@ -59,7 +60,7 @@ private:
 	QImage imSign_;
 
 	bool repaintEna_ = false,
-        selLeftMark_ = false, selRigthMark_ = false;
+         selLeftMark_ = false, selRigthMark_ = false;
 
 	int colorCnt_ = 30;
 
@@ -70,7 +71,7 @@ private:
 		
 	QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Cng::signalData* sign, bool isAlter = false);
 
-	QPair<double, double > getSignMaxMinValue(graphSignData* sign);
+	QPair<double, double > getSignMaxMinValue(const graphSignData& sign);
 	QPair<double, double> getSignMaxMinValue(SV_Cng::signalData* sign, QPair<qint64, qint64>& tmInterval);
 	void addPosToHistory();
 

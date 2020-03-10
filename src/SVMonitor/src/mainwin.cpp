@@ -94,8 +94,7 @@ void MainWin::load(){
     triggerPanel_->setWindowFlags(Qt::Window);
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
     exportPanel_->setWindowFlags(Qt::Window);
-    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
-    scriptPanel_->setWindowFlags(Qt::Window);
+   
        
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
@@ -110,21 +109,7 @@ void MainWin::load(){
         mainWin->onTrigger(name);
     });
 
-    SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
-    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
-    SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
-    SV_Script::setGetModuleData(scriptPanel_, getModuleDataSrv);
-    SV_Script::setAddSignal(scriptPanel_, addSignalSrv);
-    SV_Script::setAddModule(scriptPanel_, addModuleSrv);    
-    SV_Script::setAddSignalsCBack(scriptPanel_, [](){
-        QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
-    });
-    SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
-        QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
-    });
-    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
-        QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
-    });
+  
 
     SV_Exp::setLoadSignalData(exportPanel_, loadSignalDataSrv);
     SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRefSrv);
@@ -210,7 +195,31 @@ void MainWin::Connect(){
         addNewWindow(QRect());
     });
     connect(ui.actionScript, &QAction::triggered, [this]() {
-        if (scriptPanel_) scriptPanel_->showNormal();
+        
+        if (!scriptPanel_){
+            scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
+            scriptPanel_->setWindowFlags(Qt::Window);
+
+            SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
+            SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
+            SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
+            SV_Script::setGetModuleData(scriptPanel_, getModuleDataSrv);
+            SV_Script::setAddSignal(scriptPanel_, addSignalSrv);
+            SV_Script::setAddModule(scriptPanel_, addModuleSrv);
+            SV_Script::setAddSignalsCBack(scriptPanel_, [](){
+                QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+            });
+            SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
+                QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+            });
+            SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
+                QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+            });
+
+            SV_Script::startUpdateThread(scriptPanel_);
+        }
+        scriptPanel_->showNormal();
+    
     });
 	connect(ui.actionSettings, &QAction::triggered, [this]() {
         if (settPanel_) settPanel_->showNormal();
@@ -586,8 +595,7 @@ MainWin::MainWin(QWidget *parent)
         else
             statusMess(QString(tr("Не удалось запустить WEB сервер: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));
     }
-
-    SV_Script::startUpdateThread(scriptPanel_);
+    
     SV_Trigger::startUpdateThread(triggerPanel_);
 }
 

@@ -34,7 +34,7 @@ namespace SV_Cng {
     /// вернуть тип сигнала как значение
     /// \param str
     /// \return
-    valueType getSVType(std::string str) {
+    valueType getSVType(const std::string& str) {
 
         valueType res = valueType::tInt;
 

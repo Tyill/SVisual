@@ -609,11 +609,14 @@ void triggerPanel::workCycle(){
     QMap<QString, int> trgId; int cid = 0;
     QMap<QString, signalData*> sdata;
 
+    SV_Aux::TimerDelay tmDelay;
+    SV_Aux::Front front;
+
     while (!thrStop_){
 
         auto tref = getCopyTriggerRef();
 
-        tmDelay_.UpdateCycTime();
+        tmDelay.UpdateCycTime();
 
         for (auto& t : tref){
 
@@ -626,7 +629,7 @@ void triggerPanel::workCycle(){
             if (!sdata[t->name] && (t->condType != eventType::connectModule) &&
                 (t->condType != eventType::disconnectModule)) continue;
 
-            if (front_.PosFront(tmDelay_.OnDelTmSec(t->isActive && checkCondition(t, sdata[t->name]),
+            if (front.PosFront(tmDelay.OnDelTmSec(t->isActive && checkCondition(t, sdata[t->name]),
                 t->condTOut, trgId[t->name]), trgId[t->name])){
 
                 if (pfOnTriggerCBack)
@@ -634,7 +637,9 @@ void triggerPanel::workCycle(){
             }
         }
 
-        SV_Aux::SleepMs(SV_CYCLESAVE_MS - SV_CYCLEREC_MS);
+        int ms = SV_CYCLESAVE_MS - (int)tmDelay.GetCTime();
+        if (ms > 0)
+            SV_Aux::SleepMs(ms);
     }
 }
 

@@ -37,7 +37,7 @@ using namespace std;
 /// старт сервера
 bool server::startServer(SV_Srv::config cng_){
 
-	std::unique_lock<std::mutex> lck(mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	if (isRun_) return true;
 
@@ -113,7 +113,7 @@ void server::receiveData(std::string& inout, std::string& out){
 // вернуть все модули
 std::map<std::string, SV_Cng::moduleData *> server::getCopyModuleRef(){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	map<string, SV_Cng::moduleData*> mref = moduleData_;
 
@@ -123,7 +123,7 @@ std::map<std::string, SV_Cng::moduleData *> server::getCopyModuleRef(){
 // добавить модуль
 bool server::addModule(const std::string &name, SV_Cng::moduleData* md){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	bool ok = false;
 	if (md && (moduleData_.find(name) == moduleData_.end())) {
@@ -137,7 +137,7 @@ bool server::addModule(const std::string &name, SV_Cng::moduleData* md){
 // вернуть данные модуля
 SV_Cng::moduleData* server::getModuleData(const std::string& module){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	return moduleData_.find(module) != moduleData_.end() ? moduleData_[module] : nullptr;
 }
@@ -145,7 +145,7 @@ SV_Cng::moduleData* server::getModuleData(const std::string& module){
 // вернуть все сигналы
 std::map<std::string, SV_Cng::signalData *> server::getCopySignalRef(){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	map<string, SV_Cng::signalData*> sref = signalData_;
 
@@ -155,7 +155,7 @@ std::map<std::string, SV_Cng::signalData *> server::getCopySignalRef(){
 // добавить сигнал
 bool server::addSignal(const std::string& sign, SV_Cng::signalData* sd){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	bool ok = false;
 	if (sd && (signalData_.find(sign) == signalData_.end())) {
@@ -169,7 +169,7 @@ bool server::addSignal(const std::string& sign, SV_Cng::signalData* sd){
 // вернуть данные сигнала
 SV_Cng::signalData* server::getSignalData(const std::string& sign){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	return signalData_.find(sign) != signalData_.end() ? signalData_[sign] : nullptr;
 }
@@ -178,7 +178,7 @@ SV_Cng::signalData* server::getSignalData(const std::string& sign){
 // разрешить запись буфера данных
 bool server::signalBufferEna(const std::string& sign){
 
-	std::unique_lock<std::mutex> lck (mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
 	if (signalData_.find(sign) == signalData_.end()) return false;
 

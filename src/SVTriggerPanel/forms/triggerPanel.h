@@ -81,10 +81,7 @@ private:
     bool isSelModule_ = true;
 
     int cTriggRow_ = 0;
-
-    SV_Aux::TimerDelay tmDelay_;
-    SV_Aux::Front front_;
-
+        
     std::thread workThr_;
     std::mutex mtx_;
     bool thrStop_ = false;

@@ -164,12 +164,7 @@ void wdgGraph::paintSignals(){
 
 	bool paintPnt = (tmInterv.second - tmInterv.first) < SV_CYCLESAVE_MS * 3;
     	
-	int signBoolCnt = 0;
-	auto sref = grPanel_->pfGetCopySignalRef();
-
-	for (auto& s : signalListAlter_) 
-        if (sref[s]->type == valueType::tBool) ++signBoolCnt;
-
+	
     for (int s = signalList_.size() - 1; s >= 0; --s){
 
         auto& sign = signals_[signalList_[s]];
@@ -239,6 +234,11 @@ void wdgGraph::paintSignals(){
             }
         }
     }
+
+    int signBoolCnt = 0;
+    for (auto& s : signalsAlter_)
+        if (s.type == valueType::tBool) 
+            ++signBoolCnt;
 
     for (int s = signalList_.size() - 1; s >= 0; --s){
 
@@ -569,7 +569,7 @@ void wdgGraph::addSignal(QString sign){
 
 		signalData* sd = grPanel_->pfGetSignalData(sign);
 
-		signals_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal });
+        signals_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal, sd });
 		signalList_.push_front(sign);
 
 		QPalette palette = lb->palette();
@@ -613,7 +613,7 @@ void wdgGraph::addAlterSignal(QString sign){
 
 		signalData* sd = grPanel_->pfGetSignalData(sign);
 
-		signalsAlter_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal });
+        signalsAlter_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal, sd });
 		signalListAlter_.push_front(sign);
 
 		QPalette palette = lb->palette();
@@ -947,12 +947,14 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
 }
 
 
-QPair<double, double> wdgGraph::getSignMaxMinValue(graphSignData* sign){
+QPair<double, double> wdgGraph::getSignMaxMinValue(const graphSignData& sign){
 
-	QVector<QVector<QPair<int, int>>>& grPnts = sign->pnts;
-		
-	int gSz = grPnts.size(); double minVal = INT32_MAX, maxVal = -INT32_MAX;
-	for (int g = 0; g < gSz; ++g){
+	auto& grPnts = sign.pnts;
+	
+    double minVal = INT32_MAX, maxVal = -INT32_MAX;
+
+	int gSz = grPnts.size();
+    for (int g = 0; g < gSz; ++g){
 
 		int sz = grPnts[g].size();
 		for (int i = 0; i < sz; ++i){
@@ -1040,19 +1042,12 @@ void wdgGraph::plotUpdate(){
 
 	if (axisTime_){
 					
-		auto sref = grPanel_->pfGetCopySignalRef();
-		for (auto it = signals_.begin(); it != signals_.end(); ++it){
-						
-			it->pnts = getSignalPnts(sref[it->sign]);
-			
-		}
+		for (auto& s : signals_)						
+            s.pnts = getSignalPnts(s.sdata);
 		
-		for (auto it = signalsAlter_.begin(); it != signalsAlter_.end(); it++){
-
-			it->pnts = getSignalPnts(sref[it->sign], true);
-
-		}
-		
+		for (auto& s : signalsAlter_)
+            s.pnts = getSignalPnts(s.sdata, true);
+        		
 		repaintEna_ = true;
 
 		ui.wPlot->update();
@@ -1061,45 +1056,20 @@ void wdgGraph::plotUpdate(){
 }
 
 void wdgGraph::axisTimeChange(){
-			
+		    
 	if (axisTime_){
-		
-		auto sref = grPanel_->pfGetCopySignalRef();
-		
-		for (auto it = signals_.begin(); it != signals_.end(); it++){
-			it->pnts = getSignalPnts(sref[it->sign]);
-		}
-		
-		for (auto it = signalsAlter_.begin(); it != signalsAlter_.end(); it++){
-			it->pnts = getSignalPnts(sref[it->sign], true);
-		}
-		
-		repaintEna_ = true;
+				
+        axisTime_->update();
 
-		axisTime_->update();
-		ui.wPlot->update();		
-	}	
+        plotUpdate();
+   }	
 }
 
 void wdgGraph::axisValueChange(){
 	
-	if (axisTime_){
-		auto sref = grPanel_->pfGetCopySignalRef();
+	ui.wAxisValue->update();
 
-		for (auto it = signals_.begin(); it != signals_.end(); it++){
-			it->pnts = getSignalPnts(sref[it->sign]);
-		}
-
-		for (auto it = signalsAlter_.begin(); it != signalsAlter_.end(); it++){
-			it->pnts = getSignalPnts(sref[it->sign], true);
-		}
-		
-		repaintEna_ = true;
-       
-		ui.wAxisValue->update();
-		ui.wPlot->update();
-		
-	}
+    plotUpdate();
 }
 
 void wdgGraph::delSignal(QString sign, bool isLabelSender){
@@ -1156,18 +1126,17 @@ void wdgGraph::resizeByTime(){
 	if (signalList_.isEmpty()&& signalsAlter_.isEmpty()) return;
 
 	double minTm = INT64_MAX, maxTm = -INT64_MAX;
-    auto sref = grPanel_->pfGetCopySignalRef();
-
-	for (auto& sign : signalList_){
+   
+    for (auto& s : signals_){
 		
-		if (sref[sign]->buffMinTime < minTm) minTm = sref[sign]->buffMinTime;
-		if (sref[sign]->buffMaxTime > maxTm) maxTm = sref[sign]->buffMaxTime;
+		if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
+        if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;
 	}
 
-	for (auto& sname : signalListAlter_){
+    for (auto& s : signalsAlter_){
 		
-		if (sref[sname]->buffMinTime < minTm) minTm = sref[sname]->buffMinTime;
-		if (sref[sname]->buffMaxTime > maxTm) maxTm = sref[sname]->buffMaxTime;
+		if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
+		if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;
 	}
 	
 	axisTime_->setTimeInterval(minTm, maxTm);
@@ -1181,12 +1150,15 @@ void wdgGraph::resizeByValue(){
 	
 	if (signals_.isEmpty()) return;
 
-	double minVal = INT32_MAX, maxVal = -INT32_MAX; bool isFloatSign = false;
+	double minVal = INT32_MAX, maxVal = -INT32_MAX;
+    
+    bool isFloatSign = false;
 	for (auto& sign : signals_){
 
 		if (sign.type != valueType::tBool){
 
-			isFloatSign = true; QPair<double, double> minMaxVal = getSignMaxMinValue(&sign);
+			isFloatSign = true;
+            QPair<double, double> minMaxVal = getSignMaxMinValue(sign);
 
 			if (minMaxVal.first < minVal) minVal = minMaxVal.first;
 			if (minMaxVal.second > maxVal) maxVal = minMaxVal.second;
@@ -1257,38 +1229,40 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalValueByMarkerPos(int pos){
 	QPair<double,double> valIntr = ui.wAxisValue->getValInterval();
 	double valScale = ui.wAxisValue->getValScale();
 
-	int sz = signalList_.size();
-	for (int i = 0; i < sz; ++i){
+	for (auto& s : signals_){
 		
-		auto sign = signals_[signalList_[i]];
-		res.append(graphSignPoint());
-        res[i].sign = signalList_[i];
-		res[i].name = sign.name;
-		res[i].type = sign.type;
-		res[i].color = sign.color;
+        graphSignPoint sp;
+        		
+        sp.sign = s.sign;
+        sp.name = s.name;
+        sp.type = s.type;
+        sp.color = s.color;
 
-		int sZn = sign.pnts.size(); bool exist = false;
+        int sZn = s.pnts.size(); bool exist = false;
 		for (int zn = 0; zn < sZn; ++zn){
 
-			int prev = sign.pnts[zn][0].first;
-			for (auto pt : sign.pnts[zn]){
+            int prev = s.pnts[zn][0].first;
+            for (auto& pt : s.pnts[zn]){
 				
 				if ((pt.first == pos) || ((prev < pos) && (pos < pt.first))){
 										
-					if (sign.type != valueType::tBool)
-						res[i].val = pt.second * valScale + valIntr.first;
+                    if (s.type != valueType::tBool)
+						sp.val = pt.second * valScale + valIntr.first;
 					else 
-						res[i].val = pt.second;
+						sp.val = pt.second;
 
-					res[i].xPix = pos;
-					res[i].yPix = pt.second;
-					exist = true;
+					sp.xPix = pos;
+					sp.yPix = pt.second;
+					
+                    exist = true;
 					break;
 				}
 				prev = pt.first;
 			}
 			if (exist) break;
 		}
+
+        res.append(sp);
 	}
 
 	return res;
@@ -1298,39 +1272,36 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalAlterValueByMarkerPos(int p
 
 	QVector<graphSignPoint> res;
 
-	int sz = signalListAlter_.size();
-	for (int i = 0; i < sz; ++i){
+    QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
+  
+    for (auto& s : signalsAlter_){
+  
+        QPair<double, double> valInterval = getSignMaxMinValue(s.sdata, tmInterval);
+        double valMinInterval = valInterval.first - 1, valMaxInterval = valInterval.second + 3;
+        double valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
 
-		auto sign = signalsAlter_[signalListAlter_[i]];
+		graphSignPoint sp;
 
-		auto sdata = grPanel_->pfGetSignalData(signalListAlter_[i]);
-
-		QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
-		QPair<double, double> valInterval = getSignMaxMinValue(sdata, tmInterval);
-		double valMinInterval = valInterval.first - 1, valMaxInterval = valInterval.second + 3;
-		double valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
-
-		res.append(graphSignPoint());
-		res[i].sign = signalListAlter_[i];
-		res[i].name = sign.name;
-		res[i].type = sign.type;
-		res[i].color = sign.color;
-
-		int sZn = sign.pnts.size(); bool exist = false;
+	    sp.sign = s.sign;
+        sp.name = s.name;
+        sp.type = s.type;
+        sp.color = s.color;
+              
+        int sZn = s.pnts.size(); bool exist = false;
 		for (int zn = 0; zn < sZn; ++zn){
 
-			int prev = sign.pnts[zn][0].first;
-			for (auto pt : sign.pnts[zn]){
+            int prev = s.pnts[zn][0].first;
+            for (auto& pt : s.pnts[zn]){
 
 				if ((pt.first == pos) || ((prev < pos) && (pos < pt.first))){
 
-					if (sign.type != valueType::tBool)
-						res[i].val = pt.second * valScale + valMinInterval;
+                    if (s.type != valueType::tBool)
+                        sp.val = pt.second * valScale + valMinInterval;
 					else
-						res[i].val = pt.second;
+                        sp.val = pt.second;
 
-					res[i].xPix = pos;
-					res[i].yPix = pt.second;
+					sp.xPix = pos;
+					sp.yPix = pt.second;
 
 					exist = true;
 					break;
@@ -1339,10 +1310,13 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalAlterValueByMarkerPos(int p
 			}
 			if (exist) break;
 		}
+
+        res.append(sp);
 	}
 
 	return res;
 }
+
 void wdgGraph::undoCmd(){
 
 	if (historyPos_.isEmpty()) return;
@@ -1364,37 +1338,36 @@ void wdgGraph::undoCmd(){
 
 void wdgGraph::colorUpdate(){
 
-	for (auto it = signals_.begin(); it != signals_.end(); it++){
+	for (auto& s : signals_){
 
 		colorCnt_ += 30;
 
-		int num = it->num;
+        int num = s.num;
 		QColor clr = QColor((num * (60 + colorCnt_)) % 255,
 			(num * (120 + colorCnt_)) % 255,
 			(num * (180 + colorCnt_)) % 255, 255);
 
-		it->color = clr;
+        s.color = clr;
 				
-		it->lb->setStyleSheet("color : " + clr.name() + "; ");
-        it->lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
-		it->lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
-
+		s.lb->setStyleSheet("color : " + clr.name() + "; ");
+        s.lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
+		s.lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
 	}
 
-	for (auto it = signalsAlter_.begin(); it != signalsAlter_.end(); it++){
+	for (auto& s : signalsAlter_){
 
 		colorCnt_ += 30;
 
-		int num = it->num;
+        int num = s.num;
 		QColor clr = QColor((num * (60 + colorCnt_)) % 255,
 			(num * (120 + colorCnt_)) % 255,
 			(num * (180 + colorCnt_)) % 255, 255);
 
-		it->color = clr;
+		s.color = clr;
 
-		it->lb->setStyleSheet("color : " + clr.name() + "; ");
-		it->lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
-		it->lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
+		s.lb->setStyleSheet("color : " + clr.name() + "; ");
+		s.lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
+		s.lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
 	}
 	repaintEna_ = true;
 	ui.wPlot->update();
