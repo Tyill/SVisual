@@ -94,7 +94,7 @@
             <bool>true</bool>
            </property>
            <property name="columnCount">
-            <number>4</number>
+            <number>5</number>
            </property>
            <attribute name="headerDefaultSectionSize">
             <number>125</number>
@@ -120,6 +120,11 @@
            <column>
             <property name="text">
              <string>Группа</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Цвет</string>
             </property>
            </column>
           </widget>
@@ -202,7 +207,7 @@
      <x>0</x>
      <y>0</y>
      <width>879</width>
-     <height>26</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMain">

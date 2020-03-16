@@ -611,6 +611,8 @@ MainWin::~MainWin(){
 	if (db_){
 		if (!db_->saveSignals(SV_Srv::getCopySignalRef()))
 			statusMess(tr("Ошибка сохранения сигналов в БД"));
+        if (!db_->saveAttrSignals(attrSign_))
+            statusMess(tr("Ошибка сохранения атрибутов в БД"));
 		if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
 			statusMess(tr("Ошибка сохранения триггеров в БД"));
 	}
@@ -681,7 +683,13 @@ void MainWin::sortSignalByModule(){
 			item->setText(1, SV_Cng::getSVTypeStr(sd->type).c_str());
 			item->setText(2, sd->comment.c_str());
 			item->setText(3, sd->group.c_str());
-			item->setText(4, sign.c_str());
+
+            if (attrSign_.contains(sign.c_str()))
+                item->setBackgroundColor(4, attrSign_[sign.c_str()].color);
+            else
+                item->setBackgroundColor(4, QColor(255,255,255));
+
+			item->setText(5, sign.c_str());
 					
 			if (sd->type == SV_Cng::valueType::tBool)
 				item->setIcon(0, iconImpuls);
@@ -703,8 +711,7 @@ void MainWin::selSignalClick(QTreeWidgetItem* item, int column){
 	if (mref.find(item->text(0).toStdString()) != mref.end()){
 
 		ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
-	}
-
+	}    
 }
 
 void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
@@ -713,23 +720,33 @@ void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
 
 	if (mref.find(item->text(0).toStdString()) != mref.end()) return;
 
-	if (column > 1)
-		ui.treeSignals->editItem(item, column);		
-	else{
-        SV_Graph::addSignal(graphPanels_[this], item->text(4));
-	}
+    if (column == 0){
+        SV_Graph::addSignal(graphPanels_[this], item->text(5));
+    }else {
+        if (column == 4){
+            QColorDialog* clrSelWin = new QColorDialog(this);
+            clrSelWin->open();
 
+            item->setBackgroundColor(4, clrSelWin->getColor());
+
+            attrSign_[item->text(5)] = attrSignal{ item->text(5), clrSelWin->getColor().rgb() };
+        }
+        else 
+            ui.treeSignals->editItem(item, column);
+    }
 }
 
 void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
 
-	std::string sign = item->text(4).toStdString();
-	SV_Cng::signalData* sd = SV_Srv::getSignalData(sign); if (!sd) return;
-
-	switch (column){
-		case 2: sd->comment = item->text(2).toStdString(); break;
-		case 3: sd->group = item->text(3).toStdString(); break;
-	}		
+	std::string sign = item->text(5).toStdString();
+	SV_Cng::signalData* sd = SV_Srv::getSignalData(sign);
+    
+    if (!sd) return;
+       
+    switch (column){
+    case 2: sd->comment = item->text(2).toStdString(); break;
+    case 3: sd->group = item->text(3).toStdString(); break;    
+    }
 }
 
 void MainWin::contextMenuEvent(QContextMenuEvent * event){
@@ -850,6 +867,11 @@ void MainWin::updateTblSignal(){
 					s.second->comment = sd.comment;
 				}
 
+                attrSignal as = db_->getAttrSignal(s.second->name.c_str(), s.second->module.c_str());
+                if (!as.sname.isEmpty()){
+                    attrSign_[as.sname] = as;
+                }
+
 				auto trg = db_->getTrigger(s.second->name.c_str(), s.second->module.c_str());
 				int sz = trg.size();
 				for (int i = 0; i < sz; ++i)
@@ -942,14 +964,16 @@ void MainWin::onTrigger(QString trigger){
 
 	statusMess(QObject::tr("Событие: ") + name);
 
-	if (db_) 
+    if (db_){
         db_->saveEvent(trigger, QDateTime::currentDateTime());
+    }
 
     if (!td->userProcPath.isEmpty()){
         QFile f(td->userProcPath);
 		if (f.exists()){
 
-            QStringList args = td->userProcArgs.split('\t'); for (auto& ar : args) ar = ar.trimmed();
+            QStringList args = td->userProcArgs.split('\t');
+            for (auto& ar : args) ar = ar.trimmed();
 
             QProcess::startDetached(td->userProcPath, args);
 

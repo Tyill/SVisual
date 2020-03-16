@@ -49,6 +49,9 @@ public:
     bool saveSignals(const std::map<std::string, SV_Cng::signalData*>& signs);
     SV_Cng::signalData getSignal(const QString& signal, const QString& module);
 
+    bool saveAttrSignals(const QMap<QString, attrSignal>& attr);
+    attrSignal getAttrSignal(const QString& signal, const QString& module);
+
     void saveEvent(QString trigger, QDateTime dt);
     QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);
 

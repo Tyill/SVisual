@@ -193,7 +193,7 @@ public:
         treeSignals->setTabKeyNavigation(true);
         treeSignals->setSortingEnabled(true);
         treeSignals->setWordWrap(true);
-        treeSignals->setColumnCount(4);
+        treeSignals->setColumnCount(5);
         splitter_2->addWidget(treeSignals);
         treeSignals->header()->setDefaultSectionSize(125);
         treeSignals->header()->setProperty("showSortIndicator", QVariant(true));
@@ -242,7 +242,7 @@ public:
         MainWin->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWin);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 879, 26));
+        menuBar->setGeometry(QRect(0, 0, 879, 31));
         menuMain = new QMenu(menuBar);
         menuMain->setObjectName(QStringLiteral("menuMain"));
         menuHelp = new QMenu(menuBar);
@@ -305,6 +305,7 @@ public:
         label->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSlowPlay->setText(QApplication::translate("MainWin", "\320\242\320\270\321\205\320\270\320\271 \321\200\320\265\320\266\320\270\320\274", 0));
         QTreeWidgetItem *___qtreewidgetitem = treeSignals->headerItem();
+        ___qtreewidgetitem->setText(4, QApplication::translate("MainWin", "\320\246\320\262\320\265\321\202", 0));
         ___qtreewidgetitem->setText(3, QApplication::translate("MainWin", "\320\223\321\200\321\203\320\277\320\277\320\260", 0));
         ___qtreewidgetitem->setText(2, QApplication::translate("MainWin", "\320\232\320\276\320\274\320\274\320\265\320\275\321\202\320\260\321\200\320\270\320\271", 0));
         ___qtreewidgetitem->setText(1, QApplication::translate("MainWin", "\320\242\320\270\320\277", 0));

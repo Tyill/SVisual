@@ -116,6 +116,14 @@ dbProvider::dbProvider(const QString& filename){
 	
 	if (!query(ss.str(), results)) return;
 
+    ss.str(""); ss.clear();
+    ss << "CREATE TABLE IF NOT EXISTS 'AttrSignal' ("
+        "'id' INTEGER PRIMARY KEY NOT NULL UNIQUE,"
+        "'sname' TEXT,"
+        "'color' TEXT);";
+
+    if (!query(ss.str(), results)) return;
+
 	ss.str(""); ss.clear();
 	ss << "CREATE TABLE IF NOT EXISTS 'Trigger' ("
 		"'id' INTEGER PRIMARY KEY NOT NULL UNIQUE,"
@@ -324,6 +332,56 @@ signalData dbProvider::getSignal(const QString& signal, const QString& module){
 
 	return sd;
 
+}
+
+bool dbProvider::saveAttrSignals(const QMap<QString, attrSignal>& attr){
+
+    stringstream ss; 
+    vector<vector<string>> res;
+
+    for (auto& at : attr){
+
+        ss.str(""); 
+        ss << "SELECT * FROM AttrSignal WHERE sname = '" << at.sname.toUtf8().data() << "';";
+
+        res.clear();
+        if (!query(ss.str(), res)) return false;
+        
+        if (res.empty()){
+            ss.str("");
+            ss << "INSERT INTO AttrSignal ('sname','color') VALUES(" <<
+                  "'" << at.sname.toUtf8().data() << "',"
+                  "'" << at.color.toUtf8().data() << "');";
+        }
+        else{
+            ss.str("");
+            ss << "UPDATE AttrSignal SET "
+                "color = '" << at.color.toUtf8().data() << "' "
+                "WHERE sname = '" << at.sname.toUtf8().data() << "';";
+        }
+        if (!query(ss.str(), res)) return false;        
+    }
+
+    return true;
+}
+
+attrSignal dbProvider::getAttrSignal(const QString& signal, const QString& module){
+
+    stringstream ss;
+
+    ss << "SELECT * FROM AttrSignal WHERE sname = '" << signal.toUtf8().data() << module.toUtf8().data() << "';";
+
+    attrSignal as;
+    vector<vector<string>> attr;
+    if (!query(ss.str(), attr)) return as;
+
+    if (!attr.empty()){
+
+        as.sname = attr[0][1].c_str();
+        as.color = attr[0][2].c_str();
+    }
+
+    return as;
 }
 
 void dbProvider::saveEvent(QString trg, QDateTime dt){

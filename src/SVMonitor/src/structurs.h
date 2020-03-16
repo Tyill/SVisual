@@ -39,3 +39,8 @@ struct uEvent{
 	int condValue;
 	int condTOut;
 };
+
+struct attrSignal{
+    QString sname;
+    QString color;
+};

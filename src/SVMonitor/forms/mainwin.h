@@ -118,6 +118,8 @@ private:
 
 	QSet<QString> signExist_;
 	
+    QMap<QString, attrSignal> attrSign_;
+
     bool eventFilter(QObject *target, QEvent *event);
 
 	bool writeSettings(QString pathIni);
