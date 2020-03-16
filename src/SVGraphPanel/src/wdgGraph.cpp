@@ -1229,8 +1229,10 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalValueByMarkerPos(int pos){
 	QPair<double,double> valIntr = ui.wAxisValue->getValInterval();
 	double valScale = ui.wAxisValue->getValScale();
 
-	for (auto& s : signals_){
+    for (auto& nm : signalList_){
 		
+        auto& s = signals_[nm];
+
         graphSignPoint sp;
         		
         sp.sign = s.sign;
@@ -1274,7 +1276,9 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalAlterValueByMarkerPos(int p
 
     QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
   
-    for (auto& s : signalsAlter_){
+    for (auto& nm : signalListAlter_){
+
+        auto& s = signalsAlter_[nm];
   
         QPair<double, double> valInterval = getSignMaxMinValue(s.sdata, tmInterval);
         double valMinInterval = valInterval.first - 1, valMaxInterval = valInterval.second + 3;

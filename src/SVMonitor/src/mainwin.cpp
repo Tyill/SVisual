@@ -84,23 +84,20 @@ void statusMess(const QString& mess){
 
 void MainWin::load(){
 		
-	ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	ui.treeSignals->setIconSize(QSize(40, 20));	
+    ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui.treeSignals->setIconSize(QSize(40, 20));	
 
-	orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
+  	orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
 	settPanel_ = new settingsPanel(this); settPanel_->setWindowFlags(Qt::Window);
     graphSettPanel_ = new graphSettingPanel(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
-    triggerPanel_ = SV_Trigger::createTriggerPanel(this, SV_Trigger::config(cng.cycleRecMs, cng.packetSz));
-    triggerPanel_->setWindowFlags(Qt::Window);
-    exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
-    exportPanel_->setWindowFlags(Qt::Window);
-   
        
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
     SV_Graph::setGraphSetting(graphPanels_[this], cng.graphSett);
 
+    triggerPanel_ = SV_Trigger::createTriggerPanel(this, SV_Trigger::config(cng.cycleRecMs, cng.packetSz));
+    triggerPanel_->setWindowFlags(Qt::Window);
     SV_Trigger::setGetCopySignalRef(triggerPanel_, getCopySignalRefSrv);
     SV_Trigger::setGetSignalData(triggerPanel_, getSignalDataSrv);
     SV_Trigger::setGetCopyModuleRef(triggerPanel_, getCopyModuleRefSrv);
@@ -109,8 +106,26 @@ void MainWin::load(){
         mainWin->onTrigger(name);
     });
 
-  
-
+    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
+    scriptPanel_->setWindowFlags(Qt::Window);
+    SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
+    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
+    SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
+    SV_Script::setGetModuleData(scriptPanel_, getModuleDataSrv);
+    SV_Script::setAddSignal(scriptPanel_, addSignalSrv);
+    SV_Script::setAddModule(scriptPanel_, addModuleSrv);
+    SV_Script::setAddSignalsCBack(scriptPanel_, [](){
+      QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+    });
+    SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
+      QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+    });
+    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
+      QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+    });
+   
+    exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
+    exportPanel_->setWindowFlags(Qt::Window);
     SV_Exp::setLoadSignalData(exportPanel_, loadSignalDataSrv);
     SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRefSrv);
     SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRefSrv);
@@ -136,11 +151,11 @@ void MainWin::load(){
     SV_Web::setGetSignalData(getSignalDataSrv);
     SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-	bool isOk = false;
-    db_ = new dbProvider(qUtf8Printable(cng.dbPath), isOk);
+	db_ = new dbProvider(qUtf8Printable(cng.dbPath));
 
-    if (isOk) statusMess(tr("Подключение БД успешно"));
-	else{
+    if (db_->isConnect()){
+        statusMess(tr("Подключение БД успешно"));
+    }else{
 		statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
 		
         delete db_;
@@ -195,29 +210,9 @@ void MainWin::Connect(){
         addNewWindow(QRect());
     });
     connect(ui.actionScript, &QAction::triggered, [this]() {
+            
+        SV_Script::startUpdateThread(scriptPanel_);
         
-        if (!scriptPanel_){
-            scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::player);
-            scriptPanel_->setWindowFlags(Qt::Window);
-
-            SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
-            SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
-            SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
-            SV_Script::setGetModuleData(scriptPanel_, getModuleDataSrv);
-            SV_Script::setAddSignal(scriptPanel_, addSignalSrv);
-            SV_Script::setAddModule(scriptPanel_, addModuleSrv);
-            SV_Script::setAddSignalsCBack(scriptPanel_, [](){
-                QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
-            });
-            SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
-                QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
-            });
-            SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
-                QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
-            });
-
-            SV_Script::startUpdateThread(scriptPanel_);
-        }
         scriptPanel_->showNormal();
     
     });

@@ -97,12 +97,10 @@ bool dbProvider::query(const string& query, vector<vector<string>>& results){
 	return res;
 }
 
-dbProvider::dbProvider(const QString& filename, bool& isOk){
+dbProvider::dbProvider(const QString& filename){
 		
 	pathDB_ = filename;
-
-    isOk = false;
-
+      
 	if (!init()) return;
 
 	stringstream ss;
@@ -149,14 +147,18 @@ dbProvider::dbProvider(const QString& filename, bool& isOk){
 	
 	if (!query(ss.str(), results)) return;
 
-
-    isOk = true;
+    isConnect_ = true;
 }
 
 dbProvider::~dbProvider(){
 
 	close();
 
+}
+
+bool dbProvider::isConnect(){
+
+    return isConnect_;
 }
 
 bool dbProvider::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){

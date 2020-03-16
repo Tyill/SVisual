@@ -256,6 +256,41 @@ void MainWin::load(){
 	SV_Stat::setGetTimeInterval(statPanel_, [](){
         return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
 	});
+
+    scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::viewer);
+    scriptPanel_->setWindowFlags(Qt::Window);
+    SV_Script::setLoadSignalData(scriptPanel_, loadSignalData);
+    SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
+    SV_Script::setGetSignalData(scriptPanel_, getSignalData);
+    SV_Script::setGetModuleData(scriptPanel_, getModuleData);
+    SV_Script::setAddSignal(scriptPanel_, [](const QString& name, SV_Cng::signalData* sd){
+    if (!mainWin->signalRef_.contains(name)) {
+        mainWin->signalRef_.insert(name, sd);
+        mainWin->signalRef_[name]->isActive = true;
+
+        return true;
+    }
+    return false;
+    });
+    SV_Script::setAddModule(scriptPanel_, [](const QString& name, SV_Cng::moduleData* md){
+    if (!mainWin->moduleRef_.contains(name)) {
+        mainWin->moduleRef_.insert(name, md);
+        mainWin->moduleRef_[name]->isActive = true;
+
+        return true;
+    }
+    return false;
+    });
+    SV_Script::setAddSignalsCBack(scriptPanel_, [](){
+    QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+    });
+    SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
+    QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+    });
+    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
+    QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+    });
+
       
 	ui.splitter->addWidget(gp);
     QList<int> ss; ss.append(150); ss.append(500);
@@ -305,46 +340,8 @@ void MainWin::Connect(){
         QApplication::setFont(ft);
     });
     connect(ui.actionScript, &QAction::triggered, [this]() {
-
-        if (!scriptPanel_){
-
-            scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::viewer);
-            scriptPanel_->setWindowFlags(Qt::Window);
-
-            SV_Script::setLoadSignalData(scriptPanel_, loadSignalData);
-            SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
-            SV_Script::setGetSignalData(scriptPanel_, getSignalData);
-            SV_Script::setGetModuleData(scriptPanel_, getModuleData);
-            SV_Script::setAddSignal(scriptPanel_, [](const QString& name, SV_Cng::signalData* sd){
-                if (!mainWin->signalRef_.contains(name)) {
-                    mainWin->signalRef_.insert(name, sd);
-                    mainWin->signalRef_[name]->isActive = true;
-
-                    return true;
-                }
-                return false;
-            });
-            SV_Script::setAddModule(scriptPanel_, [](const QString& name, SV_Cng::moduleData* md){
-                if (!mainWin->moduleRef_.contains(name)) {
-                    mainWin->moduleRef_.insert(name, md);
-                    mainWin->moduleRef_[name]->isActive = true;
-
-                    return true;
-                }
-                return false;
-            });
-            SV_Script::setAddSignalsCBack(scriptPanel_, [](){
-                QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
-            });
-            SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
-                QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
-            });
-            SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
-                QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
-            });
-
-            SV_Script::startUpdateThread(scriptPanel_);
-        }   
+               
+        SV_Script::startUpdateThread(scriptPanel_);
             
         scriptPanel_->showNormal();
     });

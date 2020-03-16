@@ -35,9 +35,11 @@ class dbProvider
 
 public:
 
-    dbProvider(const QString& path, bool& isOk);
+    dbProvider(const QString& path);
 
     ~dbProvider();
+
+    bool isConnect();
 
     bool saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trg);
 
@@ -53,6 +55,8 @@ public:
 private:
 
     sqlite3* db_ = nullptr;
+
+    bool isConnect_ = false;
 
     QString pathDB_;
 
