@@ -62,6 +62,7 @@ public:
 
 	SV_Graph::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
 	SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
+    SV_Graph::pf_getSignalAttr pfGetSignalAttr = nullptr;
 	SV_Graph::pf_loadSignalData pfLoadSignalData= nullptr;
         
     void addSignalOnGraph(QString name, int section);
@@ -70,6 +71,7 @@ public:
     QVector<QVector<QString>> getLocateSignals();
 
     void setGraphSetting(const SV_Graph::graphSetting&);
+    void setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att);
 
 public slots:
 	void updateSignals();

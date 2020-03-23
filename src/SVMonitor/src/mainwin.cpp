@@ -46,9 +46,11 @@
 #include "SVWebServer/SVWebServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.4";
-// added web browse
+const QString VERSION = "1.1.5";
+// added select color signal
 
+// const QString VERSION = "1.1.4";
+// added web browse
 //const QString VERSION = "1.1.3";
 // reading from additional COM ports
 // const QString VERSION = "1.1.2";
@@ -94,6 +96,14 @@ void MainWin::load(){
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
+    SV_Graph::setGetSignalAttr(graphPanels_[this], [](const QString& sname, SV_Graph::signalAttr& out){
+
+        if (mainWin->signAttr_.contains(sname)){
+            out.color = mainWin->signAttr_[sname].color;
+            return true;
+        }
+        return false;
+    });
     SV_Graph::setGraphSetting(graphPanels_[this], cng.graphSett);
 
     triggerPanel_ = SV_Trigger::createTriggerPanel(this, SV_Trigger::config(cng.cycleRecMs, cng.packetSz));
@@ -611,7 +621,7 @@ MainWin::~MainWin(){
 	if (db_){
 		if (!db_->saveSignals(SV_Srv::getCopySignalRef()))
 			statusMess(tr("Ошибка сохранения сигналов в БД"));
-        if (!db_->saveAttrSignals(attrSign_))
+        if (!db_->saveAttrSignals(signAttr_))
             statusMess(tr("Ошибка сохранения атрибутов в БД"));
 		if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
 			statusMess(tr("Ошибка сохранения триггеров в БД"));
@@ -681,14 +691,15 @@ void MainWin::sortSignalByModule(){
 			item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
 			item->setText(0, sd->name.c_str());
 			item->setText(1, SV_Cng::getSVTypeStr(sd->type).c_str());
-			item->setText(2, sd->comment.c_str());
-			item->setText(3, sd->group.c_str());
 
-            if (attrSign_.contains(sign.c_str()))
-                item->setBackgroundColor(4, attrSign_[sign.c_str()].color);
+            if (signAttr_.contains(sign.c_str()))
+                item->setBackgroundColor(2, signAttr_[sign.c_str()].color);
             else
-                item->setBackgroundColor(4, QColor(255,255,255));
+                item->setBackgroundColor(2, QColor(255, 255, 255));
 
+			item->setText(3, sd->comment.c_str());
+			item->setText(4, sd->group.c_str());
+                       
 			item->setText(5, sign.c_str());
 					
 			if (sd->type == SV_Cng::valueType::tBool)
@@ -720,16 +731,26 @@ void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
 
 	if (mref.find(item->text(0).toStdString()) != mref.end()) return;
 
+    auto sign = item->text(5);
+
     if (column == 0){
-        SV_Graph::addSignal(graphPanels_[this], item->text(5));
+        SV_Graph::addSignal(graphPanels_[this], sign);
     }else {
-        if (column == 4){
-            QColorDialog* clrSelWin = new QColorDialog(this);
-            clrSelWin->open();
+        if (column == 2){
+           
+            auto clr = QColorDialog::getColor();
 
-            item->setBackgroundColor(4, clrSelWin->getColor());
+            item->setBackgroundColor(2, clr);
 
-            attrSign_[item->text(5)] = attrSignal{ item->text(5), clrSelWin->getColor().rgb() };
+            auto sd = getSignalDataSrv(sign);
+
+            if (!sd) return;
+
+            signAttr_[sign] = signalAttr{ QString::fromStdString(sd->name),
+                                          QString::fromStdString(sd->module),
+                                          clr };
+            for (auto gp : graphPanels_)
+                SV_Graph::setSignalAttr(gp, sign, SV_Graph::signalAttr{ signAttr_[sign].color });
         }
         else 
             ui.treeSignals->editItem(item, column);
@@ -744,8 +765,8 @@ void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
     if (!sd) return;
        
     switch (column){
-    case 2: sd->comment = item->text(2).toStdString(); break;
-    case 3: sd->group = item->text(3).toStdString(); break;    
+    case 3: sd->comment = item->text(3).toStdString(); break;
+    case 4: sd->group = item->text(4).toStdString(); break;    
     }
 }
 
@@ -867,9 +888,9 @@ void MainWin::updateTblSignal(){
 					s.second->comment = sd.comment;
 				}
 
-                attrSignal as = db_->getAttrSignal(s.second->name.c_str(), s.second->module.c_str());
-                if (!as.sname.isEmpty()){
-                    attrSign_[as.sname] = as;
+                signalAttr as = db_->getAttrSignal(s.second->name.c_str(), s.second->module.c_str());
+                if (as.color.isValid()){
+                    signAttr_[QString::fromStdString(s.first)] = as;
                 }
 
 				auto trg = db_->getTrigger(s.second->name.c_str(), s.second->module.c_str());
@@ -1066,6 +1087,14 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     });
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
     SV_Graph::setGetSignalData(gp, getSignalDataSrv);
+    SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::signalAttr& out){
+                
+        if (mainWin->signAttr_.contains(sname)){
+            out.color = mainWin->signAttr_[sname].color;
+            return true;
+        }
+        return false;
+    });
     SV_Graph::setGraphSetting(gp, cng.graphSett);
 
     graphPanels_[graphWin] = gp;

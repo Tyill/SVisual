@@ -118,7 +118,7 @@ private:
 
 	QSet<QString> signExist_;
 	
-    QMap<QString, attrSignal> attrSign_;
+    QMap<QString, signalAttr> signAttr_;
 
     bool eventFilter(QObject *target, QEvent *event);
 

@@ -92,7 +92,7 @@ namespace SV_Cng {
 			buffMaxValue = 0;
 		}
 	};
-
+        
     /// модуль
 	struct moduleData {
 

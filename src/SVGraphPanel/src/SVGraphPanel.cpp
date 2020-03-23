@@ -42,6 +42,12 @@ namespace SV_Graph {
             ((graphPanel*)gp)->setGraphSetting(gs);
     }
 
+    void setSignalAttr(QWidget* gp, const QString& sign, const signalAttr& att){
+
+        if (gp)
+            ((graphPanel*)gp)->setSignalAttr(sign, att);
+    }
+
 	void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f) {
 
 		if (gp && f)
@@ -53,6 +59,12 @@ namespace SV_Graph {
 		if (gp && f)
 			((graphPanel*) gp)->pfGetSignalData = f;
 	}
+
+    void setGetSignalAttr(QWidget *gp, pf_getSignalAttr f){
+
+        if (gp && f)
+            ((graphPanel*)gp)->pfGetSignalAttr = f;
+    }
 
 	void setLoadSignalData(QWidget *gp, pf_loadSignalData f) {
 

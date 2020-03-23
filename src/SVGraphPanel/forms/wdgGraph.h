@@ -113,6 +113,7 @@ public:
 	void plotUpdate();
 	
     void setGraphSetting(const SV_Graph::graphSetting&);
+    void setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att);
 
 	void setMarkersPos(QPoint left, QPoint right);
 	void getMarkersPos(QPoint& left, QPoint& right);

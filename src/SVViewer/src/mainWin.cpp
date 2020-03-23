@@ -34,10 +34,11 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
+const QString VERSION = "1.1.5";
+// added select color signal
 
-const QString VERSION = "1.1.4";
+// const QString VERSION = "1.1.4";
 // added web browse
-
 //const QString VERSION = "1.1.3";
 // reading from additional COM ports
 //const QString VERSION = "1.1.2";
@@ -146,10 +147,17 @@ bool MainWin::readSignals(QString path){
                 moduleRef_[module.c_str()]->signls.push_back(sign);
                 moduleRef_[module.c_str()]->isActive = false;
 
-				std::string group = (lst.size() == 5) ? qPrintable(lst[4]) : "";
+				std::string group = (lst.size() >= 5) ? qPrintable(lst[4]) : "";
 				std::string comment = qPrintable(lst[3]);
 				std::string stype = qPrintable(lst[2]);
 
+                if (lst.size() >= 6){
+                    signAttr_[sign.c_str()].signal = QString::fromStdString(sname);
+                    signAttr_[sign.c_str()].module = QString::fromStdString(module);
+                    QColor clr;
+                    clr.setNamedColor(lst[5]);
+                    signAttr_[sign.c_str()].color = clr;
+                }
 
                 if (!groupRef_.contains(group.c_str()))
                     groupRef_[group.c_str()] = new groupData(group.c_str());
@@ -194,7 +202,13 @@ bool MainWin::writeSignals(QString path){
                 << QString::fromLocal8Bit(s->name.c_str()) << '\t'
                 << getSVTypeStr(s->type).c_str() << '\t'
                 << QString::fromLocal8Bit(s->comment.c_str()) << '\t'
-                << QString::fromLocal8Bit(s->group.c_str()) << endl;
+                << QString::fromLocal8Bit(s->group.c_str());
+                
+            QString sign = QString::fromStdString(s->name + s->module);
+            if (signAttr_.contains(sign))
+                txtStream << '\t' << signAttr_[sign].color.name(QColor::HexArgb).toUtf8().data() << endl;
+            else
+                txtStream << endl;
         }
 
         file.close();
@@ -233,6 +247,14 @@ void MainWin::load(){
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
     SV_Graph::setGetSignalData(gp, getSignalData);
     SV_Graph::setLoadSignalData(gp, loadSignalData);
+    SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::signalAttr& out){
+
+        if (mainWin->signAttr_.contains(sname)){
+            out.color = mainWin->signAttr_[sname].color;
+            return true;
+        }
+        return false;
+    });
     SV_Graph::setGraphSetting(gp, cng.graphSett);
     graphPanels_[this] = gp;
 
@@ -583,7 +605,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 	int scnt = 0;
 	if (byModule){
 
-		ui.treeSignals->headerItem()->setText(2, tr("Группа"));
+		ui.treeSignals->headerItem()->setText(3, tr("Группа"));
 		
 		for (auto md : moduleRef_){
 
@@ -605,9 +627,15 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 				item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
 				item->setText(0, sref[sname]->name.c_str());
 				item->setText(1, SV_Cng::getSVTypeStr(sref[sname]->type).c_str());
-				item->setText(2, sref[sname]->group.c_str());
-				item->setText(3, sref[sname]->comment.c_str());
-				item->setText(4, sname);
+
+                if (signAttr_.contains(sname))
+                    item->setBackgroundColor(2, signAttr_[sname].color);
+                else
+                    item->setBackgroundColor(2, QColor(255, 255, 255));
+
+				item->setText(3, sref[sname]->group.c_str());
+				item->setText(4, sref[sname]->comment.c_str());
+				item->setText(5, sname);
 
 				if (sref[sname]->type == valueType::tBool)
 					item->setIcon(0, iconImpuls);
@@ -618,7 +646,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 	}
 	else {
 
-		ui.treeSignals->headerItem()->setText(2, tr("Модуль"));
+		ui.treeSignals->headerItem()->setText(3, tr("Модуль"));
 
 		for (auto grp : groupRef_){
 
@@ -643,9 +671,15 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 				item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
 				item->setText(0, sref[sname]->name.c_str());
 				item->setText(1, SV_Cng::getSVTypeStr(sref[sname]->type).c_str());
-				item->setText(2, sref[sname]->module.c_str());
-				item->setText(3, sref[sname]->comment.c_str());
-				item->setText(4, sname);
+
+                if (signAttr_.contains(sname))
+                    item->setBackgroundColor(2, signAttr_[sname].color);
+                else
+                    item->setBackgroundColor(2, QColor(255, 255, 255));
+
+				item->setText(3, sref[sname]->module.c_str());
+				item->setText(4, sref[sname]->comment.c_str());
+				item->setText(5, sname);
 
 				if (sref[sname]->type == valueType::tBool)
 					item->setIcon(0, iconImpuls);
@@ -714,26 +748,50 @@ void MainWin::selSignalClick(QTreeWidgetItem* item, int column){
 void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
 	
 	if (moduleRef_.contains(item->text(0))) return;
+    
+    auto sign = item->text(5);
 
-	if ((column > 1) && (cng.sortByMod || (column != 2)))
-		ui.treeSignals->editItem(item, column);
-	else
-        SV_Graph::addSignal(graphPanels_[this], item->text(4));
+    if (column == 0){
+        SV_Graph::addSignal(graphPanels_[this], sign);
+    }
+    else {
+        if (column == 2){
+
+            auto clr = QColorDialog::getColor();
+
+            item->setBackgroundColor(2, clr);
+
+            auto sd = getSignalData(sign);
+
+            if (!sd) return;
+
+            signAttr_[sign] = signalAttr{ QString::fromStdString(sd->name),
+                QString::fromStdString(sd->module),
+                clr };
+            for (auto gp : graphPanels_)
+                SV_Graph::setSignalAttr(gp, sign, SV_Graph::signalAttr{ signAttr_[sign].color });
+        }
+        else
+            ui.treeSignals->editItem(item, column);
+    }
+
 }
 
 void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
 
-	QString sign = item->text(4);
-	signalData* sd = getSignalData(sign); if (!sd) return;
+	QString sign = item->text(5);
+	signalData* sd = getSignalData(sign); 
+    
+    if (!sd) return;
 
 	switch (column){
-		case 2:
+		case 3:
 			if (cng.sortByMod){
-			   sd->group = item->text(2).toUtf8().data();
-			   updateGroup(item->text(2), sign);
+			   sd->group = item->text(3).toUtf8().data();
+			   updateGroup(item->text(3), sign);
 		    }
 		    break;
-		case 3: sd->comment = item->text(3).toUtf8().data(); break;
+		case 4: sd->comment = item->text(4).toUtf8().data(); break;
 	}
 		
 }
@@ -755,6 +813,14 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
     SV_Graph::setGetSignalData(gp, getSignalData);
     SV_Graph::setLoadSignalData(gp, loadSignalData);
+    SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::signalAttr& out){
+
+        if (mainWin->signAttr_.contains(sname)){
+            out.color = mainWin->signAttr_[sname].color;
+            return true;
+        }
+        return false;
+    });
     SV_Graph::setGraphSetting(gp, cng.graphSett);
 
     graphPanels_[graphWin] = gp;

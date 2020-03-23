@@ -60,7 +60,7 @@ void treeWidgetExt::mouseMoveEvent(QMouseEvent *event){
 			if (item) {
 				QMimeData *mimeData = new QMimeData;
 
-				QString sign = item->text(4);
+				QString sign = item->text(5);
 
 				mimeData->setText(sign);
 				QDrag *drag = new QDrag(this);

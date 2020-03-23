@@ -114,17 +114,17 @@
            </column>
            <column>
             <property name="text">
+             <string>Цвет</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
              <string>Комментарий</string>
             </property>
            </column>
            <column>
             <property name="text">
              <string>Группа</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Цвет</string>
             </property>
            </column>
           </widget>
@@ -381,7 +381,7 @@
   </action>
   <action name="actionGraphSett">
    <property name="text">
-    <string>Вид графика</string>
+    <string>График</string>
    </property>
   </action>
  </widget>

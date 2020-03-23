@@ -84,6 +84,8 @@ private:
 
 	QMutex mtx_;
 
+    QMap<QString, signalAttr> signAttr_;
+
     QMap<QString, SV_Cng::moduleData*> moduleRef_;   // ключ - имя модуля
     QMap<QString, SV_Cng::groupData*> groupRef_;     // ключ - имя группы
     QMap<QString, SV_Cng::signalData*> signalRef_;   // ключ - название сигнала

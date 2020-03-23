@@ -126,6 +126,14 @@ void graphPanel::setGraphSetting(const SV_Graph::graphSetting& gs){
     }
 }
 
+void graphPanel::setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att){
+
+    for (auto ob : graphObj_){
+
+        ob->setSignalAttr(sign, att);
+    }
+}
+
 void graphPanel::addSignalOnGraph(QString sign, int section){
 
 	SV_Cng::signalData* sd = pfGetSignalData(sign);

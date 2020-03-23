@@ -62,27 +62,36 @@ namespace SV_Graph {
         int transparent = 0;
         int lineWidth = 1;        
     };
+        
+    struct signalAttr{
+        QColor color;
+    };
 
-    SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget *parent, const config& cng);
+    SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget* gp, const config& cng);
 
-    SVGRAPHPANEL_API void setGraphSetting(QWidget *parent, const graphSetting&);
+    SVGRAPHPANEL_API void setGraphSetting(QWidget* gp, const graphSetting&);
 
-    typedef QMap<QString, SV_Cng::signalData *>(*pf_getCopySignalRef)();
-    SVGRAPHPANEL_API void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f);
+    SVGRAPHPANEL_API void setSignalAttr(QWidget* gp, const QString& sign, const signalAttr&);
+
+    typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
+    SVGRAPHPANEL_API void setGetCopySignalRef(QWidget* gp, pf_getCopySignalRef f);
 
     typedef SV_Cng::signalData *(*pf_getSignalData)(const QString& sign);
-    SVGRAPHPANEL_API void setGetSignalData(QWidget *gp, pf_getSignalData f);
+    SVGRAPHPANEL_API void setGetSignalData(QWidget* gp, pf_getSignalData f);
 
     typedef bool (*pf_loadSignalData)(const QString& sign);
-    SVGRAPHPANEL_API void setLoadSignalData(QWidget *gp, pf_loadSignalData f);
+    SVGRAPHPANEL_API void setLoadSignalData(QWidget* gp, pf_loadSignalData f);
 
-    SVGRAPHPANEL_API void addSignal(QWidget *gp, QString sname, int section = 0);
+    typedef bool (*pf_getSignalAttr)(const QString& sign, signalAttr& out);
+    SVGRAPHPANEL_API void setGetSignalAttr(QWidget* gp, pf_getSignalAttr f);
 
-    SVGRAPHPANEL_API void update(QWidget *gp);
+    SVGRAPHPANEL_API void addSignal(QWidget* gp, QString sname, int section = 0);
 
-    SVGRAPHPANEL_API QPair<qint64, qint64> getTimeInterval(QWidget *gp);
+    SVGRAPHPANEL_API void update(QWidget* gp);
+        
+    SVGRAPHPANEL_API QPair<qint64, qint64> getTimeInterval(QWidget* gp);
 
-	SVGRAPHPANEL_API void setTimeInterval(QWidget *gp, qint64 stTime, qint64 enTime);
+	SVGRAPHPANEL_API void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime);
 
     SVGRAPHPANEL_API QVector<QVector<QString>> getLocateSignals(QWidget *gp);
 

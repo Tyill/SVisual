@@ -56,5 +56,11 @@ struct fileData{
 	}
 };
 
+struct signalAttr{
+    QString signal;
+    QString module;
+    QColor color;
+};
+
 
 

@@ -119,7 +119,8 @@ dbProvider::dbProvider(const QString& filename){
     ss.str(""); ss.clear();
     ss << "CREATE TABLE IF NOT EXISTS 'AttrSignal' ("
         "'id' INTEGER PRIMARY KEY NOT NULL UNIQUE,"
-        "'sname' TEXT,"
+        "'signal' TEXT,"
+        "'module' TEXT,"
         "'color' TEXT);";
 
     if (!query(ss.str(), results)) return;
@@ -334,30 +335,33 @@ signalData dbProvider::getSignal(const QString& signal, const QString& module){
 
 }
 
-bool dbProvider::saveAttrSignals(const QMap<QString, attrSignal>& attr){
+bool dbProvider::saveAttrSignals(const QMap<QString, signalAttr>& attr){
 
     stringstream ss; 
     vector<vector<string>> res;
 
-    for (auto& at : attr){
+    for (auto& att : attr){
 
         ss.str(""); 
-        ss << "SELECT * FROM AttrSignal WHERE sname = '" << at.sname.toUtf8().data() << "';";
+        ss << "SELECT * FROM AttrSignal WHERE signal = '" << att.signal.toUtf8().data() << "' AND "
+                                         << " module = '" << att.module.toUtf8().data() << "';";
 
         res.clear();
         if (!query(ss.str(), res)) return false;
         
         if (res.empty()){
             ss.str("");
-            ss << "INSERT INTO AttrSignal ('sname','color') VALUES(" <<
-                  "'" << at.sname.toUtf8().data() << "',"
-                  "'" << at.color.toUtf8().data() << "');";
+            ss << "INSERT INTO AttrSignal ('signal','module','color') VALUES(" <<
+                "'" << att.signal.toUtf8().data() << "',"
+                "'" << att.module.toUtf8().data() << "',"
+                "'" << att.color.name(QColor::HexArgb).toUtf8().data() << "');";
         }
         else{
             ss.str("");
             ss << "UPDATE AttrSignal SET "
-                "color = '" << at.color.toUtf8().data() << "' "
-                "WHERE sname = '" << at.sname.toUtf8().data() << "';";
+                "color = '" << att.color.name(QColor::HexArgb).toUtf8().data() << "' "
+                "WHERE signal = '" << att.signal.toUtf8().data() << "' AND "
+                  << " module = '" << att.module.toUtf8().data() << "';";
         }
         if (!query(ss.str(), res)) return false;        
     }
@@ -365,20 +369,24 @@ bool dbProvider::saveAttrSignals(const QMap<QString, attrSignal>& attr){
     return true;
 }
 
-attrSignal dbProvider::getAttrSignal(const QString& signal, const QString& module){
+signalAttr dbProvider::getAttrSignal(const QString& signal, const QString& module){
 
     stringstream ss;
 
-    ss << "SELECT * FROM AttrSignal WHERE sname = '" << signal.toUtf8().data() << module.toUtf8().data() << "';";
+    ss << "SELECT * FROM AttrSignal WHERE signal = '" << signal.toUtf8().data() << "' AND "
+                                     << " module = '" << module.toUtf8().data() << "';";
 
-    attrSignal as;
+    signalAttr as;
     vector<vector<string>> attr;
     if (!query(ss.str(), attr)) return as;
 
     if (!attr.empty()){
 
-        as.sname = attr[0][1].c_str();
-        as.color = attr[0][2].c_str();
+        QColor clr;
+        clr.setNamedColor(QString::fromStdString(attr[0][3]));
+        as.signal = signal;
+        as.module = module;
+        as.color = clr;
     }
 
     return as;

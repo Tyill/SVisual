@@ -95,6 +95,39 @@ void wdgGraph::setGraphSetting(const SV_Graph::graphSetting& gs){
     graphSetting_ = gs;
 }
 
+void wdgGraph::setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att){
+
+    bool isExist = false;
+    for (auto& s : signals_){
+        if (s.sign == sign){
+            s.color = att.color;
+            s.lb->setStyleSheet("color : " + att.color.name() + "; ");
+            s.lbLeftMarkVal->setStyleSheet("color : " + att.color.name() + "; ");
+            s.lbRightMarkVal->setStyleSheet("color : " + att.color.name() + "; ");
+            isExist = true;
+			break;
+        }
+    }
+    
+	for (auto& s : signalsAlter_){
+		if (s.sign == sign){
+			s.color = att.color;
+			s.lb->setStyleSheet("color : " + att.color.name() + "; ");
+			s.lbLeftMarkVal->setStyleSheet("color : " + att.color.name() + "; ");
+			s.lbRightMarkVal->setStyleSheet("color : " + att.color.name() + "; ");
+			isExist = true;
+			break;
+		}
+	}
+
+    if (isExist){
+        repaintEna_ = true;
+        ui.wPlot->update();
+
+        emit req_markerChange(this->objectName());
+    }
+}
+
 QSize wdgGraph::sizeHint(){
 
 	return this->size();
@@ -569,6 +602,10 @@ void wdgGraph::addSignal(QString sign){
 
 		signalData* sd = grPanel_->pfGetSignalData(sign);
 
+        SV_Graph::signalAttr sAttr;
+        if (grPanel_->pfGetSignalAttr(sign, sAttr))
+            clr = sAttr.color;
+
         signals_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal, sd });
 		signalList_.push_front(sign);
 
@@ -612,6 +649,10 @@ void wdgGraph::addAlterSignal(QString sign){
 		QLabel* lbRightVal = new QLabel(ui.wPlot);
 
 		signalData* sd = grPanel_->pfGetSignalData(sign);
+
+        SV_Graph::signalAttr sAttr;
+        if (grPanel_->pfGetSignalAttr(sign, sAttr))
+            clr = sAttr.color;
 
         signalsAlter_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal, sd });
 		signalListAlter_.push_front(sign);
@@ -1351,6 +1392,10 @@ void wdgGraph::colorUpdate(){
 			(num * (120 + colorCnt_)) % 255,
 			(num * (180 + colorCnt_)) % 255, 255);
 
+        SV_Graph::signalAttr sAttr;
+        if (grPanel_->pfGetSignalAttr(s.sign, sAttr))
+            clr = sAttr.color;
+        
         s.color = clr;
 				
 		s.lb->setStyleSheet("color : " + clr.name() + "; ");
@@ -1366,6 +1411,10 @@ void wdgGraph::colorUpdate(){
 		QColor clr = QColor((num * (60 + colorCnt_)) % 255,
 			(num * (120 + colorCnt_)) % 255,
 			(num * (180 + colorCnt_)) % 255, 255);
+
+        SV_Graph::signalAttr sAttr;
+        if (grPanel_->pfGetSignalAttr(s.sign, sAttr))
+            clr = sAttr.color;
 
 		s.color = clr;
 

@@ -41,8 +41,8 @@ public:
     {
         if (graphSettingClass->objectName().isEmpty())
             graphSettingClass->setObjectName(QStringLiteral("graphSettingClass"));
-        graphSettingClass->resize(400, 183);
-        graphSettingClass->setMaximumSize(QSize(400, 200));
+        graphSettingClass->resize(400, 235);
+        graphSettingClass->setMaximumSize(QSize(400, 235));
         verticalLayout_3 = new QVBoxLayout(graphSettingClass);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         groupBox = new QGroupBox(graphSettingClass);
