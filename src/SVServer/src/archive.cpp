@@ -132,13 +132,17 @@ bool archive::copyToDisk(bool isStop){
 	FUNC_BEGIN
 
 	size_t dsz = archiveData_.size();
-	if (dsz == 0) return true;
+	if (dsz == 0) 
+        return true;
 
-	int SMAXCNT = 100; // макс кол-во сигналов в посылке
+    size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
 
-	int sint = sizeof(int), tmSz = sizeof(uint64_t), vlSz = sizeof(value) * SV_PACKETSZ;
-		//       name        module      group       comment       type    vCnt
-	int	headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + sint + sint;
+    size_t sint = sizeof(int),
+           tmSz = sizeof(uint64_t),
+           vlSz = sizeof(value) * SV_PACKETSZ;
+
+		//           name        module      group       comment       type    vCnt
+    size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + sint + sint;
 		
     vector<char> inArr((tmSz + vlSz) * cpySz_ * SMAXCNT + headSz * SMAXCNT),
 			     compArr;
@@ -152,7 +156,7 @@ bool archive::copyToDisk(bool isStop){
         return false;
 
 	size_t sCnt = 0, csize = 0;
-	for (int i = 0; i < dsz; ++i) {
+	for (size_t i = 0; i < dsz; ++i) {
 
 		auto sign = pServ_->getSignalData(keys[i]);
 

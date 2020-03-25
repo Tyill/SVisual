@@ -44,13 +44,13 @@ bufferData::bufferData(bufferData::config cng_){
 
 void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 
-	size_t sz = in.size(); 
-	int clSz = SV_NAMESZ + sizeof(valueType) + sizeof(value) * SV_PACKETSZ,
-		cPos = SV_NAMESZ;
+	size_t sz = in.size(), 
+	       clSz = SV_NAMESZ + sizeof(valueType) + sizeof(value) * SV_PACKETSZ,
+		   cPos = SV_NAMESZ;
 	
 	string module = in.c_str();
 
-    int valCnt = std::max(0, std::min(int(sz - cPos) / clSz, SV_VALUE_MAX_CNT * 10)); // 10 - запас
+    int valCnt = std::max(size_t(0), std::min((sz - cPos) / clSz, size_t(SV_VALUE_MAX_CNT * 10))); // 10 - запас
 
 	mtx_.lock();
 
@@ -61,8 +61,8 @@ void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 
 	mtx_.unlock();
 
-	int vlsz = sizeof(value) * SV_PACKETSZ,
-		offs = SV_NAMESZ + sizeof(valueType);
+	size_t vlsz = sizeof(value) * SV_PACKETSZ,
+		   offs = SV_NAMESZ + sizeof(valueType);
 
 	while (cPos < sz){
 
@@ -77,7 +77,10 @@ void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 
 		buffer_[buffWr].isActive = true;
 
-		++buffWr; if (buffWr >= buffSz_) buffWr = 0;
+		++buffWr; 
+        if (buffWr >= buffSz_)
+            buffWr = 0;
+
 		cPos += clSz;
 	}
 }
