@@ -494,7 +494,14 @@ void MainWin::Connect(){
         }
 
     });
-    
+    connect(ui.actionManual, &QAction::triggered, [this]() {
+
+#ifdef SV_EN
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/SVManualEN.pdf"));
+#else
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/SVManualRU.pdf"));
+#endif
+    });    
 	connect(ui.actionProgram, &QAction::triggered, [this]() {
 	QMessageBox::about(this, tr("About SVisual"),
 			tr("<h2>SVViewer </h2>"
