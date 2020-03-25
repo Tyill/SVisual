@@ -223,6 +223,7 @@
     <property name="title">
      <string>Помощь</string>
     </property>
+    <addaction name="actionManual"/>
     <addaction name="actionCheckUpdate"/>
     <addaction name="actionProgram"/>
    </widget>
@@ -382,6 +383,11 @@
   <action name="actionGraphSett">
    <property name="text">
     <string>График</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="text">
+    <string>Руководство пользователя</string>
    </property>
   </action>
  </widget>

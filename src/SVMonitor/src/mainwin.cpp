@@ -377,6 +377,14 @@ void MainWin::Connect(){
         
         statusMess(tr("Состояние успешно загружено"));
     });
+    connect(ui.actionManual, &QAction::triggered, [this]() {
+
+#ifdef SV_EN
+        QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualEN.pdf"));
+#else
+        QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualRU.pdf"));
+#endif
+    });
     connect(ui.actionProgram, &QAction::triggered, [this]() {
 
         QString mess = "<h2>SVMonitor </h2>"

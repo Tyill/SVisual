@@ -10,177 +10,193 @@
     </message>
     <message>
         <location filename="../forms/mainwin.ui" line="72"/>
-        <location filename="../forms/ui_mainwin.h" line="306"/>
+        <location filename="../forms/ui_mainwin.h" line="311"/>
         <source>Тихий режим</source>
         <translation>Quiet mode</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="307"/>
-        <location filename="../forms/ui_mainwin.h" line="291"/>
+        <location filename="../forms/mainwin.ui" line="313"/>
+        <location filename="../forms/ui_mainwin.h" line="295"/>
         <source>О программе</source>
         <translation>About the program</translation>
     </message>
     <message>
         <location filename="../forms/mainwin.ui" line="52"/>
-        <location filename="../forms/ui_mainwin.h" line="305"/>
+        <location filename="../forms/ui_mainwin.h" line="310"/>
         <source>Модули</source>
         <translation>Modules</translation>
     </message>
     <message>
         <location filename="../forms/mainwin.ui" line="14"/>
-        <location filename="../forms/ui_mainwin.h" line="283"/>
+        <location filename="../forms/ui_mainwin.h" line="287"/>
         <source>SVMonitor</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../forms/mainwin.ui" line="107"/>
-        <location filename="../forms/ui_mainwin.h" line="311"/>
+        <location filename="../forms/ui_mainwin.h" line="317"/>
         <source>Имя</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../forms/mainwin.ui" line="112"/>
-        <location filename="../forms/ui_mainwin.h" line="310"/>
+        <location filename="../forms/ui_mainwin.h" line="316"/>
         <source>Тип</source>
         <translation>Type</translation>
     </message>
     <message>
         <location filename="../forms/mainwin.ui" line="117"/>
-        <location filename="../forms/ui_mainwin.h" line="309"/>
+        <location filename="../forms/ui_mainwin.h" line="315"/>
+        <source>Цвет</source>
+        <translation>Color</translation>
+    </message>
+    <message>
+        <location filename="../forms/mainwin.ui" line="122"/>
+        <location filename="../forms/ui_mainwin.h" line="314"/>
         <source>Комментарий</source>
         <translation>Comment</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="122"/>
-        <location filename="../forms/ui_mainwin.h" line="308"/>
+        <location filename="../forms/mainwin.ui" line="127"/>
+        <location filename="../forms/ui_mainwin.h" line="313"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="210"/>
-        <location filename="../forms/ui_mainwin.h" line="315"/>
+        <location filename="../forms/mainwin.ui" line="215"/>
+        <location filename="../forms/ui_mainwin.h" line="321"/>
         <source>Файл</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="219"/>
-        <location filename="../forms/ui_mainwin.h" line="316"/>
+        <location filename="../forms/mainwin.ui" line="224"/>
+        <location filename="../forms/ui_mainwin.h" line="322"/>
         <source>Помощь</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="226"/>
-        <location filename="../forms/ui_mainwin.h" line="317"/>
+        <location filename="../forms/mainwin.ui" line="232"/>
+        <location filename="../forms/ui_mainwin.h" line="323"/>
         <source>Вид</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="261"/>
-        <location filename="../forms/ui_mainwin.h" line="285"/>
+        <location filename="../forms/mainwin.ui" line="267"/>
+        <location filename="../forms/ui_mainwin.h" line="289"/>
         <source>Выход</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="270"/>
-        <location filename="../forms/ui_mainwin.h" line="286"/>
+        <location filename="../forms/mainwin.ui" line="276"/>
+        <location filename="../forms/ui_mainwin.h" line="290"/>
         <source>Добавить</source>
         <translation>Add</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="279"/>
-        <location filename="../forms/ui_mainwin.h" line="287"/>
+        <location filename="../forms/mainwin.ui" line="285"/>
+        <location filename="../forms/ui_mainwin.h" line="291"/>
         <source>Сигналы</source>
         <translation>Signals</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="288"/>
-        <location filename="../forms/ui_mainwin.h" line="288"/>
+        <location filename="../forms/mainwin.ui" line="294"/>
+        <location filename="../forms/ui_mainwin.h" line="292"/>
         <source>Настройка уведомлений</source>
         <translation>Configuring notifications</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="293"/>
-        <location filename="../forms/ui_mainwin.h" line="289"/>
+        <location filename="../forms/mainwin.ui" line="299"/>
+        <location filename="../forms/ui_mainwin.h" line="293"/>
         <source>Настройки</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="302"/>
-        <location filename="../forms/ui_mainwin.h" line="290"/>
+        <location filename="../forms/mainwin.ui" line="308"/>
+        <location filename="../forms/ui_mainwin.h" line="294"/>
         <source>Отчет событий</source>
         <translation>Event report</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="312"/>
-        <location filename="../forms/ui_mainwin.h" line="292"/>
+        <location filename="../forms/mainwin.ui" line="318"/>
+        <location filename="../forms/ui_mainwin.h" line="296"/>
         <source>Проверить обновления</source>
         <translation>Check for Updates</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="321"/>
-        <location filename="../forms/ui_mainwin.h" line="293"/>
+        <location filename="../forms/mainwin.ui" line="327"/>
+        <location filename="../forms/ui_mainwin.h" line="297"/>
         <source>Печать</source>
         <translation>Print</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="330"/>
-        <location filename="../forms/ui_mainwin.h" line="294"/>
+        <location filename="../forms/mainwin.ui" line="336"/>
+        <location filename="../forms/ui_mainwin.h" line="298"/>
         <source>Экспорт</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="339"/>
-        <location filename="../forms/ui_mainwin.h" line="295"/>
+        <location filename="../forms/mainwin.ui" line="345"/>
+        <location filename="../forms/ui_mainwin.h" line="299"/>
         <source>Новое окно</source>
         <translation>New window</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="344"/>
-        <location filename="../forms/ui_mainwin.h" line="296"/>
+        <location filename="../forms/mainwin.ui" line="350"/>
+        <location filename="../forms/ui_mainwin.h" line="300"/>
         <source>Сохранить текущее состояние</source>
         <translation>Save current state</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="349"/>
-        <location filename="../forms/ui_mainwin.h" line="297"/>
+        <location filename="../forms/mainwin.ui" line="355"/>
+        <location filename="../forms/ui_mainwin.h" line="301"/>
         <source>Загрузить состояние окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="354"/>
-        <location filename="../forms/ui_mainwin.h" line="298"/>
+        <location filename="../forms/mainwin.ui" line="360"/>
+        <location filename="../forms/ui_mainwin.h" line="302"/>
         <source>Увеличить размер шрифта</source>
         <translation>Increase font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="357"/>
-        <location filename="../forms/ui_mainwin.h" line="299"/>
+        <location filename="../forms/mainwin.ui" line="363"/>
+        <location filename="../forms/ui_mainwin.h" line="303"/>
         <source>Ctrl+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="362"/>
-        <location filename="../forms/ui_mainwin.h" line="300"/>
+        <location filename="../forms/mainwin.ui" line="368"/>
+        <location filename="../forms/ui_mainwin.h" line="304"/>
         <source>Уменьшить размер шрифта</source>
         <translation>Decrease font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="365"/>
-        <location filename="../forms/ui_mainwin.h" line="301"/>
+        <location filename="../forms/mainwin.ui" line="371"/>
+        <location filename="../forms/ui_mainwin.h" line="305"/>
         <source>Ctrl+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="374"/>
-        <location filename="../forms/ui_mainwin.h" line="302"/>
+        <location filename="../forms/mainwin.ui" line="380"/>
+        <location filename="../forms/ui_mainwin.h" line="306"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="379"/>
-        <location filename="../forms/ui_mainwin.h" line="303"/>
+        <location filename="../forms/mainwin.ui" line="385"/>
+        <location filename="../forms/ui_mainwin.h" line="307"/>
+        <source>График</source>
+        <translation>Graph</translation>
+    </message>
+    <message>
+        <location filename="../forms/mainwin.ui" line="390"/>
+        <location filename="../forms/ui_mainwin.h" line="308"/>
+        <source>Руководство пользователя</source>
+        <translation>User manual</translation>
+    </message>
+    <message>
         <source>Вид графика</source>
-        <translation>View graphics</translation>
+        <translation type="vanished">View graphics</translation>
     </message>
     <message>
         <source>Подключение базы данных успешно</source>
@@ -191,7 +207,7 @@
         <translation type="vanished">Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="373"/>
+        <location filename="../src/mainwin.cpp" line="395"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
@@ -213,82 +229,82 @@
         <translation type="vanished">Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="157"/>
+        <location filename="../src/mainwin.cpp" line="167"/>
         <source>Подключение БД успешно</source>
         <translation>Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="159"/>
+        <location filename="../src/mainwin.cpp" line="169"/>
         <source>Подключение БД ошибка: </source>
         <translation>Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="256"/>
+        <location filename="../src/mainwin.cpp" line="270"/>
         <source>Доступна новая версия: </source>
         <translation>New version available: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="258"/>
+        <location filename="../src/mainwin.cpp" line="272"/>
         <source>У вас самая новая версия</source>
         <translation>You have the newest version</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="272"/>
+        <location filename="../src/mainwin.cpp" line="286"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="316"/>
+        <location filename="../src/mainwin.cpp" line="330"/>
         <source>Состояние успешно сохранено</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="321"/>
+        <location filename="../src/mainwin.cpp" line="335"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="364"/>
+        <location filename="../src/mainwin.cpp" line="378"/>
         <source>Состояние успешно загружено</source>
         <translation>Load state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="524"/>
+        <location filename="../src/mainwin.cpp" line="546"/>
         <source>Инициализация параметров успешно</source>
         <translation>Initialization successfully settings</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="526"/>
+        <location filename="../src/mainwin.cpp" line="548"/>
         <source>Не найден файл инициализации %1</source>
         <translation>Not found ini file %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="553"/>
+        <location filename="../src/mainwin.cpp" line="575"/>
         <source>Прослушивание %1 порта запущено</source>
         <translation>Listening port %1 running</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="560"/>
+        <location filename="../src/mainwin.cpp" line="582"/>
         <source>%1 порт недоступен</source>
         <translation>%1 port is not available</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="569"/>
+        <location filename="../src/mainwin.cpp" line="591"/>
         <source>TCP cервер запущен: адрес %1 порт %2</source>
         <translation>TCP server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="576"/>
+        <location filename="../src/mainwin.cpp" line="598"/>
         <source>Не удалось запустить TCP сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server TCP: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="584"/>
+        <location filename="../src/mainwin.cpp" line="606"/>
         <source>WEB cервер запущен: адрес %1 порт %2</source>
         <translation>WEB server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="587"/>
+        <location filename="../src/mainwin.cpp" line="609"/>
         <source>Не удалось запустить WEB сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server WEB: address of %1 port %2</translation>
     </message>
@@ -301,12 +317,17 @@
         <translation type="vanished">Unable to start the server tcp: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="610"/>
+        <location filename="../src/mainwin.cpp" line="631"/>
         <source>Ошибка сохранения сигналов в БД</source>
         <translation>Error save signals in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="612"/>
+        <location filename="../src/mainwin.cpp" line="633"/>
+        <source>Ошибка сохранения атрибутов в БД</source>
+        <translation>Error save attributs in DB</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwin.cpp" line="635"/>
         <source>Ошибка сохранения триггеров в БД</source>
         <translation>Error save triggers in DB</translation>
     </message>
@@ -315,22 +336,21 @@
         <translation type="vanished">Error save events in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="833"/>
+        <location filename="../src/mainwin.cpp" line="882"/>
         <source>Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.</source>
         <translation>Signal limit exceeded:% 1. Stable work is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="872"/>
+        <location filename="../src/mainwin.cpp" line="926"/>
         <source>Подключен модуль: </source>
         <translation>Module is connected: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="877"/>
         <source>Превышен лимит количества модулей: %1. Стабильная работа не гарантирована.</source>
-        <translation>Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
+        <translation type="vanished">Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="925"/>
+        <location filename="../src/mainwin.cpp" line="975"/>
         <source>Отключен модуль: </source>
         <translation>Module is disconnected: </translation>
     </message>
@@ -343,36 +363,36 @@
         <translation type="vanished">Close an application. Saving options error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="744"/>
-        <location filename="../src/mainwin.cpp" line="794"/>
+        <location filename="../src/mainwin.cpp" line="793"/>
+        <location filename="../src/mainwin.cpp" line="843"/>
         <source>Отключить</source>
         <translation>Shut off</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="746"/>
-        <location filename="../src/mainwin.cpp" line="789"/>
+        <location filename="../src/mainwin.cpp" line="795"/>
+        <location filename="../src/mainwin.cpp" line="838"/>
         <source>Включить</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="747"/>
-        <location filename="../src/mainwin.cpp" line="751"/>
-        <location filename="../src/mainwin.cpp" line="799"/>
+        <location filename="../src/mainwin.cpp" line="796"/>
+        <location filename="../src/mainwin.cpp" line="800"/>
+        <location filename="../src/mainwin.cpp" line="848"/>
         <source>Удалить</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="781"/>
+        <location filename="../src/mainwin.cpp" line="830"/>
         <source>Сигнал удален </source>
         <translation>The signal is deleted </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="802"/>
+        <location filename="../src/mainwin.cpp" line="851"/>
         <source>Удалить модуль со всеми сигналами?</source>
         <translation>Remove the module with all the signals?</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="809"/>
+        <location filename="../src/mainwin.cpp" line="858"/>
         <source>Модуль удален </source>
         <translation>Module removed </translation>
     </message>
@@ -416,17 +436,17 @@
         <translation type="vanished">Disconnect module &apos;</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="944"/>
+        <location filename="../src/mainwin.cpp" line="994"/>
         <source>Событие: </source>
         <translation>Event: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="957"/>
+        <location filename="../src/mainwin.cpp" line="1009"/>
         <source> Процесс запущен: </source>
         <translation>Process is run: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="960"/>
+        <location filename="../src/mainwin.cpp" line="1012"/>
         <source> Путь не найден: </source>
         <translation>Path is not found: </translation>
     </message>

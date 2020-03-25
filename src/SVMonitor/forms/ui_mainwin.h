@@ -53,6 +53,7 @@ public:
     QAction *actionDnFont;
     QAction *actionScript;
     QAction *actionGraphSett;
+    QAction *actionManual;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_2;
     QSplitter *splitter;
@@ -148,6 +149,8 @@ public:
         actionScript->setIcon(icon9);
         actionGraphSett = new QAction(MainWin);
         actionGraphSett->setObjectName(QStringLiteral("actionGraphSett"));
+        actionManual = new QAction(MainWin);
+        actionManual->setObjectName(QStringLiteral("actionManual"));
         centralWidget = new QWidget(MainWin);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout_2 = new QVBoxLayout(centralWidget);
@@ -261,6 +264,7 @@ public:
         menuMain->addAction(actionSaveWinState);
         menuMain->addAction(actionLoadWinState);
         menuMain->addAction(actionExit);
+        menuHelp->addAction(actionManual);
         menuHelp->addAction(actionCheckUpdate);
         menuHelp->addAction(actionProgram);
         menu->addAction(actionUpFont);
@@ -301,6 +305,7 @@ public:
         actionDnFont->setShortcut(QApplication::translate("MainWin", "Ctrl+2", 0));
         actionScript->setText(QApplication::translate("MainWin", "\320\241\320\272\321\200\320\270\320\277\321\202", 0));
         actionGraphSett->setText(QApplication::translate("MainWin", "\320\223\321\200\320\260\321\204\320\270\320\272", 0));
+        actionManual->setText(QApplication::translate("MainWin", "\320\240\321\203\320\272\320\276\320\262\320\276\320\264\321\201\321\202\320\262\320\276 \320\277\320\276\320\273\321\214\320\267\320\276\320\262\320\260\321\202\320\265\320\273\321\217", 0));
         groupBox->setTitle(QString());
         label->setText(QApplication::translate("MainWin", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
         btnSlowPlay->setText(QApplication::translate("MainWin", "\320\242\320\270\321\205\320\270\320\271 \321\200\320\265\320\266\320\270\320\274", 0));
