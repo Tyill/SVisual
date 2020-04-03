@@ -201,6 +201,9 @@ public:
     {
         wdgGraphClass->setWindowTitle(QApplication::translate("wdgGraphClass", "wGraph", 0));
         groupBox->setTitle(QString());
+#ifndef QT_NO_TOOLTIP
+        btnAxisAttr->setToolTip(QApplication::translate("wdgGraphClass", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \320\276\321\201\320\270 \320\267\320\275\320\260\321\207\320\265\320\275\320\270\320\271", 0));
+#endif // QT_NO_TOOLTIP
         btnAxisAttr->setText(QApplication::translate("wdgGraphClass", "Auto", 0));
 #ifndef QT_NO_TOOLTIP
         btnUp->setToolTip(QApplication::translate("wdgGraphClass", "\320\237\320\265\321\200\320\265\320\274\320\265\321\201\321\202\320\270\321\202\321\214 \320\262\320\275\320\270\320\267", 0));

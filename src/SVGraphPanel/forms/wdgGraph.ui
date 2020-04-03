@@ -80,6 +80,9 @@
             <pointsize>6</pointsize>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Настройка оси значений</string>
+          </property>
           <property name="text">
            <string>Auto</string>
           </property>

@@ -71,6 +71,9 @@ public:
 	void wheelEvent(QWheelEvent * event);
 	void scale(int delta);
 
+    void setDashStep(int);
+    int getDashStep();
+
 protected:
 	void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 

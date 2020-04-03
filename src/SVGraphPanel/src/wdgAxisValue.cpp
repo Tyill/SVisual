@@ -95,6 +95,16 @@ void wdgAxisValue::scale(int delta){
 	emit req_axisChange();
 }
 
+void wdgAxisValue::setDashStep(int step){
+
+    curDashStep_ = qMax(step, 1);
+}
+
+int wdgAxisValue::getDashStep(){
+
+    return curDashStep_;
+}
+
 void wdgAxisValue::wheelEvent(QWheelEvent * event){
 
 	scale(event->delta());

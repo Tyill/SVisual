@@ -69,9 +69,9 @@ namespace SV_Graph {
 
     struct axisAttr{
         bool isAuto = true;
-        float min = 0.f,
-              max = 0.f,
-              step = 0.f;
+        double min = 0.0,
+               max = 0.0,
+               step = 0.0;
     };
 
     SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget* gp, const config& cng);

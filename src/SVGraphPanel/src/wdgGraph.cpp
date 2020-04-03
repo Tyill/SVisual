@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "forms/graphPanel.h"
 #include "forms/wdgGraph.h"
+#include "forms/axisSettingPanel.h"
 #include "wdgAxisTime.h"
 #include "wdgAxisValue.h"
 #include "wdgMarker.h"
@@ -80,10 +81,38 @@ wdgGraph::wdgGraph(QWidget *parent, SV_Graph::config cng_){
 
 	});
 
-    connect(ui.btnAxisAttr, &QPushButton::clicked, this, [this] {
+    connect(ui.btnAxisAttr, &QPushButton::clicked, this, [this]{
 
-        
+        auto valIntrl = ui.wAxisValue->getValInterval();
 
+        double scale = ui.wAxisValue->getValScale();
+               
+        axisAttr_.min = valIntrl.first;
+        axisAttr_.max = valIntrl.second;
+        axisAttr_.step = ui.wAxisValue->getDashStep() * scale;
+
+        axisSettingPanel* axisSett = new axisSettingPanel(this, axisAttr_);
+
+        connect(axisSett, &axisSettingPanel::req_settChange, this, [this](SV_Graph::axisAttr attr){
+
+            if (attr.isAuto)
+                ui.btnAxisAttr->setText("Auto");
+            else
+                ui.btnAxisAttr->setText("Fix");
+
+            ui.wAxisValue->setValInterval(attr.min, attr.max);
+
+            double scale = ui.wAxisValue->getValScale();
+
+            ui.wAxisValue->setDashStep(int(attr.step / scale + 0.5));
+
+            axisValueChange();
+
+            axisAttr_ = attr;
+        });
+
+        axisSett->setWindowFlags(Qt::Window);
+        axisSett->show();
     });
 	
 	connect(ui.wPlot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
