@@ -56,15 +56,22 @@ namespace SV_Graph {
             packetSz(packetSz_),
             mode(mode_) {}
     };
-
+        
     struct graphSetting{
         bool darkTheme = false;
         int transparent = 0;
         int lineWidth = 1;        
     };
-        
+   
     struct signalAttr{
         QColor color;
+    };
+
+    struct axisAttr{
+        bool isAuto = true;
+        float min = 0.f,
+              max = 0.f,
+              step = 0.f;
     };
 
     SVGRAPHPANEL_API QWidget *createGraphPanel(QWidget* gp, const config& cng);
@@ -72,6 +79,10 @@ namespace SV_Graph {
     SVGRAPHPANEL_API void setGraphSetting(QWidget* gp, const graphSetting&);
 
     SVGRAPHPANEL_API void setSignalAttr(QWidget* gp, const QString& sign, const signalAttr&);
+
+    SVGRAPHPANEL_API void setAxisAttr(QWidget* gp, const QVector<axisAttr>&);
+
+    SVGRAPHPANEL_API QVector<axisAttr> getAxisAttr(QWidget* gp);
 
     typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
     SVGRAPHPANEL_API void setGetCopySignalRef(QWidget* gp, pf_getCopySignalRef f);

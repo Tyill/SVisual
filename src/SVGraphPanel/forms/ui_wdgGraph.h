@@ -33,6 +33,8 @@ public:
     QGroupBox *groupBox;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
+    QPushButton *btnAxisAttr;
+    QSpacerItem *horizontalSpacer_2;
     QFrame *line;
     QPushButton *btnUp;
     QPushButton *btnDn;
@@ -69,6 +71,21 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(5, -1, -1, -1);
+        btnAxisAttr = new QPushButton(groupBox);
+        btnAxisAttr->setObjectName(QStringLiteral("btnAxisAttr"));
+        btnAxisAttr->setMinimumSize(QSize(40, 20));
+        btnAxisAttr->setMaximumSize(QSize(40, 20));
+        QFont font;
+        font.setPointSize(6);
+        btnAxisAttr->setFont(font);
+        btnAxisAttr->setCheckable(false);
+
+        horizontalLayout->addWidget(btnAxisAttr);
+
+        horizontalSpacer_2 = new QSpacerItem(10, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(horizontalSpacer_2);
+
         line = new QFrame(groupBox);
         line->setObjectName(QStringLiteral("line"));
         line->setStyleSheet(QStringLiteral("background-color: rgb(255, 255, 255);"));
@@ -184,6 +201,7 @@ public:
     {
         wdgGraphClass->setWindowTitle(QApplication::translate("wdgGraphClass", "wGraph", 0));
         groupBox->setTitle(QString());
+        btnAxisAttr->setText(QApplication::translate("wdgGraphClass", "Auto", 0));
 #ifndef QT_NO_TOOLTIP
         btnUp->setToolTip(QApplication::translate("wdgGraphClass", "\320\237\320\265\321\200\320\265\320\274\320\265\321\201\321\202\320\270\321\202\321\214 \320\262\320\275\320\270\320\267", 0));
 #endif // QT_NO_TOOLTIP

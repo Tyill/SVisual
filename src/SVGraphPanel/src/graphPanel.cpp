@@ -134,6 +134,16 @@ void graphPanel::setSignalAttr(const QString& sign, const SV_Graph::signalAttr& 
     }
 }
 
+void graphPanel::setAxisAttr(const QVector<SV_Graph::axisAttr>&){
+
+
+}
+
+QVector<SV_Graph::axisAttr> graphPanel::getAxisAttr(){
+
+    return QVector<SV_Graph::axisAttr>();
+}
+
 void graphPanel::addSignalOnGraph(QString sign, int section){
 
 	SV_Cng::signalData* sd = pfGetSignalData(sign);

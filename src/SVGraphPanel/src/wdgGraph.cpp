@@ -80,6 +80,11 @@ wdgGraph::wdgGraph(QWidget *parent, SV_Graph::config cng_){
 
 	});
 
+    connect(ui.btnAxisAttr, &QPushButton::clicked, this, [this] {
+
+        
+
+    });
 	
 	connect(ui.wPlot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
     connect(ui.wPlot, &wdgPlot::req_updMarker, this, &wdgGraph::showMarkPos);
@@ -126,6 +131,15 @@ void wdgGraph::setSignalAttr(const QString& sign, const SV_Graph::signalAttr& at
 
         emit req_markerChange(this->objectName());
     }
+}
+
+void wdgGraph::setAxisAttr(const SV_Graph::axisAttr& attr){
+
+    axisAttr_ = attr;
+}
+
+SV_Graph::axisAttr wdgGraph::getAxisAttr(){
+    return axisAttr_;
 }
 
 QSize wdgGraph::sizeHint(){
