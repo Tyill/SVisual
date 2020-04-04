@@ -62,6 +62,7 @@ public:
     QVBoxLayout *verticalLayout_2;
     QCheckBox *rbtnArchEna;
     QHBoxLayout *horizontalLayout_2;
+    QLabel *label_3;
     QPushButton *btnArchPath;
     QLineEdit *txtArchPath;
     QGroupBox *groupBox_2;
@@ -81,7 +82,7 @@ public:
     {
         if (settingsPanelClass->objectName().isEmpty())
             settingsPanelClass->setObjectName(QStringLiteral("settingsPanelClass"));
-        settingsPanelClass->resize(676, 554);
+        settingsPanelClass->resize(603, 486);
         settingsPanelClass->setMinimumSize(QSize(550, 350));
         settingsPanelClass->setMaximumSize(QSize(700, 16777215));
         verticalLayout_3 = new QVBoxLayout(settingsPanelClass);
@@ -229,6 +230,12 @@ public:
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        label_3 = new QLabel(grbSaveData);
+        label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setEnabled(true);
+
+        horizontalLayout_2->addWidget(label_3);
+
         btnArchPath = new QPushButton(grbSaveData);
         btnArchPath->setObjectName(QStringLiteral("btnArchPath"));
         btnArchPath->setEnabled(false);
@@ -345,6 +352,7 @@ public:
         rbtnArchEna->setToolTip(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
 #endif // QT_NO_TOOLTIP
         rbtnArchEna->setText(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
+        label_3->setText(QApplication::translate("settingsPanelClass", "\320\277\321\203\321\202\321\214", 0));
         btnArchPath->setText(QString());
         groupBox_2->setTitle(QApplication::translate("settingsPanelClass", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \320\270\320\267\320\274\320\265\321\200\320\265\320\275\320\270\320\271", 0));
         label_4->setText(QApplication::translate("settingsPanelClass", "\320\237\320\265\321\200\320\270\320\276\320\264 \320\267\320\260\320\277\320\270\321\201\320\270", 0));
