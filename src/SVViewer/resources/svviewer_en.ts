@@ -42,7 +42,7 @@
     <message>
         <location filename="../forms/mainWin.ui" line="114"/>
         <location filename="../forms/ui_mainWin.h" line="305"/>
-        <location filename="../src/mainWin.cpp" line="615"/>
+        <location filename="../src/mainWin.cpp" line="617"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
@@ -109,8 +109,12 @@
     <message>
         <location filename="../forms/mainWin.ui" line="343"/>
         <location filename="../forms/ui_mainWin.h" line="291"/>
+        <source>Сохранить состояние окон</source>
+        <translation>Save state windows</translation>
+    </message>
+    <message>
         <source>Сохранить текущее состояние</source>
-        <translation>Save current state</translation>
+        <translation type="vanished">Save current state</translation>
     </message>
     <message>
         <location filename="../forms/mainWin.ui" line="348"/>
@@ -186,27 +190,27 @@
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="459"/>
+        <location filename="../src/mainWin.cpp" line="460"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="506"/>
+        <location filename="../src/mainWin.cpp" line="508"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="507"/>
+        <location filename="../src/mainWin.cpp" line="509"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="656"/>
+        <location filename="../src/mainWin.cpp" line="658"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="713"/>
+        <location filename="../src/mainWin.cpp" line="715"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
@@ -219,7 +223,7 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="724"/>
+        <location filename="../src/mainWin.cpp" line="726"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>

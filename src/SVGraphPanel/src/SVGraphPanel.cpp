@@ -48,6 +48,20 @@ namespace SV_Graph {
             ((graphPanel*)gp)->setSignalAttr(sign, att);
     }
 
+    void setAxisAttr(QWidget* gp, const QVector<axisAttr>& attr){
+
+        if (gp)
+            ((graphPanel*)gp)->setAxisAttr(attr);
+    }
+
+    QVector<axisAttr> getAxisAttr(QWidget* gp){
+
+        if (gp)
+            return ((graphPanel*)gp)->getAxisAttr();
+        else
+            return QVector<axisAttr>();
+    }
+
 	void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f) {
 
 		if (gp && f)

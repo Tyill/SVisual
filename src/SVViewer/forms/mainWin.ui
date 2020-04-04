@@ -340,7 +340,7 @@
   </action>
   <action name="actionSaveWinState">
    <property name="text">
-    <string>Сохранить текущее состояние</string>
+    <string>Сохранить состояние окон</string>
    </property>
   </action>
   <action name="actionLoadWinState">

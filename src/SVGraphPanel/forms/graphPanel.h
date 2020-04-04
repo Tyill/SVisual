@@ -72,6 +72,8 @@ public:
 
     void setGraphSetting(const SV_Graph::graphSetting&);
     void setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att);
+    void setAxisAttr(const QVector<SV_Graph::axisAttr>&);
+    QVector<SV_Graph::axisAttr> getAxisAttr();
 
 public slots:
 	void updateSignals();

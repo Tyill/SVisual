@@ -32,6 +32,7 @@
 #include "src/wdgMarker.h"
 #include "SVGraphPanel/forms/ui_wdgGraph.h"
 #include "SVGraphPanel/forms/graphPanel.h"
+#include "SVGraphPanel/forms/axisSettingPanel.h"
 
 class wdgGraph : public QWidget
 {
@@ -75,10 +76,10 @@ private:
 	QPair<double, double> getSignMaxMinValue(SV_Cng::signalData* sign, QPair<qint64, qint64>& tmInterval);
 	void addPosToHistory();
 
-	wdgAxisTime* axisTime_ = NULL;
+	wdgAxisTime* axisTime_ = nullptr;
 	
-	wdgMarker* leftMarker_ = NULL;
-	wdgMarker* rightMarker_ = NULL;
+	wdgMarker* leftMarker_ = nullptr;
+	wdgMarker* rightMarker_ = nullptr;
 	
 	bool eventFilter(QObject *target, QEvent *event);
 
@@ -86,6 +87,8 @@ private:
 	graphPanel* grPanel_ = nullptr;
     SV_Graph::config cng;
 
+    axisSettingPanel* axisSettPanel_ = nullptr;
+    
     void paintSignals();
 	void paintSignalsAlter();
 	void paintObjects();
@@ -107,24 +110,29 @@ public:
 	wdgGraph(QWidget *parent, SV_Graph::config cng_);
 	~wdgGraph();
 	
-	QPainter plotPainterMem_;
-
 	void setAxisTime(wdgAxisTime* axisTime);
-	void plotUpdate();
 	
     void setGraphSetting(const SV_Graph::graphSetting&);
     void setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att);
 
+    void setAxisAttr(const SV_Graph::axisAttr& attr);
+    SV_Graph::axisAttr getAxisAttr();
+
 	void setMarkersPos(QPoint left, QPoint right);
 	void getMarkersPos(QPoint& left, QPoint& right);
-	QVector<graphSignPoint> getSignalValueByMarkerPos(int pos);
+	
+    QVector<graphSignPoint> getSignalValueByMarkerPos(int pos);
 	QVector<wdgGraph::graphSignPoint> getSignalAlterValueByMarkerPos(int pos);
-	void addSignal(QString sign);
+	
+    void addSignal(QString sign);
 	void addAlterSignal(QString sign);
-	QStringList getAllSignals();
+	
+    QStringList getAllSignals();
 	QStringList getAllAlterSignals();
-	QSize sizeHint();
+	
+    QSize sizeHint();
 	void scale(bool posNeg);   
+    void plotUpdate();
 
 protected:
 	void dragEnterEvent(QDragEnterEvent *event);

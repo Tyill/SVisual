@@ -134,6 +134,34 @@ void graphPanel::setSignalAttr(const QString& sign, const SV_Graph::signalAttr& 
     }
 }
 
+void graphPanel::setAxisAttr(const QVector<SV_Graph::axisAttr>& attr){
+
+    for (auto ob : graphObj_){
+
+        int ind = splitterGraph_->indexOf(ob);
+
+        if (ind < attr.size())
+            ob->setAxisAttr(attr[ind]);
+    }
+
+}
+
+QVector<SV_Graph::axisAttr> graphPanel::getAxisAttr(){
+
+    QVector<SV_Graph::axisAttr> res;
+    for (auto ob : graphObj_){
+
+        int ind = splitterGraph_->indexOf(ob);
+
+        if (ind >= res.size())
+            res.resize(ind + 1);
+
+        res[ind] = ob->getAxisAttr();
+    }
+
+    return res;
+}
+
 void graphPanel::addSignalOnGraph(QString sign, int section){
 
 	SV_Cng::signalData* sd = pfGetSignalData(sign);
