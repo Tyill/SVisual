@@ -89,12 +89,12 @@
     <message>
         <location filename="../forms/graphPanel.ui" line="101"/>
         <source>автошкала по времени  [CTRL+S]</source>
-        <translation>autoscale of time [CTRL+S]</translation>
+        <translation>autoscale by time [CTRL+S]</translation>
     </message>
     <message>
         <location filename="../forms/graphPanel.ui" line="130"/>
         <source>автошкала по амплитуде [CTRL+D]</source>
-        <translation>autoscale of value [CTRL+D]</translation>
+        <translation>autoscale by value [CTRL+D]</translation>
     </message>
     <message>
         <location filename="../forms/graphPanel.ui" line="153"/>
