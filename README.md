@@ -18,15 +18,13 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * connection to the MK via COM port (usb for arduino), over Ethernet or Wi-Fi protocol TCP;
 
-* Interrogation of values of signals in real time with frequency from 100 Hz(below, those 100 Hz maximum, default 10 Hz), the number of devices and signals is selected by the user;
+* Interrogation of values of signals in real time with frequency before 100 Hz (default 10 Hz), the number of devices and signals is selected by the user;
 
-* the permissible number of signals for recording 2048, the number of modules 8 (if there is nothing wrong, there will be only a warning, the stock is provided);
+* the permissible number of signals for recording 2048;
 
 * output of the values of the selected signals to the monitor screen in real time;
 
 * record the archive of signals to the PC hard disk;
-
-* allowable number of signals 2048, number of modules 8
 
 * viewing the archive using additional SVViewer software;
 
@@ -39,6 +37,8 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 * client UART+DMA for stm32f1 https://github.com/burrbull/svisual-stm32f1
 
 * docker image https://hub.docker.com/r/tyiler/svdocker
+
+* viewing in a web browser
 
 ## Demo
 
