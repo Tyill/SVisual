@@ -32,6 +32,7 @@
 #include "src/wdgMarker.h"
 #include "SVGraphPanel/forms/ui_wdgGraph.h"
 #include "SVGraphPanel/forms/graphPanel.h"
+#include "SVGraphPanel/forms/axisSettingPanel.h"
 
 class wdgGraph : public QWidget
 {
@@ -86,8 +87,8 @@ private:
 	graphPanel* grPanel_ = nullptr;
     SV_Graph::config cng;
 
-    SV_Graph::axisAttr axisAttr_;
-
+    axisSettingPanel* axisSettPanel_ = nullptr;
+    
     void paintSignals();
 	void paintSignalsAlter();
 	void paintObjects();

@@ -26,17 +26,24 @@
 
 #include "SVGraphPanel/forms/ui_axisSetting.h"
 #include "SVGraphPanel/SVGraphPanel.h"
+#include "SVConfig/SVConfigLimits.h"
 
 class axisSettingPanel : public QDialog
 {
     Q_OBJECT
 
 public:
-    axisSettingPanel(QWidget *parent_, const SV_Graph::axisAttr& attr) : 
-        QDialog(parent_){
+    axisSettingPanel(QWidget* parent, const SV_Graph::axisAttr& attr){
+
+#ifdef SV_EN
+        QTranslator translator;
+        translator.load(":/SVGp/svgraphpanel_en.qm");
+        QCoreApplication::installTranslator(&translator);
+#endif
+        setParent(parent);
 
         ui.setupUi(this);
-
+        
         ui.chbAuto->setChecked(attr.isAuto);
         
         ui.txtMaxValue->setEnabled(!attr.isAuto);

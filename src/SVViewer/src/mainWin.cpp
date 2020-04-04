@@ -419,6 +419,7 @@ void MainWin::Connect(){
         QFile file(fname);
 
         QTextStream txtStream(&file);
+        txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
 
         auto wins = graphPanels_.keys();
 
@@ -445,6 +446,18 @@ void MainWin::Connect(){
                 txtStream << endl;
             }
 
+            QVector<SV_Graph::axisAttr> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
+            for (int i = 0; i < axisAttr.size(); ++i){
+
+                txtStream << "axisAttr" << i << " = ";
+                txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
+                txtStream << axisAttr[i].min << " ";
+                txtStream << axisAttr[i].max << " ";
+                txtStream << axisAttr[i].step << " ";
+
+                txtStream << endl;
+            }
+
             txtStream << endl;
             ++cnt;
         }
@@ -463,6 +476,7 @@ void MainWin::Connect(){
         cng.selOpenDir = fname;
 
         QSettings settings(fname, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
         auto grps = settings.childGroups();
         for (auto& g : grps){
@@ -489,6 +503,29 @@ void MainWin::Connect(){
 
                 ++sect;
             }
+
+            QVector< SV_Graph::axisAttr> axisAttrs;
+            int axisInx = 0;
+            while (true){
+
+                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList attr = str.split(' ');
+
+                SV_Graph::axisAttr axAttr;
+                axAttr.isAuto = attr[0] == "1";
+                axAttr.min = attr[1].toDouble();
+                axAttr.max = attr[2].toDouble();
+                axAttr.step = attr[3].toDouble();
+
+                axisAttrs.push_back(axAttr);
+
+                ++axisInx;
+            }
+
+            if (!axisAttrs.empty())
+                SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
           
             settings.endGroup();
         }

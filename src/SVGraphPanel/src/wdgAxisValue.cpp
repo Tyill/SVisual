@@ -40,6 +40,8 @@ wdgAxisValue::~wdgAxisValue(){}
 
 void wdgAxisValue::mouseMoveEvent(QMouseEvent * event){
 
+    if (!axisAttr_.isAuto) return;
+
 	int pos = event->pos().y(), diff = pos - mousePrevPosY_;
 
 	curOffsPos_ += diff;
@@ -50,7 +52,7 @@ void wdgAxisValue::mouseMoveEvent(QMouseEvent * event){
 	valInterval_.first += scale_ * diff;
 	valInterval_.second += scale_ * diff;
 
-	curInterv_ = valInterval_.second - valInterval_.first;
+	curInterv_ = int(valInterval_.second - valInterval_.first);
 
 	mousePrevPosY_ = pos;
 
@@ -65,6 +67,8 @@ void wdgAxisValue::mousePressEvent(QMouseEvent * event){
 
 void wdgAxisValue::scale(int delta){
 		
+    if (!axisAttr_.isAuto) return;
+
 	if (delta > 0) curDashStep_++;
 	else curDashStep_--;
 
@@ -88,21 +92,42 @@ void wdgAxisValue::scale(int delta){
 		valInterval_.second += offs;
 	}
 
-	curInterv_ = valInterval_.second - valInterval_.first;
+	curInterv_ = int(valInterval_.second - valInterval_.first);
 
 	scale_ = (valInterval_.second - valInterval_.first) / height();
 
 	emit req_axisChange();
 }
 
-void wdgAxisValue::setDashStep(int step){
+void wdgAxisValue::setAxisAttr(const SV_Graph::axisAttr& attr){
+    
+    if (axisAttr_.isAuto && attr.isAuto) return;
 
-    curDashStep_ = qMax(step, 1);
+    valInterval_.first = attr.min;
+    valInterval_.second = attr.max;
+
+    if (abs(attr.max - attr.min) < 0.000001)
+        valInterval_.first = attr.max - 0.000001;
+
+    curInterv_ = int(valInterval_.second - valInterval_.first);
+
+    scale_ = (valInterval_.second - valInterval_.first) / height();
+
+    curDashStep_ = qMax(int(abs(attr.step) / scale_ + 0.5), 1);
+    curOffsPos_ = curDashStep_;
+
+    axisAttr_ = attr;
 }
 
-int wdgAxisValue::getDashStep(){
+SV_Graph::axisAttr wdgAxisValue::getAxisAttr(){
 
-    return curDashStep_;
+    axisAttr_.min = valInterval_.first;
+    axisAttr_.max = valInterval_.second;
+
+    if (axisAttr_.isAuto)
+        axisAttr_.step = curDashStep_ * scale_;
+
+    return axisAttr_;
 }
 
 void wdgAxisValue::wheelEvent(QWheelEvent * event){
@@ -114,64 +139,53 @@ void wdgAxisValue::wheelEvent(QWheelEvent * event){
 void wdgAxisValue::resizeEvent(QResizeEvent * event){
 
 	scale_ = (valInterval_.second - valInterval_.first) / height();
+    
+    if (!axisAttr_.isAuto)
+       curDashStep_ = qMax(int(abs(axisAttr_.step) / scale_ + 0.5), 1);
 
 	emit req_axisChange();
 }
 
-void wdgAxisValue::drawDashLines(QPainter& painter){
 
-	int w = width(), h = height();
+void wdgAxisValue::setValInterval(double minv, double maxv){
 
-	painter.setPen(Qt::gray);
-	painter.drawLine(QPoint(w-1, 0), QPoint(w-1, h));
+    if (!axisAttr_.isAuto) return;
 
-	painter.setPen(Qt::black);
-	int cHeight = curOffsPos_ % curDashStep_;
+    valInterval_.first = minv;
+    valInterval_.second = maxv;
 
-	while (cHeight < h){
+    curInterv_ = int(valInterval_.second - valInterval_.first);
 
-		painter.drawLine(QPoint(w - cng_dashHeight_, cHeight), QPoint(w, cHeight));
-
-		cHeight += curDashStep_;
-	}
+    scale_ = (valInterval_.second - valInterval_.first) / height();
 }
 
-QString wdgAxisValue::getValMark(int offs){
-		
-	double vl = valInterval_.second - scale_ * offs;
+QPair<double, double> wdgAxisValue::getValInterval(){
 
-    int sign = vl > 0 ? 1 : -1;
+    return valInterval_;
 
-    vl *= sign;
-
-    int diap = abs(valInterval_.second - valInterval_.first);
-
-    if (diap > 100) vl = int(vl + 0.5);
-    else if (diap > 10) vl = int(vl * 10 + 0.5) / 10.;
-    else if (diap > 1) vl = int(vl * 100 + 0.5) / 100.;
-    else vl = int(vl * 1000 + 0.5) / 1000.;
-
-    return QString::number(vl * sign);
 }
 
-void wdgAxisValue::drawValMark(QPainter& painter){
+double wdgAxisValue::getValScale(){
 
-	int w = width(), h = height();
+    return scale_;
+}
 
-	int cHeight = curOffsPos_ % curDashStep_;
+QVector<int> wdgAxisValue::getAxisMark(){
 
-	while (cHeight < h){
+    QVector<int> mark;
 
-		QString valMark = getValMark(cHeight);
-			
-        int fontMetr = this->fontMetrics().width(valMark), 
-            xp = std::max(0, w - fontMetr - 15);
+    int h = height();
 
-        painter.drawText(QPoint(xp, cHeight), valMark);
-				
-		cHeight += curDashStep_;
-				
-	}
+    int cHeight = curOffsPos_ % curDashStep_;
+
+    while (cHeight < h){
+
+        mark.push_back(cHeight);
+
+        cHeight += curDashStep_;
+    }
+
+    return mark;
 }
 
 void wdgAxisValue::paintEvent(QPaintEvent *event){
@@ -181,45 +195,59 @@ void wdgAxisValue::paintEvent(QPaintEvent *event){
 	drawDashLines(painter);
 
 	drawValMark(painter);
-
 }
 
-void wdgAxisValue::setValInterval(double minv, double maxv){
-		
-	valInterval_.first = minv;
-	valInterval_.second = maxv;
+void wdgAxisValue::drawDashLines(QPainter& painter){
 
-	curInterv_ = valInterval_.second - valInterval_.first;
+    int w = width(), h = height();
 
-	scale_ = (valInterval_.second - valInterval_.first) / height();
+    painter.setPen(Qt::gray);
+    painter.drawLine(QPoint(w - 1, 0), QPoint(w - 1, h));
+
+    painter.setPen(Qt::black);
+    int cHeight = curOffsPos_ % curDashStep_;
+
+    while (cHeight < h){
+
+        painter.drawLine(QPoint(w - cng_dashHeight_, cHeight), QPoint(w, cHeight));
+
+        cHeight += curDashStep_;
+    }
 }
 
-QPair<double, double> wdgAxisValue::getValInterval(){
+void wdgAxisValue::drawValMark(QPainter& painter){
 
-	return valInterval_;
+    int w = width(), h = height();
 
+    int cHeight = curOffsPos_ % curDashStep_;
+
+    while (cHeight < h){
+
+        QString valMark = getValMark(cHeight);
+
+        int fontMetr = this->fontMetrics().width(valMark),
+            xp = std::max(0, w - fontMetr - 15);
+
+        painter.drawText(QPoint(xp, cHeight), valMark);
+
+        cHeight += curDashStep_;
+    }
 }
 
-double wdgAxisValue::getValScale(){
+QString wdgAxisValue::getValMark(int offs){
 
-	return scale_;
-}
+    double vl = valInterval_.second - scale_ * offs;
 
-QVector<int> wdgAxisValue::getAxisMark(){
+    int sign = vl > 0 ? 1 : -1;
 
-	QVector<int> mark;
+    vl *= sign;
 
-	int h = height();
+    double diap = abs(valInterval_.second - valInterval_.first);
 
-	int cHeight = curOffsPos_ % curDashStep_;
+    if (diap > 1.0)       vl = int(vl + 0.5);
+    else if (diap > 0.1)  vl = int(vl * 10 + 0.5) / 10.;
+    else if (diap > 0.01) vl = int(vl * 100 + 0.5) / 100.;
+    else                  vl = int(vl * 1000 + 0.5) / 1000.;
 
-	while (cHeight < h){
-
-		mark.push_back(cHeight);
-
-		cHeight += curDashStep_;
-	}
-
-	return mark;
-
+    return QString::number(vl * sign);
 }

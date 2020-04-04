@@ -25,7 +25,6 @@
 #include "stdafx.h"
 #include "forms/graphPanel.h"
 #include "forms/wdgGraph.h"
-#include "forms/axisSettingPanel.h"
 #include "wdgAxisTime.h"
 #include "wdgAxisValue.h"
 #include "wdgMarker.h"
@@ -82,37 +81,25 @@ wdgGraph::wdgGraph(QWidget *parent, SV_Graph::config cng_){
 	});
 
     connect(ui.btnAxisAttr, &QPushButton::clicked, this, [this]{
+        
+        if (!axisSettPanel_){
+            axisSettPanel_ = new axisSettingPanel(this, ui.wAxisValue->getAxisAttr());
 
-        auto valIntrl = ui.wAxisValue->getValInterval();
+            connect(axisSettPanel_, &axisSettingPanel::req_settChange, this, [this](SV_Graph::axisAttr attr){
 
-        double scale = ui.wAxisValue->getValScale();
-               
-        axisAttr_.min = valIntrl.first;
-        axisAttr_.max = valIntrl.second;
-        axisAttr_.step = ui.wAxisValue->getDashStep() * scale;
+                if (attr.isAuto)
+                    ui.btnAxisAttr->setText("Auto");
+                else
+                    ui.btnAxisAttr->setText("Fix");
 
-        axisSettingPanel* axisSett = new axisSettingPanel(this, axisAttr_);
+                ui.wAxisValue->setAxisAttr(attr);
 
-        connect(axisSett, &axisSettingPanel::req_settChange, this, [this](SV_Graph::axisAttr attr){
+                axisValueChange();
+            });
 
-            if (attr.isAuto)
-                ui.btnAxisAttr->setText("Auto");
-            else
-                ui.btnAxisAttr->setText("Fix");
-
-            ui.wAxisValue->setValInterval(attr.min, attr.max);
-
-            double scale = ui.wAxisValue->getValScale();
-
-            ui.wAxisValue->setDashStep(int(attr.step / scale + 0.5));
-
-            axisValueChange();
-
-            axisAttr_ = attr;
-        });
-
-        axisSett->setWindowFlags(Qt::Window);
-        axisSett->show();
+            axisSettPanel_->setWindowFlags(Qt::Window);
+        }
+        axisSettPanel_->show();
     });
 	
 	connect(ui.wPlot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
@@ -163,12 +150,21 @@ void wdgGraph::setSignalAttr(const QString& sign, const SV_Graph::signalAttr& at
 }
 
 void wdgGraph::setAxisAttr(const SV_Graph::axisAttr& attr){
+        
+    if (attr.isAuto)
+        ui.btnAxisAttr->setText("Auto");
+    else
+        ui.btnAxisAttr->setText("Fix");
 
-    axisAttr_ = attr;
+    ui.wAxisValue->setAxisAttr(attr);
+
+    axisValueChange();
+    
 }
 
 SV_Graph::axisAttr wdgGraph::getAxisAttr(){
-    return axisAttr_;
+
+    return ui.wAxisValue->getAxisAttr();
 }
 
 QSize wdgGraph::sizeHint(){
@@ -272,7 +268,7 @@ void wdgGraph::paintSignals(){
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
                         yPos = h - valInterval.second / valScale;
-                    else if ((valInterval.first < 0) && (valInterval.second < 0))
+                    else if ((valInterval.first < 0) && (valInterval.second <= 0))
                         yPos = h;
                                         
                     painter.setPen(clr);
@@ -408,7 +404,7 @@ void wdgGraph::paintSignalsAlter(){
                     float yPos = 0;
                     if ((valInterval.first < 0) && (valInterval.second > 0))
                         yPos = h - valInterval.second / valScale;
-                    else if ((valInterval.first < 0) && (valInterval.second < 0))
+                    else if ((valInterval.first < 0) && (valInterval.second <= 0))
                         yPos = h;
 
                     painter.setPen(clr);

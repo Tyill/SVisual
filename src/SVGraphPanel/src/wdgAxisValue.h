@@ -25,6 +25,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "SVGraphPanel/SVGraphPanel.h"
 
 class wdgAxisValue : public QWidget
 {
@@ -40,6 +41,8 @@ private:
 	int curInterv_ = 0;
 
 	QPair<double, double> valInterval_;
+
+    SV_Graph::axisAttr axisAttr_;
 
 	double scale_ = 1.0;
 
@@ -71,8 +74,8 @@ public:
 	void wheelEvent(QWheelEvent * event);
 	void scale(int delta);
 
-    void setDashStep(int);
-    int getDashStep();
+    void setAxisAttr(const SV_Graph::axisAttr&);
+    SV_Graph::axisAttr getAxisAttr();
 
 protected:
 	void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
