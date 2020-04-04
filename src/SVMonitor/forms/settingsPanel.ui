@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
-    <height>486</height>
+    <width>676</width>
+    <height>554</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -317,16 +317,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>путь</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QPushButton" name="btnArchPath">
           <property name="enabled">
