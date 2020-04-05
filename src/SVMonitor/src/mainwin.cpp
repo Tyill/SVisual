@@ -33,6 +33,7 @@
 #include "forms/mainwin.h"
 #include "forms/eventOrderWin.h"
 #include "forms/settingsPanel.h"
+#include "forms/signScriptPanel.h"
 #include "forms/graphSettingPanel.h"
 #include "sql.h"
 #include "comReader.h"
@@ -818,15 +819,15 @@ void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
 
 void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
-	std::string root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0).toStdString() : "";
+	QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
 	
-	if (root.empty() || !qobject_cast<treeWidgetExt*>(focusWidget())) return;
+	if (root.isEmpty() || !qobject_cast<treeWidgetExt*>(focusWidget())) return;
 
 	QMenu* menu = new QMenu(this);
 
-	auto mref = SV_Srv::getCopyModuleRef();
+	auto mref = getCopyModuleRefSrv();
 
-	if (mref.find(root) != mref.end()){
+	if (mref.contains(root)){
 		
 		if (mref[root]->isEnable && mref[root]->isActive) menu->addAction(tr("Отключить"));
 		else{
@@ -835,7 +836,11 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
 		}				
 	}
 	else{
-		menu->addAction(tr("Удалить"));
+        QString module = ui.treeSignals->currentItem()->parent()->text(0);
+        if (module != "Virtual"){
+            menu->addAction(tr("Скрипт"));
+        }
+        menu->addAction(tr("Удалить"));
 	}
 
 	connect(menu,
@@ -849,26 +854,42 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
 void MainWin::contextMenuClick(QAction* act){
 
-	std::string root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0).toStdString() : "";
+	QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
 
-	if (root.empty()) return;
+	if (root.isEmpty()) return;
 
-	auto sref = SV_Srv::getCopySignalRef();
-
-	auto mref = SV_Srv::getCopyModuleRef();
+	auto sref = getCopySignalRefSrv();
+	auto mref = getCopyModuleRefSrv();
 
 	// signal
 	if (mref.find(root) == mref.end()){
 
-		std::string module = ui.treeSignals->currentItem()->parent()->text(0).toStdString();
-		std::string sign = root + module;
-		if (sref.find(sign) != sref.end()){
-			sref[sign]->isDelete = true;
+        if (act->text() == tr("Скрипт")){
 
-			statusMess(tr("Сигнал удален ") + module.c_str() + ":" + root.c_str());
+            SV_Script::startUpdateThread(scriptPanel_);
 
-			sortSignalByModule();
-		}
+            signScriptPanel* scr = new signScriptPanel(this, scriptPanel_);
+            scr->setWindowFlags(Qt::Window);
+
+            QString module = ui.treeSignals->currentItem()->parent()->text(0);
+
+            auto sd = getSignalDataSrv(root + module);
+
+            scr->showSignScript(root, module, sd->type);
+
+        }
+        else if(act->text() == tr("Удалить")){
+
+            QString module = ui.treeSignals->currentItem()->parent()->text(0);
+            QString sign = root + module;
+            if (sref.contains(sign)){
+                sref[sign]->isDelete = true;
+
+                statusMess(tr("Сигнал удален ") + module + ":" + root);
+
+                sortSignalByModule();
+            }
+        }
 	}
 	// module
 	else{
@@ -893,13 +914,15 @@ void MainWin::contextMenuClick(QAction* act){
 			switch (mb.exec()) {
 			case QMessageBox::Yes:
 				{
-					statusMess(tr("Модуль удален ") + root.c_str());
+					statusMess(tr("Модуль удален ") + root);
 
 					mref[root]->isDelete = true;
 					
-					for (auto sign : sref) if (sign.second->module == root){
-						sign.second->isDelete = true;
-					}
+                    for (auto s : sref){
+                        if (QString::fromStdString(s->module) == root){
+                            s->isDelete = true;
+                        }
+                    }
 
 					sortSignalByModule();
 				}

@@ -462,14 +462,50 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
             if (ui.tabWidget->tabText(i) == scrName)
                 return;
         }
-               
+
         scrState_[row].tabInx = ui.tabWidget->count();
 
         auto te = new QTextEdit();
         te->setFrameShape(QFrame::NoFrame);
 
         te->setText(scrState_[row].text);
-                        
+
+        connect(te, &QTextEdit::textChanged, [this, row](){
+            scrState_[row].isChange = true;
+            ui.lbChange->setText("*");
+        });
+
+        ui.tabWidget->addTab(te, scrName);
+
+        ui.tabWidget->setCurrentIndex(scrState_[row].tabInx);
+
+        ui.lbChange->setText(scrState_[row].isChange ? "*" : "");
+    });
+    connect(ui.tblActiveScripts, &QTableWidget::itemDoubleClicked, [this](QTableWidgetItem* item){
+        
+        int row = item->row();
+        QString scrName = ui.tblActiveScripts->item(row, 0)->text();
+
+        int sz = ui.tabWidget->count();
+        for (int i = 0; i < sz; ++i){
+            if (ui.tabWidget->tabText(i) == scrName)
+                return;
+        }
+
+        for (int i = 0; i < scrState_.size(); ++i){
+            if (scrState_[i].name == scrName){
+                row = i;
+                break;
+            }
+        }
+
+        scrState_[row].tabInx = ui.tabWidget->count();
+
+        auto te = new QTextEdit();
+        te->setFrameShape(QFrame::NoFrame);
+
+        te->setText(scrState_[row].text);
+
         connect(te, &QTextEdit::textChanged, [this, row](){
             scrState_[row].isChange = true;
             ui.lbChange->setText("*");
@@ -631,6 +667,81 @@ void scriptPanel::addScript(QString name){
     }
 }
 
+bool scriptPanel::isActiveScript(const QString& sname){
+      
+    auto sts = std::find_if(scrState_.begin(), scrState_.end(),
+        [sname](const scriptState& st) {
+        return st.name == sname;
+    }
+    );
+
+    if (sts == scrState_.end()){
+       
+        addScript(sname);
+
+        sts = &scrState_.back();
+    }
+
+    return sts->isActive;
+}
+
+void scriptPanel::activeScript(const QString& sname){
+      
+    if (!isActiveScript(sname)){
+
+        std::unique_lock<std::mutex> lck(mtx_);
+
+        auto sts = std::find_if(scrState_.begin(), scrState_.end(),
+            [sname](const scriptState& st) {
+            return st.name == sname;
+        }
+        );
+
+        QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
+
+        QTextStream txtStream(&file);
+        txtStream.setCodec("utf8");
+
+        file.open(QIODevice::ReadOnly);
+
+        sts->text = txtStream.readAll();
+        sts->isChange = false;
+
+        file.close();
+        
+        int rowCnt = ui.tblActiveScripts->rowCount();
+        ui.tblActiveScripts->insertRow(rowCnt);
+        auto itm = new QTableWidgetItem(sname);
+        itm->setFlags(itm->flags() ^ Qt::ItemFlag::ItemIsEditable);
+        ui.tblActiveScripts->setItem(rowCnt, 0, itm);
+
+        sts->isActive = true;
+        buffCPos_ = 0;
+    }
+}
+
+void scriptPanel::deactiveScript(const QString& sname){
+
+    if (isActiveScript(sname)){
+
+        int rows = ui.tblActiveScripts->rowCount();
+        for (int i = 0; i < rows; ++i){
+
+            if (sname == ui.tblActiveScripts->item(i, 0)->text()){
+
+                std::find_if(scrState_.begin(), scrState_.end(),
+                    [sname](const scriptState& st) {
+                    return st.name == sname;
+                }
+                )->isActive = false;
+
+                ui.tblActiveScripts->removeRow(i);
+                break;
+            }
+        }
+    }
+}
+
 void scriptPanel::nameScriptChange(int row, int col){
 
     if ((col == 0) && (row < scrState_.size())){
@@ -756,7 +867,7 @@ void scriptPanel::workCycle(){
             lua_pcall(luaState_, 0, 0, 0);
 
             const char* err = lua_tostring(luaState_, -1);
-            if (err && serr.isEmpty()){
+            if (err){
                 serr = QString(err);
                 lua_pop(luaState_, -1);
             }
@@ -774,24 +885,35 @@ void scriptPanel::workCycle(){
             }
         }
 
-        if (isActive){
+        if (isActive && serr.isEmpty()){
             
+            luaL_loadstring(luaState_, qUtf8Printable(allScr));
+                        
+            bool isNoError = false;
             do {
                 // other scripts
                 for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_){
-
-                    luaL_loadstring(luaState_, qUtf8Printable(allScr));
+                                      
+                    lua_pushvalue(luaState_, -1);
 
                     lua_pcall(luaState_, 0, 0, 0);
 
-                    const char* err = lua_tostring(luaState_, -1);
-                    if (err && serr.isEmpty()){
-                        serr = QString(err);
-                        lua_pop(luaState_, -1);
+                    if (!isNoError){
+                        const char* err = lua_tostring(luaState_, -1);
+                        if (err){
+                            serr = QString(err);
+                            lua_pop(luaState_, -1);
+                            break;
+                        }
+                        else
+                            isNoError = true;
                     }
                 }
                 iterValue_ = 0;
                 ++buffCPos_;
+
+                if (!isNoError) break;
+
             } while (buffCPos_ < buffSz_);
 
             buffCPos_ = qMax(0, buffSz_ - 1);
@@ -799,7 +921,7 @@ void scriptPanel::workCycle(){
 
         mtx_.unlock();
      
-        if (isActive && isNewCycle && pfUpdateSignalsCBack)
+        if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::modeGr::viewer))
             pfUpdateSignalsCBack();
 
         if (!serr.isEmpty()){

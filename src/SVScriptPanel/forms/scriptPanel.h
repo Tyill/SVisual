@@ -63,6 +63,12 @@ public:
     ~scriptPanel();
 
     void startUpdateThread();
+
+    bool isActiveScript(const QString& fname);
+
+    void activeScript(const QString& fname);
+
+    void deactiveScript(const QString& fname);
 	
 private:
     Ui::ScriptPanelClass ui;

@@ -24,6 +24,8 @@
 //
 #pragma once
 
+#include "src/stdafx.h"
+#include "SVScriptPanel/SVScriptPanel.h"
 #include "SVConfig/SVConfigLimits.h"
 #include "forms/ui_signScriptPanel.h"
 
@@ -32,42 +34,162 @@ class signScriptPanel : public QDialog
     Q_OBJECT
 
 public:
-    signScriptPanel(QWidget* parent){
+    signScriptPanel(QWidget* parent, QDialog* mainScrPanel){
 
 #ifdef SV_EN
-      /*  QTranslator translator;
+        QTranslator translator;
         translator.load(":/SVMonitor/svmonitor_en.qm");
-        a.installTranslator(&translator);*/
+        QCoreApplication::installTranslator(&translator);
 #endif
+        mainScrPanel_ = mainScrPanel;
+
         setParent(parent);
 
         ui.setupUi(this);
+
+        connect(ui.btnSave, &QPushButton::clicked, this, [this] {
+
+            saveScript();
+        });
+
+        connect(ui.btnActive, &QPushButton::clicked, this, [this] {
+
+            if (SV_Script::isActiveScript(mainScrPanel_, sFileName_)){
+
+                SV_Script::deactiveScript(mainScrPanel_, sFileName_);
                 
+                ui.btnActive->setText(tr("Включить"));
+            }
+            else{
+
+                SV_Script::activeScript(mainScrPanel_, sFileName_);
+
+                ui.btnActive->setText(tr("Отключить"));
+            }
+        });
+
+        connect(ui.txtScript, &QTextEdit::textChanged, [this](){
+            ui.lbChange->setText("*");
+        });
+             
     }
     ~signScriptPanel() = default;
 
-    Ui::signScriptPanelClass ui;
+    void showSignScript(const QString& signal, const QString& module, SV_Cng::valueType type){
+
+        sFileName_ = signal + module + ".lua";
+
+        this->setWindowTitle(tr("Скрипт ") + sFileName_);
+                       
+        QFile file(QApplication::applicationDirPath() + "/scripts/" + sFileName_);
+
+        if (file.exists()){
+
+            QTextStream txtStream(&file);
+            txtStream.setCodec("utf8");
+
+            file.open(QIODevice::ReadOnly);
+
+            ui.txtScript->setText(txtStream.readAll());
+
+            file.close();
+        }
+        else{
+          
+            QString stext = "ctm = getTimeValue(\"" + module + "\", \"" + signal + "\"); \n";
+
+            if (type == SV_Cng::valueType::tBool)     stext += "cval = getBoolValue(";
+            else if (type == SV_Cng::valueType::tInt) stext += "cval = getIntValue(";
+            else                                      stext += "cval = getFloatValue(";
             
-private slots:
-    void paramChange(){
-       /* SV_Graph::axisAttr attr;
+            stext += "\"" + module + "\", \"" + signal + "\");";
 
-        attr.isAuto = ui.chbAuto->isChecked();
+            stext += "\n\n\n";
 
-        ui.txtMaxValue->setEnabled(!attr.isAuto);
-        ui.txtMinValue->setEnabled(!attr.isAuto);
-        ui.txtStepValue->setEnabled(!attr.isAuto);
+            stext += "nval = cval;\n";
+            stext += "offs = 0;\n";
 
+            stext += "\n\n\n";
 
-        attr.max = ui.txtMaxValue->text().toDouble();
-        attr.min = ui.txtMinValue->text().toDouble();
-        attr.step = ui.txtStepValue->text().toDouble();
+            if (type == SV_Cng::valueType::tBool)     stext += "setBoolValue(";
+            else if (type == SV_Cng::valueType::tInt) stext += "setIntValue(";
+            else                                      stext += "setFloatValue(";
 
-        emit req_settChange(attr);*/
+            stext += "\"" + signal + "Virt" + "\", nval, ctm + offs);";
+          
+
+            ui.txtScript->setText(stext);
+
+            QTextStream txtStream(&file);
+            txtStream.setCodec("utf8");
+
+            file.open(QIODevice::WriteOnly);
+
+            txtStream << stext;
+
+            file.close();
+        }
+
+        ui.lbChange->setText("");
+        
+        if (SV_Script::isActiveScript(mainScrPanel_, sFileName_))                       
+            ui.btnActive->setText(tr("Отключить"));
+        else
+            ui.btnActive->setText(tr("Включить"));
+
+        show();        
     }
 
-signals:
-    //void req_settChange(SV_Graph::axisAttr);
+private:
+
+    Ui::signScriptPanelClass ui;
+        
+    QString sFileName_;
+
+    QDialog* mainScrPanel_ = nullptr;
+    
+    void closeEvent(QCloseEvent* e){
+
+        if (!ui.lbChange->text().isEmpty()){
+            QMessageBox msgBox;
+            msgBox.setText(tr("Скрипт ") + sFileName_ + tr(" изменен."));
+            msgBox.setInformativeText(tr("Сохранить изменения?"));
+            msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
+            msgBox.setDefaultButton(QMessageBox::Save);
+
+            if (msgBox.exec() == QMessageBox::Save){
+
+                saveScript();                
+            }
+        }
+    }
+
+    void saveScript(){
+
+        if (ui.lbChange->text().isEmpty()) return;
+
+        bool isActiveScript = SV_Script::isActiveScript(mainScrPanel_, sFileName_);
+
+        if (isActiveScript)
+            SV_Script::deactiveScript(mainScrPanel_, sFileName_);
+
+        QFile file(QApplication::applicationDirPath() + "/scripts/" + sFileName_);
+
+        QTextStream txtStream(&file);
+        txtStream.setCodec("utf8");
+
+        file.open(QIODevice::WriteOnly);
+
+        txtStream << ui.txtScript->toPlainText();
+
+        file.close();
+
+        ui.lbChange->setText("");
+
+        if (isActiveScript)
+            SV_Script::activeScript(mainScrPanel_, sFileName_);
+
+    }
 };
 
 

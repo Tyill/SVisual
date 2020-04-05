@@ -68,6 +68,26 @@ namespace SV_Script {
             ((scriptPanel *)stp)->pfAddModule = f;
     }
 
+    bool isActiveScript(QDialog* stp, const QString& fname){
+
+        if (stp)
+            return ((scriptPanel *)stp)->isActiveScript(fname);
+        else
+            return false;
+    }
+
+    void activeScript(QDialog* stp, const QString& fname){
+
+        if (stp)
+            ((scriptPanel *)stp)->activeScript(fname);
+    }
+
+    void deactiveScript(QDialog* stp, const QString& fname){
+
+        if (stp)
+            ((scriptPanel *)stp)->deactiveScript(fname);
+    }
+
 	void setLoadSignalData(QDialog *stp, pf_loadSignalData f) {
 
 		if (stp)

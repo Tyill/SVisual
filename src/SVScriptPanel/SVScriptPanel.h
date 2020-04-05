@@ -75,6 +75,13 @@ namespace SV_Script {
     typedef bool(*pf_addModule)(const QString &module, SV_Cng::moduleData *);
     SVSCRIPTPANEL_API void setAddModule(QDialog* stPanel, pf_addModule f);
 
+    SVSCRIPTPANEL_API bool isActiveScript(QDialog* stPanel, const QString& fname);
+
+    SVSCRIPTPANEL_API void activeScript(QDialog* stPanel, const QString& fname);
+    
+    SVSCRIPTPANEL_API void deactiveScript(QDialog* stPanel, const QString& fname);
+
+
     typedef bool(*pf_loadSignalData)(const QString& sign);
 	SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 

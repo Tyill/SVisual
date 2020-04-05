@@ -15,65 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="lbTop">
-     <property name="text">
-      <string>ctm = getTimeValue(&quot;client&quot;, &quot;sin&quot;); 
-cval = getIntValue(&quot;client&quot;, &quot;sin&quot;); </string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QTextEdit" name="txtScript"/>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>1</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="lbBottom">
-       <property name="text">
-        <string>setIntValue(&quot;</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="txtNewSName">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>&quot;, nval, ctm + offs);</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
