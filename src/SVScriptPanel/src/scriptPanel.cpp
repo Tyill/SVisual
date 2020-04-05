@@ -182,7 +182,7 @@ void scriptPanel::setValue(const QString& sign, SV_Cng::value val, uint64_t time
 
     // заполняем буфер
     int vp = (mode_ == SV_Script::modeGr::player) ? sd->buffValuePos : buffCPos_;
-    
+   
     sd->buffData[vp].vals[iterValue_] = val;
     
     if (iterValue_ == (SV_PACKETSZ - 1)){
@@ -353,6 +353,7 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
     connect(ui.btnNewScript, SIGNAL(clicked()), SLOT(addScript()));
     connect(ui.btnSave, SIGNAL(clicked()), SLOT(saveScript()));  
     connect(ui.btnSetActive, &QPushButton::clicked, [this](){
+        std::unique_lock<std::mutex> lck(mtx_);
 
         auto items = ui.tblScripts->selectedItems();
         for (auto it : items){
@@ -371,6 +372,7 @@ scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::mod
                 ui.tblActiveScripts->setItem(rowCnt, 0, itm);
 
                 sts->isActive = true;
+                buffCPos_ = 0;
             }            
         }
     });
@@ -749,7 +751,7 @@ void scriptPanel::workCycle(){
         
         if ((loadScr != scrState_.end()) && fp.PosFront(loadScr->isActive, 0)){
 
-            luaL_loadfile(luaState_, qPrintable(path + loadScr->name));
+            luaL_loadstring(luaState_, qUtf8Printable(loadScr->text));
 
             lua_pcall(luaState_, 0, 0, 0);
 
@@ -763,32 +765,38 @@ void scriptPanel::workCycle(){
         bool isActive = false, 
              isNewCycle = (buffCPos_ == 0);
 
-        do {           
-            // other scripts
-            for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_){
+        QString allScr;
+        for (auto& s : scrState_){
+            if (s.isActive && (s.name != "load.lua")){
+                isActive = true;
 
-                for (auto& s : scrState_){
-                    if (s.isActive && (s.name != "load.lua")){
-                        isActive = true;
+                allScr += s.text + '\n';
+            }
+        }
 
-                        luaL_loadfile(luaState_, qPrintable(path + s.name));
+        if (isActive){
+            
+            do {
+                // other scripts
+                for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_){
 
-                        lua_pcall(luaState_, 0, 0, 0);
+                    luaL_loadstring(luaState_, qUtf8Printable(allScr));
 
-                        const char* err = lua_tostring(luaState_, -1);
-                        if (err && serr.isEmpty()){
-                            serr = QString(err);
-                            lua_pop(luaState_, -1);
-                        }
+                    lua_pcall(luaState_, 0, 0, 0);
+
+                    const char* err = lua_tostring(luaState_, -1);
+                    if (err && serr.isEmpty()){
+                        serr = QString(err);
+                        lua_pop(luaState_, -1);
                     }
                 }
-            }
-            iterValue_ = 0;
-            ++buffCPos_;
-        } while (buffCPos_ < buffSz_);
-               
-        buffCPos_ = qMax(0, buffSz_ - 1);
-     
+                iterValue_ = 0;
+                ++buffCPos_;
+            } while (buffCPos_ < buffSz_);
+
+            buffCPos_ = qMax(0, buffSz_ - 1);
+        }
+
         mtx_.unlock();
      
         if (isActive && isNewCycle && pfUpdateSignalsCBack)
