@@ -104,6 +104,12 @@
     <ClCompile Include="..\..\..\src\SVMonitor\src\dbProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_signScriptPanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_signScriptPanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\src\SVMonitor\src\comReader.h">
@@ -137,6 +143,12 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVMonitor\forms\graphSettingPanel.h">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\src\SVMonitor\forms\signScriptPanel.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\src\SVMonitor\forms\signScriptPanel.h">
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -182,6 +194,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\SVMonitor\src\dbProvider.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_signScriptPanel.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
