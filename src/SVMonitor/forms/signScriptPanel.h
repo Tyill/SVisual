@@ -186,6 +186,8 @@ private:
 
         ui.lbChange->setText("");
 
+        SV_Script::refreshScript(mainScrPanel_, sFileName_);
+
         if (isActiveScript)
             SV_Script::activeScript(mainScrPanel_, sFileName_);
 

@@ -81,6 +81,7 @@ namespace SV_Script {
     
     SVSCRIPTPANEL_API void deactiveScript(QDialog* stPanel, const QString& fname);
 
+    SVSCRIPTPANEL_API void refreshScript(QDialog* stPanel, const QString& fname);
 
     typedef bool(*pf_loadSignalData)(const QString& sign);
 	SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);

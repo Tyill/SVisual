@@ -88,6 +88,12 @@ namespace SV_Script {
             ((scriptPanel *)stp)->deactiveScript(fname);
     }
 
+    void refreshScript(QDialog* stp, const QString& fname){
+
+        if (stp)
+            ((scriptPanel *)stp)->refreshScript(fname);
+    }
+
 	void setLoadSignalData(QDialog *stp, pf_loadSignalData f) {
 
 		if (stp)

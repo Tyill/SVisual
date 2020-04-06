@@ -69,6 +69,8 @@ public:
     void activeScript(const QString& fname);
 
     void deactiveScript(const QString& fname);
+
+    void refreshScript(const QString& fname);
 	
 private:
     Ui::ScriptPanelClass ui;
@@ -85,7 +87,9 @@ private:
 
     QMap<QString, SV_Cng::signalData*> signBuff_;
         
-    int iterValue_ = 0, buffCPos_ = 0, buffSz_ = 0;
+    int iterValue_ = 0,
+        buffCPos_ = 0,
+        buffSz_ = 1;
    
     struct scriptState{
         bool isChange = true;

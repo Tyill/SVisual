@@ -203,20 +203,24 @@ void scriptPanel::setValue(const QString& sign, SV_Cng::value val, uint64_t time
 
             if (vp == sd->buffBeginPos) {
                 ++sd->buffBeginPos;
-                if (sd->buffBeginPos >= buffSz) sd->buffBeginPos = 0;
+                if (sd->buffBeginPos == buffSz) sd->buffBeginPos = 0;
             }
         }
         else{
 
+            if (vp == buffSz_)
+                vp = buffSz_ - 1;
+
             sd->buffValuePos = vp;
             
-            if (vp >= sd->buffData.size()){
-                SV_Cng::recData rd;
+            size_t csz = sd->buffData.size();
+            if (csz < buffSz_){
+               
+                sd->buffData.resize(buffSz_);
 
-                rd.beginTime = time;
-                rd.vals = new SV_Cng::value[SV_PACKETSZ];
-
-                sd->buffData.push_back(rd);
+                SV_Cng::value* buff = new SV_Cng::value[SV_PACKETSZ * (buffSz_ - csz)];
+                for (size_t i = 0; i < (buffSz_ - csz); ++i)
+                    sd->buffData[i + csz].vals = &buff[i * SV_PACKETSZ];
             }
         }
     }
@@ -303,13 +307,15 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, 
            
         pfAddSignal(sign, sd);
 
-        if (mode_ == SV_Script::modeGr::player)
+        if (mode_ == SV_Script::modeGr::player){
             pfLoadSignalData(sign);
+        }
         else{
-            SV_Cng::recData rd;
-            rd.vals = new SV_Cng::value[SV_PACKETSZ];
+            sd->buffData.resize(buffSz_);
 
-            sd->buffData.push_back(rd);
+            SV_Cng::value* buff = new SV_Cng::value[SV_PACKETSZ * buffSz_];
+            for (int i = 0; i < buffSz_; ++i)
+                sd->buffData[i].vals = &buff[i * SV_PACKETSZ];
         }
 
         if (pfAddSignalsCBack)
@@ -691,31 +697,18 @@ void scriptPanel::activeScript(const QString& sname){
 
         std::unique_lock<std::mutex> lck(mtx_);
 
-        auto sts = std::find_if(scrState_.begin(), scrState_.end(),
+        std::find_if(scrState_.begin(), scrState_.end(),
             [sname](const scriptState& st) {
             return st.name == sname;
         }
-        );
-
-        QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
-
-        QTextStream txtStream(&file);
-        txtStream.setCodec("utf8");
-
-        file.open(QIODevice::ReadOnly);
-
-        sts->text = txtStream.readAll();
-        sts->isChange = false;
-
-        file.close();
-        
+        )->isActive = true;
+                      
         int rowCnt = ui.tblActiveScripts->rowCount();
         ui.tblActiveScripts->insertRow(rowCnt);
         auto itm = new QTableWidgetItem(sname);
         itm->setFlags(itm->flags() ^ Qt::ItemFlag::ItemIsEditable);
         ui.tblActiveScripts->setItem(rowCnt, 0, itm);
-
-        sts->isActive = true;
+                
         buffCPos_ = 0;
     }
 }
@@ -740,6 +733,39 @@ void scriptPanel::deactiveScript(const QString& sname){
             }
         }
     }
+}
+
+void scriptPanel::refreshScript(const QString& sname){
+
+    QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
+
+    QTextStream txtStream(&file);
+    txtStream.setCodec("utf8");
+
+    file.open(QIODevice::ReadOnly);
+
+    auto sts = std::find_if(scrState_.begin(), scrState_.end(),
+        [sname](const scriptState& st) {
+        return st.name == sname;
+    }
+    );
+
+    sts->text = txtStream.readAll();
+
+    file.close();
+    
+    int sz = ui.tabWidget->count();
+    for (int i = 0; i < sz; ++i){
+        if (ui.tabWidget->tabText(i) == sname){
+                        
+            ((QTextEdit*)ui.tabWidget->widget(i))->setText(sts->text);
+
+            sts->isChange = false;
+            ui.lbChange->setText("");
+
+            break;
+        }
+    }    
 }
 
 void scriptPanel::nameScriptChange(int row, int col){
@@ -885,15 +911,44 @@ void scriptPanel::workCycle(){
             }
         }
 
+        // other scripts
         if (isActive && serr.isEmpty()){
             
             luaL_loadstring(luaState_, qUtf8Printable(allScr));
-                        
-            bool isNoError = false;
-            do {
-                // other scripts
+            
+            if (mode_ == SV_Script::modeGr::viewer){
+                
+                bool isNoError = false;
+                while (buffCPos_ < buffSz_){
+
+                    for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_){
+
+                        lua_pushvalue(luaState_, -1);
+
+                        lua_pcall(luaState_, 0, 0, 0);
+
+                        if (!isNoError){
+                            const char* err = lua_tostring(luaState_, -1);
+                            if (err){
+                                serr = QString(err);
+                                lua_pop(luaState_, -1);
+                                break;
+                            }
+                            else
+                                isNoError = true;
+                        }
+                    }
+                    iterValue_ = 0;
+                    ++buffCPos_;
+
+                    if (!isNoError) break;
+                }
+            }
+            else{ // SV_Script::modeGr::player
+
+                bool isNoError = false;
                 for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_){
-                                      
+
                     lua_pushvalue(luaState_, -1);
 
                     lua_pcall(luaState_, 0, 0, 0);
@@ -910,13 +965,7 @@ void scriptPanel::workCycle(){
                     }
                 }
                 iterValue_ = 0;
-                ++buffCPos_;
-
-                if (!isNoError) break;
-
-            } while (buffCPos_ < buffSz_);
-
-            buffCPos_ = qMax(0, buffSz_ - 1);
+            }
         }
 
         mtx_.unlock();
