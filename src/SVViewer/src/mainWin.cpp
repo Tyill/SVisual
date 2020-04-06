@@ -27,6 +27,7 @@
 #include <QPrintDialog>
 #include "forms/mainWin.h"
 #include "forms/graphSettingPanel.h"
+#include "forms/signScriptPanel.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "SVStatPanel/SVStatPanel.h"
 #include "SVScriptPanel/SVScriptPanel.h"
@@ -34,9 +35,11 @@
 #include "SVConfig/SVConfigLimits.h"
 #include "SVConfig/SVConfigData.h"
 
-const QString VERSION = "1.1.5";
-// added select color signal
+const QString VERSION = "1.1.6";
+// added menu - script for signal
 
+//const QString VERSION = "1.1.5";
+// added select color signal
 // const QString VERSION = "1.1.4";
 // added web browse
 //const QString VERSION = "1.1.3";
@@ -838,6 +841,49 @@ void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
 		case 4: sd->comment = item->text(4).toUtf8().data(); break;
 	}
 		
+}
+
+void MainWin::contextMenuEvent(QContextMenuEvent * event){
+       
+    if (!ui.treeSignals->currentItem() || !qobject_cast<treeWidgetExt*>(focusWidget())) return;
+       
+    QString sign = ui.treeSignals->currentItem()->text(5);
+
+    auto sd = getSignalData(sign);
+
+    if (sd){
+
+        if (sd->module != "Virtual"){
+            QMenu* menu = new QMenu(this);
+            menu->addAction(tr("Скрипт"));
+
+            connect(menu,
+                SIGNAL(triggered(QAction*)),
+                this,
+                SLOT(contextMenuClick(QAction*))
+                );
+
+            menu->exec(event->globalPos());
+        }
+    }    
+}
+
+void MainWin::contextMenuClick(QAction* act){
+           
+    if (act->text() == tr("Скрипт")){
+
+        SV_Script::startUpdateThread(scriptPanel_);
+
+        signScriptPanel* scr = new signScriptPanel(this, scriptPanel_);
+        scr->setWindowFlags(Qt::Window);
+    
+        QString sign = ui.treeSignals->currentItem()->text(5);
+
+        auto sd = getSignalData(sign);
+
+        scr->showSignScript(QString::fromStdString(sd->name), QString::fromStdString(sd->module), sd->type);
+
+    }
 }
 
 QDialog* MainWin::addNewWindow(const QRect& pos){

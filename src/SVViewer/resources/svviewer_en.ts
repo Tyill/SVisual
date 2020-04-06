@@ -42,7 +42,7 @@
     <message>
         <location filename="../forms/mainWin.ui" line="114"/>
         <location filename="../forms/ui_mainWin.h" line="305"/>
-        <location filename="../src/mainWin.cpp" line="617"/>
+        <location filename="../src/mainWin.cpp" line="653"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
@@ -149,6 +149,8 @@
     <message>
         <location filename="../forms/mainWin.ui" line="373"/>
         <location filename="../forms/ui_mainWin.h" line="297"/>
+        <location filename="../src/mainWin.cpp" line="856"/>
+        <location filename="../src/mainWin.cpp" line="871"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
@@ -185,32 +187,32 @@
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="413"/>
+        <location filename="../src/mainWin.cpp" line="414"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="460"/>
+        <location filename="../src/mainWin.cpp" line="473"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="508"/>
+        <location filename="../src/mainWin.cpp" line="544"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="509"/>
+        <location filename="../src/mainWin.cpp" line="545"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="658"/>
+        <location filename="../src/mainWin.cpp" line="694"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="715"/>
+        <location filename="../src/mainWin.cpp" line="751"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
@@ -223,7 +225,7 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="726"/>
+        <location filename="../src/mainWin.cpp" line="762"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>
@@ -253,6 +255,58 @@
         <location filename="../forms/ui_graphSetting.h" line="107"/>
         <source>Черный фон</source>
         <translation>Dark theme</translation>
+    </message>
+</context>
+<context>
+    <name>signScriptPanel</name>
+    <message>
+        <location filename="../forms/signScriptPanel.h" line="61"/>
+        <location filename="../forms/signScriptPanel.h" line="138"/>
+        <source>Включить</source>
+        <translation>Activate</translation>
+    </message>
+    <message>
+        <location filename="../forms/signScriptPanel.h" line="67"/>
+        <location filename="../forms/signScriptPanel.h" line="136"/>
+        <source>Отключить</source>
+        <translation>Deactivate</translation>
+    </message>
+    <message>
+        <location filename="../forms/signScriptPanel.h" line="82"/>
+        <location filename="../forms/signScriptPanel.h" line="155"/>
+        <source>Скрипт </source>
+        <translation>Script </translation>
+    </message>
+    <message>
+        <location filename="../forms/signScriptPanel.h" line="155"/>
+        <source> изменен.</source>
+        <translation> is change.</translation>
+    </message>
+    <message>
+        <location filename="../forms/signScriptPanel.h" line="156"/>
+        <source>Сохранить изменения?</source>
+        <translation>Save changes?</translation>
+    </message>
+</context>
+<context>
+    <name>signScriptPanelClass</name>
+    <message>
+        <location filename="../forms/signScriptPanel.ui" line="14"/>
+        <location filename="../forms/ui_signScriptPanel.h" line="82"/>
+        <source>Скрипт для сигнала</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/signScriptPanel.ui" line="45"/>
+        <location filename="../forms/ui_signScriptPanel.h" line="84"/>
+        <source>Сохранить</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="../forms/signScriptPanel.ui" line="52"/>
+        <location filename="../forms/ui_signScriptPanel.h" line="85"/>
+        <source>Включить</source>
+        <translation>Activate</translation>
     </message>
 </context>
 </TS>

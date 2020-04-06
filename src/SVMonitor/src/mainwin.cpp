@@ -47,9 +47,11 @@
 #include "SVWebServer/SVWebServer.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.5";
-// added select color signal
+const QString VERSION = "1.1.6";
+// added menu - script for signal
 
+//const QString VERSION = "1.1.5";
+// added select color signal
 // const QString VERSION = "1.1.4";
 // added web browse
 //const QString VERSION = "1.1.3";

@@ -105,6 +105,7 @@ private:
 	void load();	
 
 	void sortSignalByGroupOrModule(bool byModule);
+    void contextMenuEvent(QContextMenuEvent * event);
 
 public slots:
     void updateTblSignal();
@@ -116,6 +117,7 @@ public slots:
 	void selSignalChange(QTreeWidgetItem * item, int column);
     bool loadData(QStringList files);
     void loadDataFinished(bool ok);
+    void contextMenuClick(QAction*);
 };
 
 

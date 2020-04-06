@@ -50,12 +50,12 @@ void bufferData::updDataSignals(const std::string& in, uint64_t bTm){
 	
 	string module = in.c_str();
 
-    int valCnt = std::max(size_t(0), std::min((sz - cPos) / clSz, size_t(SV_VALUE_MAX_CNT * 10))); // 10 - запас
+    size_t valCnt = std::max(size_t(0), std::min((sz - cPos) / clSz, size_t(SV_VALUE_MAX_CNT * 10))); // 10 - запас
 
 	mtx_.lock();
 
 	int buffWr = buffWritePos_;
-	buffWritePos_ += valCnt; 
+	buffWritePos_ += int(valCnt); 
     
     if (buffWritePos_ >= buffSz_) buffWritePos_ -= buffSz_;
 

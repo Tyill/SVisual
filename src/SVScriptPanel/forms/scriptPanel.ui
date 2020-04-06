@@ -107,26 +107,6 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="btnResetActive">
-           <property name="toolTip">
-            <string>Удалить из активных</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources/svscriptresource.qrc">
-             <normaloff>:/SVScript/images/arrow-up.png</normaloff>:/SVScript/images/arrow-up.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>30</width>
-             <height>30</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="btnSetActive">
            <property name="toolTip">
             <string>Добавить в активные</string>
@@ -137,6 +117,26 @@
            <property name="icon">
             <iconset resource="../resources/svscriptresource.qrc">
              <normaloff>:/SVScript/images/arrow-dn.png</normaloff>:/SVScript/images/arrow-dn.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnResetActive">
+           <property name="toolTip">
+            <string>Удалить из активных</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../resources/svscriptresource.qrc">
+             <normaloff>:/SVScript/images/arrow-up.png</normaloff>:/SVScript/images/arrow-up.png</iconset>
            </property>
            <property name="iconSize">
             <size>
