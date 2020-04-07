@@ -464,8 +464,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>773</width>
-            <height>174</height>
+            <width>768</width>
+            <height>189</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -592,6 +592,21 @@
       <column>
        <property name="text">
         <string>Y2 - Y1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>MIN</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>MAX</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>MEAN</string>
        </property>
       </column>
      </widget>

@@ -239,7 +239,7 @@ public:
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QStringLiteral("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 773, 174));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 768, 189));
         verticalLayout_3 = new QVBoxLayout(scrollAreaWidgetContents);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         verticalLayout_3->setContentsMargins(0, 0, 0, -1);
@@ -270,8 +270,8 @@ public:
 
         splitter_2->addWidget(layoutWidget);
         tblValues = new QTableWidget(splitter_2);
-        if (tblValues->columnCount() < 8)
-            tblValues->setColumnCount(8);
+        if (tblValues->columnCount() < 11)
+            tblValues->setColumnCount(11);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
         tblValues->setHorizontalHeaderItem(0, __qtablewidgetitem);
         QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
@@ -288,6 +288,12 @@ public:
         tblValues->setHorizontalHeaderItem(6, __qtablewidgetitem6);
         QTableWidgetItem *__qtablewidgetitem7 = new QTableWidgetItem();
         tblValues->setHorizontalHeaderItem(7, __qtablewidgetitem7);
+        QTableWidgetItem *__qtablewidgetitem8 = new QTableWidgetItem();
+        tblValues->setHorizontalHeaderItem(8, __qtablewidgetitem8);
+        QTableWidgetItem *__qtablewidgetitem9 = new QTableWidgetItem();
+        tblValues->setHorizontalHeaderItem(9, __qtablewidgetitem9);
+        QTableWidgetItem *__qtablewidgetitem10 = new QTableWidgetItem();
+        tblValues->setHorizontalHeaderItem(10, __qtablewidgetitem10);
         if (tblValues->rowCount() < 5)
             tblValues->setRowCount(5);
         tblValues->setObjectName(QStringLiteral("tblValues"));
@@ -376,6 +382,12 @@ public:
         ___qtablewidgetitem6->setText(QApplication::translate("graphPanelClass", "Y2", 0));
         QTableWidgetItem *___qtablewidgetitem7 = tblValues->horizontalHeaderItem(7);
         ___qtablewidgetitem7->setText(QApplication::translate("graphPanelClass", "Y2 - Y1", 0));
+        QTableWidgetItem *___qtablewidgetitem8 = tblValues->horizontalHeaderItem(8);
+        ___qtablewidgetitem8->setText(QApplication::translate("graphPanelClass", "MIN", 0));
+        QTableWidgetItem *___qtablewidgetitem9 = tblValues->horizontalHeaderItem(9);
+        ___qtablewidgetitem9->setText(QApplication::translate("graphPanelClass", "MAX", 0));
+        QTableWidgetItem *___qtablewidgetitem10 = tblValues->horizontalHeaderItem(10);
+        ___qtablewidgetitem10->setText(QApplication::translate("graphPanelClass", "MEAN", 0));
     } // retranslateUi
 
 };

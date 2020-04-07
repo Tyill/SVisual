@@ -1361,8 +1361,9 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalAlterValueByMarkerPos(int p
         auto& s = signalsAlter_[nm];
   
         QPair<double, double> valInterval = getSignMaxMinValue(s.sdata, tmInterval);
-        double valMinInterval = valInterval.first - 1, valMaxInterval = valInterval.second + 3;
-        double valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
+        double valMinInterval = valInterval.first - 1,
+               valMaxInterval = valInterval.second + 3,
+               valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
 
 		graphSignPoint sp;
 
@@ -1399,6 +1400,124 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalAlterValueByMarkerPos(int p
 	}
 
 	return res;
+}
+
+QVector<wdgGraph::graphSignStat> wdgGraph::getStatParams(int markPosBegin, int markPosEnd){
+
+    QVector<graphSignStat> res;
+
+    if (markPosBegin > markPosEnd)
+        qSwap(markPosBegin, markPosEnd);
+
+    QPair<double, double> valIntr = ui.wAxisValue->getValInterval();
+    double valScale = ui.wAxisValue->getValScale();
+
+    for (auto& nm : signalList_){
+
+        auto& s = signals_[nm];
+
+        graphSignStat stat;
+        
+        if (s.type != valueType::tBool){
+
+            bool isRet = false;
+            int sZn = s.pnts.size(), vcnt = 0;
+            for (int zn = 0; zn < sZn; ++zn){
+
+                for (auto& pt : s.pnts[zn]){
+
+                    if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)){
+
+                        double cval = pt.second * valScale + valIntr.first;
+
+                        if (cval < stat.vmin) stat.vmin = cval;
+                        if (cval > stat.vmax) stat.vmax = cval;
+
+                        stat.vmean += cval;
+                        ++vcnt;
+                    }
+                    if (pt.first > markPosEnd){
+                        isRet = true;
+                        break;
+                    }
+                }
+
+                if (isRet) break;
+            }
+            if (vcnt > 0)
+                stat.vmean /= vcnt;
+        }
+        else{
+            stat.vmin = 0.0;
+            stat.vmax = 0.0;
+            stat.vmean = 0.0;
+        }
+
+        res.append(stat);
+    }
+
+    return res;
+}
+
+QVector<wdgGraph::graphSignStat> wdgGraph::getStatAlterParams(int markPosBegin, int markPosEnd){
+
+    QVector<graphSignStat> res;
+
+    if (markPosBegin > markPosEnd)
+        qSwap(markPosBegin, markPosEnd);
+
+    QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
+
+    for (auto& nm : signalListAlter_){
+
+        auto& s = signalsAlter_[nm];
+
+        QPair<double, double> valInterval = getSignMaxMinValue(s.sdata, tmInterval);
+        double valMinInterval = valInterval.first - 1,
+               valMaxInterval = valInterval.second + 3,
+               valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
+
+        graphSignStat stat;
+
+        if (s.type != valueType::tBool){
+
+            bool isRet = false;
+            int sZn = s.pnts.size(), vcnt = 0;
+            for (int zn = 0; zn < sZn; ++zn){
+
+                for (auto& pt : s.pnts[zn]){
+
+                    if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)){
+
+                        double cval = pt.second * valScale + valMinInterval;
+
+                        if (cval < stat.vmin) stat.vmin = cval;
+                        if (cval > stat.vmax) stat.vmax = cval;
+
+                        stat.vmean += cval;
+                        ++vcnt;
+                    }
+                    if (pt.first > markPosEnd){
+                        isRet = true;
+                        break;
+                    }
+                }
+
+                if (isRet) break;
+            }
+            if (vcnt > 0)
+                stat.vmean /= vcnt;
+        }
+        else{
+            stat.vmin = 0.0;
+            stat.vmax = 0.0;
+            stat.vmean = 0.0;
+        }
+
+        res.append(stat);
+    }
+
+    return res;
 }
 
 void wdgGraph::undoCmd(){
