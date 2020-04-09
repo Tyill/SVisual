@@ -197,7 +197,7 @@ namespace SV_TcpSrv {
 
 		std::mutex mtx;
 		std::unique_lock<std::mutex> lck(mtx);
-		cval.wait_for(lck, std::chrono::seconds(1));
+		cval.wait_for(lck, std::chrono::milliseconds(100));
 
 		return server.isRun;
 	}
