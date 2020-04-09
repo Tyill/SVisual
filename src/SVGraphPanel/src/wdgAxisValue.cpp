@@ -151,8 +151,14 @@ void wdgAxisValue::setValInterval(double minv, double maxv){
 
     if (!axisAttr_.isAuto) return;
 
-    valInterval_.first = minv;
-    valInterval_.second = maxv;
+    if (minv != maxv){
+        valInterval_.first = minv;
+        valInterval_.second = maxv;
+    }
+    else{
+        valInterval_.first = minv - 0.1;
+        valInterval_.second = maxv + 0.1;
+    }
 
     curInterv_ = int(valInterval_.second - valInterval_.first);
 

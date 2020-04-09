@@ -72,7 +72,7 @@ private:
 		
 	QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Cng::signalData* sign, bool isAlter = false);
 
-	QPair<double, double > getSignMaxMinValue(const graphSignData& sign);
+	QPair<double, double > getSignPntsMaxMinValue(const graphSignData& sign);
 	QPair<double, double> getSignMaxMinValue(SV_Cng::signalData* sign, QPair<qint64, qint64>& tmInterval);
 	void addPosToHistory();
 

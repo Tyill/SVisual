@@ -98,8 +98,8 @@ wdgGraph::wdgGraph(QWidget *parent, SV_Graph::config cng_){
             });
 
             axisSettPanel_->setWindowFlags(Qt::Window);
-        }
-        axisSettPanel_->show();
+        }       
+        axisSettPanel_->showNormal();
     });
 	
 	connect(ui.wPlot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
@@ -844,7 +844,8 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
 
     if (isAlter){
 		valInterval = getSignMaxMinValue(sign, tmInterval);
-		valMinInterval = valInterval.first - 1, valMaxInterval = valInterval.second + 3;
+        valMinInterval = valInterval.first;
+        valMaxInterval = valInterval.second;
 		valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
     }
 
@@ -1026,8 +1027,7 @@ QVector<QVector<QPair<int, int>>> wdgGraph::getSignalPnts(signalData* sign, bool
 	return zonePnts;
 }
 
-
-QPair<double, double> wdgGraph::getSignMaxMinValue(const graphSignData& sign){
+QPair<double, double> wdgGraph::getSignPntsMaxMinValue(const graphSignData& sign){
 
 	auto& grPnts = sign.pnts;
 	
@@ -1114,6 +1114,10 @@ QPair<double, double> wdgGraph::getSignMaxMinValue(signalData* sign, QPair<qint6
 		break;
 	}
 	
+    if (minVal == maxVal){
+        minVal -= 0.1;
+        maxVal += 0.1;
+    }
 
 	return QPair<double, double>(minVal, maxVal);
 }
@@ -1230,7 +1234,7 @@ void wdgGraph::resizeByValue(){
 	
 	if (signals_.isEmpty()) return;
 
-	double minVal = INT32_MAX, maxVal = -INT32_MAX;
+	double minPntVal = INT32_MAX, maxPntVal = -INT32_MAX;
     
     bool isFloatSign = false;
 	for (auto& sign : signals_){
@@ -1238,10 +1242,10 @@ void wdgGraph::resizeByValue(){
 		if (sign.type != valueType::tBool){
 
 			isFloatSign = true;
-            QPair<double, double> minMaxVal = getSignMaxMinValue(sign);
+            QPair<double, double> minMaxVal = getSignPntsMaxMinValue(sign);
 
-			if (minMaxVal.first < minVal) minVal = minMaxVal.first;
-			if (minMaxVal.second > maxVal) maxVal = minMaxVal.second;
+            if (minMaxVal.first < minPntVal) minPntVal = minMaxVal.first;
+            if (minMaxVal.second > maxPntVal) maxPntVal = minMaxVal.second;
 		}			
 	}
 
@@ -1250,8 +1254,9 @@ void wdgGraph::resizeByValue(){
 		QPair<double, double> intl = ui.wAxisValue->getValInterval();
 	
 		double scale = ui.wAxisValue->getValScale();
-		ui.wAxisValue->setValInterval(intl.first + minVal * scale - 1, intl.first + maxVal * scale + 1);
-	
+                 
+        ui.wAxisValue->setValInterval(intl.first + minPntVal * scale, intl.first + maxPntVal * scale);
+        
 		axisValueChange();
 	}
 }
@@ -1361,8 +1366,8 @@ QVector<wdgGraph::graphSignPoint> wdgGraph::getSignalAlterValueByMarkerPos(int p
         auto& s = signalsAlter_[nm];
   
         QPair<double, double> valInterval = getSignMaxMinValue(s.sdata, tmInterval);
-        double valMinInterval = valInterval.first - 1,
-               valMaxInterval = valInterval.second + 3,
+        double valMinInterval = valInterval.first,
+               valMaxInterval = valInterval.second,
                valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
 
 		graphSignPoint sp;
@@ -1473,8 +1478,8 @@ QVector<wdgGraph::graphSignStat> wdgGraph::getStatAlterParams(int markPosBegin, 
         auto& s = signalsAlter_[nm];
 
         QPair<double, double> valInterval = getSignMaxMinValue(s.sdata, tmInterval);
-        double valMinInterval = valInterval.first - 1,
-               valMaxInterval = valInterval.second + 3,
+        double valMinInterval = valInterval.first,
+               valMaxInterval = valInterval.second,
                valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
 
         graphSignStat stat;
