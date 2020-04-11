@@ -52,7 +52,7 @@ void wdgAxisValue::mouseMoveEvent(QMouseEvent * event){
 	valInterval_.first += scale_ * diff;
 	valInterval_.second += scale_ * diff;
 
-    curInterv_ = abs(valInterval_.second) - abs(valInterval_.first);
+    curInterv_ = abs(valInterval_.second - valInterval_.first);
 
 	mousePrevPosY_ = pos;
 
@@ -92,7 +92,7 @@ void wdgAxisValue::scale(int delta){
 		valInterval_.second += offs;
 	}
 
-	curInterv_ = abs(valInterval_.second) - abs(valInterval_.first);
+	curInterv_ = abs(valInterval_.second - valInterval_.first);
 
 	scale_ = (valInterval_.second - valInterval_.first) / height();
 
@@ -109,7 +109,7 @@ void wdgAxisValue::setAxisAttr(const SV_Graph::axisAttr& attr){
     if (abs(attr.max - attr.min) < 0.000001)
         valInterval_.first = attr.max - 0.000001;
 
-    curInterv_ = abs(valInterval_.second) - abs(valInterval_.first);
+    curInterv_ = abs(valInterval_.second - valInterval_.first);
 
     scale_ = (valInterval_.second - valInterval_.first) / height();
 
@@ -162,7 +162,7 @@ void wdgAxisValue::setValInterval(double minv, double maxv){
         valInterval_.second = maxv + 0.1;
     }
 
-    curInterv_ = abs(valInterval_.second) - abs(valInterval_.first);
+    curInterv_ = abs(valInterval_.second - valInterval_.first);
 
     scale_ = (valInterval_.second - valInterval_.first) / height();
 }
@@ -255,7 +255,7 @@ QString wdgAxisValue::getValMark(double vl){
 
     vl *= sign;
 
-    double diap = abs(valInterval_.second) - abs(valInterval_.first);
+    double diap = abs(valInterval_.second - valInterval_.first) / 2;
 
     if (diap > 1.0)       vl = int(vl + 0.5);
     else if (diap > 0.1)  vl = int(vl * 10 + 0.5) / 10.;

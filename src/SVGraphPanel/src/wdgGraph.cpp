@@ -245,7 +245,7 @@ void wdgGraph::paintSignals(){
                         
             QColor clr = sign.color;
             clr.setAlpha(graphSetting_.transparent);
-            painter.setBrush(QBrush(clr));
+            painter.setBrush(clr);
 
             bool isFillGraph = graphSetting_.transparent > 0;
 
@@ -318,7 +318,9 @@ void wdgGraph::paintSignals(){
 
         if (sign.type == valueType::tBool){
 
-            painter.setBrush(sign.color);
+            QColor clr = sign.color;
+            clr.setAlpha(128);
+            painter.setBrush(clr);
             painter.setPen(sign.color);
 
 			int znSz = sign.pnts.size(), sDist = 15, sH = 10;
@@ -382,7 +384,7 @@ void wdgGraph::paintSignalsAlter(){
 
             QColor clr = sign.color;
             clr.setAlpha(graphSetting_.transparent);
-            painter.setBrush(QBrush(clr));
+            painter.setBrush(clr);
                        
             bool isFillGraph = graphSetting_.transparent > 0;
 
@@ -450,7 +452,9 @@ void wdgGraph::paintSignalsAlter(){
 
         if (sign.type == valueType::tBool){
 
-            painter.setBrush(sign.color);
+            QColor clr = sign.color;
+            clr.setAlpha(128);
+            painter.setBrush(clr);
             painter.setPen(sign.color);
 
 			int znSz = sign.pnts.size(), sDist = 15, sH = 10;
