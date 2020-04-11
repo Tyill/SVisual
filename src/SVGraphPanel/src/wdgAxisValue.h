@@ -54,7 +54,7 @@ private:
 	void drawDashLines(QPainter& painter);
 	void drawValMark(QPainter& painter);
 
-	QString getValMark(int offs);
+	QString getValMark(double vl);
 
 
 public:
