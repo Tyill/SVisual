@@ -35,7 +35,6 @@
 #include "forms/settingsPanel.h"
 #include "forms/signScriptPanel.h"
 #include "forms/graphSettingPanel.h"
-#include "sql.h"
 #include "comReader.h"
 #include "SVAuxFunc/mt_log.h"
 #include "SVAuxFunc/serverTCP.h"
@@ -45,6 +44,7 @@
 #include "SVScriptPanel/SVScriptPanel.h"
 #include "SVServer/SVServer.h"
 #include "SVWebServer/SVWebServer.h"
+#include "SVZabbix/SVZabbix.h"
 #include "serverAPI.h"
 
 const QString VERSION = "1.1.6";
@@ -163,6 +163,8 @@ void MainWin::load(){
     SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
     SV_Web::setGetSignalData(getSignalDataSrv);
     SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+
+    SV_Zbx::setGetSignalData(getSignalDataSrv);
 
 	db_ = new dbProvider(qUtf8Printable(cng.dbPath));
 

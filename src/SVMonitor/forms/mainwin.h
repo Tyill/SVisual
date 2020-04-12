@@ -74,7 +74,11 @@ public:
         QString web_addr;          ///< ip
         int web_port;              ///< port
 
-        
+        // zabbix
+        bool zabbix_ena;              
+        QString zabbix_addr;       ///< agent ip
+        int zabbix_port;           ///< agent port
+
         SV_Graph::graphSetting graphSett;
 	};
 

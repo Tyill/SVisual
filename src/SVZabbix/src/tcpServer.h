@@ -24,5 +24,49 @@
 //
 #pragma once
 
-#include <QtCore>
-#include <QtNetwork>
+
+/////////////////////
+#include "stdafx.h"
+#include <QTcpServer>
+#include <QTcpSocket>
+
+#include "SVZabbix/SVZabbix.h"
+
+class tcpServer : public QTcpServer{
+    
+    Q_OBJECT
+
+public:
+
+    tcpServer(QObject *parent = nullptr) : QTcpServer(parent){}
+
+    ~tcpServer() = default;
+  
+    SV_Zbx::pf_getSignalData pfGetSignalData = nullptr;
+        
+    void setConfig(const SV_Zbx::config& cng);
+   
+
+private:
+    void incomingConnection(qintptr handle) override;
+
+    SV_Zbx::config cng;
+    
+};
+
+class clientSocket : public QTcpSocket
+{
+    Q_OBJECT
+
+public:
+       
+    clientSocket(QObject *parent = nullptr);
+
+private: 
+  
+    tcpServer* server_ = nullptr;
+
+
+private slots:
+    void readData();
+};

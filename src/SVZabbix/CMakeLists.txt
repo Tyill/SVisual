@@ -13,3 +13,5 @@ FILE(GLOB_RECURSE SRC_Zbx "*.cpp" "*.c" "*.h" "*.ui" "*.qrc")
 add_library(SVZabbix SHARED ${SRC_Zbx})
 
 target_link_libraries(SVZabbix SVConfig SVAuxFunc)
+
+qt5_use_modules(SVZabbix Core Network)

@@ -40,7 +40,7 @@
 namespace SV_Zbx {
     
 	  struct config {
-
+      
 		int cycleRecMs;
 		int packetSz;
 
@@ -49,17 +49,11 @@ namespace SV_Zbx {
 				packetSz(packetSz_) {}
 	  };
 
-    SVZABBIX_API bool startSend(const std::string& addr, int port, const config&);
+    SVZABBIX_API bool startAgent(const std::string& addr, int port, const config&);
 
-    SVZABBIX_API void stopSend();
-      
-    typedef std::map<std::string, SV_Cng::signalData*>(*pf_getCopySignalRef)();
-    SVZABBIX_API void setGetCopySignalRef(pf_getCopySignalRef f);
-
-    typedef std::map<std::string, SV_Cng::moduleData*>(*pf_getCopyModuleRef)();
-    SVZABBIX_API void setGetCopyModuleRef(pf_getCopyModuleRef f);
-
-    typedef SV_Cng::signalData* (*pf_getSignalData)(const std::string &sign);
+    SVZABBIX_API void stopAgent();
+    
+    typedef SV_Cng::signalData* (*pf_getSignalData)(const QString& sign);
     SVZABBIX_API void setGetSignalData(pf_getSignalData f);        
     
 }

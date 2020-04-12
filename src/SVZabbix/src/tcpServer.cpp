@@ -22,7 +22,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
 
-#include <QtCore>
-#include <QtNetwork>
+#include "stdafx.h"
+#include "tcpServer.h"
+#include "SVConfig/SVConfigData.h"
+#include "SVConfig/SVConfigLimits.h"
+#include <QDir>
+#include <QUrl>
+
+void tcpServer::setConfig(const SV_Zbx::config& cng_){
+
+    cng = cng_;
+}
+
+void tcpServer::incomingConnection(qintptr handle){
+
+    clientSocket* socket = new clientSocket(this);
+    socket->setSocketDescriptor(handle);
+        
+    connect(socket, SIGNAL(readyRead()), socket, SLOT(readData()));
+    connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
+}
+
+clientSocket::clientSocket(QObject* parent) 
+    : QTcpSocket(parent){
+  
+    server_ = (tcpServer*)parent;
+}
+
+void clientSocket::readData(){
+       
+    auto buff = this->readAll();
+
+    size_t nread = buff.size(),
+           parsed = 0;
+
+    if (parsed < nread) {
+               
+        QByteArray resp;
+        resp += QString("HTTP/1.1 400 Bad Request\r\n")
+            + "\r\n";
+
+        this->writeData(resp.data(), resp.size());
+    }
+}

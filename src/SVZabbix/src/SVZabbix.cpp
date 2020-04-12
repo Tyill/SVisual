@@ -24,33 +24,31 @@
 //
 #include "stdafx.h"
 #include "SVZabbix/SVZabbix.h"
+#include "tcpServer.h"
 
 using namespace std;
 
+tcpServer wServer;
+
 namespace SV_Zbx {
 
-    bool startSend(const string& addr, int port, const config& cng){
+    bool startAgent(const string& addr, int port, const config& cng){
                
-       
+        if (wServer.isListening()) return true;
+
+        wServer.setConfig(cng);
+
+        return wServer.listen(QHostAddress(addr.c_str()), port);
     }
 
-    void stopSend(){
+    void stopAgent(){
 
-
+        if (wServer.isListening())
+          wServer.close();
     }
-    	
-    void setGetCopySignalRef(pf_getCopySignalRef f) {
-
-        
-  	}
-
-    void setGetCopyModuleRef(pf_getCopyModuleRef f){
-
-        
-    }
-
+    
     void setGetSignalData(pf_getSignalData f) {
 
-	
+	      wServer.pfGetSignalData = f;
     }    
 }
