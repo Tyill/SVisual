@@ -41,15 +41,27 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnSave">
+       <property name="toolTip">
+        <string>[CTRL+S]</string>
+       </property>
        <property name="text">
         <string>Сохранить</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+S</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnActive">
+       <property name="toolTip">
+        <string>[CTRL+D]</string>
+       </property>
        <property name="text">
         <string>Включить</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+D</string>
        </property>
       </widget>
      </item>

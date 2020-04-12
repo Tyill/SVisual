@@ -32,13 +32,13 @@ tcpServer wServer;
 
 namespace SV_Zbx {
 
-    bool startAgent(const string& addr, int port, const config& cng){
+    bool startAgent(const QString& addr, int port, const config& cng){
                
         if (wServer.isListening()) return true;
 
         wServer.setConfig(cng);
 
-        return wServer.listen(QHostAddress(addr.c_str()), port);
+        return wServer.listen(QHostAddress(addr), port);
     }
 
     void stopAgent(){

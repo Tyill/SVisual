@@ -49,7 +49,7 @@ namespace SV_Zbx {
 				packetSz(packetSz_) {}
 	  };
 
-    SVZABBIX_API bool startAgent(const std::string& addr, int port, const config&);
+    SVZABBIX_API bool startAgent(const QString& addr, int port, const config&);
 
     SVZABBIX_API void stopAgent();
     

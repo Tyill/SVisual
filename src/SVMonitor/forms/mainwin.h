@@ -104,9 +104,7 @@ private:
 
 	config cng;
 	SV_Srv::config srvCng;
-
-	bool initOk_ = false;
-
+    
     QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;

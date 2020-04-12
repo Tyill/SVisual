@@ -81,8 +81,16 @@ public:
     {
         signScriptPanelClass->setWindowTitle(QApplication::translate("signScriptPanelClass", "\320\241\320\272\321\200\320\270\320\277\321\202 \320\264\320\273\321\217 \321\201\320\270\320\263\320\275\320\260\320\273\320\260", 0));
         lbChange->setText(QString());
+#ifndef QT_NO_TOOLTIP
+        btnSave->setToolTip(QApplication::translate("signScriptPanelClass", "[CTRL+S]", 0));
+#endif // QT_NO_TOOLTIP
         btnSave->setText(QApplication::translate("signScriptPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214", 0));
+        btnSave->setShortcut(QApplication::translate("signScriptPanelClass", "Ctrl+S", 0));
+#ifndef QT_NO_TOOLTIP
+        btnActive->setToolTip(QApplication::translate("signScriptPanelClass", "[CTRL+D]", 0));
+#endif // QT_NO_TOOLTIP
         btnActive->setText(QApplication::translate("signScriptPanelClass", "\320\222\320\272\320\273\321\216\321\207\320\270\321\202\321\214", 0));
+        btnActive->setShortcut(QApplication::translate("signScriptPanelClass", "Ctrl+D", 0));
     } // retranslateUi
 
 };
