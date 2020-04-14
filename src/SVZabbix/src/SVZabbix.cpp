@@ -24,31 +24,31 @@
 //
 #include "stdafx.h"
 #include "SVZabbix/SVZabbix.h"
-#include "tcpServer.h"
+#include "zbxServer.h"
 
 using namespace std;
 
-tcpServer wServer;
+zbxServer zServer;
 
 namespace SV_Zbx {
 
     bool startAgent(const QString& addr, int port, const config& cng){
                
-        if (wServer.isListening()) return true;
+        if (zServer.isListening()) return true;
 
-        wServer.setConfig(cng);
+        zServer.setConfig(cng);
 
-        return wServer.listen(QHostAddress(addr), port);
+        return zServer.listen(QHostAddress(addr), port);
     }
 
     void stopAgent(){
 
-        if (wServer.isListening())
-          wServer.close();
+        if (zServer.isListening())
+          zServer.close();
     }
     
     void setGetSignalData(pf_getSignalData f) {
 
-	      wServer.pfGetSignalData = f;
+	      zServer.pfGetSignalData = f;
     }    
 }

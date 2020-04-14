@@ -32,20 +32,21 @@
 
 #include "SVZabbix/SVZabbix.h"
 
-class tcpServer : public QTcpServer{
+class zbxServer : public QTcpServer{
     
     Q_OBJECT
 
 public:
 
-    tcpServer(QObject *parent = nullptr) : QTcpServer(parent){}
+    zbxServer(QObject *parent = nullptr) : QTcpServer(parent){}
 
-    ~tcpServer() = default;
+    ~zbxServer() = default;
   
     SV_Zbx::pf_getSignalData pfGetSignalData = nullptr;
         
     void setConfig(const SV_Zbx::config& cng);
    
+    QString getLastValueStr(const QString& sname);
 
 private:
     void incomingConnection(qintptr handle) override;
@@ -54,17 +55,17 @@ private:
     
 };
 
-class clientSocket : public QTcpSocket
+class zbxClientSocket : public QTcpSocket
 {
     Q_OBJECT
 
 public:
        
-    clientSocket(QObject *parent = nullptr);
+    zbxClientSocket(QObject *parent);
 
 private: 
   
-    tcpServer* server_ = nullptr;
+    zbxServer* server_ = nullptr;
 
 
 private slots:

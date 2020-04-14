@@ -24,45 +24,57 @@
 //
 
 #include "stdafx.h"
-#include "tcpServer.h"
+#include "zbxServer.h"
 #include "SVConfig/SVConfigData.h"
 #include "SVConfig/SVConfigLimits.h"
 #include <QDir>
 #include <QUrl>
 
-void tcpServer::setConfig(const SV_Zbx::config& cng_){
+void zbxServer::setConfig(const SV_Zbx::config& cng_){
 
     cng = cng_;
 }
 
-void tcpServer::incomingConnection(qintptr handle){
+void zbxServer::incomingConnection(qintptr handle){
 
-    clientSocket* socket = new clientSocket(this);
+    zbxClientSocket* socket = new zbxClientSocket(this);
     socket->setSocketDescriptor(handle);
         
     connect(socket, SIGNAL(readyRead()), socket, SLOT(readData()));
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
 }
 
-clientSocket::clientSocket(QObject* parent) 
+zbxClientSocket::zbxClientSocket(QObject* parent) 
     : QTcpSocket(parent){
   
-    server_ = (tcpServer*)parent;
+    server_ = (zbxServer*)parent;
 }
 
-void clientSocket::readData(){
+void zbxClientSocket::readData(){
        
-    auto buff = this->readAll();
+    QString sname = this->readAll();
+   
+    sname = sname.trimmed();
+   
+    QString sval = server_->getLastValueStr(sname);
+   
+    this->write(sval.toStdString().c_str());
+}
 
-    size_t nread = buff.size(),
-           parsed = 0;
+QString zbxServer::getLastValueStr(const QString& sname){
 
-    if (parsed < nread) {
-               
-        QByteArray resp;
-        resp += QString("HTTP/1.1 400 Bad Request\r\n")
-            + "\r\n";
+    auto sdata = pfGetSignalData(sname);
 
-        this->writeData(resp.data(), resp.size());
+    if (sdata){
+     
+        auto val = sdata->lastData.vals[SV_PACKETSZ - 1]; 
+
+        switch (sdata->type){
+        case SV_Cng::valueType::tBool:  return val.tBool ? "1" : "0";
+        case SV_Cng::valueType::tInt:   return QString::number(val.tInt);
+        case SV_Cng::valueType::tFloat: return QString::number(val.tFloat);
+        }
     }
+    else               
+        return "0";
 }

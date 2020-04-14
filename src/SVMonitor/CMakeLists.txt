@@ -32,6 +32,6 @@ if(WIN32)
 endif()
 
 target_link_libraries(SVMonitor SVConfig SVAuxFunc SVGraphPanel SVTriggerPanel
-                      SVExportPanel SVScriptPanel SVServer SVWebServer)
+                      SVExportPanel SVScriptPanel SVServer SVWebServer SVZabbix)
 
 qt5_use_modules(SVMonitor Core Widgets Network Gui SerialPort PrintSupport)
