@@ -152,7 +152,7 @@ namespace SV_TcpSrv {
 			 "on_connect::uv_read_start error");
 	}
        
-	void initConnection() {
+    void initConnection(std::condition_variable& cval) {
 
 		server.uv_loop = uv_default_loop();
 
@@ -173,9 +173,12 @@ namespace SV_TcpSrv {
 			 "initConnection::uv_listen error");
 
 		server.isRun = true;
+        cval.notify_one();
 
 		SRVCheck(uv_run(server.uv_loop, UV_RUN_DEFAULT),
 			 "initConnection::uv_run error");
+        
+        server.isRun = false;
 	}
        
 	bool runServer(std::string addr, int port, bool keepAlive, int tout) {
@@ -188,13 +191,11 @@ namespace SV_TcpSrv {
 		server.tout = tout;
 
 		std::condition_variable cval;
-		thr = std::thread([&cval]() {
-			initConnection();
-			server.isRun = false;
-			cval.notify_one();
+        thr = std::thread([&cval]() {
+            initConnection(cval);
 		});
 		thr.detach();
-
+        
 		std::mutex mtx;
 		std::unique_lock<std::mutex> lck(mtx);
 		cval.wait_for(lck, std::chrono::milliseconds(100));
