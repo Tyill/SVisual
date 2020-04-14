@@ -35,7 +35,6 @@
 #include "forms/settingsPanel.h"
 #include "forms/signScriptPanel.h"
 #include "forms/graphSettingPanel.h"
-#include "sql.h"
 #include "comReader.h"
 #include "SVAuxFunc/mt_log.h"
 #include "SVAuxFunc/serverTCP.h"
@@ -45,11 +44,14 @@
 #include "SVScriptPanel/SVScriptPanel.h"
 #include "SVServer/SVServer.h"
 #include "SVWebServer/SVWebServer.h"
+#include "SVZabbix/SVZabbix.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.6";
-// added menu - script for signal
+const QString VERSION = "1.1.7";
+// added zabbix agent
 
+//const QString VERSION = "1.1.6";
+// added menu - script for signal
 //const QString VERSION = "1.1.5";
 // added select color signal
 // const QString VERSION = "1.1.4";
@@ -163,6 +165,8 @@ void MainWin::load(){
     SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
     SV_Web::setGetSignalData(getSignalDataSrv);
     SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+
+    SV_Zbx::setGetSignalData(getSignalDataSrv);
 
 	db_ = new dbProvider(qUtf8Printable(cng.dbPath));
 
@@ -457,6 +461,10 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "web_addr = " << cng.web_addr << endl;
     txtStream << "web_port = " << cng.web_port << endl;
     txtStream << endl;
+    txtStream << "zabbix_ena = " << (cng.zabbix_ena ? "1" : "0") << endl;
+    txtStream << "zabbix_addr = " << cng.zabbix_addr << endl;
+    txtStream << "zabbix_port = " << cng.zabbix_port << endl;
+    txtStream << endl;
     txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << endl;
     
     for (int i = 0; i < cng.com_ports.size(); ++i){
@@ -541,6 +549,11 @@ bool MainWin::init(QString initPath){
     cng.web_addr = settings.value("web_addr", "127.0.0.1").toString();
     cng.web_port = settings.value("web_port", "2145").toInt();
 
+    // zabbix
+    cng.zabbix_ena = settings.value( "zabbix_ena", "0").toInt() == 1;
+    cng.zabbix_addr = settings.value("zabbix_addr", "127.0.0.1").toString();
+    cng.zabbix_port = settings.value("zabbix_port", "2146").toInt();
+
     // копир на диск
     cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
     cng.outArchivePath = settings.value("outArchivePath", "").toString();
@@ -582,18 +595,13 @@ MainWin::MainWin(QWidget *parent)
 	cng.dirPath = QApplication::applicationDirPath();
 	cng.initPath = cng.dirPath + "/svmonitor.ini"; if (args.size() == 2) cng.initPath = args[1];
 
-	initOk_ = init(cng.initPath);
-	if (initOk_)
-		statusMess(tr("Инициализация параметров успешно"));
-	else
-	    statusMess(QString(tr("Не найден файл инициализации %1")).arg(cng.initPath));
-
+	init(cng.initPath);
+	statusMess(tr("Инициализация параметров успешно"));
+	
     auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
     graphPanels_[this] = gp;
     ui.splitter->addWidget(gp);
-
-    if (!initOk_) return;
-
+    
     Connect();
 
 	load();
@@ -649,14 +657,23 @@ MainWin::MainWin(QWidget *parent)
         else
             statusMess(QString(tr("Не удалось запустить WEB сервер: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));
     }
+
+    // zabbix
+    if (cng.zabbix_ena){
+
+        if (SV_Zbx::startAgent(cng.zabbix_addr, cng.zabbix_port, SV_Zbx::config(SV_CYCLEREC_MS, SV_PACKETSZ))){
+
+            statusMess(QString(tr("Zabbix агент запущен: адрес %1 порт %2").arg(cng.zabbix_addr).arg(cng.zabbix_port)));
+        }
+        else
+            statusMess(QString(tr("Не удалось запустить Zabbix агент: адрес %1 порт %2").arg(cng.zabbix_addr).arg(cng.zabbix_port)));
+    }
     
     SV_Trigger::startUpdateThread(triggerPanel_);
 }
 
 MainWin::~MainWin(){
 
-	if (!initOk_) return;
-	
     SV_Srv::stopServer();
 
     for (auto comReader : comReaders_){
@@ -666,6 +683,9 @@ MainWin::~MainWin(){
 
     if (cng.web_ena)
         SV_Web::stopServer();
+
+    if (cng.zabbix_ena)
+        SV_Zbx::stopAgent();
 
 	if (db_){
 		if (!db_->saveSignals(SV_Srv::getCopySignalRef()))

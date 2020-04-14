@@ -72,7 +72,7 @@ private:
 		
 	QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Cng::signalData* sign, bool isAlter = false);
 
-	QPair<double, double > getSignMaxMinValue(const graphSignData& sign);
+	QPair<double, double > getSignPntsMaxMinValue(const graphSignData& sign);
 	QPair<double, double> getSignMaxMinValue(SV_Cng::signalData* sign, QPair<qint64, qint64>& tmInterval);
 	void addPosToHistory();
 
@@ -106,6 +106,13 @@ public:
 		QColor color;
 	};
 
+    struct graphSignStat{
+        
+        double vmin = INT32_MAX,
+               vmax = INT32_MIN,
+               vmean = 0.0;
+    };
+
 
 	wdgGraph(QWidget *parent, SV_Graph::config cng_);
 	~wdgGraph();
@@ -124,6 +131,10 @@ public:
     QVector<graphSignPoint> getSignalValueByMarkerPos(int pos);
 	QVector<wdgGraph::graphSignPoint> getSignalAlterValueByMarkerPos(int pos);
 	
+    QVector<graphSignStat> getStatParams(int markPosBegin, int markPosEnd);
+
+    QVector<graphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
+
     void addSignal(QString sign);
 	void addAlterSignal(QString sign);
 	

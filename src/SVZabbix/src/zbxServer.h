@@ -24,62 +24,50 @@
 //
 #pragma once
 
+
+/////////////////////
 #include "stdafx.h"
-#include "SVGraphPanel/SVGraphPanel.h"
+#include <QTcpServer>
+#include <QTcpSocket>
 
-class wdgAxisValue : public QWidget
-{
-	Q_OBJECT
-private:
+#include "SVZabbix/SVZabbix.h"
 
-	int cng_dashHeight_ = 3;
-
-	int curDashStep_ = 100;
-	int cng_maxDashStep_ = 200;
-	int cng_minDashStep_ = 100;
-	int curOffsPos_ = 0;
-	int curInterv_ = 0;
-
-	QPair<double, double> valInterval_;
-
-    SV_Graph::axisAttr axisAttr_;
-
-	double scale_ = 1.0;
-
-	int mousePrevPosY_ = 0;
-
-	
-	void resizeEvent(QResizeEvent * event);
-
-	void drawDashLines(QPainter& painter);
-	void drawValMark(QPainter& painter);
-
-	QString getValMark(double vl);
-
+class zbxServer : public QTcpServer{
+    
+    Q_OBJECT
 
 public:
-	wdgAxisValue(QWidget *parent = 0);
-	~wdgAxisValue();
 
-	void setValInterval(double min, double max);
+    zbxServer(QObject *parent = nullptr) : QTcpServer(parent){}
 
-	QPair<double, double> getValInterval();
+    ~zbxServer() = default;
+  
+    SV_Zbx::pf_getSignalData pfGetSignalData = nullptr;
+        
+    void setConfig(const SV_Zbx::config& cng);
+   
+    QString getLastValueStr(const QString& sname);
 
-	double getValScale();
+private:
+    void incomingConnection(qintptr handle) override;
 
-	QVector<int> getAxisMark();
+    SV_Zbx::config cng;
+    
+};
 
-	void mouseMoveEvent(QMouseEvent * event);
-	void mousePressEvent(QMouseEvent * event);
-	void wheelEvent(QWheelEvent * event);
-	void scale(int delta);
+class zbxClientSocket : public QTcpSocket
+{
+    Q_OBJECT
 
-    void setAxisAttr(const SV_Graph::axisAttr&);
-    SV_Graph::axisAttr getAxisAttr();
+public:
+       
+    zbxClientSocket(QObject *parent);
 
-protected:
-	void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+private: 
+  
+    zbxServer* server_ = nullptr;
 
-signals:
-	void req_axisChange();
+
+private slots:
+    void readData();
 };

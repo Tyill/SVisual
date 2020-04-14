@@ -74,7 +74,11 @@ public:
         QString web_addr;          ///< ip
         int web_port;              ///< port
 
-        
+        // zabbix
+        bool zabbix_ena;              
+        QString zabbix_addr;       ///< agent ip
+        int zabbix_port;           ///< agent port
+
         SV_Graph::graphSetting graphSett;
 	};
 
@@ -100,9 +104,7 @@ private:
 
 	config cng;
 	SV_Srv::config srvCng;
-
-	bool initOk_ = false;
-
+    
     QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;

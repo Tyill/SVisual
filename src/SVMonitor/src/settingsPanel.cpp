@@ -36,7 +36,7 @@ settingsPanel::settingsPanel(QWidget *parent){
 	ui.setupUi(this);
 	
 	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveChange()));
-  connect(ui.btnArchPath, SIGNAL(clicked()), this, SLOT(selDirArch()));
+    connect(ui.btnArchPath, SIGNAL(clicked()), this, SLOT(selDirArch()));
 	connect(ui.rbtnConnectByCom, &QRadioButton::toggled, this, [this] (){
 		
 		bool isSel = ui.rbtnConnectByCom->isChecked();
@@ -70,15 +70,18 @@ settingsPanel::settingsPanel(QWidget *parent){
 		ui.btnArchPath->setEnabled(isSel);
 		paramChange();
 	});
-  connect(ui.chbWebActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
-  connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
-  connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
+    connect(ui.chbWebActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
+    connect(ui.chbZabbixActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
+    connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
+    connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
 
 	connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-  connect(ui.txtWebIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-  connect(ui.txtWebPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-  connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtWebIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtWebPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtZabbixIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtZabbixPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+    connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
 	connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 	
@@ -101,6 +104,10 @@ void settingsPanel::showEvent(QShowEvent * event){
     ui.chbWebActive->setChecked(cng.web_ena);
     ui.txtWebIPAddr->setText(cng.web_addr);
     ui.txtWebPort->setText(QString::number(cng.web_port));
+
+    ui.chbZabbixActive->setChecked(cng.zabbix_ena);
+    ui.txtZabbixIPAddr->setText(cng.zabbix_addr);
+    ui.txtZabbixPort->setText(QString::number(cng.zabbix_port));
 
 	ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
 	
@@ -208,6 +215,10 @@ void settingsPanel::saveChange(){
     cng.web_ena = ui.chbWebActive->isChecked();
     cng.web_addr = ui.txtWebIPAddr->text();
     cng.web_port = ui.txtWebPort->text().toInt();
+
+    cng.zabbix_ena = ui.chbZabbixActive->isChecked();
+    cng.zabbix_addr = ui.txtZabbixIPAddr->text();
+    cng.zabbix_port = ui.txtZabbixPort->text().toInt();
 
     cng.outArchiveEna = ui.rbtnArchEna->isChecked();
     cng.outArchivePath = ui.txtArchPath->text();

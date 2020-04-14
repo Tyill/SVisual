@@ -73,8 +73,16 @@ namespace SV_Cng {
                 res = value > 0 ? std::to_string((int) (value + 0.5)) : std::to_string((int) (value - 0.5));
                 break;
             case valueType::tFloat:{
+
+                int prec = 1;
+                if (abs(value) > 1.0)         prec = 1;
+                else if (abs(value) > 0.1)    prec = 2;
+                else if (abs(value) > 0.01)   prec = 3;
+                else if (abs(value) > 0.001)  prec = 4;
+                else if (abs(value) > 0.0001) prec = 5;
+                
                 stringstream stream;
-                stream << fixed << setprecision(1) << value;
+                stream << fixed << setprecision(prec) << value;
                 res = stream.str();
             }
                 break;

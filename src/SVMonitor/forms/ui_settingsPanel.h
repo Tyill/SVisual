@@ -58,6 +58,16 @@ public:
     QLabel *label_6;
     QLineEdit *txtWebPort;
     QSpacerItem *horizontalSpacer_6;
+    QGroupBox *groupBox_4;
+    QVBoxLayout *verticalLayout_6;
+    QCheckBox *chbZabbixActive;
+    QHBoxLayout *horizontalLayout_5;
+    QLabel *label_3;
+    QLineEdit *txtZabbixIPAddr;
+    QSpacerItem *horizontalSpacer_8;
+    QLabel *label_8;
+    QLineEdit *txtZabbixPort;
+    QSpacerItem *horizontalSpacer_9;
     QGroupBox *grbSaveData;
     QVBoxLayout *verticalLayout_2;
     QCheckBox *rbtnArchEna;
@@ -81,7 +91,7 @@ public:
     {
         if (settingsPanelClass->objectName().isEmpty())
             settingsPanelClass->setObjectName(QStringLiteral("settingsPanelClass"));
-        settingsPanelClass->resize(676, 554);
+        settingsPanelClass->resize(695, 656);
         settingsPanelClass->setMinimumSize(QSize(550, 350));
         settingsPanelClass->setMaximumSize(QSize(700, 16777215));
         verticalLayout_3 = new QVBoxLayout(settingsPanelClass);
@@ -216,6 +226,58 @@ public:
 
         verticalLayout_3->addWidget(groupBox_3);
 
+        groupBox_4 = new QGroupBox(settingsPanelClass);
+        groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
+        groupBox_4->setMinimumSize(QSize(0, 100));
+        verticalLayout_6 = new QVBoxLayout(groupBox_4);
+        verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        chbZabbixActive = new QCheckBox(groupBox_4);
+        chbZabbixActive->setObjectName(QStringLiteral("chbZabbixActive"));
+
+        verticalLayout_6->addWidget(chbZabbixActive);
+
+        horizontalLayout_5 = new QHBoxLayout();
+        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
+        label_3 = new QLabel(groupBox_4);
+        label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setMinimumSize(QSize(50, 0));
+
+        horizontalLayout_5->addWidget(label_3);
+
+        txtZabbixIPAddr = new QLineEdit(groupBox_4);
+        txtZabbixIPAddr->setObjectName(QStringLiteral("txtZabbixIPAddr"));
+        txtZabbixIPAddr->setEnabled(true);
+        txtZabbixIPAddr->setMinimumSize(QSize(100, 0));
+        txtZabbixIPAddr->setMaximumSize(QSize(100, 16777215));
+
+        horizontalLayout_5->addWidget(txtZabbixIPAddr);
+
+        horizontalSpacer_8 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
+
+        horizontalLayout_5->addItem(horizontalSpacer_8);
+
+        label_8 = new QLabel(groupBox_4);
+        label_8->setObjectName(QStringLiteral("label_8"));
+
+        horizontalLayout_5->addWidget(label_8);
+
+        txtZabbixPort = new QLineEdit(groupBox_4);
+        txtZabbixPort->setObjectName(QStringLiteral("txtZabbixPort"));
+        txtZabbixPort->setEnabled(true);
+        txtZabbixPort->setMaximumSize(QSize(70, 16777215));
+
+        horizontalLayout_5->addWidget(txtZabbixPort);
+
+        horizontalSpacer_9 = new QSpacerItem(10, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+        horizontalLayout_5->addItem(horizontalSpacer_9);
+
+
+        verticalLayout_6->addLayout(horizontalLayout_5);
+
+
+        verticalLayout_3->addWidget(groupBox_4);
+
         grbSaveData = new QGroupBox(settingsPanelClass);
         grbSaveData->setObjectName(QStringLiteral("grbSaveData"));
         verticalLayout_2 = new QVBoxLayout(grbSaveData);
@@ -340,6 +402,10 @@ public:
         chbWebActive->setText(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
         label_2->setText(QApplication::translate("settingsPanelClass", "IP \320\260\320\264\321\200\320\265\321\201", 0));
         label_6->setText(QApplication::translate("settingsPanelClass", "\320\277\320\276\321\200\321\202", 0));
+        groupBox_4->setTitle(QApplication::translate("settingsPanelClass", "Zabbix \320\260\320\263\320\265\320\275\321\202 (\320\277\320\260\321\201\321\201\320\270\320\262\320\275\321\213\320\271)", 0));
+        chbZabbixActive->setText(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
+        label_3->setText(QApplication::translate("settingsPanelClass", "IP \320\260\320\264\321\200\320\265\321\201", 0));
+        label_8->setText(QApplication::translate("settingsPanelClass", "\320\277\320\276\321\200\321\202", 0));
         grbSaveData->setTitle(QApplication::translate("settingsPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\265\320\275\320\270\320\265 \320\264\320\260\320\275\320\275\321\213\321\205", 0));
 #ifndef QT_NO_TOOLTIP
         rbtnArchEna->setToolTip(QApplication::translate("settingsPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
@@ -351,7 +417,11 @@ public:
         spinCycleRecMs->setSuffix(QApplication::translate("settingsPanelClass", " \320\274\321\201", 0));
         label_7->setText(QApplication::translate("settingsPanelClass", "\320\240\320\260\320\267\320\274\320\265\321\200 \320\277\320\260\320\272\320\265\321\202\320\260", 0));
         lbChange->setText(QApplication::translate("settingsPanelClass", "*", 0));
+#ifndef QT_NO_TOOLTIP
+        btnSave->setToolTip(QApplication::translate("settingsPanelClass", "CTRL+S", 0));
+#endif // QT_NO_TOOLTIP
         btnSave->setText(QApplication::translate("settingsPanelClass", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214", 0));
+        btnSave->setShortcut(QApplication::translate("settingsPanelClass", "Ctrl+S", 0));
     } // retranslateUi
 
 };

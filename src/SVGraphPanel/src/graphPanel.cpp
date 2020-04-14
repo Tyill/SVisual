@@ -313,13 +313,16 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 
 	ui.tblValues->clearContents();
 
-	int leftMarkP = leftMarkPos.x(), rightMarkP = rightMarkPos.x();
+	int leftMarkP = leftMarkPos.x(), 
+        rightMarkP = rightMarkPos.x();
 
 	QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
 	double tmScale = ui.axisTime->getTimeScale();
 
 	QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
 	QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
+
+    QVector<wdgGraph::graphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
 
 	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
 	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
@@ -338,6 +341,12 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 		QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
 		QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
 		QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
+        QString vmin = getSValue(vt, statVal[i].vmin).c_str();
+        QString vmax = getSValue(vt, statVal[i].vmax).c_str();
+        QString vmean = getSValue(vt, statVal[i].vmean).c_str();
+
+        if (vt == valueType::tBool)
+            vmean = QString::number(int(statVal[i].vmean + 0.5));
 
 		QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
 		nameItem->setForeground(leftMarkVal[i].color);
@@ -350,6 +359,9 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 		ui.tblValues->setItem(i, 5, new QTableWidgetItem(y1));
 		ui.tblValues->setItem(i, 6, new QTableWidgetItem(y2));
 		ui.tblValues->setItem(i, 7, new QTableWidgetItem(y2_y1));
+        ui.tblValues->setItem(i, 8, new QTableWidgetItem(vmin));
+        ui.tblValues->setItem(i, 9, new QTableWidgetItem(vmean));
+        ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmax));
 	}
 	ui.tblValues->resizeColumnsToContents();
 }
@@ -369,6 +381,8 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
 	QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
 	QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
 
+    QVector<wdgGraph::graphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
+
 	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
 	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
 	QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
@@ -379,7 +393,7 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
 		ui.tblValues->insertRow(ui.tblValues->rowCount());
 	}
 
-	int st = graph->getAllSignals().size();
+	int offs = graph->getAllSignals().size();
 	for (int i = 0; i < sz; ++i){
 
 		valueType vt = leftMarkVal[i].type;
@@ -387,19 +401,27 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
 		QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
 		QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
 		QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
+        QString vmin = getSValue(vt, statVal[i].vmin).c_str();
+        QString vmax = getSValue(vt, statVal[i].vmax).c_str();
+        QString vmean = getSValue(vt, statVal[i].vmean).c_str();
+       
+        if (vt == valueType::tBool)
+            vmean = QString::number(int(statVal[i].vmean + 0.5));
 
 		QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
 		nameItem->setForeground(leftMarkVal[i].color);
-		ui.tblValues->setItem(st + i, 0, nameItem);
+        ui.tblValues->setItem(offs + i, 0, nameItem);
 				
-		ui.tblValues->setItem(st + i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
-		ui.tblValues->setItem(st + i, 2, new QTableWidgetItem(x1));
-		ui.tblValues->setItem(st + i, 3, new QTableWidgetItem(x2));
-		ui.tblValues->setItem(st + i, 4, new QTableWidgetItem(x2_x1));
-		ui.tblValues->setItem(st + i, 5, new QTableWidgetItem(y1));
-		ui.tblValues->setItem(st + i, 6, new QTableWidgetItem(y2));
-		ui.tblValues->setItem(st + i, 7, new QTableWidgetItem(y2_y1));
-				
+		ui.tblValues->setItem(offs + i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
+		ui.tblValues->setItem(offs + i, 2, new QTableWidgetItem(x1));
+		ui.tblValues->setItem(offs + i, 3, new QTableWidgetItem(x2));
+		ui.tblValues->setItem(offs + i, 4, new QTableWidgetItem(x2_x1));
+		ui.tblValues->setItem(offs + i, 5, new QTableWidgetItem(y1));
+		ui.tblValues->setItem(offs + i, 6, new QTableWidgetItem(y2));
+		ui.tblValues->setItem(offs + i, 7, new QTableWidgetItem(y2_y1));
+        ui.tblValues->setItem(offs + i, 8, new QTableWidgetItem(vmin));
+        ui.tblValues->setItem(offs + i, 9, new QTableWidgetItem(vmean));
+        ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
 	}
 	ui.tblValues->resizeColumnsToContents();
 

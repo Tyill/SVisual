@@ -22,64 +22,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
-
 #include "stdafx.h"
-#include "SVGraphPanel/SVGraphPanel.h"
+#include "SVZabbix/SVZabbix.h"
+#include "zbxServer.h"
 
-class wdgAxisValue : public QWidget
-{
-	Q_OBJECT
-private:
+using namespace std;
 
-	int cng_dashHeight_ = 3;
+zbxServer zServer;
 
-	int curDashStep_ = 100;
-	int cng_maxDashStep_ = 200;
-	int cng_minDashStep_ = 100;
-	int curOffsPos_ = 0;
-	int curInterv_ = 0;
+namespace SV_Zbx {
 
-	QPair<double, double> valInterval_;
+    bool startAgent(const QString& addr, int port, const config& cng){
+               
+        if (zServer.isListening()) return true;
 
-    SV_Graph::axisAttr axisAttr_;
+        zServer.setConfig(cng);
 
-	double scale_ = 1.0;
+        return zServer.listen(QHostAddress(addr), port);
+    }
 
-	int mousePrevPosY_ = 0;
+    void stopAgent(){
 
-	
-	void resizeEvent(QResizeEvent * event);
+        if (zServer.isListening())
+          zServer.close();
+    }
+    
+    void setGetSignalData(pf_getSignalData f) {
 
-	void drawDashLines(QPainter& painter);
-	void drawValMark(QPainter& painter);
-
-	QString getValMark(double vl);
-
-
-public:
-	wdgAxisValue(QWidget *parent = 0);
-	~wdgAxisValue();
-
-	void setValInterval(double min, double max);
-
-	QPair<double, double> getValInterval();
-
-	double getValScale();
-
-	QVector<int> getAxisMark();
-
-	void mouseMoveEvent(QMouseEvent * event);
-	void mousePressEvent(QMouseEvent * event);
-	void wheelEvent(QWheelEvent * event);
-	void scale(int delta);
-
-    void setAxisAttr(const SV_Graph::axisAttr&);
-    SV_Graph::axisAttr getAxisAttr();
-
-protected:
-	void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-
-signals:
-	void req_axisChange();
-};
+	      zServer.pfGetSignalData = f;
+    }    
+}

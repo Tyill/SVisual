@@ -1,4 +1,6 @@
 mswin/VS12*
+.vscode
+build
 src/Builds/
 src/CMakeCache.txt
 src/CMakeFiles/

@@ -26,6 +26,7 @@ add_subdirectory(SVServer)
 add_subdirectory(SVWebServer)
 add_subdirectory(SVWriterExample)
 add_subdirectory(SVDocker)
+add_subdirectory(SVZabbix)
 add_subdirectory(SVClientExample)
 
 # gui
