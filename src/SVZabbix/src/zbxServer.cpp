@@ -73,6 +73,7 @@ QString zbxServer::getLastValueStr(const QString& sname){
         case SV_Cng::valueType::tBool:  return val.tBool ? "1" : "0";
         case SV_Cng::valueType::tInt:   return QString::number(val.tInt);
         case SV_Cng::valueType::tFloat: return QString::number(val.tFloat);
+        default: return "0";
         }
     }
     else               
