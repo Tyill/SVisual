@@ -1426,42 +1426,36 @@ QVector<wdgGraph::graphSignStat> wdgGraph::getStatParams(int markPosBegin, int m
         auto& s = signals_[nm];
 
         graphSignStat stat;
-        
-        if (s.type != valueType::tBool){
+                
+        bool isRet = false;
+        int sZn = s.pnts.size(), vcnt = 0;
+        for (int zn = 0; zn < sZn; ++zn){
 
-            bool isRet = false;
-            int sZn = s.pnts.size(), vcnt = 0;
-            for (int zn = 0; zn < sZn; ++zn){
+            for (auto& pt : s.pnts[zn]){
 
-                for (auto& pt : s.pnts[zn]){
+                if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)){
 
-                    if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)){
+                    double cval = pt.second * valScale + valIntr.first;
+                    if (s.type == valueType::tBool)
+                        cval = pt.second;
 
-                        double cval = pt.second * valScale + valIntr.first;
+                    if (cval < stat.vmin) stat.vmin = cval;
+                    if (cval > stat.vmax) stat.vmax = cval;
 
-                        if (cval < stat.vmin) stat.vmin = cval;
-                        if (cval > stat.vmax) stat.vmax = cval;
-
-                        stat.vmean += cval;
-                        ++vcnt;
-                    }
-                    if (pt.first > markPosEnd){
-                        isRet = true;
-                        break;
-                    }
+                    stat.vmean += cval;
+                    ++vcnt;
                 }
-
-                if (isRet) break;
+                if (pt.first > markPosEnd){
+                    isRet = true;
+                    break;
+                }
             }
-            if (vcnt > 0)
-                stat.vmean /= vcnt;
-        }
-        else{
-            stat.vmin = 0.0;
-            stat.vmax = 0.0;
-            stat.vmean = 0.0;
-        }
 
+            if (isRet) break;
+        }
+        if (vcnt > 0)
+            stat.vmean /= vcnt;
+    
         res.append(stat);
     }
 
@@ -1487,41 +1481,36 @@ QVector<wdgGraph::graphSignStat> wdgGraph::getStatAlterParams(int markPosBegin, 
                valScale = (valMaxInterval - valMinInterval) / ui.wPlot->height();
 
         graphSignStat stat;
+                
+        bool isRet = false;
+        int sZn = s.pnts.size(), vcnt = 0;
+        for (int zn = 0; zn < sZn; ++zn){
 
-        if (s.type != valueType::tBool){
+            for (auto& pt : s.pnts[zn]){
 
-            bool isRet = false;
-            int sZn = s.pnts.size(), vcnt = 0;
-            for (int zn = 0; zn < sZn; ++zn){
+                if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)){
 
-                for (auto& pt : s.pnts[zn]){
+                    double cval = pt.second * valScale + valMinInterval;
+                    if (s.type == valueType::tBool)
+                        cval = pt.second;
 
-                    if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)){
+                    if (cval < stat.vmin) stat.vmin = cval;
+                    if (cval > stat.vmax) stat.vmax = cval;
 
-                        double cval = pt.second * valScale + valMinInterval;
-
-                        if (cval < stat.vmin) stat.vmin = cval;
-                        if (cval > stat.vmax) stat.vmax = cval;
-
-                        stat.vmean += cval;
-                        ++vcnt;
-                    }
-                    if (pt.first > markPosEnd){
-                        isRet = true;
-                        break;
-                    }
+                    stat.vmean += cval;
+                    ++vcnt;
                 }
-
-                if (isRet) break;
+                if (pt.first > markPosEnd){
+                    isRet = true;
+                    break;
+                }
             }
-            if (vcnt > 0)
-                stat.vmean /= vcnt;
+
+            if (isRet) break;
         }
-        else{
-            stat.vmin = 0.0;
-            stat.vmax = 0.0;
-            stat.vmean = 0.0;
-        }
+        if (vcnt > 0)
+            stat.vmean /= vcnt;
+       
 
         res.append(stat);
     }

@@ -345,6 +345,9 @@ void graphPanel::tableUpdate(wdgGraph* graph){
         QString vmax = getSValue(vt, statVal[i].vmax).c_str();
         QString vmean = getSValue(vt, statVal[i].vmean).c_str();
 
+        if (vt == valueType::tBool)
+            vmean = QString::number(int(statVal[i].vmean + 0.5));
+
 		QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
 		nameItem->setForeground(leftMarkVal[i].color);
 		ui.tblValues->setItem(i, 0, nameItem);
@@ -357,8 +360,8 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 		ui.tblValues->setItem(i, 6, new QTableWidgetItem(y2));
 		ui.tblValues->setItem(i, 7, new QTableWidgetItem(y2_y1));
         ui.tblValues->setItem(i, 8, new QTableWidgetItem(vmin));
-        ui.tblValues->setItem(i, 9, new QTableWidgetItem(vmax));
-        ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmean));
+        ui.tblValues->setItem(i, 9, new QTableWidgetItem(vmean));
+        ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmax));
 	}
 	ui.tblValues->resizeColumnsToContents();
 }
@@ -401,6 +404,9 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
         QString vmin = getSValue(vt, statVal[i].vmin).c_str();
         QString vmax = getSValue(vt, statVal[i].vmax).c_str();
         QString vmean = getSValue(vt, statVal[i].vmean).c_str();
+       
+        if (vt == valueType::tBool)
+            vmean = QString::number(int(statVal[i].vmean + 0.5));
 
 		QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
 		nameItem->setForeground(leftMarkVal[i].color);
@@ -414,8 +420,8 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
 		ui.tblValues->setItem(offs + i, 6, new QTableWidgetItem(y2));
 		ui.tblValues->setItem(offs + i, 7, new QTableWidgetItem(y2_y1));
         ui.tblValues->setItem(offs + i, 8, new QTableWidgetItem(vmin));
-        ui.tblValues->setItem(offs + i, 9, new QTableWidgetItem(vmax));
-        ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmean));
+        ui.tblValues->setItem(offs + i, 9, new QTableWidgetItem(vmean));
+        ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
 	}
 	ui.tblValues->resizeColumnsToContents();
 

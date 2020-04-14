@@ -601,12 +601,12 @@
       </column>
       <column>
        <property name="text">
-        <string>MAX</string>
+        <string>AVR</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>MEAN</string>
+        <string>MAX</string>
        </property>
       </column>
      </widget>

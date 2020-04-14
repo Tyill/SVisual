@@ -385,9 +385,9 @@ public:
         QTableWidgetItem *___qtablewidgetitem8 = tblValues->horizontalHeaderItem(8);
         ___qtablewidgetitem8->setText(QApplication::translate("graphPanelClass", "MIN", 0));
         QTableWidgetItem *___qtablewidgetitem9 = tblValues->horizontalHeaderItem(9);
-        ___qtablewidgetitem9->setText(QApplication::translate("graphPanelClass", "MAX", 0));
+        ___qtablewidgetitem9->setText(QApplication::translate("graphPanelClass", "AVR", 0));
         QTableWidgetItem *___qtablewidgetitem10 = tblValues->horizontalHeaderItem(10);
-        ___qtablewidgetitem10->setText(QApplication::translate("graphPanelClass", "MEAN", 0));
+        ___qtablewidgetitem10->setText(QApplication::translate("graphPanelClass", "MAX", 0));
     } // retranslateUi
 
 };
