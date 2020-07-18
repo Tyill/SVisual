@@ -78,7 +78,7 @@ public:
         bool zabbix_ena;              
         QString zabbix_addr;       ///< agent ip
         int zabbix_port;           ///< agent port
-
+        
         int toutLoadWinStateSec;
 
         SV_Graph::graphSetting graphSett;

@@ -967,7 +967,7 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
 	if (mref.contains(root)){
 		
         if (mref[root]->isEnable && mref[root]->isActive){
-            menu->addAction(tr("Все на график"));
+            menu->addAction(tr("Показать все"));
             menu->addAction(tr("Отключить"));
         }
 		else{
@@ -1048,7 +1048,7 @@ void MainWin::contextMenuClick(QAction* act){
 	}
 	// module
 	else{
-        if (act->text() == tr("Все на график")){
+        if (act->text() == tr("Показать все")){
             for (auto& s : mref[root]->signls){
                 if (sref.contains(s.c_str()) && sref[s.c_str()]->isActive){
                     SV_Graph::addSignal(graphPanels_[this], QString::fromStdString(s));

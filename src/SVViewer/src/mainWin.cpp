@@ -846,7 +846,7 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
             
         if (mref[root]->isActive){
             QMenu* menu = new QMenu(this);
-            menu->addAction(tr("Все на график"));
+            menu->addAction(tr("Показать все"));
             connect(menu,
                 SIGNAL(triggered(QAction*)),
                 this,
@@ -885,7 +885,7 @@ void MainWin::contextMenuClick(QAction* act){
 
     if (root.isEmpty()) return;
              
-    if (act->text() == tr("Все на график")){
+    if (act->text() == tr("Показать все")){
         auto mref = getCopyModuleRef();
         auto sref = getCopySignalRef();
         for (auto& s : mref[root]->signls){

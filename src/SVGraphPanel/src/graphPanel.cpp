@@ -312,7 +312,7 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 	graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
 	ui.tblValues->clearContents();
-
+   
 	int leftMarkP = leftMarkPos.x(), 
         rightMarkP = rightMarkPos.x();
 
@@ -333,7 +333,7 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 	while (sz > ui.tblValues->rowCount()){
 		ui.tblValues->insertRow(ui.tblValues->rowCount());
 	}
-
+       
 	for (int i = 0; i < sz; ++i){
 
 		valueType vt = leftMarkVal[i].type;
@@ -364,6 +364,9 @@ void graphPanel::tableUpdate(wdgGraph* graph){
         ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmax));
 	}
 	ui.tblValues->resizeColumnsToContents();
+            
+    ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
+    ui.tblValues->sortByColumn(ui.tblValues->horizontalHeader()->sortIndicatorSection(), ui.tblValues->horizontalHeader()->sortIndicatorOrder());
 }
 
 void graphPanel::tableUpdateAlter(wdgGraph* graph){
@@ -424,8 +427,9 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
         ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
 	}
 	ui.tblValues->resizeColumnsToContents();
-
-
+    
+    ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
+    ui.tblValues->sortByColumn(ui.tblValues->horizontalHeader()->sortIndicatorSection(), ui.tblValues->horizontalHeader()->sortIndicatorOrder());
 }
 
 void graphPanel::diapTimeUpdate(){
@@ -434,7 +438,11 @@ void graphPanel::diapTimeUpdate(){
 
 	ui.dTimeBegin->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.first));
 	ui.dTimeEnd->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.second));
-
+    
+    if (selGraph_){
+        tableUpdate(selGraph_);
+        tableUpdateAlter(selGraph_);
+    }
 }
 
 void graphPanel::axisTimeChange(QString obj){
@@ -569,6 +577,11 @@ void graphPanel::updateSignals(){
 
 	for (auto ob : graphObj_)			
 		ob->plotUpdate();    
+
+    if (selGraph_){
+        tableUpdate(selGraph_);
+        tableUpdateAlter(selGraph_);
+    }
 }
 
 void graphPanel::graphToDn(QString obj){

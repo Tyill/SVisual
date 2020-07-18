@@ -106,16 +106,16 @@ public:
 
             stext += "\n\n\n";
 
-            stext += "nval = cval;\n";
-            stext += "offs = 0;\n";
+            stext += "valOffs = 0;\n";
+            stext += "tmOffs = 0;\n";                     
 
-            stext += "\n\n\n";
+            stext += "\n\n";
 
             if (type == SV_Cng::valueType::tBool)     stext += "setBoolValue(";
             else if (type == SV_Cng::valueType::tInt) stext += "setIntValue(";
             else                                      stext += "setFloatValue(";
 
-            stext += "\"" + signal + "Virt" + "\", nval, ctm + offs);";
+            stext += "\"" + signal + "Virt" + "\", cval + valOffs, ctm + tmOffs);";
           
 
             ui.txtScript->setText(stext);

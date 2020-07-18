@@ -47,6 +47,11 @@ void printMess(const std::string& mess){
     }
 }
 
+uint64_t getCTimeMS(){
+
+    return SV_Aux::CurrDateTimeSinceEpochMs();
+}
+
 uint64_t getTimeValue(const std::string& module, const std::string& signal){
 
     QString md = qUtf8Printable(module.c_str()),
@@ -611,7 +616,8 @@ void scriptPanel::startUpdateThread(){
         .addFunction("getFloatValue", getFloatValue)
         .addFunction("setBoolValue", setBoolValue)
         .addFunction("setIntValue", setIntValue)
-        .addFunction("setFloatValue", setFloatValue);
+        .addFunction("setFloatValue", setFloatValue)
+        .addFunction("getCTimeMS", getCTimeMS);
         
     workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
 }
