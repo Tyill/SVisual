@@ -51,6 +51,7 @@ public:
 
     bool saveAttrSignals(const QMap<QString, signalAttr>& attr);
     signalAttr getAttrSignal(const QString& signal, const QString& module);
+    void delAttrSignal(const QString& signal, const QString& module);
 
     void saveEvent(QString trigger, QDateTime dt);
     QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);

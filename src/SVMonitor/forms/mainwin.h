@@ -79,6 +79,8 @@ public:
         QString zabbix_addr;       ///< agent ip
         int zabbix_port;           ///< agent port
 
+        int toutLoadWinStateSec;
+
         SV_Graph::graphSetting graphSett;
 	};
 
@@ -137,9 +139,6 @@ private:
 
 public slots:
 	void slowMode();
-	void selSignalClick(QTreeWidgetItem*, int);
-	void selSignalDClick(QTreeWidgetItem * item, int column);
-	void selSignalChange(QTreeWidgetItem * item, int column);
 	void contextMenuClick(QAction*);
 	void updateTblSignal();
 	void updateSignals();

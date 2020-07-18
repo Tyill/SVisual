@@ -112,10 +112,7 @@ public slots:
     void updateSignals();
 	void actionOpenData();
 	void actionOpenStat();
-	void selSignalClick(QTreeWidgetItem*, int);
-	void selSignalDClick(QTreeWidgetItem * item, int column);
-	void selSignalChange(QTreeWidgetItem * item, int column);
-    bool loadData(QStringList files);
+	bool loadData(QStringList files);
     void loadDataFinished(bool ok);
     void contextMenuClick(QAction*);
 };

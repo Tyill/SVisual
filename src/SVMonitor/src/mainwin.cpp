@@ -186,9 +186,56 @@ void MainWin::load(){
 
 void MainWin::Connect(){
 		
-	connect(ui.treeSignals, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(selSignalClick(QTreeWidgetItem*, int)));
-	connect(ui.treeSignals, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(selSignalDClick(QTreeWidgetItem*, int)));
-	connect(ui.treeSignals, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(selSignalChange(QTreeWidgetItem*, int)));
+    connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
+        auto mref = SV_Srv::getCopyModuleRef();
+
+        if (mref.find(item->text(0).toStdString()) != mref.end()){
+
+            ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
+        }
+    });
+    connect(ui.treeSignals, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem* item, int column){
+        auto mref = SV_Srv::getCopyModuleRef();
+
+        if (mref.find(item->text(0).toStdString()) != mref.end())
+            return;
+
+        auto sign = item->text(5);
+        if (column == 0){
+            SV_Graph::addSignal(graphPanels_[this], sign);
+        }
+        else {
+            if (column == 2){
+
+                auto clr = QColorDialog::getColor();
+
+                item->setBackgroundColor(2, clr);
+
+                auto sd = getSignalDataSrv(sign);
+
+                if (!sd) return;
+
+                signAttr_[sign] = signalAttr{ QString::fromStdString(sd->name),
+                    QString::fromStdString(sd->module),
+                    clr };
+                for (auto gp : graphPanels_)
+                    SV_Graph::setSignalAttr(gp, sign, SV_Graph::signalAttr{ signAttr_[sign].color });
+            }
+            else
+                ui.treeSignals->editItem(item, column);
+        }
+    });
+    connect(ui.treeSignals, &QTreeWidget::itemChanged, [this](QTreeWidgetItem* item, int column){
+        std::string sign = item->text(5).toStdString();
+        SV_Cng::signalData* sd = SV_Srv::getSignalData(sign);
+
+        if (!sd) return;
+
+        switch (column){
+          case 3: sd->comment = item->text(3).toStdString(); break;
+          case 4: sd->group = item->text(4).toStdString(); break;
+        }
+    });
 
 	connect(ui.actionExit, &QAction::triggered, [this]() { 
 		this->close();
@@ -449,6 +496,7 @@ bool MainWin::writeSettings(QString pathIni){
     QFile file(pathIni);
 
     QTextStream txtStream(&file);
+    txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
 
     // запись новых данных
     file.open(QIODevice::WriteOnly);
@@ -488,6 +536,53 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "transparent = " << cng.graphSett.transparent << endl;
     txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
     txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << endl;
+    txtStream << endl;
+    txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << endl;
+    txtStream << endl;
+
+    // состояние окон
+    auto wins = graphPanels_.keys();
+    int cnt = 0;
+    for (auto w : wins){
+
+        file.open(QIODevice::WriteOnly);
+        txtStream << "[graphWin" << cnt << "]" << endl;
+
+        if (w == this)
+            txtStream << "locate = 0" << endl;
+        else{
+            auto geom = ((QDialog*)w)->geometry();
+            txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << endl;
+        }
+
+        auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
+        txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << endl;
+
+        QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
+        for (int i = 0; i < signs.size(); ++i){
+
+            txtStream << "section" << i << " = ";
+            for (int j = signs[i].size() - 1; j >= 0; --j)
+                txtStream << signs[i][j] << " ";
+
+            txtStream << endl;
+        }
+
+        QVector<SV_Graph::axisAttr> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
+        for (int i = 0; i < axisAttr.size(); ++i){
+
+            txtStream << "axisAttr" << i << " = ";
+            txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
+            txtStream << axisAttr[i].min << " ";
+            txtStream << axisAttr[i].max << " ";
+            txtStream << axisAttr[i].step << " ";
+
+            txtStream << endl;
+        }
+
+        txtStream << endl;
+        ++cnt;
+    }
 
     file.close();
 
@@ -558,6 +653,7 @@ bool MainWin::init(QString initPath){
     cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
     cng.outArchivePath = settings.value("outArchivePath", "").toString();
     if (cng.outArchivePath.isEmpty()) cng.outArchivePath = cng.dirPath + "/";
+    cng.outArchivePath.replace("\\", "/");
     cng.outArchiveName = settings.value("outFileName", "svrec").toString();;
     cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
     cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
@@ -566,8 +662,82 @@ bool MainWin::init(QString initPath){
     cng.graphSett.transparent = settings.value("transparent", "100").toInt();
     cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
 
+    cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
+
+        
     settings.endGroup();
 
+    QTimer* tmWinSetts = new QTimer(this);
+    connect(tmWinSetts, &QTimer::timeout, [this, initPath, tmWinSetts]() {
+   
+        QSettings settings(initPath, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+        auto grps = settings.childGroups();
+        for (auto& g : grps){
+
+            if (!g.startsWith("graphWin"))
+                continue;
+
+            settings.beginGroup(g);
+
+            QString locate = settings.value("locate").toString();
+            QObject* win = this;
+            if (locate != "0"){
+
+                auto lt = locate.split(' ');
+
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+            }
+
+            int sect = 0;
+            while (true){
+
+                QString str = settings.value("section" + QString::number(sect), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList signs = str.split(' ');
+                for (auto& s : signs){
+                    SV_Graph::addSignal(graphPanels_[win], s, sect);
+                }
+                ++sect;
+            }
+
+            QVector< SV_Graph::axisAttr> axisAttrs;
+            int axisInx = 0;
+            while (true){
+
+                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList attr = str.split(' ');
+
+                SV_Graph::axisAttr axAttr;
+                axAttr.isAuto = attr[0] == "1";
+                axAttr.min = attr[1].toDouble();
+                axAttr.max = attr[2].toDouble();
+                axAttr.step = attr[3].toDouble();
+
+                axisAttrs.push_back(axAttr);
+
+                ++axisInx;
+            }
+
+            if (!axisAttrs.empty())
+                SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
+
+            QString tmDiap = settings.value("tmDiap", "10000").toString();
+
+            auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
+            ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
+
+            SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
+
+            settings.endGroup();
+        }
+        tmWinSetts->deleteLater();
+    });
+    tmWinSetts->start(cng.toutLoadWinStateSec * 1000);
+    
     if (!QFile(initPath).exists())
         writeSettings(initPath);
 
@@ -784,61 +954,6 @@ void MainWin::sortSignalByModule(){
         
 }
 
-void MainWin::selSignalClick(QTreeWidgetItem* item, int column){
-
-	auto mref = SV_Srv::getCopyModuleRef();
-
-	if (mref.find(item->text(0).toStdString()) != mref.end()){
-
-		ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
-	}    
-}
-
-void MainWin::selSignalDClick(QTreeWidgetItem * item, int column){
-	
-	auto mref = SV_Srv::getCopyModuleRef();
-
-	if (mref.find(item->text(0).toStdString()) != mref.end()) return;
-
-    auto sign = item->text(5);
-
-    if (column == 0){
-        SV_Graph::addSignal(graphPanels_[this], sign);
-    }else {
-        if (column == 2){
-           
-            auto clr = QColorDialog::getColor();
-
-            item->setBackgroundColor(2, clr);
-
-            auto sd = getSignalDataSrv(sign);
-
-            if (!sd) return;
-
-            signAttr_[sign] = signalAttr{ QString::fromStdString(sd->name),
-                                          QString::fromStdString(sd->module),
-                                          clr };
-            for (auto gp : graphPanels_)
-                SV_Graph::setSignalAttr(gp, sign, SV_Graph::signalAttr{ signAttr_[sign].color });
-        }
-        else 
-            ui.treeSignals->editItem(item, column);
-    }
-}
-
-void MainWin::selSignalChange(QTreeWidgetItem * item, int column){
-
-	std::string sign = item->text(5).toStdString();
-	SV_Cng::signalData* sd = SV_Srv::getSignalData(sign);
-    
-    if (!sd) return;
-       
-    switch (column){
-    case 3: sd->comment = item->text(3).toStdString(); break;
-    case 4: sd->group = item->text(4).toStdString(); break;    
-    }
-}
-
 void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
 	QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
@@ -851,7 +966,10 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
 	if (mref.contains(root)){
 		
-		if (mref[root]->isEnable && mref[root]->isActive) menu->addAction(tr("Отключить"));
+        if (mref[root]->isEnable && mref[root]->isActive){
+            menu->addAction(tr("Все на график"));
+            menu->addAction(tr("Отключить"));
+        }
 		else{
 			menu->addAction(tr("Включить"));
 			menu->addAction(tr("Удалить"));
@@ -862,6 +980,7 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
         if (module != "Virtual"){
             menu->addAction(tr("Скрипт"));
         }
+        menu->addAction(tr("Сбросить цвет"));
         menu->addAction(tr("Удалить"));
 	}
 
@@ -900,6 +1019,20 @@ void MainWin::contextMenuClick(QAction* act){
             scr->showSignScript(root, module, sd->type);
 
         }
+        else if (act->text() == tr("Сбросить цвет")){
+
+            QString module = ui.treeSignals->currentItem()->parent()->text(0);
+            QString sign = root + module;
+
+            if (signAttr_.contains(sign)){
+                signAttr_.remove(sign);
+                for (auto gp : graphPanels_){
+                    SV_Graph::update(gp);
+                }
+                db_->delAttrSignal(root, module);
+                sortSignalByModule();
+            }
+        }
         else if(act->text() == tr("Удалить")){
 
             QString module = ui.treeSignals->currentItem()->parent()->text(0);
@@ -915,8 +1048,14 @@ void MainWin::contextMenuClick(QAction* act){
 	}
 	// module
 	else{
-
-		if (act->text() ==  tr("Включить")){
+        if (act->text() == tr("Все на график")){
+            for (auto& s : mref[root]->signls){
+                if (sref.contains(s.c_str()) && sref[s.c_str()]->isActive){
+                    SV_Graph::addSignal(graphPanels_[this], QString::fromStdString(s));
+                }
+            }
+        }
+		else if (act->text() ==  tr("Включить")){
 
 			mref[root]->isEnable = true;
 			sortSignalByModule();

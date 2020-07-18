@@ -223,6 +223,8 @@ void settingsPanel::saveChange(){
     cng.outArchiveEna = ui.rbtnArchEna->isChecked();
     cng.outArchivePath = ui.txtArchPath->text();
 
+    cng.outArchivePath.replace("\\", "/");
+
 	cng.com_ena = ui.rbtnConnectByCom->isChecked();
 
     cng.com_ports.clear();

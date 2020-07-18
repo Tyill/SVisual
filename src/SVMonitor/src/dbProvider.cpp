@@ -392,6 +392,17 @@ signalAttr dbProvider::getAttrSignal(const QString& signal, const QString& modul
     return as;
 }
 
+void dbProvider::delAttrSignal(const QString& signal, const QString& module){
+
+    stringstream ss;
+
+    ss << "DELETE FROM AttrSignal WHERE signal = '" << signal.toUtf8().data() << "' AND "
+          " module = '" << module.toUtf8().data() << "';";
+
+    vector<vector<string>> res;
+    query(ss.str(), res);
+}
+
 void dbProvider::saveEvent(QString trg, QDateTime dt){
 
 	stringstream ss;
