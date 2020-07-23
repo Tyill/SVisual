@@ -481,15 +481,9 @@ void graphPanel::selectGraph(QString obj){
 	
     for (auto ob : graphObj_){
 
-        if (ob->objectName() != obj){
-            ob->setStyleSheet("");
-        }
-        else {
+        if (ob->objectName() == obj){
             selGraph_ = ob;
-            if (graphObj_.size() > 1)
-               ob->setStyleSheet("QGroupBox{ border: 2px solid yellow; }");
-            else
-               ob->setStyleSheet("");
+            break;
         }
     }
 

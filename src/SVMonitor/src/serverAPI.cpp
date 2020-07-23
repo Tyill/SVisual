@@ -47,9 +47,20 @@ QMap<QString, SV_Cng::signalData *> getCopySignalRefSrv(){
 	return csref;
 };
 
-SV_Cng::moduleData* getModuleDataSrv(const QString& sing){
+SV_Cng::moduleData* getModuleDataSrv(const QString& module){
 
-    return SV_Srv::getModuleData(sing.toUtf8().data());
+    return SV_Srv::getModuleData(module.toUtf8().data());
+};
+
+QVector<QString> getModuleSignalsSrv(const QString& module){
+
+    auto msign = SV_Srv::getModuleSignals(module.toUtf8().data());
+
+    QVector<QString> res;
+    for (auto& s : msign){
+        res.push_back(QString::fromStdString(s));
+    }
+    return res;
 };
 
 SV_Cng::signalData* getSignalDataSrv(const QString& sing){

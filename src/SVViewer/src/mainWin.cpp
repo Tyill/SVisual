@@ -291,31 +291,31 @@ void MainWin::load(){
     SV_Script::setGetSignalData(scriptPanel_, getSignalData);
     SV_Script::setGetModuleData(scriptPanel_, getModuleData);
     SV_Script::setAddSignal(scriptPanel_, [](const QString& name, SV_Cng::signalData* sd){
-    if (!mainWin->signalRef_.contains(name)) {
-        mainWin->signalRef_.insert(name, sd);
-        mainWin->signalRef_[name]->isActive = true;
+        if (!mainWin->signalRef_.contains(name)) {
+            mainWin->signalRef_.insert(name, sd);
+            mainWin->signalRef_[name]->isActive = true;
 
-        return true;
-    }
-    return false;
+            return true;
+        }
+        return false;
     });
     SV_Script::setAddModule(scriptPanel_, [](const QString& name, SV_Cng::moduleData* md){
-    if (!mainWin->moduleRef_.contains(name)) {
-        mainWin->moduleRef_.insert(name, md);
-        mainWin->moduleRef_[name]->isActive = true;
+        if (!mainWin->moduleRef_.contains(name)) {
+            mainWin->moduleRef_.insert(name, md);
+            mainWin->moduleRef_[name]->isActive = true;
 
-        return true;
-    }
-    return false;
+            return true;
+        }
+        return false;
     });
     SV_Script::setAddSignalsCBack(scriptPanel_, [](){
-    QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
-    });
+        QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+    });     
     SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
-    QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+        QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
     });
     SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
-    QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+        QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
     });
 
       
@@ -700,10 +700,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 	ui.treeSignals->clear();
 	auto sref = getCopySignalRef();
-
-	QIcon iconImpuls(":/SVViewer/images/iconImpuls.png");
-	QIcon iconSin(":/SVViewer/images/iconSin.png");
-
+    	
 	int scnt = 0;
 	if (byModule){
 
@@ -722,7 +719,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 				QString sname = s.c_str();
 
-				if (!sref[sname]->isActive) continue;
+                if (!sref.contains(sname) || !sref[sname]->isActive) continue;
 				++scnt;
 				
 				QTreeWidgetItem* item = new QTreeWidgetItem(root);
@@ -738,11 +735,6 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 				item->setText(3, sref[sname]->group.c_str());
 				item->setText(4, sref[sname]->comment.c_str());
 				item->setText(5, sname);
-
-				if (sref[sname]->type == valueType::tBool)
-					item->setIcon(0, iconImpuls);
-				else
-					item->setIcon(0, iconSin);
 			}
 		}
 	}
@@ -766,7 +758,7 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
 				QString sname = s.c_str();
 
-				if (!sref[sname]->isActive) continue;
+                if (!sref.contains(sname) || !sref[sname]->isActive) continue;
 				++scnt;
 
 				QTreeWidgetItem* item = new QTreeWidgetItem(root);
@@ -782,11 +774,6 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 				item->setText(3, sref[sname]->module.c_str());
 				item->setText(4, sref[sname]->comment.c_str());
 				item->setText(5, sname);
-
-				if (sref[sname]->type == valueType::tBool)
-					item->setIcon(0, iconImpuls);
-				else
-					item->setIcon(0, iconSin);
 			}
 		}
 	}

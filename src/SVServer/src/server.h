@@ -68,6 +68,8 @@ class server{
     // вернуть данные модуля
     SV_Cng::moduleData* getModuleData(const std::string& module);
 
+    // вернуть сигналы модуля
+    std::vector<std::string> getModuleSignals(const std::string& module);
 
     // вернуть все сигналы
     std::map<std::string, SV_Cng::signalData *> getCopySignalRef();

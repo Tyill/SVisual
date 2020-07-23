@@ -33,6 +33,8 @@ SV_Cng::signalData* getSignalDataSrv(const QString& sing);
 
 SV_Cng::moduleData* getModuleDataSrv(const QString& md);
 
+QVector<QString> getModuleSignalsSrv(const QString& md);
+
 bool loadSignalDataSrv(const QString& name);
 
 bool addSignalSrv(const QString& name, SV_Cng::signalData* sd);

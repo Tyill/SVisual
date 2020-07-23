@@ -917,34 +917,27 @@ void MainWin::sortSignalByModule(){
 			root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-yel.png"));
 	
 		if (!md->isActive) root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-red.png"));
+        		
+        auto msigns = getModuleSignalsSrv(md->module.c_str());
+        for (auto& sign : msigns){
+			SV_Cng::signalData* sd = SV_Srv::getSignalData(sign.toStdString());
 
-		QIcon iconImpuls(":/SVMonitor/images/iconImpuls.png");
-		QIcon iconSin(":/SVMonitor/images/iconSin.png");
-
-		for (auto& sign : md->signls){
-			SV_Cng::signalData* sd = SV_Srv::getSignalData(sign);
-
-			if (sd->isDelete) continue;
+			if (!sd || sd->isDelete) continue;
 
 			QTreeWidgetItem* item = new QTreeWidgetItem(root);				
 			item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
 			item->setText(0, sd->name.c_str());
 			item->setText(1, SV_Cng::getSVTypeStr(sd->type).c_str());
 
-            if (signAttr_.contains(sign.c_str()))
-                item->setBackgroundColor(2, signAttr_[sign.c_str()].color);
+            if (signAttr_.contains(sign))
+                item->setBackgroundColor(2, signAttr_[sign].color);
             else
                 item->setBackgroundColor(2, QColor(255, 255, 255));
 
 			item->setText(3, sd->comment.c_str());
 			item->setText(4, sd->group.c_str());
                        
-			item->setText(5, sign.c_str());
-					
-			if (sd->type == SV_Cng::valueType::tBool)
-				item->setIcon(0, iconImpuls);
-			else 
-				item->setIcon(0, iconSin);
+			item->setText(5, sign);			
 		}
 	}
 	

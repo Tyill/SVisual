@@ -98,6 +98,12 @@ namespace SV_Srv {
 		return serv.getModuleData(module);
     }
 
+    // вернуть сигналы модуля
+    std::vector<std::string> getModuleSignals(const std::string& module){
+
+        return serv.getModuleSignals(module);
+    }
+
     // вернуть все сигналы
     std::map<std::string, SV_Cng::signalData *> getCopySignalRef(){
 

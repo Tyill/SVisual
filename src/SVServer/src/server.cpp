@@ -142,6 +142,13 @@ SV_Cng::moduleData* server::getModuleData(const std::string& module){
 	return moduleData_.find(module) != moduleData_.end() ? moduleData_[module] : nullptr;
 }
 
+// вернуть сигналы модуля
+std::vector<std::string> server::getModuleSignals(const std::string& module){
+    std::lock_guard<std::mutex> lck(mtx_);
+
+    return moduleData_.find(module) != moduleData_.end() ? moduleData_[module]->signls : std::vector<std::string>();
+}
+
 // вернуть все сигналы
 std::map<std::string, SV_Cng::signalData *> server::getCopySignalRef(){
 

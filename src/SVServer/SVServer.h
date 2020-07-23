@@ -99,6 +99,9 @@ namespace SV_Srv {
     // вернуть данные модуля
     SVSRV_API SV_Cng::moduleData* getModuleData(const std::string& module);
 
+    // вернуть сигналы модуля
+    SVSRV_API std::vector<std::string> getModuleSignals(const std::string& module);
+
     // вернуть все сигналы
     // key = name + module
     SVSRV_API std::map<std::string, SV_Cng::signalData *> getCopySignalRef();
