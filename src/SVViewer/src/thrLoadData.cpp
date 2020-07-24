@@ -172,12 +172,17 @@ bool MainWin::loadModuleVals(QString path){
 
 bool loadSignalData(const QString& sign){
    
-    if (!mainWin->signalRef_.contains(sign))
+    QMap<QString, signalData*> sref;
+    { QMutexLocker locker(&mainWin->mtx_);
+      sref = getCopySignalRef();
+    }
+
+    if (!sref.contains(sign))
         return false;
 
     MainWin::config& cng = mainWin->cng;
 
-    auto sdata = mainWin->signalRef_[sign];
+    auto sdata = sref[sign];
     
     bool  ok = true, isNewFile = false;
     for (auto path : mainWin->fileRef_){
@@ -193,7 +198,7 @@ bool loadSignalData(const QString& sign){
 
         QDataStream dataStream(&file);
                 
-        int csz = mainWin->signalRef_[sign]->buffData.size(),
+        int csz = sref[sign]->buffData.size(),
             newsz = csz + path->signls[sign].vlsCnt,
             vlSz = sizeof(value) * SV_PACKETSZ;
 

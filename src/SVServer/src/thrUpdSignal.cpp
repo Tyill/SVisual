@@ -96,12 +96,10 @@ void thrUpdSignal::addSignal(const string& sign, const bufferData::inputData& bp
         md->isActive = false;
         md->isDelete = false;
         md->isEnable = true;
-        pServ_->addModule(bp.module, md);
+        pServ_->addModule(md);
     }
-    
-    md->signls.push_back(sign);
-        
-    pServ_->addSignal(sign, sd);
+            
+    pServ_->addSignal(sd);
 
 	pArchive_->addSignal(sign);
 }

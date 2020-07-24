@@ -32,7 +32,6 @@
 #include "Lib/rapidjson/document.h"
 
 class thrUpdSignal;
-class thrUpdTrigger;
 
 class server{
 
@@ -63,7 +62,7 @@ class server{
     std::map<std::string, SV_Cng::moduleData *> getCopyModuleRef();
 
     // добавить модуль
-    bool addModule(const std::string& name, SV_Cng::moduleData *);
+    bool addModule(SV_Cng::moduleData*);
 
     // вернуть данные модуля
     SV_Cng::moduleData* getModuleData(const std::string& module);
@@ -72,10 +71,10 @@ class server{
     std::vector<std::string> getModuleSignals(const std::string& module);
 
     // вернуть все сигналы
-    std::map<std::string, SV_Cng::signalData *> getCopySignalRef();
+    std::map<std::string, SV_Cng::signalData*> getCopySignalRef();
 
     // добавить сигнал
-    bool addSignal(const std::string& name, SV_Cng::signalData *);
+    bool addSignal(SV_Cng::signalData*);
 
     // загрузить данные
     bool signalBufferEna(const std::string& name);
@@ -93,8 +92,8 @@ private:
     bufferData* pBuffData_ = nullptr;
     thrUpdSignal* pthrUpdSignal_ = nullptr;
    
-    std::map < std::string, SV_Cng::moduleData*> moduleData_;
-    std::map < std::string, SV_Cng::signalData*> signalData_;
+    std::map <std::string, SV_Cng::moduleData*> moduleData_;
+    std::map <std::string, SV_Cng::signalData*> signalData_;
     
     std::mutex mtx_;
 

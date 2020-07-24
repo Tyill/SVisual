@@ -58,7 +58,8 @@ public:
     SV_Script::pf_addModule pfAddModule = nullptr;
     SV_Script::pf_moduleConnectCBack pfModuleConnectCBack = nullptr;
 	SV_Script::pf_loadSignalData pfLoadSignalData= nullptr;
-	
+    SV_Script::pf_changeSignColor pfChangeSignColor = nullptr;
+    
     scriptPanel(QWidget *parent, SV_Script::config, SV_Script::modeGr mode);
     ~scriptPanel();
 

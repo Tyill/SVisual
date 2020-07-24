@@ -40,12 +40,14 @@ class MainWin : public QMainWindow
 {
 	Q_OBJECT
 
-
     friend QMap<QString, SV_Cng::signalData*> getCopySignalRef();
     friend QMap<QString, SV_Cng::moduleData*> getCopyModuleRef();
     friend SV_Cng::signalData* getSignalData(const QString& sign);
     friend SV_Cng::moduleData* getModuleData(const QString& md);
     friend bool loadSignalData(const QString& sign);
+    friend bool addSignal(SV_Cng::signalData* sd);
+    friend bool addModule(SV_Cng::moduleData* md);
+    friend QVector<QString> getModuleSignals(const QString& md);
 
 public:
 	MainWin(QWidget *parent = 0);
@@ -115,6 +117,7 @@ public slots:
 	bool loadData(QStringList files);
     void loadDataFinished(bool ok);
     void contextMenuClick(QAction*);
+    void changeSignColor(QString module, QString signal, QColor color);
 };
 
 

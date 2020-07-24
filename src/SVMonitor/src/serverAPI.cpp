@@ -73,12 +73,12 @@ bool loadSignalDataSrv(const QString& name){
     return SV_Srv::signalBufferEna(name.toUtf8().data());
 }
 
-bool addSignalSrv(const QString& name, SV_Cng::signalData* sd){
+bool addSignalSrv(SV_Cng::signalData* sd){
 
-    return SV_Srv::addSignal(name.toUtf8().data(), sd);
+    return SV_Srv::addSignal(sd);
 }
 
-bool addModuleSrv(const QString& name, SV_Cng::moduleData* md){
+bool addModuleSrv(SV_Cng::moduleData* md){
 
-    return SV_Srv::addModule(name.toUtf8().data(), md);
+    return SV_Srv::addModule(md);
 }

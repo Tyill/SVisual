@@ -104,7 +104,7 @@ namespace SV_Srv {
 
     // вернуть все сигналы
     // key = name + module
-    SVSRV_API std::map<std::string, SV_Cng::signalData *> getCopySignalRef();
+    SVSRV_API std::map<std::string, SV_Cng::signalData*> getCopySignalRef();
 
     /// вернуть данные сигнала
     /// \param sign = name + module
@@ -112,11 +112,10 @@ namespace SV_Srv {
     SVSRV_API SV_Cng::signalData* getSignalData(const std::string& sign);
 
     /// добавить сигнал
-    /// \param sign = name + module
-    SVSRV_API bool addSignal(const std::string& sign, SV_Cng::signalData*);
+    SVSRV_API bool addSignal(SV_Cng::signalData*);
 
     /// добавить модуль
-    SVSRV_API bool addModule(const std::string& name, SV_Cng::moduleData*);
+    SVSRV_API bool addModule(SV_Cng::moduleData*);
 
     /// разрешить буферизацию сигнала
     /// \param sign = name + module

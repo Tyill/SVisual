@@ -68,6 +68,12 @@ namespace SV_Script {
             ((scriptPanel *)stp)->pfAddModule = f;
     }
 
+    void setChangeSignColor(QDialog* stp, pf_changeSignColor f){
+
+        if (stp)
+            ((scriptPanel *)stp)->pfChangeSignColor = f;
+    }
+    
     bool isActiveScript(QDialog* stp, const QString& fname){
 
         if (stp)

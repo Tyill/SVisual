@@ -135,8 +135,11 @@ void MainWin::load(){
     SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
       QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
     });
-    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
-      QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+    SV_Script::setModuleConnectCBack(scriptPanel_, [](const QString& module){
+      QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
+    });
+    SV_Script::setChangeSignColor(scriptPanel_, [](const QString& module, const QString& name, const QColor& clr){
+        QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
     });
    
     exportPanel_ = SV_Exp::createExpPanel(this, SV_Exp::config(cng.cycleRecMs, cng.packetSz));
@@ -219,7 +222,7 @@ void MainWin::Connect(){
                     QString::fromStdString(sd->module),
                     clr };
                 for (auto gp : graphPanels_)
-                    SV_Graph::setSignalAttr(gp, sign, SV_Graph::signalAttr{ signAttr_[sign].color });
+                    SV_Graph::setSignalAttr(gp, sign, SV_Graph::signalAttr{ clr });
             }
             else
                 ui.treeSignals->editItem(item, column);
@@ -1331,4 +1334,10 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     }
 
     return graphWin;
+}
+
+void MainWin::changeSignColor(QString module, QString name, QColor clr){
+    for (auto gp : mainWin->graphPanels_){
+        SV_Graph::setSignalAttr(gp, name + module, SV_Graph::signalAttr{ clr });
+    }
 }

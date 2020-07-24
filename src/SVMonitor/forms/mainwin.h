@@ -145,5 +145,5 @@ public slots:
 	void moduleConnect(QString module);
 	void moduleDisconnect(QString module);
 	void onTrigger(QString trigger);
-    
+    void changeSignColor(QString module, QString signal, QColor color);
 };

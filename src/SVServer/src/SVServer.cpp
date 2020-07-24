@@ -117,15 +117,15 @@ namespace SV_Srv {
     }
 
     /// добавить сигнал
-    bool addSignal(const std::string& sign, SV_Cng::signalData* sd){
+    bool addSignal(SV_Cng::signalData* sd){
 
-        return serv.addSignal(sign, sd);
+        return serv.addSignal(sd);
     }
 
     /// добавить модуль
-    bool addModule(const std::string& module, SV_Cng::moduleData* md){
+    bool addModule(SV_Cng::moduleData* md){
 
-        return serv.addModule(module, md);
+        return serv.addModule(md);
     }
 
     // разрешить буфер сигнала

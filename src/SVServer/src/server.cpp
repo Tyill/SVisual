@@ -121,13 +121,13 @@ std::map<std::string, SV_Cng::moduleData *> server::getCopyModuleRef(){
 };
 
 // добавить модуль
-bool server::addModule(const std::string &name, SV_Cng::moduleData* md){
+bool server::addModule(SV_Cng::moduleData* md){
 
     std::lock_guard<std::mutex> lck(mtx_);
 
 	bool ok = false;
-	if (md && (moduleData_.find(name) == moduleData_.end())) {
-        moduleData_[name] = md;
+	if (md && (moduleData_.find(md->module) == moduleData_.end())) {
+        moduleData_[md->module] = md;
         ok = true;
     }
 
@@ -160,13 +160,15 @@ std::map<std::string, SV_Cng::signalData *> server::getCopySignalRef(){
 };
 
 // добавить сигнал
-bool server::addSignal(const std::string& sign, SV_Cng::signalData* sd){
+bool server::addSignal(SV_Cng::signalData* sd){
 
     std::lock_guard<std::mutex> lck(mtx_);
 
+    string sign = sd->name + sd->module;
 	bool ok = false;
 	if (sd && (signalData_.find(sign) == signalData_.end())) {
         signalData_[sign] = sd;
+        moduleData_[sd->module]->signls.push_back(sign);
         ok = true;
     }
 

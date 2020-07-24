@@ -37,7 +37,7 @@ QVector<QString> getModuleSignalsSrv(const QString& md);
 
 bool loadSignalDataSrv(const QString& name);
 
-bool addSignalSrv(const QString& name, SV_Cng::signalData* sd);
+bool addSignalSrv(SV_Cng::signalData* sd);
 
-bool addModuleSrv(const QString& name, SV_Cng::moduleData* md);
+bool addModuleSrv(SV_Cng::moduleData* md);
 

@@ -73,31 +73,58 @@ using namespace SV_Cng;
 bool loadSignalData(const QString& sign);
 
 QMap<QString, signalData*> getCopySignalRef(){
-    
-    auto sref = mainWin->signalRef_;
-
-    return sref;
+    return mainWin->signalRef_;
 }
 
 QMap<QString, moduleData*> getCopyModuleRef(){
-
-    auto mref = mainWin->moduleRef_;
-
-    return mref;
+    return mainWin->moduleRef_;
 }
 
 signalData* getSignalData(const QString& sign){
-
-    signalData* sd = mainWin->signalRef_.contains(sign) ? mainWin->signalRef_[sign] : nullptr;
-
-    return sd;
+   return mainWin->signalRef_.contains(sign) ? mainWin->signalRef_[sign] : nullptr;;
 }
 
 moduleData* getModuleData(const QString& sign){
+   return mainWin->moduleRef_.contains(sign) ? mainWin->moduleRef_[sign] : nullptr;
+}
 
-    moduleData* md = mainWin->moduleRef_.contains(sign) ? mainWin->moduleRef_[sign] : nullptr;
+bool addSignal(SV_Cng::signalData* sd){
+    QMutexLocker locker(&mainWin->mtx_);
 
-    return md;
+    QString sign = QString::fromStdString(sd->name + sd->module);
+    if (!mainWin->signalRef_.contains(sign)) {
+        mainWin->signalRef_.insert(sign, sd);
+        mainWin->signalRef_[sign]->isActive = true;
+        mainWin->moduleRef_[QString::fromStdString(sd->module)]->signls.push_back(sd->name + sd->module);
+        return true;
+    }
+    return false;
+}
+
+bool addModule(SV_Cng::moduleData* md){
+    QMutexLocker locker(&mainWin->mtx_);
+
+    QString name = QString::fromStdString(md->module);
+    if (!mainWin->moduleRef_.contains(name)) {
+        mainWin->moduleRef_.insert(name, md);
+        mainWin->moduleRef_[name]->isActive = true;
+
+        return true;
+    }
+    return false;
+}
+
+QVector<QString> getModuleSignals(const QString& md){
+    QMutexLocker locker(&mainWin->mtx_);
+
+    QVector<QString> res;
+    if (mainWin->moduleRef_.contains(md)){
+        auto& msign = mainWin->moduleRef_[md]->signls;
+        for (auto& s : msign){
+           res.push_back(QString::fromStdString(s));
+        }
+    }    
+    return res;
 }
 
 
@@ -290,34 +317,20 @@ void MainWin::load(){
     SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
     SV_Script::setGetSignalData(scriptPanel_, getSignalData);
     SV_Script::setGetModuleData(scriptPanel_, getModuleData);
-    SV_Script::setAddSignal(scriptPanel_, [](const QString& name, SV_Cng::signalData* sd){
-        if (!mainWin->signalRef_.contains(name)) {
-            mainWin->signalRef_.insert(name, sd);
-            mainWin->signalRef_[name]->isActive = true;
-
-            return true;
-        }
-        return false;
-    });
-    SV_Script::setAddModule(scriptPanel_, [](const QString& name, SV_Cng::moduleData* md){
-        if (!mainWin->moduleRef_.contains(name)) {
-            mainWin->moduleRef_.insert(name, md);
-            mainWin->moduleRef_[name]->isActive = true;
-
-            return true;
-        }
-        return false;
-    });
+    SV_Script::setAddSignal(scriptPanel_, addSignal);
+    SV_Script::setAddModule(scriptPanel_, addModule);
     SV_Script::setAddSignalsCBack(scriptPanel_, [](){
         QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
     });     
     SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
         QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
     });
-    SV_Script::setModuleConnectCBack(scriptPanel_, [](const std::string& module){
+    SV_Script::setModuleConnectCBack(scriptPanel_, [](const QString& module){
         QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
     });
-
+    SV_Script::setChangeSignColor(scriptPanel_, [](const QString& module, const QString& name, const QColor& clr){
+        QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
+    });
       
 	ui.splitter->addWidget(gp);
     QList<int> ss; ss.append(150); ss.append(500);
@@ -699,26 +712,32 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
         isExpanded[ui.treeSignals->topLevelItem(i)->text(0)] = ui.treeSignals->topLevelItem(i)->isExpanded();
 
 	ui.treeSignals->clear();
-	auto sref = getCopySignalRef();
-    	
+	        	
 	int scnt = 0;
 	if (byModule){
+        QMap<QString, signalData*> sref;
+        QMap<QString, moduleData*> mref;
+        { QMutexLocker locker(&mainWin->mtx_); 
+          mref = getCopyModuleRef();
+          sref = getCopySignalRef();
+        }        
 
 		ui.treeSignals->headerItem()->setText(3, tr("Группа"));
 		
-		for (auto md : moduleRef_){
+        for (auto md : mref){
 
             if (!md->isActive) continue;
 
 			QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
 			
-            if (isExpanded.contains(md->module.c_str()))
+            if (isExpanded.contains(md->module.c_str())){
                 root->setExpanded(isExpanded[md->module.c_str()]);
+            }
             root->setText(0, md->module.c_str());
-            for (auto& s : md->signls){
 
-				QString sname = s.c_str();
-
+            auto signls = getModuleSignals(QString::fromStdString(md->module));
+            for (auto& sname : signls){
+                				
                 if (!sref.contains(sname) || !sref[sname]->isActive) continue;
 				++scnt;
 				
@@ -739,6 +758,11 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 		}
 	}
 	else {
+
+        QMap<QString, signalData*> sref;
+        { QMutexLocker locker(&mainWin->mtx_);
+          sref = getCopySignalRef();
+        }
 
 		ui.treeSignals->headerItem()->setText(3, tr("Модуль"));
 
@@ -946,4 +970,10 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
     }
 
     return graphWin;
+}
+
+void MainWin::changeSignColor(QString module, QString name, QColor clr){
+    for (auto gp : mainWin->graphPanels_){
+        SV_Graph::setSignalAttr(gp, name + module, SV_Graph::signalAttr{ clr });
+    }
 }

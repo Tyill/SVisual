@@ -52,6 +52,18 @@ uint64_t getCTimeMS(){
     return SV_Aux::CurrDateTimeSinceEpochMs();
 }
 
+void changeSignColor(const std::string& module, const std::string& signal, const std::string& color){
+
+    QString md = qUtf8Printable(module.c_str()),
+            sn = qUtf8Printable(signal.c_str());
+
+    if (scrPanelRef->pfChangeSignColor){
+        QColor clr;
+        clr.setNamedColor(QString::fromStdString(color));
+        scrPanelRef->pfChangeSignColor(md, sn, clr);
+    }
+}
+
 uint64_t getTimeValue(const std::string& module, const std::string& signal){
 
     QString md = qUtf8Printable(module.c_str()),
@@ -264,9 +276,9 @@ void scriptPanel::updateSign(signalData* sign, int beginPos, int valuePos){
 
 }
 
-bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, SV_Cng::valueType stype){
+bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, SV_Cng::valueType stype){
 
-    QString sign = signal + module;
+    QString sign = sname + module;
              
     if (signBuff_.contains(sign))
         return true;
@@ -283,7 +295,7 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, 
         sd->isBuffEnable = false;
         sd->isDelete = false;
 
-        sd->name = qUtf8Printable(signal);
+        sd->name = qUtf8Printable(sname);
         sd->module = "Virtual";
         sd->type = stype;
 
@@ -302,15 +314,13 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& signal, 
             md->isActive = true;
             md->isDelete = false;
             md->isEnable = true;
-            pfAddModule("Virtual", md);
+            pfAddModule(md);
 
             if (pfModuleConnectCBack)
                 pfModuleConnectCBack("Virtual");
         }
-
-        md->signls.push_back(qUtf8Printable(sign));
-           
-        pfAddSignal(sign, sd);
+                   
+        pfAddSignal(sd);
 
         if (mode_ == SV_Script::modeGr::player){
             pfLoadSignalData(sign);
@@ -617,7 +627,8 @@ void scriptPanel::startUpdateThread(){
         .addFunction("setBoolValue", setBoolValue)
         .addFunction("setIntValue", setIntValue)
         .addFunction("setFloatValue", setFloatValue)
-        .addFunction("getCTimeMS", getCTimeMS);
+        .addFunction("getCTimeMS", getCTimeMS)
+        .addFunction("changeSignColor", changeSignColor);
         
     workThr_ = std::thread([](scriptPanel* sp){ sp->workCycle(); }, this);
 }

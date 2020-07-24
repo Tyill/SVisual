@@ -69,11 +69,14 @@ namespace SV_Script {
     typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
 	SVSCRIPTPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
-    typedef bool(*pf_addSignal)(const QString &sign, SV_Cng::signalData *);
+    typedef bool(*pf_addSignal)(SV_Cng::signalData*);
     SVSCRIPTPANEL_API void setAddSignal(QDialog* stPanel, pf_addSignal f);
 
-    typedef bool(*pf_addModule)(const QString &module, SV_Cng::moduleData *);
+    typedef bool(*pf_addModule)(SV_Cng::moduleData*);
     SVSCRIPTPANEL_API void setAddModule(QDialog* stPanel, pf_addModule f);
+
+    typedef void(*pf_changeSignColor)(const QString &module, const QString &sign, const QColor& color);
+    SVSCRIPTPANEL_API void setChangeSignColor(QDialog* stPanel, pf_changeSignColor f);
 
     SVSCRIPTPANEL_API bool isActiveScript(QDialog* stPanel, const QString& fname);
 
@@ -95,6 +98,6 @@ namespace SV_Script {
     SVSCRIPTPANEL_API void setAddSignalsCBack(QDialog* stPanel, pf_addSignalsCBack);
 
     // модуль подключен
-    typedef void(*pf_moduleConnectCBack)(const std::string& module);
+    typedef void(*pf_moduleConnectCBack)(const QString& module);
     SVSCRIPTPANEL_API void setModuleConnectCBack(QDialog* stPanel, pf_moduleConnectCBack);
 }

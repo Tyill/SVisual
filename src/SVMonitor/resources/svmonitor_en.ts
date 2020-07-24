@@ -183,8 +183,8 @@
     <message>
         <location filename="../forms/mainwin.ui" line="380"/>
         <location filename="../forms/ui_mainwin.h" line="306"/>
-        <location filename="../src/mainwin.cpp" line="863"/>
-        <location filename="../src/mainwin.cpp" line="889"/>
+        <location filename="../src/mainwin.cpp" line="977"/>
+        <location filename="../src/mainwin.cpp" line="1004"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
@@ -213,7 +213,7 @@
         <translation type="vanished">Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="440"/>
+        <location filename="../src/mainwin.cpp" line="490"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
@@ -235,91 +235,97 @@
         <translation type="vanished">Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="174"/>
+        <location filename="../src/mainwin.cpp" line="177"/>
         <source>Подключение БД успешно</source>
         <translation>Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="176"/>
+        <location filename="../src/mainwin.cpp" line="179"/>
         <source>Подключение БД ошибка: </source>
         <translation>Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="277"/>
+        <location filename="../src/mainwin.cpp" line="327"/>
         <source>Доступна новая версия: </source>
         <translation>New version available: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="279"/>
+        <location filename="../src/mainwin.cpp" line="329"/>
         <source>У вас самая новая версия</source>
         <translation>You have the newest version</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="293"/>
+        <location filename="../src/mainwin.cpp" line="343"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="350"/>
+        <location filename="../src/mainwin.cpp" line="400"/>
         <source>Состояние успешно сохранено</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="355"/>
+        <location filename="../src/mainwin.cpp" line="405"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="423"/>
+        <location filename="../src/mainwin.cpp" line="473"/>
         <source>Состояние успешно загружено</source>
         <translation>Load state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="599"/>
+        <location filename="../src/mainwin.cpp" line="772"/>
         <source>Инициализация параметров успешно</source>
         <translation>Initialization successfully settings</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="666"/>
+        <location filename="../src/mainwin.cpp" line="839"/>
         <source>Zabbix агент запущен: адрес %1 порт %2</source>
         <translation>Zabbix agent running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="669"/>
+        <location filename="../src/mainwin.cpp" line="842"/>
         <source>Не удалось запустить Zabbix агент: адрес %1 порт %2</source>
         <translation>Unable to start the agent Zabbix: address of %1 port %2</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwin.cpp" line="966"/>
+        <location filename="../src/mainwin.cpp" line="1047"/>
+        <source>Показать все</source>
+        <translation>Show all</translation>
     </message>
     <message>
         <source>Не найден файл инициализации %1</source>
         <translation type="vanished">Not found ini file %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="624"/>
+        <location filename="../src/mainwin.cpp" line="797"/>
         <source>Прослушивание %1 порта запущено</source>
         <translation>Listening port %1 running</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="631"/>
+        <location filename="../src/mainwin.cpp" line="804"/>
         <source>%1 порт недоступен</source>
         <translation>%1 port is not available</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="640"/>
+        <location filename="../src/mainwin.cpp" line="813"/>
         <source>TCP cервер запущен: адрес %1 порт %2</source>
         <translation>TCP server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="647"/>
+        <location filename="../src/mainwin.cpp" line="820"/>
         <source>Не удалось запустить TCP сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server TCP: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="655"/>
+        <location filename="../src/mainwin.cpp" line="828"/>
         <source>WEB cервер запущен: адрес %1 порт %2</source>
         <translation>WEB server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="658"/>
+        <location filename="../src/mainwin.cpp" line="831"/>
         <source>Не удалось запустить WEB сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server WEB: address of %1 port %2</translation>
     </message>
@@ -332,17 +338,17 @@
         <translation type="vanished">Unable to start the server tcp: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="692"/>
+        <location filename="../src/mainwin.cpp" line="865"/>
         <source>Ошибка сохранения сигналов в БД</source>
         <translation>Error save signals in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="694"/>
+        <location filename="../src/mainwin.cpp" line="867"/>
         <source>Ошибка сохранения атрибутов в БД</source>
         <translation>Error save attributs in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="696"/>
+        <location filename="../src/mainwin.cpp" line="869"/>
         <source>Ошибка сохранения триггеров в БД</source>
         <translation>Error save triggers in DB</translation>
     </message>
@@ -351,12 +357,12 @@
         <translation type="vanished">Error save events in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="965"/>
+        <location filename="../src/mainwin.cpp" line="1100"/>
         <source>Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.</source>
         <translation>Signal limit exceeded:% 1. Stable work is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1009"/>
+        <location filename="../src/mainwin.cpp" line="1144"/>
         <source>Подключен модуль: </source>
         <translation>Module is connected: </translation>
     </message>
@@ -365,7 +371,7 @@
         <translation type="vanished">Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1058"/>
+        <location filename="../src/mainwin.cpp" line="1193"/>
         <source>Отключен модуль: </source>
         <translation>Module is disconnected: </translation>
     </message>
@@ -378,37 +384,43 @@
         <translation type="vanished">Close an application. Saving options error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="854"/>
-        <location filename="../src/mainwin.cpp" line="924"/>
+        <location filename="../src/mainwin.cpp" line="967"/>
+        <location filename="../src/mainwin.cpp" line="1059"/>
         <source>Отключить</source>
         <translation>Shut off</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="856"/>
-        <location filename="../src/mainwin.cpp" line="919"/>
+        <location filename="../src/mainwin.cpp" line="970"/>
+        <location filename="../src/mainwin.cpp" line="1054"/>
         <source>Включить</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="857"/>
-        <location filename="../src/mainwin.cpp" line="865"/>
-        <location filename="../src/mainwin.cpp" line="903"/>
-        <location filename="../src/mainwin.cpp" line="929"/>
+        <location filename="../src/mainwin.cpp" line="971"/>
+        <location filename="../src/mainwin.cpp" line="980"/>
+        <location filename="../src/mainwin.cpp" line="1032"/>
+        <location filename="../src/mainwin.cpp" line="1064"/>
         <source>Удалить</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="910"/>
+        <location filename="../src/mainwin.cpp" line="979"/>
+        <location filename="../src/mainwin.cpp" line="1018"/>
+        <source>Сбросить цвет</source>
+        <translation>Reset color</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwin.cpp" line="1039"/>
         <source>Сигнал удален </source>
         <translation>The signal is deleted </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="932"/>
+        <location filename="../src/mainwin.cpp" line="1067"/>
         <source>Удалить модуль со всеми сигналами?</source>
         <translation>Remove the module with all the signals?</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="939"/>
+        <location filename="../src/mainwin.cpp" line="1074"/>
         <source>Модуль удален </source>
         <translation>Module removed </translation>
     </message>
@@ -452,17 +464,17 @@
         <translation type="vanished">Disconnect module &apos;</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1077"/>
+        <location filename="../src/mainwin.cpp" line="1212"/>
         <source>Событие: </source>
         <translation>Event: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1092"/>
+        <location filename="../src/mainwin.cpp" line="1227"/>
         <source> Процесс запущен: </source>
         <translation>Process is run: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1095"/>
+        <location filename="../src/mainwin.cpp" line="1230"/>
         <source> Путь не найден: </source>
         <translation>Path is not found: </translation>
     </message>
@@ -605,22 +617,22 @@
 <context>
     <name>settingsPanel</name>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="132"/>
+        <location filename="../src/settingsPanel.cpp" line="133"/>
         <source>порт</source>
         <translation>port</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="147"/>
+        <location filename="../src/settingsPanel.cpp" line="148"/>
         <source>скорость</source>
         <translation>speed</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="198"/>
+        <location filename="../src/settingsPanel.cpp" line="199"/>
         <source>Выбор пути сохранения файлов записи</source>
         <translation>Choosing ways to preserve the recording files</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="238"/>
+        <location filename="../src/settingsPanel.cpp" line="241"/>
         <source>Изменения вступят в силу после перезагрузки</source>
         <translation>Changes will take effect after a reboot</translation>
     </message>
