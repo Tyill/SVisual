@@ -47,9 +47,11 @@
 #include "SVZabbix/SVZabbix.h"
 #include "serverAPI.h"
 
-const QString VERSION = "1.1.7";
-// added zabbix agent
+const QString VERSION = "1.1.8";
+// proposal https://github.com/Tyill/SVisual/issues/31
 
+//const QString VERSION = "1.1.7";
+// added zabbix agent
 //const QString VERSION = "1.1.6";
 // added menu - script for signal
 //const QString VERSION = "1.1.5";
