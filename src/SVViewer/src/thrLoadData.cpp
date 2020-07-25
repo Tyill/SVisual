@@ -172,11 +172,7 @@ bool MainWin::loadModuleVals(QString path){
 
 bool loadSignalData(const QString& sign){
    
-    QMap<QString, signalData*> sref;
-    { QMutexLocker locker(&mainWin->mtx_);
-      sref = getCopySignalRef();
-    }
-
+    QMap<QString, signalData*> sref = getCopySignalRef();
     if (!sref.contains(sign))
         return false;
 

@@ -223,9 +223,11 @@ void thrUpdSignal::updCycle(){
 			bp = pBuffData_->getDataByReadPos();
 		}
 		
-		if (isBuffActive && pServ_->pfUpdateSignalsCBack) pServ_->pfUpdateSignalsCBack();
+		if (isBuffActive && pServ_->pfUpdateSignalsCBack) 
+            pServ_->pfUpdateSignalsCBack();
 
-		if (isNewSign && pServ_->pfAddSignalsCBack) pServ_->pfAddSignalsCBack();
+		if (isNewSign && pServ_->pfAddSignalsCBack) 
+            pServ_->pfAddSignalsCBack();
 
 		// архив
 		if (cng.outArchiveEna && tmDelay.HourOnc())
@@ -260,6 +262,7 @@ void thrUpdSignal::updCycle(){
            SleepMs(min(ms, 10000));
 	}
 
-	if (cng.outArchiveEna) pArchive_->copyToDisk(true);
+	if (cng.outArchiveEna) 
+        pArchive_->copyToDisk(true);
 }
 

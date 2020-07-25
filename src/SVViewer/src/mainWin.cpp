@@ -251,7 +251,6 @@ bool MainWin::writeSignals(QString path){
 
 void MainWin::updateGroup(QString group, QString sign){
 
-
 	if (!groupRef_.contains(group))
 		groupRef_[group] = new groupData(group.toUtf8().data());
 
@@ -620,8 +619,7 @@ void MainWin::Connect(){
 }
 
 bool MainWin::init(QString initPath){
-
-
+    
 	QSettings settings(initPath, QSettings::IniFormat);
 	settings.beginGroup("Param");
 
@@ -899,9 +897,10 @@ void MainWin::contextMenuClick(QAction* act){
     if (act->text() == tr("Показать все")){
         auto mref = getCopyModuleRef();
         auto sref = getCopySignalRef();
-        for (auto& s : mref[root]->signls){
-            if (sref.contains(s.c_str()) && sref[s.c_str()]->isActive){
-                SV_Graph::addSignal(graphPanels_[this], QString::fromStdString(s));
+        auto signls = getModuleSignals(root);
+        for (auto& s : signls){
+            if (sref.contains(s) && sref[s]->isActive){
+                SV_Graph::addSignal(graphPanels_[this], s);
             }
         }
     }

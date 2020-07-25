@@ -280,8 +280,9 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
 
     QString sign = sname + module;
              
-    if (signBuff_.contains(sign))
-        return true;
+    if (signBuff_.contains(sign)) {
+        return signBuff_[sign];
+    }        
     
     if (module == "Virtual"){
 
@@ -333,23 +334,22 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
                 sd->buffData[i].vals = &buff[i * SV_PACKETSZ];
         }
 
-        if (pfAddSignalsCBack)
+        if (pfAddSignalsCBack) {
             pfAddSignalsCBack();
+        }
     }
     else{
-
-        if (!pfLoadSignalData)
-            return false;
-
+                
         auto sdata = pfGetSignalData(sign);
-
-        if (!sdata || !pfLoadSignalData(sign))
-            return false;
-
-        signBuff_[sign] = sdata;
+       
+        if (sdata && pfLoadSignalData && pfLoadSignalData(sign)) {            
+            signBuff_[sign] = sdata;           
+        }
+        else {
+            signBuff_[sign] = nullptr;
+        }
     }
-
-    return true;
+    return signBuff_[sign];
 }
 
 /////////////////////////////////
