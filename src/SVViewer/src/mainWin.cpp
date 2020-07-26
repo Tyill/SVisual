@@ -873,19 +873,19 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
         if (sd){
 
+            QMenu* menu = new QMenu(this);
             if (sd->module != "Virtual"){
-                QMenu* menu = new QMenu(this);
                 menu->addAction(tr("Скрипт"));
-                menu->addAction(tr("Сбросить цвет"));
-
-                connect(menu,
-                    SIGNAL(triggered(QAction*)),
-                    this,
-                    SLOT(contextMenuClick(QAction*))
-                    );
-
-                menu->exec(event->globalPos());
             }
+            menu->addAction(tr("Сбросить цвет"));
+            
+            connect(menu,
+                SIGNAL(triggered(QAction*)),
+                this,
+                SLOT(contextMenuClick(QAction*))
+                );
+
+            menu->exec(event->globalPos());
         }
     }
 }
