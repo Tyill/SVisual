@@ -38,35 +38,35 @@ class graphSettingPanel;
 
 class MainWin : public QMainWindow
 {
-	Q_OBJECT
+  Q_OBJECT
 
-    friend QMap<QString, SV_Cng::signalData*> getCopySignalRef();
-    friend QMap<QString, SV_Cng::moduleData*> getCopyModuleRef();
-    friend SV_Cng::signalData* getSignalData(const QString& sign);
-    friend SV_Cng::moduleData* getModuleData(const QString& md);
+    friend QMap<QString, SV_Base::SignalData*> getCopySignalRef();
+    friend QMap<QString, SV_Base::ModuleData*> getCopyModuleRef();
+    friend SV_Base::SignalData* getSignalData(const QString& sign);
+    friend SV_Base::ModuleData* getModuleData(const QString& md);
     friend bool loadSignalData(const QString& sign);
-    friend bool addSignal(SV_Cng::signalData* sd);
-    friend bool addModule(SV_Cng::moduleData* md);
+    friend bool addSignal(SV_Base::SignalData* sd);
+    friend bool addModule(SV_Base::ModuleData* md);
     friend QVector<QString> getModuleSignals(const QString& md);
 
 public:
-	MainWin(QWidget *parent = 0);
-	~MainWin();
+  MainWin(QWidget *parent = 0);
+  ~MainWin();
 
-	Ui::MainWin ui;
+  Ui::MainWin ui;
 
-	struct config{
+  struct config{
 
-		bool sortByMod;
+    bool sortByMod;
 
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
         QString initPath;
         QString selOpenDir;
 
         SV_Graph::graphSetting graphSett;
-	};
+  };
 
     bool loadModuleVals(QString path);
 
@@ -78,19 +78,19 @@ private:
    
     QDialog* exportPanel_ = nullptr;
     QMap<QObject*, QWidget*> graphPanels_;
-	QDialog* statPanel_ = nullptr;
+  QDialog* statPanel_ = nullptr;
     graphSettingPanel* graphSettPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;
 
-	thrLoadData* thrLoadData_ = nullptr;
+  thrLoadData* thrLoadData_ = nullptr;
 
-	QMutex mtx_;
+  QMutex mtx_;
 
     QMap<QString, signalAttr> signAttr_;
 
-    QMap<QString, SV_Cng::moduleData*> moduleRef_;   // ключ - имя модуля
-    QMap<QString, SV_Cng::groupData*> groupRef_;     // ключ - имя группы
-    QMap<QString, SV_Cng::signalData*> signalRef_;   // ключ - название сигнала
+    QMap<QString, SV_Base::ModuleData*> moduleRef_;   // ключ - имя модуля
+    QMap<QString, SV_Base::GroupData*> groupRef_;     // ключ - имя группы
+    QMap<QString, SV_Base::SignalData*> signalRef_;   // ключ - название сигнала
     QMap<QString, fileData*> fileRef_;
 
     bool init(QString initPath);
@@ -103,18 +103,18 @@ private:
 
     void updateGroup(QString group, QString sign);
 
-	void Connect();
-	void load();	
+  void Connect();
+  void load();  
 
-	void sortSignalByGroupOrModule(bool byModule);
+  void sortSignalByGroupOrModule(bool byModule);
     void contextMenuEvent(QContextMenuEvent * event);
 
 public slots:
     void updateTblSignal();
     void updateSignals();
-	void actionOpenData();
-	void actionOpenStat();
-	bool loadData(QStringList files);
+  void actionOpenData();
+  void actionOpenStat();
+  bool loadData(QStringList files);
     void loadDataFinished(bool ok);
     void contextMenuClick(QAction*);
     void changeSignColor(QString module, QString signal, QColor color);

@@ -29,121 +29,117 @@
 #include <map>
 #include <cstdint>
 
-namespace SV_Cng {
+namespace SV_Base {
 
     /// тип польз переменной
-	enum class valueType {
-		tBool = 0,
-		tInt = 1,
-		tFloat = 2,
-	};
+  enum class ValueType {
+    BOOL = 0,
+    INT = 1,
+    FLOAT = 2,
+  };
 
-    /// значение польз переменной
-	union value {
-		bool tBool;
-		int tInt;
-		float tFloat;
-	};
+  /// значение польз переменной
+  union Value {
+    bool vBool;
+    int vInt;
+    float vFloat;
+  };
 
-    /// пакет записи
-	struct recData {
-		uint64_t beginTime;  ///< нач время, мс
-		value *vals;         ///< данные
+  /// пакет записи
+  struct RecData {
+    uint64_t beginTime;  ///< нач время, мс
+    Value *vals;         ///< данные
 
-		recData() : beginTime(0), vals(nullptr) {};
-	};
+    RecData() : beginTime(0), vals(nullptr) {};
+  };
 
-	/// сигнал
-	struct signalData {
+  /// сигнал
+  struct SignalData {
 
-		bool isActive;          ///< активен
-	    bool isDelete;          ///< удален
-		bool isBuffEnable;      ///< буфер разрешен
+    bool isActive;          ///< активен
+    bool isDelete;          ///< удален
+    bool isBuffEnable;      ///< буфер разрешен
 
-		std::string name;       ///< имя
-		std::string module;     ///< модуль
-		std::string group;      ///< группа
-		std::string comment;    ///< комментарий
+    std::string name;       ///< имя
+    std::string module;     ///< модуль
+    std::string group;      ///< группа
+    std::string comment;    ///< комментарий
 
-		valueType type;         ///< тип
+    ValueType type;         ///< тип
 
-		recData lastData;       ///< последняя запись
+    RecData lastData;       ///< последняя запись
 
-		///// буфер данных
-		std::vector<recData> buffData;         
-		int buffBeginPos;
-		int buffValuePos;
-		uint64_t buffMinTime, buffMaxTime;
-		double buffMinValue, buffMaxValue;
-		///////
+    ///// буфер данных
+    std::vector<RecData> buffData;         
+    int buffBeginPos;
+    int buffValuePos;
+    uint64_t buffMinTime, buffMaxTime;
+    double buffMinValue, buffMaxValue;
+    ///////
 
-		signalData() {
-			isActive = false;			
-			isDelete = false;
-			isBuffEnable = false;
+    SignalData() {
+      isActive = false;      
+      isDelete = false;
+      isBuffEnable = false;
 
-			type = valueType::tBool;
+      type = ValueType::BOOL;
 
-			buffBeginPos = 0;
-			buffValuePos = 0;
-			buffMinTime = INT32_MAX;
-			buffMaxTime = INT32_MIN;
-			buffMinValue = 0;
-			buffMaxValue = 0;
-		}
-	};
+      buffBeginPos = 0;
+      buffValuePos = 0;
+      buffMinTime = INT32_MAX;
+      buffMaxTime = INT32_MIN;
+      buffMinValue = 0;
+      buffMaxValue = 0;
+    }
+  };
         
     /// модуль
-	struct moduleData {
+  struct ModuleData {
 
-		bool isActive;                   ///< активен
-		bool isEnable;                   ///< разрешен
-		bool isDelete;                   ///< удален
-		std::string module;              ///< название
-		std::vector<std::string> signls; ///< список сигналов
+    bool isActive;                   ///< активен
+    bool isEnable;                   ///< разрешен
+    bool isDelete;                   ///< удален
+    std::string module;              ///< название
+    std::vector<std::string> signls; ///< список сигналов
 
-		/// модуль
-		/// \param modul название модуля
-		moduleData(const std::string& modul) {
+    /// модуль
+    /// \param modul название модуля
+    ModuleData(const std::string& modul) {
 
-			isActive = false;
-			isEnable = false;
-			isDelete = false;
-			module = modul;
-		}
-	};
+      isActive = false;
+      isEnable = false;
+      isDelete = false;
+      module = modul;
+    }
+  };
 
     /// группа сигналов
-	struct groupData {
+  struct GroupData {
 
-		bool isActive;                     ///< активна
+    bool isActive;                     ///< активна
+    std::string group;                 ///< название
+    std::vector<std::string> signls;   ///< список сигналов
 
-		std::string group;                 ///< имя
-
-		std::vector<std::string> signls;   ///< список сигналов
-
-		/// группа сигналов
-		/// \param grp имя
-        groupData(const std::string& grp) {
-			isActive = true;
-			group = grp;
-		}
-	};
+    GroupData(const std::string& grp) {
+      isActive = true;
+      group = grp;
+    }
+  };
        
     /// вернуть тип сигнала как значение
     /// \param str
     /// \return
-	valueType getSVType(const std::string& str);
+  ValueType getSVType(const std::string& str);
 
     /// вернуть тип сигнала как строку
     /// \param type
     /// \return
-	std::string getSVTypeStr(valueType type);
+  std::string getSVTypeStr(ValueType type);
 
     /// вернуть значение как строку
     /// \param vt
-    /// \param value
+    /// \param Value
     /// \return
-	std::string getSValue(valueType vt, double value);
+  std::string getSValue(ValueType vt, double Value);
         
 }

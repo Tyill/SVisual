@@ -1455,7 +1455,7 @@ reexecute:
             }
             break;
 
-          /* Multi-value `Connection` header */
+          /* Multi-Value `Connection` header */
           case h_matching_connection_token_start:
             break;
 
@@ -1746,7 +1746,7 @@ reexecute:
               break;
           }
 
-          /* header value was empty */
+          /* header Value was empty */
           MARK(header_value);
           UPDATE_STATE(s_header_field_start);
           CALLBACK_DATA_NOADVANCE(header_value);
@@ -2058,7 +2058,7 @@ reexecute:
    * We use the NOADVANCE() variety of callbacks here because 'p' has already
    * overflowed 'data' and this allows us to correct for the off-by-one that
    * we'd otherwise have (since CALLBACK_DATA() is meant to be run with a 'p'
-   * value that's in-bounds).
+   * Value that's in-bounds).
    */
 
   assert(((header_field_mark ? 1 : 0) +
@@ -2453,7 +2453,7 @@ http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
       v *= 10;
       v += *p - '0';
 
-      /* Ports have a max value of 2^16 */
+      /* Ports have a max Value of 2^16 */
       if (v > 0xffff) {
         return 1;
       }

@@ -37,7 +37,7 @@
 
 class triggerPanel : public QDialog
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
    
@@ -47,14 +47,14 @@ public:
     SV_Trigger::pf_getModuleData pfGetModuleData = nullptr;
     SV_Trigger::pf_onTriggerCBack pfOnTriggerCBack = nullptr;
 
-	Ui::triggerPanelClass ui;
+  Ui::triggerPanelClass ui;
 
-	triggerPanel(QWidget *parent, SV_Trigger::config);
-	~triggerPanel();
+  triggerPanel(QWidget *parent, SV_Trigger::config);
+  ~triggerPanel();
 
     void startUpdateThread();
 
-	void updateWin();
+  void updateWin();
 
     // ������� ��� ��������
     QMap<QString, SV_Trigger::triggerData*> getCopyTriggerRef();
@@ -97,20 +97,20 @@ private:
     void updateTableSignal();
     void updateStateSignal();
 
-    bool checkCondition(SV_Trigger::triggerData* tr, SV_Cng::signalData* sd);
+    bool checkCondition(SV_Trigger::triggerData* tr, SV_Base::SignalData* sd);
     void workCycle();
 
 
 private slots:
-	void selModule(QListWidgetItem * item);
-	void selSignal(QTableWidgetItem * item);
-	void selTrigger(QTableWidgetItem * item);
-	void addTrigger();
-	void delTrigger();
-	void changeTrigger();
-	void paramChange();
+  void selModule(QListWidgetItem * item);
+  void selSignal(QTableWidgetItem * item);
+  void selTrigger(QTableWidgetItem * item);
+  void addTrigger();
+  void delTrigger();
+  void changeTrigger();
+  void paramChange();
     void selCondition(SV_Trigger::eventType);
-	void selDirProc();
+  void selDirProc();
 };
 
 

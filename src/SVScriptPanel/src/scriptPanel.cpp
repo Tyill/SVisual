@@ -34,7 +34,7 @@
 #include "SVAuxFunc/Front.h"
 #include "SVAuxFunc/auxFunc.h"
 
-using namespace SV_Cng;
+using namespace SV_Base;
 namespace lub = luabridge;
 
 scriptPanel* scrPanelRef = nullptr;
@@ -69,7 +69,7 @@ uint64_t getTimeValue(const std::string& module, const std::string& signal){
     QString md = qUtf8Printable(module.c_str()),
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tBool)){
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)){
      
         if (scrPanelRef->mode_ == SV_Script::modeGr::player)
             return scrPanelRef->signBuff_[sign]->lastData.beginTime;
@@ -91,17 +91,17 @@ bool getBoolValue(const std::string& module, const std::string& signal){
     QString md = qUtf8Printable(module.c_str()),
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tBool)){
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)){
         
         if (scrPanelRef->mode_ == SV_Script::modeGr::player)
-            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tBool;
+            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].BOOL;
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                 scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
 
             int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
 
-            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].tBool;
+            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].BOOL;
         }
     }
     else
@@ -113,17 +113,17 @@ int getIntValue(const std::string& module, const std::string& signal){
     QString md = qUtf8Printable(module.c_str()),
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tInt)){
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::INT)){
 
         if (scrPanelRef->mode_ == SV_Script::modeGr::player)
-            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tInt;
+            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].INT;
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
 
             int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
 
-            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].tInt;
+            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].INT;
         }
     }
     else
@@ -135,17 +135,17 @@ float getFloatValue(const std::string& module, const std::string& signal){
     QString md = qUtf8Printable(module.c_str()),
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tFloat)){
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT)){
 
         if (scrPanelRef->mode_ == SV_Script::modeGr::player)
-            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].tFloat;
+            return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].FLOAT;
         else{
             if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
                scrPanelRef->buffSz_ = qMax(scrPanelRef->buffSz_, int(scrPanelRef->signBuff_[sign]->buffData.size()));
 
             int inx = qMin(scrPanelRef->buffCPos_, int(scrPanelRef->signBuff_[sign]->buffData.size() - 1));
 
-            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].tFloat;
+            return scrPanelRef->signBuff_[sign]->buffData[inx].vals[scrPanelRef->iterValue_].FLOAT;
         }
     }
     else
@@ -158,10 +158,10 @@ void setBoolValue(const std::string& signal, bool bval, uint64_t time){
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
       
-   SV_Cng::value val;
-   val.tBool = bval;
+   SV_Base::Value val;
+   val.BOOL = bval;
 
-   if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tBool))
+   if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL))
        scrPanelRef->setValue(sign, val, time);
 }
      
@@ -171,10 +171,10 @@ void setIntValue(const std::string& signal, int ival, uint64_t time){
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
 
-    SV_Cng::value val;
-    val.tInt = ival;
+    SV_Base::Value val;
+    val.INT = ival;
 
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tInt))
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::INT))
         scrPanelRef->setValue(sign, val, time);
 }
      
@@ -184,14 +184,14 @@ void setFloatValue(const std::string& signal, float fval, uint64_t time){
             sn = qUtf8Printable(signal.c_str()),
             sign = sn + md;
 
-    SV_Cng::value val;
-    val.tFloat = fval;
+    SV_Base::Value val;
+    val.FLOAT = fval;
 
-    if (scrPanelRef->updateBuffValue(md, sn, SV_Cng::valueType::tFloat))
+    if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT))
         scrPanelRef->setValue(sign, val, time);
 }
 
-void scriptPanel::setValue(const QString& sign, SV_Cng::value val, uint64_t time){
+void scriptPanel::setValue(const QString& sign, SV_Base::Value val, uint64_t time){
 
     auto sd = signBuff_[sign];    
      
@@ -235,7 +235,7 @@ void scriptPanel::setValue(const QString& sign, SV_Cng::value val, uint64_t time
                
                 sd->buffData.resize(buffSz_);
 
-                SV_Cng::value* buff = new SV_Cng::value[SV_PACKETSZ * (buffSz_ - csz)];
+                SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * (buffSz_ - csz)];
                 for (size_t i = 0; i < (buffSz_ - csz); ++i)
                     sd->buffData[i + csz].vals = &buff[i * SV_PACKETSZ];
             }
@@ -243,31 +243,31 @@ void scriptPanel::setValue(const QString& sign, SV_Cng::value val, uint64_t time
     }
 }
 
-void scriptPanel::updateSign(signalData* sign, int beginPos, int valuePos){
+void scriptPanel::updateSign(SignalData* sign, int beginPos, int valuePos){
 
     sign->buffMinTime = sign->buffData[beginPos].beginTime;
     sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
 
     double minValue = sign->buffMinValue, maxValue = sign->buffMaxValue;
 
-    if (sign->type == valueType::tInt){
+    if (sign->type == ValueType::INT){
 
-        value* vl = sign->buffData[valuePos].vals;
+        Value* vl = sign->buffData[valuePos].vals;
 
         for (int i = 0; i < SV_PACKETSZ; ++i){
 
-            if (vl[i].tInt > maxValue) maxValue = vl[i].tInt;
-            if (vl[i].tInt < minValue) minValue = vl[i].tInt;
+            if (vl[i].INT > maxValue) maxValue = vl[i].INT;
+            if (vl[i].INT < minValue) minValue = vl[i].INT;
         }
 
     }
-    else if (sign->type == valueType::tFloat){
+    else if (sign->type == ValueType::FLOAT){
 
-        value* vl = sign->buffData[valuePos].vals;
+        Value* vl = sign->buffData[valuePos].vals;
         for (int i = 0; i < SV_PACKETSZ; ++i){
 
-            if (vl[i].tFloat > maxValue) maxValue = vl[i].tFloat;
-            if (vl[i].tFloat < minValue) minValue = vl[i].tFloat;
+            if (vl[i].FLOAT > maxValue) maxValue = vl[i].FLOAT;
+            if (vl[i].FLOAT < minValue) minValue = vl[i].FLOAT;
         }
     }
 
@@ -276,7 +276,7 @@ void scriptPanel::updateSign(signalData* sign, int beginPos, int valuePos){
 
 }
 
-bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, SV_Cng::valueType stype){
+bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, SV_Base::ValueType stype){
 
     QString sign = sname + module;
              
@@ -289,7 +289,7 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
         if (!pfAddSignal || !pfAddModule || !pfGetModuleData || !pfLoadSignalData)
             return false;
 
-        signalData* sd = new signalData();
+        SignalData* sd = new SignalData();
         signBuff_[sign] = sd;
 
         sd->isActive = true;
@@ -300,9 +300,9 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
         sd->module = "Virtual";
         sd->type = stype;
 
-        sd->lastData.vals = new SV_Cng::value[SV_PACKETSZ];
+        sd->lastData.vals = new SV_Base::Value[SV_PACKETSZ];
         sd->lastData.beginTime = SV_Aux::CurrDateTimeSinceEpochMs();
-        memset(sd->lastData.vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
+        memset(sd->lastData.vals, 0, sizeof(SV_Base::Value) * SV_PACKETSZ);
 
         sd->buffMinTime = sd->lastData.beginTime - 5000;
         sd->buffMaxTime = sd->lastData.beginTime + 5000;
@@ -311,7 +311,7 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
 
         auto md = pfGetModuleData("Virtual");
         if (!md){
-            md = new SV_Cng::moduleData("Virtual");
+            md = new SV_Base::ModuleData("Virtual");
             md->isActive = true;
             md->isDelete = false;
             md->isEnable = true;
@@ -329,7 +329,7 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
         else{
             sd->buffData.resize(buffSz_);
 
-            SV_Cng::value* buff = new SV_Cng::value[SV_PACKETSZ * buffSz_];
+            SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * buffSz_];
             for (int i = 0; i < buffSz_; ++i)
                 sd->buffData[i].vals = &buff[i * SV_PACKETSZ];
         }
@@ -357,19 +357,19 @@ bool scriptPanel::updateBuffValue(const QString& module, const QString& sname, S
 /////////////////////////////////
 
 scriptPanel::scriptPanel(QWidget *parent, SV_Script::config cng_, SV_Script::modeGr mode){
-		
-	setParent(parent);
-	
+    
+  setParent(parent);
+  
 #ifdef SV_EN
-	QTranslator translator;
-	translator.load(":/SVScript/svscriptpanel_en.qm");
-	QCoreApplication::installTranslator(&translator);
+  QTranslator translator;
+  translator.load(":/SVScript/svscriptpanel_en.qm");
+  QCoreApplication::installTranslator(&translator);
 #endif
-    	
+      
     mode_ = mode;
-	cng = cng_;
+  cng = cng_;
 
-	ui.setupUi(this);
+  ui.setupUi(this);
 
     scrPanelRef = this;
                

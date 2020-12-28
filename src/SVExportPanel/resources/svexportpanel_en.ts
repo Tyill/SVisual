@@ -113,7 +113,7 @@
         <location filename="../forms/exportPanel.ui" line="318"/>
         <location filename="../forms/ui_exportPanel.h" line="339"/>
         <source>каждое значение</source>
-        <translation>each value</translation>
+        <translation>each Value</translation>
     </message>
     <message>
         <location filename="../forms/exportPanel.ui" line="341"/>

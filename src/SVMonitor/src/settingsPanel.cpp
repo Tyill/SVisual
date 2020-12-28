@@ -29,18 +29,18 @@
 
 settingsPanel::settingsPanel(QWidget *parent){
 
-	setParent(parent);
+  setParent(parent);
 
-	mainWin_ = (MainWin*)parent;
+  mainWin_ = (MainWin*)parent;
 
-	ui.setupUi(this);
-	
-	connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveChange()));
+  ui.setupUi(this);
+  
+  connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveChange()));
     connect(ui.btnArchPath, SIGNAL(clicked()), this, SLOT(selDirArch()));
-	connect(ui.rbtnConnectByCom, &QRadioButton::toggled, this, [this] (){
-		
-		bool isSel = ui.rbtnConnectByCom->isChecked();
-        		
+  connect(ui.rbtnConnectByCom, &QRadioButton::toggled, this, [this] (){
+    
+    bool isSel = ui.rbtnConnectByCom->isChecked();
+            
         ui.btnAddCOM->setEnabled(isSel);
         ui.btnDelCOM->setEnabled(isSel);
 
@@ -49,42 +49,42 @@ settingsPanel::settingsPanel(QWidget *parent){
             com.second->setEnabled(isSel);
         }
 
-		selParamLoad_ = true;
-		paramChange();
-	});
-	connect(ui.rbtnConnectByEthernet, &QRadioButton::toggled, this, [this](){
+    selParamLoad_ = true;
+    paramChange();
+  });
+  connect(ui.rbtnConnectByEthernet, &QRadioButton::toggled, this, [this](){
 
-		bool isSel = ui.rbtnConnectByEthernet->isChecked();
+    bool isSel = ui.rbtnConnectByEthernet->isChecked();
 
-		ui.txtIPAddr->setEnabled(isSel);
-		ui.txtTCPPort->setEnabled(isSel);
+    ui.txtIPAddr->setEnabled(isSel);
+    ui.txtTCPPort->setEnabled(isSel);
 
-		selParamLoad_ = true;
-		paramChange();
-	});
-	connect(ui.rbtnArchEna, &QCheckBox::toggled, this, [this](){
+    selParamLoad_ = true;
+    paramChange();
+  });
+  connect(ui.rbtnArchEna, &QCheckBox::toggled, this, [this](){
 
         bool isSel = ui.rbtnArchEna->isChecked();
 
-		ui.txtArchPath->setEnabled(isSel);
-		ui.btnArchPath->setEnabled(isSel);
-		paramChange();
-	});
+    ui.txtArchPath->setEnabled(isSel);
+    ui.btnArchPath->setEnabled(isSel);
+    paramChange();
+  });
     connect(ui.chbWebActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
     connect(ui.chbZabbixActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
     connect(ui.btnAddCOM, SIGNAL(clicked()), this, SLOT(addCOM()));
     connect(ui.btnDelCOM, SIGNAL(clicked()), this, SLOT(delCOM()));
 
-	connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-	connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtTCPPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
     connect(ui.txtWebIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
     connect(ui.txtWebPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
     connect(ui.txtZabbixIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
     connect(ui.txtZabbixPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
     connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
-	connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
-	connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
-	
+  connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
+  connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
+  
     MainWin::config cng = mainWin_->getConfig();
         
     for (int i = 0; i < cng.com_ports.size(); ++i)
@@ -96,11 +96,11 @@ settingsPanel::~settingsPanel(){}
 
 void settingsPanel::showEvent(QShowEvent * event){
 
-	MainWin::config cng = mainWin_->getConfig();
+  MainWin::config cng = mainWin_->getConfig();
 
-	ui.txtIPAddr->setText(cng.tcp_addr);
-	ui.txtTCPPort->setText(QString::number(cng.tcp_port));
-	
+  ui.txtIPAddr->setText(cng.tcp_addr);
+  ui.txtTCPPort->setText(QString::number(cng.tcp_port));
+  
     ui.chbWebActive->setChecked(cng.web_ena);
     ui.txtWebIPAddr->setText(cng.web_addr);
     ui.txtWebPort->setText(QString::number(cng.web_port));
@@ -109,16 +109,16 @@ void settingsPanel::showEvent(QShowEvent * event){
     ui.txtZabbixIPAddr->setText(cng.zabbix_addr);
     ui.txtZabbixPort->setText(QString::number(cng.zabbix_port));
 
-	ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
-	
+  ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
+  
     ui.rbtnArchEna->setChecked(cng.outArchiveEna);
     ui.txtArchPath->setText(cng.outArchivePath);
-	
-	ui.spinCycleRecMs->setValue(cng.cycleRecMs);
-	ui.spinPacketSz->setValue(cng.packetSz);
-	  
-	selParamLoad_ = false;
-	ui.lbChange->setText("");
+  
+  ui.spinCycleRecMs->setValue(cng.cycleRecMs);
+  ui.spinPacketSz->setValue(cng.packetSz);
+    
+  selParamLoad_ = false;
+  ui.lbChange->setText("");
 }
 
 void settingsPanel::addCOM(QString port, QString speed, int setRow){
@@ -194,11 +194,11 @@ void settingsPanel::delCOM(){
 }
 
 void settingsPanel::selDirArch(){
-		
-	QString fl = QFileDialog::getExistingDirectory(this,
+    
+  QString fl = QFileDialog::getExistingDirectory(this,
         tr("Выбор пути сохранения файлов записи"), selDirArch_);
 
-	if (fl.isEmpty()) return;
+  if (fl.isEmpty()) return;
 
     ui.txtArchPath->setText(fl + "/");
 
@@ -207,10 +207,10 @@ void settingsPanel::selDirArch(){
 
 void settingsPanel::saveChange(){
 
-	MainWin::config cng = mainWin_->getConfig();
+  MainWin::config cng = mainWin_->getConfig();
 
-	cng.tcp_addr = ui.txtIPAddr->text();
-	cng.tcp_port = ui.txtTCPPort->text().toInt();
+  cng.tcp_addr = ui.txtIPAddr->text();
+  cng.tcp_port = ui.txtTCPPort->text().toInt();
 
     cng.web_ena = ui.chbWebActive->isChecked();
     cng.web_addr = ui.txtWebIPAddr->text();
@@ -225,27 +225,27 @@ void settingsPanel::saveChange(){
 
     cng.outArchivePath.replace("\\", "/");
 
-	cng.com_ena = ui.rbtnConnectByCom->isChecked();
+  cng.com_ena = ui.rbtnConnectByCom->isChecked();
 
     cng.com_ports.clear();
     for (auto& port : comPorts_){
         cng.com_ports.push_back(qMakePair(port.first->text(), port.second->currentText()));
     }
 
-	cng.cycleRecMs = ui.spinCycleRecMs->value();
-	cng.packetSz = ui.spinPacketSz->value();
+  cng.cycleRecMs = ui.spinCycleRecMs->Value();
+  cng.packetSz = ui.spinPacketSz->Value();
 
-	mainWin_->updateConfig(cng);
+  mainWin_->updateConfig(cng);
 
-	if (selParamLoad_)
-		ui.lbChange->setText(tr("Изменения вступят в силу после перезагрузки"));
-	else
-		ui.lbChange->setText("");
-		
+  if (selParamLoad_)
+    ui.lbChange->setText(tr("Изменения вступят в силу после перезагрузки"));
+  else
+    ui.lbChange->setText("");
+    
 }
 
 void settingsPanel::paramChange(){
-    	
+      
     selParamLoad_ = true;
-	ui.lbChange->setText("*"); 
+  ui.lbChange->setText("*"); 
 }

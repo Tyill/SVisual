@@ -30,13 +30,13 @@
 
 class graphSettingPanel : public QDialog
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting&);
-	~graphSettingPanel() = default;
-	
-	Ui::graphSettingClass ui;
+  graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting&);
+  ~graphSettingPanel() = default;
+  
+  Ui::graphSettingClass ui;
 
 private:
 

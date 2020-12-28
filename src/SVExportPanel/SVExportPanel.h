@@ -39,34 +39,34 @@
 
 namespace SV_Exp {
 
-	struct config {
+  struct config {
 
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
-		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-				cycleRecMs(cycleRecMs_),
-				packetSz(packetSz_) {}
-	};
+    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+        cycleRecMs(cycleRecMs_),
+        packetSz(packetSz_) {}
+  };
 
     SVEXPPANEL_API QDialog* createExpPanel(QWidget* parent, config);
 
-	typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
+  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
     SVEXPPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
 
-    typedef QMap<QString, SV_Cng::moduleData*>(*pf_getCopyModuleRef)();
+    typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
     SVEXPPANEL_API void setGetCopyModuleRef(QDialog* stPanel, pf_getCopyModuleRef f);
 
-	typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
+  typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
     SVEXPPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
-	typedef bool(*pf_loadSignalData)(const QString& sign);
+  typedef bool(*pf_loadSignalData)(const QString& sign);
     SVEXPPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 
-	typedef QPair<qint64, qint64>(*pf_getTimeInterval)();
+  typedef QPair<qint64, qint64>(*pf_getTimeInterval)();
     SVEXPPANEL_API void setGetTimeInterval(QDialog* stPanel, pf_getTimeInterval f);
 
-	typedef void(*pf_setTimeInterval)(qint64, qint64);
+  typedef void(*pf_setTimeInterval)(qint64, qint64);
     SVEXPPANEL_API void setSetTimeInterval(QDialog* stPanel, pf_setTimeInterval f);
 
 }

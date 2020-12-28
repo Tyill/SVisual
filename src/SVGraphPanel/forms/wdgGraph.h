@@ -36,75 +36,75 @@
 
 class wdgGraph : public QWidget
 {
-	Q_OBJECT
+  Q_OBJECT
 
 private:
-	
-	struct graphSignData{
-		QString sign;
-		QString name;
-		SV_Cng::valueType type;
-		int num;
-		QColor color;
-		QLabel* lb;
-		QLabel* lbLeftMarkVal;
-		QLabel* lbRightMarkVal;
-        SV_Cng::signalData* sdata;
-		QVector<QVector<QPair<int, int>>> pnts;
-	};
+  
+  struct graphSignData{
+    QString sign;
+    QString name;
+    SV_Base::ValueType type;
+    int num;
+    QColor color;
+    QLabel* lb;
+    QLabel* lbLeftMarkVal;
+    QLabel* lbRightMarkVal;
+        SV_Base::SignalData* sdata;
+    QVector<QVector<QPair<int, int>>> pnts;
+  };
 
-	struct histPos{
-		QPair<double, double> valIntl;
-		QPair<qint64, qint64> tmIntl;
-	};
+  struct histPos{
+    QPair<double, double> valIntl;
+    QPair<qint64, qint64> tmIntl;
+  };
 
-	QImage imSign_;
+  QImage imSign_;
 
-	bool repaintEna_ = false,
+  bool repaintEna_ = false,
          selLeftMark_ = false, selRigthMark_ = false;
 
-	int colorCnt_ = 30;
+  int colorCnt_ = 30;
 
     SV_Graph::graphSetting graphSetting_;
-		
-	QMap <QString, graphSignData> signals_, signalsAlter_;
-	QStringList signalList_, signalListAlter_;
-		
-	QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Cng::signalData* sign, bool isAlter = false);
+    
+  QMap <QString, graphSignData> signals_, signalsAlter_;
+  QStringList signalList_, signalListAlter_;
+    
+  QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Base::SignalData* sign, bool isAlter = false);
 
-	QPair<double, double > getSignPntsMaxMinValue(const graphSignData& sign);
-	QPair<double, double> getSignMaxMinValue(SV_Cng::signalData* sign, QPair<qint64, qint64>& tmInterval);
-	void addPosToHistory();
+  QPair<double, double > getSignPntsMaxMinValue(const graphSignData& sign);
+  QPair<double, double> getSignMaxMinValue(SV_Base::SignalData* sign, QPair<qint64, qint64>& tmInterval);
+  void addPosToHistory();
 
-	wdgAxisTime* axisTime_ = nullptr;
-	
-	wdgMarker* leftMarker_ = nullptr;
-	wdgMarker* rightMarker_ = nullptr;
-	
-	bool eventFilter(QObject *target, QEvent *event);
+  wdgAxisTime* axisTime_ = nullptr;
+  
+  wdgMarker* leftMarker_ = nullptr;
+  wdgMarker* rightMarker_ = nullptr;
+  
+  bool eventFilter(QObject *target, QEvent *event);
 
-	QVector<histPos> historyPos_;
-	graphPanel* grPanel_ = nullptr;
+  QVector<histPos> historyPos_;
+  graphPanel* grPanel_ = nullptr;
     SV_Graph::config cng;
 
     axisSettingPanel* axisSettPanel_ = nullptr;
     
     void paintSignals();
-	void paintSignalsAlter();
-	void paintObjects();
-	void paintObjectsAlter();
-	
+  void paintSignalsAlter();
+  void paintObjects();
+  void paintObjectsAlter();
+  
 public:
-	Ui::wdgGraphClass ui;
+  Ui::wdgGraphClass ui;
 
-	struct graphSignPoint{
-		int xPix, yPix;
-		double val;
-		QString sign;
-		QString name;
-		SV_Cng::valueType type;
-		QColor color;
-	};
+  struct graphSignPoint{
+    int xPix, yPix;
+    double val;
+    QString sign;
+    QString name;
+    SV_Base::ValueType type;
+    QColor color;
+  };
 
     struct graphSignStat{
         
@@ -114,62 +114,62 @@ public:
     };
 
 
-	wdgGraph(QWidget *parent, SV_Graph::config cng_);
-	~wdgGraph();
-	
-	void setAxisTime(wdgAxisTime* axisTime);
-	
+  wdgGraph(QWidget *parent, SV_Graph::config cng_);
+  ~wdgGraph();
+  
+  void setAxisTime(wdgAxisTime* axisTime);
+  
     void setGraphSetting(const SV_Graph::graphSetting&);
     void setSignalAttr(const QString& sign, const SV_Graph::signalAttr& att);
 
     void setAxisAttr(const SV_Graph::axisAttr& attr);
     SV_Graph::axisAttr getAxisAttr();
 
-	void setMarkersPos(QPoint left, QPoint right);
-	void getMarkersPos(QPoint& left, QPoint& right);
-	
+  void setMarkersPos(QPoint left, QPoint right);
+  void getMarkersPos(QPoint& left, QPoint& right);
+  
     QVector<graphSignPoint> getSignalValueByMarkerPos(int pos);
-	QVector<wdgGraph::graphSignPoint> getSignalAlterValueByMarkerPos(int pos);
-	
+  QVector<wdgGraph::graphSignPoint> getSignalAlterValueByMarkerPos(int pos);
+  
     QVector<graphSignStat> getStatParams(int markPosBegin, int markPosEnd);
 
     QVector<graphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
 
     void addSignal(QString sign);
-	void addAlterSignal(QString sign);
-	
+  void addAlterSignal(QString sign);
+  
     QStringList getAllSignals();
-	QStringList getAllAlterSignals();
-	
+  QStringList getAllAlterSignals();
+  
     QSize sizeHint();
-	void scale(bool posNeg);   
+  void scale(bool posNeg);   
     void plotUpdate();
 
 protected:
-	void dragEnterEvent(QDragEnterEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
-	void dropEvent(QDropEvent *event);
-	void resizeEvent(QResizeEvent * event);
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dragMoveEvent(QDragMoveEvent *event);
+  void dropEvent(QDropEvent *event);
+  void resizeEvent(QResizeEvent * event);
     void keyPressEvent(QKeyEvent * event);
 
 public slots:
-	void axisValueChange();
-	void axisTimeChange();
-	void delSignal(QString sign, bool isLabelSender = true);
-	void delSignalAlter(QString sign, bool isLabelSender = true);
-	void resizeByTime();
-	void resizeByValue();
-	void resizeByRect();
-	void showMarkPos();
-	void updateByMarker();
-	void undoCmd();
-	void colorUpdate();
+  void axisValueChange();
+  void axisTimeChange();
+  void delSignal(QString sign, bool isLabelSender = true);
+  void delSignalAlter(QString sign, bool isLabelSender = true);
+  void resizeByTime();
+  void resizeByValue();
+  void resizeByRect();
+  void showMarkPos();
+  void updateByMarker();
+  void undoCmd();
+  void colorUpdate();
 
 signals:
-	void req_axisTimeUpdate(QString name);
-	void req_markerChange(QString name);
-	void req_selectGraph(QString name);
-	void req_graphUp(QString name);
-	void req_graphDn(QString name);
-	void req_close();
+  void req_axisTimeUpdate(QString name);
+  void req_markerChange(QString name);
+  void req_selectGraph(QString name);
+  void req_graphUp(QString name);
+  void req_graphDn(QString name);
+  void req_close();
 };

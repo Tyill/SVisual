@@ -39,27 +39,27 @@
 
 namespace SV_Web {
     
-	  struct config {
+    struct config {
 
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
-		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-				cycleRecMs(cycleRecMs_),
-				packetSz(packetSz_) {}
-	  };
+    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+        cycleRecMs(cycleRecMs_),
+        packetSz(packetSz_) {}
+    };
 
     SVWEBSERVER_API bool startServer(const QString& addr, int port, const config&);
 
     SVWEBSERVER_API void stopServer();
       
-    typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
+    typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
     SVWEBSERVER_API void setGetCopySignalRef(pf_getCopySignalRef f);
 
-    typedef QMap<QString, SV_Cng::moduleData*>(*pf_getCopyModuleRef)();
+    typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
     SVWEBSERVER_API void setGetCopyModuleRef(pf_getCopyModuleRef f);
 
-    typedef SV_Cng::signalData* (*pf_getSignalData)(const QString &sign);
+    typedef SV_Base::SignalData* (*pf_getSignalData)(const QString &sign);
     SVWEBSERVER_API void setGetSignalData(pf_getSignalData f);        
     
 }

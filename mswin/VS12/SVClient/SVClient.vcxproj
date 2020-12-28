@@ -21,12 +21,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\SVClient\src\client.cpp" />
     <ClCompile Include="..\..\..\src\SVClient\src\dllmain.cpp" />
-    <ClCompile Include="..\..\..\src\SVClient\src\stdafx.cpp" />
     <ClCompile Include="..\..\..\src\SVClient\src\SVClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\SVClient\src\client.h" />
-    <ClInclude Include="..\..\..\src\SVClient\src\stdafx.h" />
     <ClInclude Include="..\..\..\src\SVClient\SVClient.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

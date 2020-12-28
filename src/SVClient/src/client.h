@@ -30,61 +30,61 @@
 #include <mutex>
 #include <thread>
 
-class client
+class Client
 {
 public:
 
-	struct config{
+  struct config{
 
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
-		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-				cycleRecMs(cycleRecMs_),
-				packetSz(packetSz_)
-		{}
-	};
+    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+        cycleRecMs(cycleRecMs_),
+        packetSz(packetSz_)
+    {}
+  };
 
-	client() = default;
+  client() = default;
 
-	~client();
+  ~client();
 
-	bool connect(const char* moduleName, const char* ipAddr, int port);
-	
-	void disconnect();
+  bool connect(const char* moduleName, const char* ipAddr, int port);
+  
+  void disconnect();
 
-	bool addValue(const char* name, SV_Cng::valueType type, SV_Cng::value value, bool onlyFront);
-	
-	void setConfig(config cng);
+  bool addValue(const char* name, SV_Base::ValueType type, SV_Base::Value Value, bool onlyFront);
+  
+  void setConfig(config cng);
 
 private:
 
-	struct valueRec{
-		bool isActive;
-		bool isOnlyFront;
-		char name[SV_NAMESZ];
-		SV_Cng::valueType type;
-		SV_Cng::value* vals;
-	};
+  struct valueRec{
+    bool isActive;
+    bool isOnlyFront;
+    char name[SV_NAMESZ];
+    SV_Base::ValueType type;
+    SV_Base::Value* vals;
+  };
 
-	bool isConnect_ = false, 
+  bool isConnect_ = false, 
          thrStop_ = false, 
          isWrite_ = false;
 
-	std::thread thr_;
-	std::mutex mtxConnect_, mtxUpdValue_;
+  std::thread thr_;
+  std::mutex mtxConnect_, mtxUpdValue_;
 
-	std::map<std::string, valueRec*> values_;
+  std::map<std::string, valueRec*> values_;
 
-	std::string module_, addrServ_;
+  std::string module_, addrServ_;
 
-	int portServ_ = 0;
+  int portServ_ = 0;
 
-	int curCycCnt_ = 0;
+  int curCycCnt_ = 0;
 
-	config cng;
+  config cng;
 
-	void sendCyc();
+  void sendCyc();
 
-	bool sendData();
+  bool sendData();
 };

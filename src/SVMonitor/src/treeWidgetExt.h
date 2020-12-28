@@ -28,22 +28,22 @@
 
 class treeWidgetExt : public QTreeWidget
 {
-	Q_OBJECT
+  Q_OBJECT
 
 
 private:
-	QPoint startMovePos_;
+  QPoint startMovePos_;
 
 
 protected:
-		
-	void mousePressEvent(QMouseEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
-	
+    
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+  
 public:
 
-	treeWidgetExt(QWidget *parent = 0);
-	~treeWidgetExt();
+  treeWidgetExt(QWidget *parent = 0);
+  ~treeWidgetExt();
 
 
 };

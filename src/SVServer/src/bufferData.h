@@ -42,39 +42,39 @@ public:
 
     bufferData(bufferData::config);
 
-	/// входная переменная
-	struct inputData{
-		bool isActive = false;     ///< активна
-		std::string name;          ///< имя
-		std::string module;        ///< модуль
-		SV_Cng::valueType type;    /// тип
-        SV_Cng::recData data;      /// данные
-	};
+  /// входная переменная
+  struct inputData{
+    bool isActive = false;     ///< активна
+    std::string name;          ///< имя
+    std::string module;        ///< модуль
+    SV_Base::ValueType type;    /// тип
+        SV_Base::RecData data;      /// данные
+  };
 
-	/// обновить данные буфера
-	/// \param in новые данные
-	/// \param bTm отметка времени, мс
-	/// \return true - ok
-	void updDataSignals(const std::string& in, uint64_t bTm);
+  /// обновить данные буфера
+  /// \param in новые данные
+  /// \param bTm отметка времени, мс
+  /// \return true - ok
+  void updDataSignals(const std::string& in, uint64_t bTm);
 
-	/// вернуть данные по текущей позиции чтения
+  /// вернуть данные по текущей позиции чтения
     /// \return
-	inputData getDataByReadPos();
+  inputData getDataByReadPos();
 
     /// инкремент позиции чтения
-	void incReadPos();
+  void incReadPos();
 
     /// размер буфера
     /// \return
-	int getBuffSize();
+  int getBuffSize();
 
-	private:
+  private:
 
     /// запись
     struct valueData{
         char name[SV_NAMESZ];
-        SV_Cng::valueType type;
-        SV_Cng::value* vals;
+        SV_Base::ValueType type;
+        SV_Base::Value* vals;
 
         valueData() : vals(NULL){};
     };
@@ -86,7 +86,7 @@ public:
     inputData buffer_[buffSz_];
 
     int buffReadPos_ = 0;  ///< тек позиция чтения
-	int buffWritePos_ = 0; ///< тек позиция записи
+  int buffWritePos_ = 0; ///< тек позиция записи
 
-	std::mutex mtx_;
+  std::mutex mtx_;
 };

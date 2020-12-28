@@ -39,21 +39,21 @@
 
 namespace SV_Zbx {
     
-	  struct config {
+    struct config {
       
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
-		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-				cycleRecMs(cycleRecMs_),
-				packetSz(packetSz_) {}
-	  };
+    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+        cycleRecMs(cycleRecMs_),
+        packetSz(packetSz_) {}
+    };
 
     SVZABBIX_API bool startAgent(const QString& addr, int port, const config&);
 
     SVZABBIX_API void stopAgent();
     
-    typedef SV_Cng::signalData* (*pf_getSignalData)(const QString& sign);
+    typedef SV_Base::SignalData* (*pf_getSignalData)(const QString& sign);
     SVZABBIX_API void setGetSignalData(pf_getSignalData f);        
     
 }

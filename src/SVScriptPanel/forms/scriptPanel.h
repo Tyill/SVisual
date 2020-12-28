@@ -43,21 +43,21 @@ class scriptPanel : public QDialog
     friend bool getBoolValue(const std::string& module, const std::string& signal);
     friend int getIntValue(const std::string& module, const std::string& signal);
     friend float getFloatValue(const std::string& module, const std::string& signal);
-    friend void setBoolValue(const std::string& signal, bool value, uint64_t time);
-    friend void setIntValue(const std::string& signal, int value, uint64_t time);
-    friend void setFloatValue(const std::string& signal, float value, uint64_t time);
+    friend void setBoolValue(const std::string& signal, bool Value, uint64_t time);
+    friend void setIntValue(const std::string& signal, int Value, uint64_t time);
+    friend void setFloatValue(const std::string& signal, float Value, uint64_t time);
 
 public:
     
     SV_Script::pf_updateSignalsCBack pfUpdateSignalsCBack = nullptr;
     SV_Script::pf_addSignalsCBack pfAddSignalsCBack = nullptr;
-	SV_Script::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-	SV_Script::pf_getSignalData pfGetSignalData = nullptr;
+  SV_Script::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+  SV_Script::pf_getSignalData pfGetSignalData = nullptr;
     SV_Script::pf_getModuleData pfGetModuleData = nullptr;
     SV_Script::pf_addSignal pfAddSignal = nullptr;
     SV_Script::pf_addModule pfAddModule = nullptr;
     SV_Script::pf_moduleConnectCBack pfModuleConnectCBack = nullptr;
-	SV_Script::pf_loadSignalData pfLoadSignalData= nullptr;
+  SV_Script::pf_loadSignalData pfLoadSignalData= nullptr;
     SV_Script::pf_changeSignColor pfChangeSignColor = nullptr;
     
     scriptPanel(QWidget *parent, SV_Script::config, SV_Script::modeGr mode);
@@ -72,10 +72,10 @@ public:
     void deactiveScript(const QString& fname);
 
     void refreshScript(const QString& fname);
-	
+  
 private:
     Ui::ScriptPanelClass ui;
-	    
+      
     SV_Script::modeGr mode_;
 
     SV_Script::config cng;
@@ -86,7 +86,7 @@ private:
     std::mutex mtx_;
     bool isStopWork_ = false;
 
-    QMap<QString, SV_Cng::signalData*> signBuff_;
+    QMap<QString, SV_Base::SignalData*> signBuff_;
         
     int iterValue_ = 0,
         buffCPos_ = 0,
@@ -107,10 +107,10 @@ private:
     
     QString exlName(QString);
 
-    void updateSign(SV_Cng::signalData* sign, int beginPos, int valuePos);
-    bool updateBuffValue(const QString& module, const QString& signal, SV_Cng::valueType stype);
+    void updateSign(SV_Base::SignalData* sign, int beginPos, int valuePos);
+    bool updateBuffValue(const QString& module, const QString& signal, SV_Base::ValueType stype);
 
-    void setValue(const QString& signal, SV_Cng::value value, uint64_t time);
+    void setValue(const QString& signal, SV_Base::Value Value, uint64_t time);
     void contextMenuEvent(QContextMenuEvent * event);
     void workCycle();
 

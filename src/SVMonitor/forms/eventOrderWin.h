@@ -30,19 +30,19 @@
 
 class eventOrderWin : public QDialog
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	eventOrderWin(QWidget *parent = 0);
-	~eventOrderWin();
+  eventOrderWin(QWidget *parent = 0);
+  ~eventOrderWin();
 
-	Ui::eventOrderClass ui;
+  Ui::eventOrderClass ui;
 
 private:
-	void showEvent(QShowEvent * event);
+  void showEvent(QShowEvent * event);
 
-	MainWin* mainWin_ = nullptr;
+  MainWin* mainWin_ = nullptr;
 
 public slots:
-	void showOrder();
+  void showOrder();
 };

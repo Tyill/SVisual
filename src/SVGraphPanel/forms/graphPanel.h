@@ -32,42 +32,42 @@ class wdgGraph;
 
 class graphPanel : public QWidget
 {
-	Q_OBJECT
+  Q_OBJECT
 
 
 private:
 
-	SV_Graph::config cng;
+  SV_Graph::config cng;
 
-	const int MIN_HEIGHT_GRAPH = 300;
-	int graphCnt_ = 0;
-	QVector<wdgGraph*> graphObj_;
+  const int MIN_HEIGHT_GRAPH = 300;
+  int graphCnt_ = 0;
+  QVector<wdgGraph*> graphObj_;
 
-	QSplitter* splitterGraph_ = nullptr;
-	wdgGraph* selGraph_ = nullptr;
+  QSplitter* splitterGraph_ = nullptr;
+  wdgGraph* selGraph_ = nullptr;
 
     SV_Graph::graphSetting graphSett_;
 
-	bool isPlay_ = true;
-		
+  bool isPlay_ = true;
+    
     void load();
-	void tableUpdate(wdgGraph* graph);
-	void tableUpdateAlter(wdgGraph* graph);
+  void tableUpdate(wdgGraph* graph);
+  void tableUpdateAlter(wdgGraph* graph);
 
 public:
-	Ui::graphPanelClass ui;
+  Ui::graphPanelClass ui;
 
-	graphPanel(QWidget *parent, const SV_Graph::config& cng);
-	~graphPanel();
+  graphPanel(QWidget *parent, const SV_Graph::config& cng);
+  ~graphPanel();
 
-	SV_Graph::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-	SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
+  SV_Graph::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+  SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
     SV_Graph::pf_getSignalAttr pfGetSignalAttr = nullptr;
-	SV_Graph::pf_loadSignalData pfLoadSignalData= nullptr;
+  SV_Graph::pf_loadSignalData pfLoadSignalData= nullptr;
         
     void addSignalOnGraph(QString name, int section);
-	QPair<qint64, qint64> getTimeInterval();
-	void setTimeInterval(qint64 stTime, qint64 enTime);
+  QPair<qint64, qint64> getTimeInterval();
+  void setTimeInterval(qint64 stTime, qint64 enTime);
     QVector<QVector<QString>> getLocateSignals();
 
     void setGraphSetting(const SV_Graph::graphSetting&);
@@ -76,27 +76,27 @@ public:
     QVector<SV_Graph::axisAttr> getAxisAttr();
 
 public slots:
-	void updateSignals();
-	void resizeByValue();
-	void delSignal(QString sign);
-	void scaleGraph();
+  void updateSignals();
+  void resizeByValue();
+  void delSignal(QString sign);
+  void scaleGraph();
 
 private slots:
-	void addGraph(QString sign);
-	void axisTimeChange(QString obj);
-	void diapTimeUpdate();
-	void markerChange(QString obj);
-	void selectGraph(QString obj);	
-	void graphToUp(QString obj);
-	void graphToDn(QString obj);
-	void closeGraph();
-	void dragEnterEvent(QDragEnterEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
-	void dropEvent(QDropEvent *event);
-	void resizeByTime();		
-	void undoCmd();
-	void colorUpdate();
-	
+  void addGraph(QString sign);
+  void axisTimeChange(QString obj);
+  void diapTimeUpdate();
+  void markerChange(QString obj);
+  void selectGraph(QString obj);  
+  void graphToUp(QString obj);
+  void graphToDn(QString obj);
+  void closeGraph();
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dragMoveEvent(QDragMoveEvent *event);
+  void dropEvent(QDropEvent *event);
+  void resizeByTime();    
+  void undoCmd();
+  void colorUpdate();
+  
 };
 
 

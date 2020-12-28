@@ -32,21 +32,21 @@
 #include "Lib/rapidjson/stringbuffer.h"
 #include "Lib/rapidjson/document.h"
 
-using namespace SV_Cng;
+using namespace SV_Base;
 
 exportPanel::exportPanel(QWidget *parent, SV_Exp::config cng_){
-		
-	setParent(parent);
-	
+    
+  setParent(parent);
+  
 #ifdef SV_EN
-	QTranslator translator;
-	translator.load(":/SVExp/svexportpanel_en.qm");
-	QCoreApplication::installTranslator(&translator);
+  QTranslator translator;
+  translator.load(":/SVExp/svexportpanel_en.qm");
+  QCoreApplication::installTranslator(&translator);
 #endif
     
-	cng = cng_;
+  cng = cng_;
 
-	ui.setupUi(this);
+  ui.setupUi(this);
 
     ui.dTimeBegin->setDateTime(QDateTime::currentDateTime().addSecs(-10));
     ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
@@ -165,7 +165,7 @@ void exportPanel::updateTableSignal(){
         if ((selModule_ == s->module.c_str()) && !s->isDelete){
 
             if (row >= rowCnt){
-                ui.tableSignal->insertRow(rowCnt);	++rowCnt;
+                ui.tableSignal->insertRow(rowCnt);  ++rowCnt;
             }
             ui.tableSignal->setItem(row, 0, new QTableWidgetItem(s->name.c_str()));
             ui.tableSignal->setItem(row, 1, new QTableWidgetItem(getSVTypeStr(s->type).c_str()));
@@ -188,7 +188,7 @@ void exportPanel::updateTableExport(){
         if (expSignals_.contains((s->name + s->module).c_str())){
 
             if (row >= rowCnt){
-                ui.tableExport->insertRow(rowCnt);	++rowCnt;
+                ui.tableExport->insertRow(rowCnt);  ++rowCnt;
             }
             ui.tableExport->setItem(row, 0, new QTableWidgetItem(s->module.c_str()));
             ui.tableExport->setItem(row, 1, new QTableWidgetItem(s->name.c_str()));
@@ -234,9 +234,9 @@ void exportPanel::exportToXLSX(QString fileName){
 
                     for (int j = 0; j < SV_PACKETSZ; ++j){
                         switch (sd->type){
-                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[cp].vals[j].tBool ? 1 : 0); break;
-                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[cp].vals[j].tInt); break;
-                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[cp].vals[j].tFloat); break;
+                        case ValueType::BOOL:  xlsx.write(row, col - 1, sd->buffData[cp].vals[j].BOOL ? 1 : 0); break;
+                        case ValueType::INT:   xlsx.write(row, col - 1, sd->buffData[cp].vals[j].INT); break;
+                        case ValueType::FLOAT: xlsx.write(row, col - 1, sd->buffData[cp].vals[j].FLOAT); break;
                         }
                         ++row;
                      }
@@ -249,9 +249,9 @@ void exportPanel::exportToXLSX(QString fileName){
                         xlsx.write(row, 1, QDateTime::fromMSecsSinceEpoch(dt));
 
                         switch (sd->type){
-                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tBool ? 1 : 0); break;
-                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tInt); break;
-                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tFloat); break;
+                        case ValueType::BOOL:  xlsx.write(row, col - 1, sd->buffData[cp].vals[0].BOOL ? 1 : 0); break;
+                        case ValueType::INT:   xlsx.write(row, col - 1, sd->buffData[cp].vals[0].INT); break;
+                        case ValueType::FLOAT: xlsx.write(row, col - 1, sd->buffData[cp].vals[0].FLOAT); break;
                         }
                         ++row;
                     }                    
@@ -264,9 +264,9 @@ void exportPanel::exportToXLSX(QString fileName){
                         xlsx.write(row, 1, QDateTime::fromMSecsSinceEpoch(dt));
 
                         switch (sd->type){
-                        case valueType::tBool:  xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tBool ? 1 : 0); break;
-                        case valueType::tInt:   xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tInt); break;
-                        case valueType::tFloat: xlsx.write(row, col - 1, sd->buffData[cp].vals[0].tFloat); break;
+                        case ValueType::BOOL:  xlsx.write(row, col - 1, sd->buffData[cp].vals[0].BOOL ? 1 : 0); break;
+                        case ValueType::INT:   xlsx.write(row, col - 1, sd->buffData[cp].vals[0].INT); break;
+                        case ValueType::FLOAT: xlsx.write(row, col - 1, sd->buffData[cp].vals[0].FLOAT); break;
                         }
                         ++row;
                     }
@@ -310,7 +310,7 @@ void exportPanel::exportToTXT(QString fileName){
             out << "signal = " << sd->name.c_str() << '\n';
                        
             auto bsz = sd->buffData.size(); int cp = sd->buffBeginPos;
-            QString value, time;
+            QString Value, time;
             while (cp != sd->buffValuePos){
 
                 uint64_t dt = sd->buffData[cp].beginTime;
@@ -322,9 +322,9 @@ void exportPanel::exportToTXT(QString fileName){
 
                         for (int j = 0; j < SV_PACKETSZ; ++j){
                             switch (sd->type){
-                            case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[j].tBool ? 1 : 0) + ' '; break;
-                            case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[j].tInt) + ' '; break;
-                            case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[j].tFloat) + ' '; break;
+                            case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[j].BOOL ? 1 : 0) + ' '; break;
+                            case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[j].INT) + ' '; break;
+                            case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[j].FLOAT) + ' '; break;
                             }
                         }
                     }
@@ -336,9 +336,9 @@ void exportPanel::exportToTXT(QString fileName){
                             time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
 
                             switch (sd->type){
-                            case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
-                            case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
-                            case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
+                            case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].BOOL ? 1 : 0) + ' '; break;
+                            case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].INT) + ' '; break;
+                            case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].FLOAT) + ' '; break;
                             }
                         }
                     }
@@ -350,9 +350,9 @@ void exportPanel::exportToTXT(QString fileName){
                             time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
 
                             switch (sd->type){
-                            case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
-                            case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
-                            case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
+                            case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].BOOL ? 1 : 0) + ' '; break;
+                            case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].INT) + ' '; break;
+                            case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].FLOAT) + ' '; break;
                             }
                         }
                     }
@@ -362,7 +362,7 @@ void exportPanel::exportToTXT(QString fileName){
                 if (cp >= bsz) cp = 0;
             }
             out << "time = " << qPrintable(time) << '\n';
-            out << "value = " << qPrintable(value) << '\n';
+            out << "Value = " << qPrintable(Value) << '\n';
         }
 
         data.close();
@@ -409,7 +409,7 @@ void exportPanel::exportToJSON(QString fileName){
         writer.String(sd->name.c_str());
         
         auto bsz = sd->buffData.size(); int cp = sd->buffBeginPos;
-        QString time, value;
+        QString time, Value;
         while(cp != sd->buffValuePos){
                        
             uint64_t dt = sd->buffData[cp].beginTime;
@@ -424,9 +424,9 @@ void exportPanel::exportToJSON(QString fileName){
 
                    for (int j = 0; j < SV_PACKETSZ; ++j){
                         switch (sd->type){
-                        case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[j].tBool ? 1 : 0) + ' '; break;
-                        case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[j].tInt) + ' '; break;
-                        case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[j].tFloat) + ' '; break;
+                        case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[j].BOOL ? 1 : 0) + ' '; break;
+                        case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[j].INT) + ' '; break;
+                        case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[j].FLOAT) + ' '; break;
                         }
                     }
                 }
@@ -438,9 +438,9 @@ void exportPanel::exportToJSON(QString fileName){
                         time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
 
                         switch (sd->type){
-                        case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
-                        case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
-                        case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
+                        case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].BOOL ? 1 : 0) + ' '; break;
+                        case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].INT) + ' '; break;
+                        case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].FLOAT) + ' '; break;
                         }
                     }
                 }
@@ -452,9 +452,9 @@ void exportPanel::exportToJSON(QString fileName){
                         time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
 
                         switch (sd->type){
-                        case valueType::tBool:  value += QString::number(sd->buffData[cp].vals[0].tBool ? 1 : 0) + ' '; break;
-                        case valueType::tInt:   value += QString::number(sd->buffData[cp].vals[0].tInt) + ' '; break;
-                        case valueType::tFloat: value += QString::number(sd->buffData[cp].vals[0].tFloat) + ' '; break;
+                        case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].BOOL ? 1 : 0) + ' '; break;
+                        case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].INT) + ' '; break;
+                        case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].FLOAT) + ' '; break;
                         }
                     }
                 }
@@ -467,7 +467,7 @@ void exportPanel::exportToJSON(QString fileName){
         writer.String(qPrintable(time));
 
         writer.Key("Value");
-        writer.String(qPrintable(value));
+        writer.String(qPrintable(Value));
 
         writer.EndObject();
     }

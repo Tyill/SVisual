@@ -27,11 +27,11 @@
 #include "stdafx.h"
 
 class thrLoadData : public QObject {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	thrLoadData(QStringList files);
+  thrLoadData(QStringList files);
 
 signals:
-	void finished(bool ok);
+  void finished(bool ok);
 };

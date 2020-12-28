@@ -84,10 +84,10 @@ namespace SV_Graph {
 
     SVGRAPHPANEL_API QVector<axisAttr> getAxisAttr(QWidget* gp);
 
-    typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
+    typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
     SVGRAPHPANEL_API void setGetCopySignalRef(QWidget* gp, pf_getCopySignalRef f);
 
-    typedef SV_Cng::signalData *(*pf_getSignalData)(const QString& sign);
+    typedef SV_Base::SignalData *(*pf_getSignalData)(const QString& sign);
     SVGRAPHPANEL_API void setGetSignalData(QWidget* gp, pf_getSignalData f);
 
     typedef bool (*pf_loadSignalData)(const QString& sign);
@@ -102,7 +102,7 @@ namespace SV_Graph {
         
     SVGRAPHPANEL_API QPair<qint64, qint64> getTimeInterval(QWidget* gp);
 
-	SVGRAPHPANEL_API void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime);
+  SVGRAPHPANEL_API void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime);
 
     SVGRAPHPANEL_API QVector<QVector<QString>> getLocateSignals(QWidget *gp);
 

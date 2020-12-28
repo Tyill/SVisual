@@ -28,21 +28,21 @@
 int main(int argc, char *argv[])
 {
 #ifdef _WIN32
-	QStringList paths = QCoreApplication::libraryPaths();
-	paths.append(".");
-	paths.append("plugins");
-	QCoreApplication::setLibraryPaths(paths);
+  QStringList paths = QCoreApplication::libraryPaths();
+  paths.append(".");
+  paths.append("plugins");
+  QCoreApplication::setLibraryPaths(paths);
 #endif
 
-	QApplication a(argc, argv);
+  QApplication a(argc, argv);
 
 #ifdef SV_EN
-	QTranslator translator;
+  QTranslator translator;
     translator.load(":/SVViewer/svviewer_en.qm");
-	a.installTranslator(&translator);
+  a.installTranslator(&translator);
 #endif
 
-	MainWin w;
-	w.showMaximized();
-	return a.exec();
+  MainWin w;
+  w.showMaximized();
+  return a.exec();
 }

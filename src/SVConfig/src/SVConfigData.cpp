@@ -29,71 +29,62 @@
 
 using namespace std;
 
-namespace SV_Cng {
+namespace SV_Base {
 
-    /// вернуть тип сигнала как значение
-    /// \param str
-    /// \return
-    valueType getSVType(const std::string& str) {
+  /// вернуть тип сигнала как значение
+  /// \param str
+  /// \return
+  ValueType getSVType(const std::string& str) {
 
-        valueType res = valueType::tInt;
+    ValueType res = ValueType::INT;
+    if (str == "bool") res = ValueType::BOOL;
+    else if (str == "float") res = ValueType::FLOAT;
+    return res;
+  }
 
-        if (str == "bool") res = valueType::tBool;
-        else if (str == "float") res = valueType::tFloat;
+  /// вернуть тип сигнала как строку
+  /// \param type
+  /// \return
+  std::string getSVTypeStr(ValueType type) {
 
-        return res;
-    }
+    std::string res = "int";
+    if (type == ValueType::BOOL) res = "bool";
+    else if (type == ValueType::FLOAT) res = "float";
+    return res;
+  }
 
-    /// вернуть тип сигнала как строку
-    /// \param type
-    /// \return
-    std::string getSVTypeStr(valueType type) {
+  /// вернуть значение как строку
+  /// \param vt
+  /// \param Value
+  /// \return
+  std::string getSValue(ValueType vt, double value) {
 
-        std::string res = "int";
+    std::string res = "";
 
-        if (type == valueType::tBool) res = "bool";
-        else if (type == valueType::tFloat) res = "float";
-
-        return res;
-    }
-
-    /// вернуть значение как строку
-    /// \param vt
-    /// \param value
-    /// \return
-    std::string getSValue(valueType vt, double value) {
-
-        std::string res = "";
-
-        switch (vt) {
-            case valueType::tBool:
-                res = value > 0 ? "1" : "0";
-                break;
-            case valueType::tInt:
-                res = value > 0 ? std::to_string((int) (value + 0.5)) : std::to_string((int) (value - 0.5));
-                break;
-            case valueType::tFloat:{
-
-                int prec = 1;
-                if (abs(value) > 1.0)         prec = 1;
-                else if (abs(value) > 0.1)    prec = 2;
-                else if (abs(value) > 0.01)   prec = 3;
-                else if (abs(value) > 0.001)  prec = 4;
-                else if (abs(value) > 0.0001) prec = 5;
-                
-                stringstream stream;
-                stream << fixed << setprecision(prec) << value;
-                res = stream.str();
-            }
-                break;
-            default:
-                break;
+    switch (vt) {
+      case ValueType::BOOL:
+        res = value > 0 ? "1" : "0";
+        break;
+      case ValueType::INT:
+        res = value > 0 ? std::to_string((int)(value + 0.5)) : std::to_string((int)(value - 0.5));
+        break;
+      case ValueType::FLOAT:{
+        int prec = 1;
+        if (abs(value) < 1.0){
+          if (abs(value) > 0.1)         prec = 2;
+          else if (abs(value) > 0.01)   prec = 3;
+          else if (abs(value) > 0.001)  prec = 4;
+          else prec = 5;
         }
-
-        return res;
+        stringstream stream;
+        stream << fixed << setprecision(prec) << value;
+        res = stream.str();
+      }
+      break;
+      default: break;
     }
 
-    
+    return res;
+  }
 }
-
 

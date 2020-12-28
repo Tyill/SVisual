@@ -19,19 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\auxFunc.h" />
-    <ClInclude Include="..\..\..\src\SVAuxFunc\clientTCP.h" />
-    <ClInclude Include="..\..\..\src\SVAuxFunc\Front.h" />
-    <ClInclude Include="..\..\..\src\SVAuxFunc\mt_log.h" />
-    <ClInclude Include="..\..\..\src\SVAuxFunc\serverTCP.h" />
-    <ClInclude Include="..\..\..\src\SVAuxFunc\src\stdafx.h" />
-    <ClInclude Include="..\..\..\src\SVAuxFunc\TimerDelay.h" />
+    <ClInclude Include="..\..\..\src\SVAuxFunc\aux_func.h" />
+    <ClInclude Include="..\..\..\src\SVAuxFunc\tcp_client.h" />
+    <ClInclude Include="..\..\..\src\SVAuxFunc\logger.h" />
+    <ClInclude Include="..\..\..\src\SVAuxFunc\tcp_server.h" />
+    <ClInclude Include="..\..\..\src\SVAuxFunc\timer_delay.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\auxFunc.cpp" />
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\clientTCP.cpp" />
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\serverTCP.cpp" />
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\stdafx.cpp" />
+    <ClCompile Include="..\..\..\src\SVAuxFunc\src\aux_func.cpp" />
+    <ClCompile Include="..\..\..\src\SVAuxFunc\src\tcp_client.cpp" />
+    <ClCompile Include="..\..\..\src\SVAuxFunc\src\tcp_server.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ABAC7B39-E15F-4708-9E1D-74AB3B8BEEED}</ProjectGuid>
@@ -112,7 +109,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libuv.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Lib>
@@ -131,7 +128,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libuv.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

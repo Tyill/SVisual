@@ -29,87 +29,87 @@
 #include "dragLabel.h"
 #include "forms/wdgGraph.h"
 
-using namespace SV_Cng;
+using namespace SV_Base;
 
 void graphPanel::load(){
 
-	setAcceptDrops(true);
+  setAcceptDrops(true);
 
-	QList<int> ss; ss.append(90); ss.append(cng.isShowTable ? 1 : 0);
-	ui.splitter_2->setSizes(ss);
+  QList<int> ss; ss.append(90); ss.append(cng.isShowTable ? 1 : 0);
+  ui.splitter_2->setSizes(ss);
 
-	connect(ui.btnResizeByAuto, &QPushButton::clicked, [this](){
-		resizeByTime();
-		resizeByValue();
-	});
-	connect(ui.btnResizeByTime, SIGNAL(clicked()), this, SLOT(resizeByTime()));
-	connect(ui.btnResizeByValue, SIGNAL(clicked()), this, SLOT(resizeByValue()));
-	connect(ui.btnScalePos, SIGNAL(clicked()), this, SLOT(scaleGraph()));
-	connect(ui.btnScaleNeg, SIGNAL(clicked()), this, SLOT(scaleGraph()));
-	connect(ui.btnUndo, SIGNAL(clicked()), this, SLOT(undoCmd()));
-	connect(ui.btnColorUpdate, SIGNAL(clicked()), this, SLOT(colorUpdate()));
+  connect(ui.btnResizeByAuto, &QPushButton::clicked, [this](){
+    resizeByTime();
+    resizeByValue();
+  });
+  connect(ui.btnResizeByTime, SIGNAL(clicked()), this, SLOT(resizeByTime()));
+  connect(ui.btnResizeByValue, SIGNAL(clicked()), this, SLOT(resizeByValue()));
+  connect(ui.btnScalePos, SIGNAL(clicked()), this, SLOT(scaleGraph()));
+  connect(ui.btnScaleNeg, SIGNAL(clicked()), this, SLOT(scaleGraph()));
+  connect(ui.btnUndo, SIGNAL(clicked()), this, SLOT(undoCmd()));
+  connect(ui.btnColorUpdate, SIGNAL(clicked()), this, SLOT(colorUpdate()));
 
     splitterGraph_ = new QSplitter(this);
-	splitterGraph_->setOrientation(Qt::Vertical);
+  splitterGraph_->setOrientation(Qt::Vertical);
 
-	ui.scrollAreaWidgetContents->layout()->addWidget(splitterGraph_);
-	connect(ui.btnPlay, &QPushButton::clicked, this, [this] {
+  ui.scrollAreaWidgetContents->layout()->addWidget(splitterGraph_);
+  connect(ui.btnPlay, &QPushButton::clicked, this, [this] {
 
-		isPlay_ = !isPlay_;
+    isPlay_ = !isPlay_;
 
-		if (isPlay_)
-			ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_stop.png"));
-		else
-			ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
-	});
+    if (isPlay_)
+      ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_stop.png"));
+    else
+      ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
+  });
 
-	ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
-	ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
-	ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
-	ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
+  ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
+  ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
+  ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
+  ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
 }
 
 graphPanel::graphPanel(QWidget *parent, const SV_Graph::config& cng_){
 
 #ifdef SV_EN
-	QTranslator translator;
-	translator.load(":/SVGp/svgraphpanel_en.qm");
-	QCoreApplication::installTranslator(&translator);
+  QTranslator translator;
+  translator.load(":/SVGp/svgraphpanel_en.qm");
+  QCoreApplication::installTranslator(&translator);
 #endif
 
-	cng = cng_;
+  cng = cng_;
 
-	setParent(parent);
+  setParent(parent);
 
-	ui.setupUi(this);
-		
-	load();
+  ui.setupUi(this);
+    
+  load();
 
-	////// хак. не открывается на полную
-	ui.dTimeBegin->setVisible(false);
-	ui.dTimeEnd->setVisible(false);
-	ui.lbDTime->setVisible(false);
+  ////// хак. не открывается на полную
+  ui.dTimeBegin->setVisible(false);
+  ui.dTimeEnd->setVisible(false);
+  ui.lbDTime->setVisible(false);
 
-	QTimer* tm = new QTimer(this);
-	connect(tm, &QTimer::timeout, [=]() {
+  QTimer* tm = new QTimer(this);
+  connect(tm, &QTimer::timeout, [=]() {
 
-		if (cng.mode == SV_Graph::modeGr::viewer){
-			ui.btnPlay->setVisible(false);           
+    if (cng.mode == SV_Graph::modeGr::viewer){
+      ui.btnPlay->setVisible(false);           
             ui.btnAScale->setVisible(false);
             ui.btnAScale->setChecked(false);
-			ui.dTimeBegin->setVisible(true);
-			ui.dTimeEnd->setVisible(true);
-			ui.lbDTime->setVisible(true);
-		}
-		else{
-			ui.dTimeBegin->setVisible(false);
-			ui.dTimeEnd->setVisible(false);
-			ui.lbDTime->setVisible(false);
-		}
-		tm->stop();	tm->deleteLater();
-	});
-	tm->start(100);	
-	////////////
+      ui.dTimeBegin->setVisible(true);
+      ui.dTimeEnd->setVisible(true);
+      ui.lbDTime->setVisible(true);
+    }
+    else{
+      ui.dTimeBegin->setVisible(false);
+      ui.dTimeEnd->setVisible(false);
+      ui.lbDTime->setVisible(false);
+    }
+    tm->stop();  tm->deleteLater();
+  });
+  tm->start(100);  
+  ////////////
 
 }
 
@@ -164,12 +164,12 @@ QVector<SV_Graph::axisAttr> graphPanel::getAxisAttr(){
 
 void graphPanel::addSignalOnGraph(QString sign, int section){
 
-	SV_Cng::signalData* sd = pfGetSignalData(sign);
+  SV_Base::SignalData* sd = pfGetSignalData(sign);
 
     if (!sd) return;
 
-	if (sd && !sd->isBuffEnable && pfLoadSignalData)
-		pfLoadSignalData(sign);
+  if (sd && !sd->isBuffEnable && pfLoadSignalData)
+    pfLoadSignalData(sign);
 
     if (graphObj_.size() <= section){
         while (graphObj_.size() <= section)
@@ -182,12 +182,12 @@ void graphPanel::addSignalOnGraph(QString sign, int section){
         ui.axisTime->req_axisChange();
     }
         
-	if (selGraph_){
-		selGraph_->addSignal(sign);
+  if (selGraph_){
+    selGraph_->addSignal(sign);
 
-		tableUpdate(selGraph_);
-		tableUpdateAlter(selGraph_);
-	}
+    tableUpdate(selGraph_);
+    tableUpdateAlter(selGraph_);
+  }
     else{
         graphObj_[section]->addSignal(sign);
         
@@ -196,174 +196,174 @@ void graphPanel::addSignalOnGraph(QString sign, int section){
 
         selGraph_ = graphObj_[section];
     }
-	
+  
 }
 
 void graphPanel::addGraph(QString sign){
 
-	wdgGraph* graph = new wdgGraph(this, cng);
-			
-	graph->setObjectName("graph_" + QString::number(graphCnt_));
-	++graphCnt_;
-		
+  wdgGraph* graph = new wdgGraph(this, cng);
+      
+  graph->setObjectName("graph_" + QString::number(graphCnt_));
+  ++graphCnt_;
+    
     graph->setGraphSetting(graphSett_);
 
-	graphObj_.append(graph);
-	
-	splitterGraph_->addWidget(graph);
+  graphObj_.append(graph);
+  
+  splitterGraph_->addWidget(graph);
 
-	ui.scrollAreaWidgetContents->setMinimumHeight(graphObj_.size() * MIN_HEIGHT_GRAPH);
-	
-	QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
-	vscr->setValue(vscr->maximumHeight());
+  ui.scrollAreaWidgetContents->setMinimumHeight(graphObj_.size() * MIN_HEIGHT_GRAPH);
+  
+  QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
+  vscr->setValue(vscr->maximumHeight());
 
-	graph->setAxisTime(ui.axisTime);
+  graph->setAxisTime(ui.axisTime);
 
     if (!sign.isEmpty())
-	    graph->addSignal(sign);
+      graph->addSignal(sign);
 
-	connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
-	connect(ui.axisTime, SIGNAL(req_axisChange()), graph, SLOT(axisTimeChange()));
-	connect(graph, SIGNAL(req_axisTimeUpdate(QString)), this, SLOT(axisTimeChange(QString)));
-	connect(graph, SIGNAL(req_markerChange(QString)), this, SLOT(markerChange(QString)));
-	connect(graph, SIGNAL(req_selectGraph(QString)), this, SLOT(selectGraph(QString)));
-	connect(graph, SIGNAL(req_graphUp(QString)), this, SLOT(graphToUp(QString)));
-	connect(graph, SIGNAL(req_graphDn(QString)), this, SLOT(graphToDn(QString)));
-	connect(graph, SIGNAL(req_close()), this, SLOT(closeGraph()));
-	
-	if (graphObj_.size() > 1){
+  connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
+  connect(ui.axisTime, SIGNAL(req_axisChange()), graph, SLOT(axisTimeChange()));
+  connect(graph, SIGNAL(req_axisTimeUpdate(QString)), this, SLOT(axisTimeChange(QString)));
+  connect(graph, SIGNAL(req_markerChange(QString)), this, SLOT(markerChange(QString)));
+  connect(graph, SIGNAL(req_selectGraph(QString)), this, SLOT(selectGraph(QString)));
+  connect(graph, SIGNAL(req_graphUp(QString)), this, SLOT(graphToUp(QString)));
+  connect(graph, SIGNAL(req_graphDn(QString)), this, SLOT(graphToDn(QString)));
+  connect(graph, SIGNAL(req_close()), this, SLOT(closeGraph()));
+  
+  if (graphObj_.size() > 1){
 
-		QPoint leftMarkPos, rightMarkPos;
-		graphObj_[0]->getMarkersPos(leftMarkPos, rightMarkPos);
-		graph->setMarkersPos(leftMarkPos, rightMarkPos);
-	}
+    QPoint leftMarkPos, rightMarkPos;
+    graphObj_[0]->getMarkersPos(leftMarkPos, rightMarkPos);
+    graph->setMarkersPos(leftMarkPos, rightMarkPos);
+  }
 
-	tableUpdate(graph);
-	tableUpdateAlter(graph);
+  tableUpdate(graph);
+  tableUpdateAlter(graph);
 
     selGraph_ = graph;
 }
 
 void graphPanel::delSignal(QString sign){
-		
-	for (auto gr : graphObj_){
-		
-		gr->delSignal(sign, false);
-	}
-	tableUpdate(selGraph_);
+    
+  for (auto gr : graphObj_){
+    
+    gr->delSignal(sign, false);
+  }
+  tableUpdate(selGraph_);
 
 }
 
 void graphPanel::dragEnterEvent(QDragEnterEvent *event)
 {
-	if (qobject_cast<QTreeWidget *>(event->source()) || 
-		qobject_cast<dragLabel *>(event->source())) {
-		
-		event->accept();
+  if (qobject_cast<QTreeWidget *>(event->source()) || 
+    qobject_cast<dragLabel *>(event->source())) {
+    
+    event->accept();
 
-	}		
+  }    
 }
 
 void graphPanel::dragMoveEvent(QDragMoveEvent *event){
 
-	if (qobject_cast<QTreeWidget *>(event->source()) ||
-		qobject_cast<dragLabel *>(event->source())) {
+  if (qobject_cast<QTreeWidget *>(event->source()) ||
+    qobject_cast<dragLabel *>(event->source())) {
 
-		event->accept();
+    event->accept();
 
-	}
+  }
 }
 
 void graphPanel::dropEvent(QDropEvent *event)
 {
-	dragLabel* lb = qobject_cast<dragLabel *>(event->source());
+  dragLabel* lb = qobject_cast<dragLabel *>(event->source());
 
-	if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
+  if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
 
-		QString sign = event->mimeData()->text();
-				
-		if (!sign.isEmpty()){
+    QString sign = event->mimeData()->text();
+        
+    if (!sign.isEmpty()){
 
-			auto sd = pfGetSignalData(sign);
+      auto sd = pfGetSignalData(sign);
 
-			if (sd && !sd->isBuffEnable && pfLoadSignalData)
-				pfLoadSignalData(sign);
+      if (sd && !sd->isBuffEnable && pfLoadSignalData)
+        pfLoadSignalData(sign);
 
-			if (lb) lb->req_delSignal(sign);
-			if (graphObj_.isEmpty()){
+      if (lb) lb->req_delSignal(sign);
+      if (graphObj_.isEmpty()){
 
-				ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
-				
-				addGraph(sign);
+        ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
+        
+        addGraph(sign);
 
-				ui.axisTime->req_axisChange();
-			}
-			else addGraph(sign);
-			
-		}
+        ui.axisTime->req_axisChange();
+      }
+      else addGraph(sign);
+      
+    }
 
-		event->accept();
-	}		
+    event->accept();
+  }    
 }
 
 void graphPanel::tableUpdate(wdgGraph* graph){
-	
-	QPoint leftMarkPos, rightMarkPos;
-	graph->getMarkersPos(leftMarkPos, rightMarkPos);
+  
+  QPoint leftMarkPos, rightMarkPos;
+  graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
-	ui.tblValues->clearContents();
+  ui.tblValues->clearContents();
    
-	int leftMarkP = leftMarkPos.x(), 
+  int leftMarkP = leftMarkPos.x(), 
         rightMarkP = rightMarkPos.x();
 
-	QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
-	double tmScale = ui.axisTime->getTimeScale();
+  QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
+  double tmScale = ui.axisTime->getTimeScale();
 
-	QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
-	QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
+  QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
+  QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
 
     QVector<wdgGraph::graphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
 
-	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-	QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-	if (leftMarkP > rightMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+  QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+  QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+  QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+  if (leftMarkP > rightMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 
-	int sz = leftMarkVal.size();
-	while (sz > ui.tblValues->rowCount()){
-		ui.tblValues->insertRow(ui.tblValues->rowCount());
-	}
+  int sz = leftMarkVal.size();
+  while (sz > ui.tblValues->rowCount()){
+    ui.tblValues->insertRow(ui.tblValues->rowCount());
+  }
        
-	for (int i = 0; i < sz; ++i){
+  for (int i = 0; i < sz; ++i){
 
-		valueType vt = leftMarkVal[i].type;
+    ValueType vt = leftMarkVal[i].type;
 
-		QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
-		QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
-		QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
+    QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
+    QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
+    QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
         QString vmin = getSValue(vt, statVal[i].vmin).c_str();
         QString vmax = getSValue(vt, statVal[i].vmax).c_str();
         QString vmean = getSValue(vt, statVal[i].vmean).c_str();
 
-        if (vt == valueType::tBool)
+        if (vt == ValueType::BOOL)
             vmean = QString::number(int(statVal[i].vmean + 0.5));
 
-		QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
-		nameItem->setForeground(leftMarkVal[i].color);
-		ui.tblValues->setItem(i, 0, nameItem);
+    QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
+    nameItem->setForeground(leftMarkVal[i].color);
+    ui.tblValues->setItem(i, 0, nameItem);
 
-		ui.tblValues->setItem(i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
-		ui.tblValues->setItem(i, 2, new QTableWidgetItem(x1));
-		ui.tblValues->setItem(i, 3, new QTableWidgetItem(x2));
-		ui.tblValues->setItem(i, 4, new QTableWidgetItem(x2_x1));
-		ui.tblValues->setItem(i, 5, new QTableWidgetItem(y1));
-		ui.tblValues->setItem(i, 6, new QTableWidgetItem(y2));
-		ui.tblValues->setItem(i, 7, new QTableWidgetItem(y2_y1));
+    ui.tblValues->setItem(i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
+    ui.tblValues->setItem(i, 2, new QTableWidgetItem(x1));
+    ui.tblValues->setItem(i, 3, new QTableWidgetItem(x2));
+    ui.tblValues->setItem(i, 4, new QTableWidgetItem(x2_x1));
+    ui.tblValues->setItem(i, 5, new QTableWidgetItem(y1));
+    ui.tblValues->setItem(i, 6, new QTableWidgetItem(y2));
+    ui.tblValues->setItem(i, 7, new QTableWidgetItem(y2_y1));
         ui.tblValues->setItem(i, 8, new QTableWidgetItem(vmin));
         ui.tblValues->setItem(i, 9, new QTableWidgetItem(vmean));
         ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmax));
-	}
-	ui.tblValues->resizeColumnsToContents();
+  }
+  ui.tblValues->resizeColumnsToContents();
             
     ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
     ui.tblValues->sortByColumn(ui.tblValues->horizontalHeader()->sortIndicatorSection(), ui.tblValues->horizontalHeader()->sortIndicatorOrder());
@@ -371,62 +371,62 @@ void graphPanel::tableUpdate(wdgGraph* graph){
 
 void graphPanel::tableUpdateAlter(wdgGraph* graph){
 
-	if (graph->getAllAlterSignals().isEmpty()) return;
+  if (graph->getAllAlterSignals().isEmpty()) return;
 
-	QPoint leftMarkPos, rightMarkPos;
-	graph->getMarkersPos(leftMarkPos, rightMarkPos);
-		
-	int leftMarkP = leftMarkPos.x(), rightMarkP = rightMarkPos.x();
+  QPoint leftMarkPos, rightMarkPos;
+  graph->getMarkersPos(leftMarkPos, rightMarkPos);
+    
+  int leftMarkP = leftMarkPos.x(), rightMarkP = rightMarkPos.x();
 
-	QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
-	double tmScale = ui.axisTime->getTimeScale();
+  QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
+  double tmScale = ui.axisTime->getTimeScale();
 
-	QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
-	QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
+  QVector<wdgGraph::graphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
+  QVector<wdgGraph::graphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
 
     QVector<wdgGraph::graphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
 
-	QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-	QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-	QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-	if (rightMarkP < leftMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+  QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+  QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+  QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+  if (rightMarkP < leftMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 
-	int sz = leftMarkVal.size();
-	while (sz > ui.tblValues->rowCount()){
-		ui.tblValues->insertRow(ui.tblValues->rowCount());
-	}
+  int sz = leftMarkVal.size();
+  while (sz > ui.tblValues->rowCount()){
+    ui.tblValues->insertRow(ui.tblValues->rowCount());
+  }
 
-	int offs = graph->getAllSignals().size();
-	for (int i = 0; i < sz; ++i){
+  int offs = graph->getAllSignals().size();
+  for (int i = 0; i < sz; ++i){
 
-		valueType vt = leftMarkVal[i].type;
+    ValueType vt = leftMarkVal[i].type;
 
-		QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
-		QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
-		QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
+    QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
+    QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
+    QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
         QString vmin = getSValue(vt, statVal[i].vmin).c_str();
         QString vmax = getSValue(vt, statVal[i].vmax).c_str();
         QString vmean = getSValue(vt, statVal[i].vmean).c_str();
        
-        if (vt == valueType::tBool)
+        if (vt == ValueType::BOOL)
             vmean = QString::number(int(statVal[i].vmean + 0.5));
 
-		QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
-		nameItem->setForeground(leftMarkVal[i].color);
+    QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
+    nameItem->setForeground(leftMarkVal[i].color);
         ui.tblValues->setItem(offs + i, 0, nameItem);
-				
-		ui.tblValues->setItem(offs + i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
-		ui.tblValues->setItem(offs + i, 2, new QTableWidgetItem(x1));
-		ui.tblValues->setItem(offs + i, 3, new QTableWidgetItem(x2));
-		ui.tblValues->setItem(offs + i, 4, new QTableWidgetItem(x2_x1));
-		ui.tblValues->setItem(offs + i, 5, new QTableWidgetItem(y1));
-		ui.tblValues->setItem(offs + i, 6, new QTableWidgetItem(y2));
-		ui.tblValues->setItem(offs + i, 7, new QTableWidgetItem(y2_y1));
+        
+    ui.tblValues->setItem(offs + i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
+    ui.tblValues->setItem(offs + i, 2, new QTableWidgetItem(x1));
+    ui.tblValues->setItem(offs + i, 3, new QTableWidgetItem(x2));
+    ui.tblValues->setItem(offs + i, 4, new QTableWidgetItem(x2_x1));
+    ui.tblValues->setItem(offs + i, 5, new QTableWidgetItem(y1));
+    ui.tblValues->setItem(offs + i, 6, new QTableWidgetItem(y2));
+    ui.tblValues->setItem(offs + i, 7, new QTableWidgetItem(y2_y1));
         ui.tblValues->setItem(offs + i, 8, new QTableWidgetItem(vmin));
         ui.tblValues->setItem(offs + i, 9, new QTableWidgetItem(vmean));
         ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
-	}
-	ui.tblValues->resizeColumnsToContents();
+  }
+  ui.tblValues->resizeColumnsToContents();
     
     ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
     ui.tblValues->sortByColumn(ui.tblValues->horizontalHeader()->sortIndicatorSection(), ui.tblValues->horizontalHeader()->sortIndicatorOrder());
@@ -434,10 +434,10 @@ void graphPanel::tableUpdateAlter(wdgGraph* graph){
 
 void graphPanel::diapTimeUpdate(){
 
-	QPair<qint64, qint64> tIntl = ui.axisTime->getTimeInterval();
+  QPair<qint64, qint64> tIntl = ui.axisTime->getTimeInterval();
 
-	ui.dTimeBegin->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.first));
-	ui.dTimeEnd->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.second));
+  ui.dTimeBegin->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.first));
+  ui.dTimeEnd->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.second));
     
     if (selGraph_){
         tableUpdate(selGraph_);
@@ -446,39 +446,39 @@ void graphPanel::diapTimeUpdate(){
 }
 
 void graphPanel::axisTimeChange(QString obj){
-		
-	diapTimeUpdate();
+    
+  diapTimeUpdate();
 
-	for (auto ob : graphObj_){
+  for (auto ob : graphObj_){
 
-		if (ob->objectName() != obj) 
-			ob->plotUpdate();
-	}
+    if (ob->objectName() != obj) 
+      ob->plotUpdate();
+  }
 }
 
 void graphPanel::markerChange(QString obj){
 
-	wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
+  wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
 
-	if (!graph) return;
-		
-	tableUpdate(graph);
-	tableUpdateAlter(graph);
+  if (!graph) return;
+    
+  tableUpdate(graph);
+  tableUpdateAlter(graph);
 
-	QPoint leftMarkPos, rightMarkPos;
-	graph->getMarkersPos(leftMarkPos, rightMarkPos);
-	
-	for (auto ob : graphObj_){
+  QPoint leftMarkPos, rightMarkPos;
+  graph->getMarkersPos(leftMarkPos, rightMarkPos);
+  
+  for (auto ob : graphObj_){
 
-		if (ob->objectName() != obj){
-			ob->setMarkersPos(leftMarkPos, rightMarkPos);
-			ob->ui.wPlot->update();
-		}
-	}
+    if (ob->objectName() != obj){
+      ob->setMarkersPos(leftMarkPos, rightMarkPos);
+      ob->ui.wPlot->update();
+    }
+  }
 }
 
 void graphPanel::selectGraph(QString obj){
-	
+  
     for (auto ob : graphObj_){
 
         if (ob->objectName() == obj){
@@ -487,37 +487,37 @@ void graphPanel::selectGraph(QString obj){
         }
     }
 
-	markerChange(obj);
+  markerChange(obj);
 }
 
 void graphPanel::closeGraph(){
 
-	wdgGraph* obj = qobject_cast<wdgGraph*>(sender());
-	
-	if (obj){
-		int sz = graphObj_.size();
-		for (int i = 0; i < sz; ++i){
-			if (graphObj_[i]->objectName() == obj->objectName()){
-								
-				graphObj_.remove(i);
-				sz--;
-				break;
-			}
-		}
+  wdgGraph* obj = qobject_cast<wdgGraph*>(sender());
+  
+  if (obj){
+    int sz = graphObj_.size();
+    for (int i = 0; i < sz; ++i){
+      if (graphObj_[i]->objectName() == obj->objectName()){
+                
+        graphObj_.remove(i);
+        sz--;
+        break;
+      }
+    }
 
-		if (obj == selGraph_){
-			if (sz > 1) selectGraph(graphObj_[0]->objectName());
-			else selGraph_ = nullptr;
-		}		
-		obj->deleteLater();
-		ui.scrollAreaWidgetContents->setMinimumHeight(sz * MIN_HEIGHT_GRAPH);
-	}
-		
+    if (obj == selGraph_){
+      if (sz > 1) selectGraph(graphObj_[0]->objectName());
+      else selGraph_ = nullptr;
+    }    
+    obj->deleteLater();
+    ui.scrollAreaWidgetContents->setMinimumHeight(sz * MIN_HEIGHT_GRAPH);
+  }
+    
 }
 
 void graphPanel::resizeByTime(){
 
-	if (selGraph_) selGraph_->resizeByTime();
+  if (selGraph_) selGraph_->resizeByTime();
 
 }
 
@@ -530,28 +530,28 @@ void graphPanel::resizeByValue(){
 
 void graphPanel::scaleGraph(){
 
-	if (selGraph_){
+  if (selGraph_){
 
-		if (sender()->objectName() == "btnScalePos")
-			selGraph_->scale(true);
-		else 
-			selGraph_->scale(false);
-	}
+    if (sender()->objectName() == "btnScalePos")
+      selGraph_->scale(true);
+    else 
+      selGraph_->scale(false);
+  }
 }
 
 void graphPanel::undoCmd(){
 
-	if (selGraph_) selGraph_->undoCmd();
+  if (selGraph_) selGraph_->undoCmd();
 }
 
 void graphPanel::colorUpdate(){
 
-	if (selGraph_) selGraph_->colorUpdate();
+  if (selGraph_) selGraph_->colorUpdate();
 }
 
 void graphPanel::updateSignals(){
-	
-	if (graphObj_.isEmpty() || !isPlay_) return;
+  
+  if (graphObj_.isEmpty() || !isPlay_) return;
 
     if (ui.btnAScale->isChecked()){
         for (auto ob : graphObj_)
@@ -569,8 +569,8 @@ void graphPanel::updateSignals(){
         ui.axisTime->update();
     }
 
-	for (auto ob : graphObj_)			
-		ob->plotUpdate();    
+  for (auto ob : graphObj_)      
+    ob->plotUpdate();    
 
     if (selGraph_){
         tableUpdate(selGraph_);
@@ -580,57 +580,57 @@ void graphPanel::updateSignals(){
 
 void graphPanel::graphToDn(QString obj){
 
-	wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
+  wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
 
-	if (!graph) return;
-		
-	for (auto ob : graphObj_){
+  if (!graph) return;
+    
+  for (auto ob : graphObj_){
 
-		if (ob->objectName() == obj){
-			
-			int ind = splitterGraph_->indexOf(ob);
+    if (ob->objectName() == obj){
+      
+      int ind = splitterGraph_->indexOf(ob);
 
-			splitterGraph_->insertWidget(ind - 1, graph);
-			
-			QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
-			vscr->setValue(graph->pos().y());
-			break;
-		}
-	}
+      splitterGraph_->insertWidget(ind - 1, graph);
+      
+      QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
+      vscr->setValue(graph->pos().y());
+      break;
+    }
+  }
 
-	
+  
 }
 
 void graphPanel::graphToUp(QString obj){
 
-	wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
+  wdgGraph* graph = qobject_cast<wdgGraph*>(sender());
 
-	if (!graph) return;
+  if (!graph) return;
 
-	int sz = graphObj_.size();
-	for (auto ob : graphObj_){
+  int sz = graphObj_.size();
+  for (auto ob : graphObj_){
 
-		if (ob->objectName() == obj){
+    if (ob->objectName() == obj){
 
-			int ind = splitterGraph_->indexOf(ob);
+      int ind = splitterGraph_->indexOf(ob);
 
-			splitterGraph_->insertWidget(ind + 1 >= sz ? 0 : ind + 1, graph);
-			QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
-			vscr->setValue(graph->pos().y());
-			break;
-		}
-	}
+      splitterGraph_->insertWidget(ind + 1 >= sz ? 0 : ind + 1, graph);
+      QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
+      vscr->setValue(graph->pos().y());
+      break;
+    }
+  }
 }
 
 QPair<qint64, qint64> graphPanel::getTimeInterval(){
 
-	return ui.axisTime->getTimeInterval();
+  return ui.axisTime->getTimeInterval();
 
 }
 
 void graphPanel::setTimeInterval(qint64 stTime, qint64 enTime){
 
-	ui.axisTime->setTimeInterval(stTime, enTime);
+  ui.axisTime->setTimeInterval(stTime, enTime);
 
 }
 

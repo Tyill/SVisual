@@ -42,26 +42,26 @@ namespace SV_Cln {
 
     bool svAddBoolValue(const char *name, bool value_in, bool onlyPosFront) {
 
-        SV_Cng::value val;
-        val.tBool = value_in;
+        SV_Base::Value val;
+        val.BOOL = value_in;
 
-        return clientObj.addValue(name, SV_Cng::valueType::tBool, val, onlyPosFront);
+        return clientObj.addValue(name, SV_Base::ValueType::BOOL, val, onlyPosFront);
     }
 
     bool svAddIntValue(const char *name, int value_in) {
 
-        SV_Cng::value val;
-        val.tInt = value_in;
+        SV_Base::Value val;
+        val.INT = value_in;
 
-        return clientObj.addValue(name, SV_Cng::valueType::tInt, val, false);
+        return clientObj.addValue(name, SV_Base::ValueType::INT, val, false);
     }
 
     bool svAddFloatValue(const char *name, float value_in) {
 
-        SV_Cng::value val;
-        val.tFloat = value_in;
+        SV_Base::Value val;
+        val.FLOAT = value_in;
 
-        return clientObj.addValue(name, SV_Cng::valueType::tFloat, val, false);
+        return clientObj.addValue(name, SV_Base::ValueType::FLOAT, val, false);
     }
 
     bool svSetParam(int cycleRecMs, int packetSz) {

@@ -28,11 +28,11 @@
 
 graphSettingPanel::graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting& gs){
 
-	setParent(parent);
+  setParent(parent);
 
     MainWin* mainWin = (MainWin*)parent;
     
-	ui.setupUi(this);
+  ui.setupUi(this);
 
     ui.slrColorTransparent->setValue(gs.transparent);
     ui.slrPenWidth->setValue(gs.lineWidth);
@@ -42,7 +42,7 @@ graphSettingPanel::graphSettingPanel(QWidget *parent, const SV_Graph::graphSetti
 
         SV_Graph::graphSetting gs;
         gs.transparent = pos;
-        gs.lineWidth = ui.slrPenWidth->value();
+        gs.lineWidth = ui.slrPenWidth->Value();
         gs.darkTheme = ui.chbDarkTheme->isChecked();
        
         mainWin->updateGraphSetting(gs);
@@ -51,18 +51,18 @@ graphSettingPanel::graphSettingPanel(QWidget *parent, const SV_Graph::graphSetti
     connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos){
 
         SV_Graph::graphSetting gs;
-        gs.transparent = ui.slrColorTransparent->value();
+        gs.transparent = ui.slrColorTransparent->Value();
         gs.lineWidth = pos;
         gs.darkTheme = ui.chbDarkTheme->isChecked();
 
         mainWin->updateGraphSetting(gs);
     });
-		
+    
     connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin](){
 
         SV_Graph::graphSetting gs;
-        gs.transparent = ui.slrColorTransparent->value();
-        gs.lineWidth = ui.slrPenWidth->value();
+        gs.transparent = ui.slrColorTransparent->Value();
+        gs.lineWidth = ui.slrPenWidth->Value();
         gs.darkTheme = ui.chbDarkTheme->isChecked();
 
         mainWin->updateGraphSetting(gs);

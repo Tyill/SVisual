@@ -49,6 +49,6 @@ namespace SV_Zbx {
     
     void setGetSignalData(pf_getSignalData f) {
 
-	      zServer.pfGetSignalData = f;
+        zServer.pfGetSignalData = f;
     }    
 }

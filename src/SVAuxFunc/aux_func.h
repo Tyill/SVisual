@@ -22,12 +22,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
 #pragma once
-
-#include <cstring>
-#include <stdio.h>
-#include <stdlib.h>
+        
 #include <string>
 #include <vector>
+#include <stdint.h>
 
+namespace SV_Aux {
+
+    // тек дата %Y%m%d
+    std::string currDateS();
+
+    // тек дата-время %Y%m%d_%H%M
+    std::string currDateTimeEx();
+
+    // тек дата-время %Y-%m-%d %H:%M:%S
+    std::string currDateTime();
+
+    // тек дата-время %Y-%m-%d %H:%M:%S:%MS
+    std::string currDateTimeMs();
+
+    // тек дата-время %Y-%m-%d %H:%M:%S
+    std::string currDateTimeSQL();
+
+    uint64_t currDateTimeSinceEpochMs();
+
+    int hourOffsFromUTC();
+
+    std::vector<std::string> split(std::string str, const char *sep);
+
+    // автосоздание субдиректорий
+    bool createSubDirectory(std::string strDirs);
+
+    void sleepMs(uint64_t ms);      
+}

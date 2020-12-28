@@ -35,17 +35,17 @@
 #include "Lib/zlib/zlib.h"
 
 using namespace std;
-using namespace SV_Cng;
+using namespace SV_Base;
 using namespace SV_Aux;
 
 void archive::statusMess(const std::string& mess){
 
-	if (pServ_->pfStatusCBack) pServ_->pfStatusCBack(CurrDateTime() + " " + mess);
+  if (pServ_->pfStatusCBack) pServ_->pfStatusCBack(CurrDateTime() + " " + mess);
 }
 
 archive::archive(config cng_, server* serv){
 
-	pServ_ = serv;
+  pServ_ = serv;
     cng = cng_;
 
     copyStartTime_ = CurrDateTimeEx();
@@ -56,71 +56,71 @@ archive::archive(config cng_, server* serv){
 
 void archive::setConfig(archive::config cng_){
 
-	cng.outArchivePath = cng_.outArchivePath;
-	cng.outArchiveName = cng_.outArchiveName;
-	cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
+  cng.outArchivePath = cng_.outArchivePath;
+  cng.outArchiveName = cng_.outArchiveName;
+  cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
 }
 
 bool archive::isCopyTimeHour(){
 
     time_t t = time(nullptr);
-	tm* lct = localtime(&t);
+  tm* lct = localtime(&t);
 
     if (front_.PosFront(lct->tm_min == 0, 0)) ++crtFileHour_;
 
-	bool req = false;
+  bool req = false;
 
-	bool isCheck = cng.outArchiveHourCnt % 2 == 0;    // кратно 2м часам?
-	bool isHourCheck = lct->tm_hour % 2 == 0; 
-	bool isNDay = front_.PosFront(lct->tm_hour == 0, 1);
-	if (((crtFileHour_ >= cng.outArchiveHourCnt) || isNDay) && (!isCheck || isHourCheck)){
-		crtFileHour_ = 0;
-		req = true;
-	}
+  bool isCheck = cng.outArchiveHourCnt % 2 == 0;    // кратно 2м часам?
+  bool isHourCheck = lct->tm_hour % 2 == 0; 
+  bool isNDay = front_.PosFront(lct->tm_hour == 0, 1);
+  if (((crtFileHour_ >= cng.outArchiveHourCnt) || isNDay) && (!isCheck || isHourCheck)){
+    crtFileHour_ = 0;
+    req = true;
+  }
 
-	return req;
+  return req;
 }
 
 string archive::getOutPath(bool isStop){
 
-	string cDate = CurrDateS();
-	if (cDate != copyDateMem_){
-		cDate = copyDateMem_;
-		copyDateMem_ = CurrDateS();
-	}
+  string cDate = CurrDateS();
+  if (cDate != copyDateMem_){
+    cDate = copyDateMem_;
+    copyDateMem_ = CurrDateS();
+  }
 
-	string path = cng.outArchivePath + cDate + "/";
+  string path = cng.outArchivePath + cDate + "/";
 
-	CreateSubDirectory(path);
+  CreateSubDirectory(path);
 
-   	int utcOffs = HourOffsFromUTC();
+     int utcOffs = HourOffsFromUTC();
 
-	string fName = cng.outArchiveName + "_temp" + "UTC" + to_string(utcOffs) + ".dat";
+  string fName = cng.outArchiveName + "_temp" + "UTC" + to_string(utcOffs) + ".dat";
 
-	if (isCopyTimeHour() || isStop){
+  if (isCopyTimeHour() || isStop){
 
-		string templ = path + fName;
-		fName = cng.outArchiveName + "_" + copyStartTime_ + "UTC" + to_string(utcOffs) + ".dat";
-		rename(templ.c_str(), (path + fName).c_str());
+    string templ = path + fName;
+    fName = cng.outArchiveName + "_" + copyStartTime_ + "UTC" + to_string(utcOffs) + ".dat";
+    rename(templ.c_str(), (path + fName).c_str());
 
-		copyStartTime_ = CurrDateTimeEx().c_str();
-	}
+    copyStartTime_ = CurrDateTimeEx().c_str();
+  }
 
-	return path + fName;
+  return path + fName;
 }
 
 bool archive::compressData(size_t insz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr){
 
     FUNC_BEGIN
 
-	uLong compressed_size = compressBound(uLong(insz));
+  uLong compressed_size = compressBound(uLong(insz));
 
     if (outArr.size() < compressed_size)
       outArr.resize(compressed_size);
 
     int res = compress((Bytef*)outArr.data(), &compressed_size, (Bytef*)inArr.data(), uLong(insz));
 
-	outsz = compressed_size;
+  outsz = compressed_size;
 
     return res == Z_OK;
 
@@ -129,111 +129,111 @@ bool archive::compressData(size_t insz, const vector<char>& inArr, size_t& outsz
 
 bool archive::copyToDisk(bool isStop){
 
-	FUNC_BEGIN
+  FUNC_BEGIN
 
-	size_t dsz = archiveData_.size();
-	if (dsz == 0) 
+  size_t dsz = archiveData_.size();
+  if (dsz == 0) 
         return true;
 
     size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
 
     size_t sint = sizeof(int),
            tmSz = sizeof(uint64_t),
-           vlSz = sizeof(value) * SV_PACKETSZ;
+           vlSz = sizeof(Value) * SV_PACKETSZ;
 
-		//           name        module      group       comment       type    vCnt
+    //           name        module      group       comment       type    vCnt
     size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + sint + sint;
-		
+    
     vector<char> inArr((tmSz + vlSz) * cpySz_ * SMAXCNT + headSz * SMAXCNT),
-			     compArr;
+           compArr;
 
-	vector<string> keys; keys.reserve(dsz);
-	for (auto &it : archiveData_) keys.push_back(it.first);
-	
-	fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
+  vector<string> keys; keys.reserve(dsz);
+  for (auto &it : archiveData_) keys.push_back(it.first);
+  
+  fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
 
-	if (!file.good())
+  if (!file.good())
         return false;
 
-	size_t sCnt = 0, csize = 0;
-	for (size_t i = 0; i < dsz; ++i) {
+  size_t sCnt = 0, csize = 0;
+  for (size_t i = 0; i < dsz; ++i) {
 
-		auto sign = pServ_->getSignalData(keys[i]);
+    auto sign = pServ_->getSignalData(keys[i]);
 
-		string sn = sign->name + sign->module;
+    string sn = sign->name + sign->module;
 
         char* pIn = inArr.data();
 
-		int vCnt = valPos_[sn];
-		if (vCnt > 0) {
-			memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
-			memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
-			memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
-			memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-			memcpy(pIn + csize, &sign->type, sint);                   csize += sint;
-			memcpy(pIn + csize, &vCnt, sint);                         csize += sint;
+    int vCnt = valPos_[sn];
+    if (vCnt > 0) {
+      memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
+      memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
+      memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
+      memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
+      memcpy(pIn + csize, &sign->type, sint);                   csize += sint;
+      memcpy(pIn + csize, &vCnt, sint);                         csize += sint;
 
-			for (int j = 0; j < vCnt; ++j) {
-				memcpy(pIn + csize, &archiveData_[sn][j].beginTime, tmSz);  csize += tmSz;
-				memcpy(pIn + csize, archiveData_[sn][j].vals, vlSz);       csize += vlSz;
-			}
+      for (int j = 0; j < vCnt; ++j) {
+        memcpy(pIn + csize, &archiveData_[sn][j].beginTime, tmSz);  csize += tmSz;
+        memcpy(pIn + csize, archiveData_[sn][j].vals, vlSz);       csize += vlSz;
+      }
 
-			valPos_[sn] = 0;
+      valPos_[sn] = 0;
 
-			++sCnt;
-		}
+      ++sCnt;
+    }
 
-		if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dsz - 1)))) {
-			sCnt = 0;
+    if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dsz - 1)))) {
+      sCnt = 0;
 
-			size_t compSz = 0;
+      size_t compSz = 0;
 
             if (!compressData(csize, inArr, compSz, compArr)) {
-				statusMess("archive::copyToDisk compressData error");
-				file.close();
-				return false;
-			};
+        statusMess("archive::copyToDisk compressData error");
+        file.close();
+        return false;
+      };
 
             file.write((char *) &compSz, sizeof(int));
-			file.write((char *) &csize, sizeof(int));
+      file.write((char *) &csize, sizeof(int));
             file.write((char *) compArr.data(), compSz);
 
-			csize = 0;
-		}
+      csize = 0;
+    }
 
-	}
+  }
 
-	file.close();
+  file.close();
 
-	FUNC_END
+  FUNC_END
 }
 
 void archive::addSignal(const string& sign){
 
-	if (archiveData_.find(sign) != archiveData_.end()) return;
+  if (archiveData_.find(sign) != archiveData_.end()) return;
 
-    archiveData_[sign] = vector<recData>(cpySz_);
+    archiveData_[sign] = vector<RecData>(cpySz_);
 
-	valPos_[sign] = 0;
+  valPos_[sign] = 0;
 
-	value* buff = new value[SV_PACKETSZ * cpySz_];
-	memset(buff, 0, SV_PACKETSZ * cpySz_ * sizeof(value));
-	for (int i = 0; i < cpySz_; ++i)
+  Value* buff = new Value[SV_PACKETSZ * cpySz_];
+  memset(buff, 0, SV_PACKETSZ * cpySz_ * sizeof(Value));
+  for (int i = 0; i < cpySz_; ++i)
         archiveData_[sign][i].vals = &buff[i * SV_PACKETSZ];
 
 }
 
-void archive::addValue(const string& sign, const recData& rd){
+void archive::addValue(const string& sign, const RecData& rd){
 
-	int vp = valPos_[sign];
+  int vp = valPos_[sign];
 
     archiveData_[sign][vp].beginTime = rd.beginTime;
-	memcpy(archiveData_[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(value));
+  memcpy(archiveData_[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(Value));
 
-	++valPos_[sign];
-	
-	if (valPos_[sign] == cpySz_){
+  ++valPos_[sign];
+  
+  if (valPos_[sign] == cpySz_){
 
-		copyToDisk(false);
-	}
+    copyToDisk(false);
+  }
 }

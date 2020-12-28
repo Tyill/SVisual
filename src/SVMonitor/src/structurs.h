@@ -30,14 +30,14 @@
 
 // событие
 struct uEvent{
-	QString triggName;
+  QString triggName;
     QString signal;
-	QString module;	
-	QString sendDateTime;
+  QString module;  
+  QString sendDateTime;
 
-	SV_Trigger::eventType condType;
-	int condValue;
-	int condTOut;
+  SV_Trigger::eventType condType;
+  int condValue;
+  int condTOut;
 };
 
 struct signalAttr{

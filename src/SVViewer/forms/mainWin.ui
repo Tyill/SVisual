@@ -126,7 +126,7 @@
           <property name="maximum">
            <number>0</number>
           </property>
-          <property name="value">
+          <property name="Value">
            <number>-1</number>
           </property>
           <property name="textVisible">

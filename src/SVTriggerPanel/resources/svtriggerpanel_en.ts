@@ -130,7 +130,7 @@
     <message>
         <location filename="../forms/triggerPanel.ui" line="395"/>
         <source>пороговое значение</source>
-        <translation>threshold value</translation>
+        <translation>threshold Value</translation>
     </message>
     <message>
         <location filename="../forms/triggerPanel.ui" line="408"/>

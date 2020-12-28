@@ -27,16 +27,16 @@
 
 namespace SV_Exp {
 
-	QDialog *createExpPanel(QWidget *parent, SV_Exp::config cng) {
+  QDialog *createExpPanel(QWidget *parent, SV_Exp::config cng) {
 
-		return new exportPanel(parent, cng);
-	}
-	
-	void setGetCopySignalRef(QDialog *exp, pf_getCopySignalRef f) {
+    return new exportPanel(parent, cng);
+  }
+  
+  void setGetCopySignalRef(QDialog *exp, pf_getCopySignalRef f) {
 
         if (exp)
             ((exportPanel *)exp)->pfGetCopySignalRef = f;
-	}
+  }
 
     void setGetCopyModuleRef(QDialog *exp, pf_getCopyModuleRef f) {
 
@@ -44,28 +44,28 @@ namespace SV_Exp {
             ((exportPanel *)exp)->pfGetCopyModuleRef = f;
     }
 
-	void setGetSignalData(QDialog *exp, pf_getSignalData f) {
+  void setGetSignalData(QDialog *exp, pf_getSignalData f) {
 
-		if (exp)
+    if (exp)
             ((exportPanel *)exp)->pfGetSignalData = f;
-	}
+  }
 
-	void setLoadSignalData(QDialog *exp, pf_loadSignalData f) {
+  void setLoadSignalData(QDialog *exp, pf_loadSignalData f) {
 
-		if (exp)
+    if (exp)
             ((exportPanel *)exp)->pfLoadSignalData = f;
-	}
+  }
 
-	void setGetTimeInterval(QDialog* exp, pf_getTimeInterval f){
+  void setGetTimeInterval(QDialog* exp, pf_getTimeInterval f){
 
-		if (exp)
+    if (exp)
             ((exportPanel *)exp)->pfGetTimeInterval = f;
-	}
+  }
 
-	void setSetTimeInterval(QDialog* exp, pf_setTimeInterval f){
+  void setSetTimeInterval(QDialog* exp, pf_setTimeInterval f){
 
-		if (exp)
+    if (exp)
             ((exportPanel *)exp)->pfSetTimeInterval = f;
-	}
+  }
 
 }

@@ -81,7 +81,7 @@ const QString VERSION = "1.1.8";
 
 MainWin* mainWin = nullptr;
 
-using namespace SV_Cng;
+using namespace SV_Base;
 
 void statusMess(const QString& mess){
 
@@ -92,12 +92,12 @@ void statusMess(const QString& mess){
 }
 
 void MainWin::load(){
-		
+    
     ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui.treeSignals->setIconSize(QSize(40, 20));	
+    ui.treeSignals->setIconSize(QSize(40, 20));  
 
-  	orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
-	settPanel_ = new settingsPanel(this); settPanel_->setWindowFlags(Qt::Window);
+    orderWin_ = new eventOrderWin(this); orderWin_->setWindowFlags(Qt::Window);
+  settPanel_ = new settingsPanel(this); settPanel_->setWindowFlags(Qt::Window);
     graphSettPanel_ = new graphSettingPanel(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
        
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
@@ -151,21 +151,21 @@ void MainWin::load(){
     SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRefSrv);
     SV_Exp::setGetSignalData(exportPanel_, getSignalDataSrv);
 
-	SV_Srv::setStatusCBack([](const std::string& mess){
-	    statusMess(mess.c_str());
-	});
-	SV_Srv::setOnUpdateSignalsCBack([](){
+  SV_Srv::setStatusCBack([](const std::string& mess){
+      statusMess(mess.c_str());
+  });
+  SV_Srv::setOnUpdateSignalsCBack([](){
         QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
-	});
-	SV_Srv::setOnAddSignalsCBack([](){
+  });
+  SV_Srv::setOnAddSignalsCBack([](){
         QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
-	});
-	SV_Srv::setOnModuleConnectCBack([](const std::string& module){
+  });
+  SV_Srv::setOnModuleConnectCBack([](const std::string& module){
         QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
-	});
-	SV_Srv::setOnModuleDisconnectCBack([](const std::string& module){
+  });
+  SV_Srv::setOnModuleDisconnectCBack([](const std::string& module){
         QMetaObject::invokeMethod(mainWin, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
-	});
+  });
       
     SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
     SV_Web::setGetSignalData(getSignalDataSrv);
@@ -173,24 +173,24 @@ void MainWin::load(){
 
     SV_Zbx::setGetSignalData(getSignalDataSrv);
 
-	db_ = new dbProvider(qUtf8Printable(cng.dbPath));
+  db_ = new dbProvider(qUtf8Printable(cng.dbPath));
 
     if (db_->isConnect()){
         statusMess(tr("Подключение БД успешно"));
     }else{
-		statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
-		
+    statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
+    
         delete db_;
         db_ = nullptr;
-	}
+  }
 
-	/////////////////////
-	initTrayIcon();
+  /////////////////////
+  initTrayIcon();
        
 }
 
 void MainWin::Connect(){
-		
+    
     connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
         auto mref = SV_Srv::getCopyModuleRef();
 
@@ -232,7 +232,7 @@ void MainWin::Connect(){
     });
     connect(ui.treeSignals, &QTreeWidget::itemChanged, [this](QTreeWidgetItem* item, int column){
         std::string sign = item->text(5).toStdString();
-        SV_Cng::signalData* sd = SV_Srv::getSignalData(sign);
+        SV_Base::SignalData* sd = SV_Srv::getSignalData(sign);
 
         if (!sd) return;
 
@@ -242,35 +242,35 @@ void MainWin::Connect(){
         }
     });
 
-	connect(ui.actionExit, &QAction::triggered, [this]() { 
-		this->close();
-	});
-	connect(ui.actionPrint, &QAction::triggered, [this]() {
-		
-		QPrinter printer(QPrinter::HighResolution);
-		printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
-		printer.setFullPage(false);
-		
-		QPrintDialog printDialog(&printer, this);
-		if (printDialog.exec() == QDialog::Accepted) {
-			
-			QPainter painter(&printer);
+  connect(ui.actionExit, &QAction::triggered, [this]() { 
+    this->close();
+  });
+  connect(ui.actionPrint, &QAction::triggered, [this]() {
+    
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
+    printer.setFullPage(false);
+    
+    QPrintDialog printDialog(&printer, this);
+    if (printDialog.exec() == QDialog::Accepted) {
+      
+      QPainter painter(&printer);
 
             double xscale = printer.pageRect().width() / double(graphPanels_[this]->width());
             double yscale = printer.pageRect().height() / double(graphPanels_[this]->height());
-			double scale = qMin(xscale, yscale);
-			painter.translate(printer.paperRect().x(), printer.paperRect().y());
-			painter.scale(scale, scale);
-		
+      double scale = qMin(xscale, yscale);
+      painter.translate(printer.paperRect().x(), printer.paperRect().y());
+      painter.scale(scale, scale);
+    
             graphPanels_[this]->render(&painter);
-		}
-	});
-	connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
+    }
+  });
+  connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
         if (triggerPanel_) triggerPanel_->showNormal();
-	});
-	connect(ui.actionEventOrder, &QAction::triggered, [this]() {
+  });
+  connect(ui.actionEventOrder, &QAction::triggered, [this]() {
         if (orderWin_) orderWin_->showNormal();
-	});
+  });
     connect(ui.actionExport, &QAction::triggered, [this]() {
         if (exportPanel_) exportPanel_->showNormal();
     });
@@ -285,9 +285,9 @@ void MainWin::Connect(){
         scriptPanel_->showNormal();
     
     });
-	connect(ui.actionSettings, &QAction::triggered, [this]() {
+  connect(ui.actionSettings, &QAction::triggered, [this]() {
         if (settPanel_) settPanel_->showNormal();
-	});
+  });
     connect(ui.actionGraphSett, &QAction::triggered, [this]() {
         if (graphSettPanel_) graphSettPanel_->showNormal();
     });
@@ -317,7 +317,7 @@ void MainWin::Connect(){
                 QJsonDocument jsDoc = QJsonDocument::fromJson(response_data);
                 
                 if (jsDoc.isObject()){
-                    QJsonObject	jsObj = jsDoc.object();
+                    QJsonObject  jsObj = jsDoc.object();
 
                     QMessageBox msgBox;
                     msgBox.setTextFormat(Qt::RichText); 
@@ -417,7 +417,7 @@ void MainWin::Connect(){
         for (auto& g : grps){
             settings.beginGroup(g);
                       
-             QString locate = settings.value("locate").toString();
+             QString locate = settings.Value("locate").toString();
              QObject* win = this;
              if (locate != "0"){
     
@@ -429,7 +429,7 @@ void MainWin::Connect(){
              int sect = 0;
              while (true){
 
-                 QString str = settings.value("section" + QString::number(sect), "").toString();
+                 QString str = settings.Value("section" + QString::number(sect), "").toString();
                  if (str.isEmpty()) break;
 
                  QStringList signs = str.split(' ');
@@ -443,7 +443,7 @@ void MainWin::Connect(){
              int axisInx = 0;
              while (true){
 
-                 QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                 QString str = settings.Value("axisAttr" + QString::number(axisInx), "").toString();
                  if (str.isEmpty()) break;
 
                  QStringList attr = str.split(' ');
@@ -462,7 +462,7 @@ void MainWin::Connect(){
              if (!axisAttrs.empty())
                  SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
 
-             QString tmDiap = settings.value("tmDiap", "10000").toString();
+             QString tmDiap = settings.Value("tmDiap", "10000").toString();
 
              auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
              ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
@@ -487,13 +487,13 @@ void MainWin::Connect(){
         QString mess = "<h2>SVMonitor </h2>"
             "<p>Программное обеспечение предназначенное"
             "<p>для анализа сигналов с устройст."
-			"<p>2017";
+      "<p>2017";
 
-		QMessageBox::about(this, tr("About SVisual"), mess);
-	});		
-	connect(ui.btnSlowPlay, &QPushButton::clicked, [this]() {
-		slowMode();
-	});
+    QMessageBox::about(this, tr("About SVisual"), mess);
+  });    
+  connect(ui.btnSlowPlay, &QPushButton::clicked, [this]() {
+    slowMode();
+  });
 }
 
 bool MainWin::writeSettings(QString pathIni){
@@ -603,23 +603,23 @@ bool MainWin::init(QString initPath){
     QSettings settings(initPath, QSettings::IniFormat);
     settings.beginGroup("Param");
 
-    cng.cycleRecMs =  settings.value("cycleRecMs", 100).toInt();
+    cng.cycleRecMs =  settings.Value("cycleRecMs", 100).toInt();
     cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
-    cng.packetSz = settings.value("packetSz", 10).toInt();
+    cng.packetSz = settings.Value("packetSz", 10).toInt();
     cng.packetSz = qMax(cng.packetSz, 1);
 
   
-    cng.selOpenDir = settings.value("selOpenDir", "").toString();
+    cng.selOpenDir = settings.Value("selOpenDir", "").toString();
 
     QFont ft = QApplication::font();
-    int fsz = settings.value("fontSz", ft.pointSize()).toInt();
+    int fsz = settings.Value("fontSz", ft.pointSize()).toInt();
     ft.setPointSize(fsz);
     QApplication::setFont(ft);
     
     // связь по usb
-    cng.com_ena = settings.value("com_ena", 0).toInt() == 1;
-    QString com_name = settings.value("com0_name", "COM4").toString();
-    QString com_speed = settings.value("com0_speed", "9600").toString();
+    cng.com_ena = settings.Value("com_ena", 0).toInt() == 1;
+    QString com_name = settings.Value("com0_name", "COM4").toString();
+    QString com_speed = settings.Value("com0_speed", "9600").toString();
 
     cng.com_ports.push_back(qMakePair(com_name, com_speed));
 
@@ -627,8 +627,8 @@ bool MainWin::init(QString initPath){
     int comCnt = 1;
     while (true){
 
-        QString com_name = settings.value("com" + QString::number(comCnt) + "_name", "").toString();
-        QString com_speed = settings.value("com" + QString::number(comCnt) + "_speed", "").toString();
+        QString com_name = settings.Value("com" + QString::number(comCnt) + "_name", "").toString();
+        QString com_speed = settings.Value("com" + QString::number(comCnt) + "_speed", "").toString();
 
         if (com_name.isEmpty() || com_speed.isEmpty())
             break;
@@ -637,37 +637,37 @@ bool MainWin::init(QString initPath){
         ++comCnt;
     }
     
-    cng.dbPath = settings.value("dbPath", "").toString();
+    cng.dbPath = settings.Value("dbPath", "").toString();
     if (cng.dbPath.isEmpty())cng.dbPath = cng.dirPath + "/svm.db";
 
     // связь по TCP
-    cng.tcp_addr = settings.value("tcp_addr", "127.0.0.1").toString();
-    cng.tcp_port = settings.value("tcp_port", "2144").toInt();
+    cng.tcp_addr = settings.Value("tcp_addr", "127.0.0.1").toString();
+    cng.tcp_port = settings.Value("tcp_port", "2144").toInt();
 
     // web
-    cng.web_ena = settings.value("web_ena", "0").toInt() == 1;
-    cng.web_addr = settings.value("web_addr", "127.0.0.1").toString();
-    cng.web_port = settings.value("web_port", "2145").toInt();
+    cng.web_ena = settings.Value("web_ena", "0").toInt() == 1;
+    cng.web_addr = settings.Value("web_addr", "127.0.0.1").toString();
+    cng.web_port = settings.Value("web_port", "2145").toInt();
 
     // zabbix
-    cng.zabbix_ena = settings.value( "zabbix_ena", "0").toInt() == 1;
-    cng.zabbix_addr = settings.value("zabbix_addr", "127.0.0.1").toString();
-    cng.zabbix_port = settings.value("zabbix_port", "2146").toInt();
+    cng.zabbix_ena = settings.Value( "zabbix_ena", "0").toInt() == 1;
+    cng.zabbix_addr = settings.Value("zabbix_addr", "127.0.0.1").toString();
+    cng.zabbix_port = settings.Value("zabbix_port", "2146").toInt();
 
     // копир на диск
-    cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
-    cng.outArchivePath = settings.value("outArchivePath", "").toString();
+    cng.outArchiveEna = settings.Value("outArchiveEna", "1").toInt() == 1;
+    cng.outArchivePath = settings.Value("outArchivePath", "").toString();
     if (cng.outArchivePath.isEmpty()) cng.outArchivePath = cng.dirPath + "/";
     cng.outArchivePath.replace("\\", "/");
-    cng.outArchiveName = settings.value("outFileName", "svrec").toString();;
-    cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
+    cng.outArchiveName = settings.Value("outFileName", "svrec").toString();;
+    cng.outArchiveHourCnt = settings.Value("outFileHourCnt", 2).toInt();
     cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
 
-    cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
-    cng.graphSett.transparent = settings.value("transparent", "100").toInt();
-    cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
+    cng.graphSett.lineWidth = settings.Value("lineWidth", "2").toInt();
+    cng.graphSett.transparent = settings.Value("transparent", "100").toInt();
+    cng.graphSett.darkTheme = settings.Value("darkTheme", "0").toInt() == 1;
 
-    cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
+    cng.toutLoadWinStateSec = settings.Value("toutLoadWinStateSec", "10").toInt();
 
         
     settings.endGroup();
@@ -685,7 +685,7 @@ bool MainWin::init(QString initPath){
 
             settings.beginGroup(g);
 
-            QString locate = settings.value("locate").toString();
+            QString locate = settings.Value("locate").toString();
             QObject* win = this;
             if (locate != "0"){
 
@@ -697,7 +697,7 @@ bool MainWin::init(QString initPath){
             int sect = 0;
             while (true){
 
-                QString str = settings.value("section" + QString::number(sect), "").toString();
+                QString str = settings.Value("section" + QString::number(sect), "").toString();
                 if (str.isEmpty()) break;
 
                 QStringList signs = str.split(' ');
@@ -711,7 +711,7 @@ bool MainWin::init(QString initPath){
             int axisInx = 0;
             while (true){
 
-                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                QString str = settings.Value("axisAttr" + QString::number(axisInx), "").toString();
                 if (str.isEmpty()) break;
 
                 QStringList attr = str.split(' ');
@@ -730,7 +730,7 @@ bool MainWin::init(QString initPath){
             if (!axisAttrs.empty())
                 SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
 
-            QString tmDiap = settings.value("tmDiap", "10000").toString();
+            QString tmDiap = settings.Value("tmDiap", "10000").toString();
 
             auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
             ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
@@ -746,45 +746,45 @@ bool MainWin::init(QString initPath){
     if (!QFile(initPath).exists())
         writeSettings(initPath);
 
-	srvCng.cycleRecMs = cng.cycleRecMs;
-	srvCng.packetSz = cng.packetSz;
-	srvCng.outArchiveEna = cng.outArchiveEna;
-	srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
-	srvCng.outArchiveName = cng.outArchiveName.toStdString();
-	srvCng.outArchivePath = cng.outArchivePath.toStdString();
+  srvCng.cycleRecMs = cng.cycleRecMs;
+  srvCng.packetSz = cng.packetSz;
+  srvCng.outArchiveEna = cng.outArchiveEna;
+  srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
+  srvCng.outArchiveName = cng.outArchiveName.toStdString();
+  srvCng.outArchivePath = cng.outArchivePath.toStdString();
 
-	return true;
+  return true;
 }
 
 MainWin::MainWin(QWidget *parent)
-	: QMainWindow(parent){
+  : QMainWindow(parent){
 
-	ui.setupUi(this);
+  ui.setupUi(this);
 
-	mainWin = this;
+  mainWin = this;
 
-	this->setWindowTitle(QString("SVMonitor ") + VERSION);
+  this->setWindowTitle(QString("SVMonitor ") + VERSION);
    
-	QStringList args = QApplication::arguments();
-		
-	cng.dirPath = QApplication::applicationDirPath();
-	cng.initPath = cng.dirPath + "/svmonitor.ini"; if (args.size() == 2) cng.initPath = args[1];
+  QStringList args = QApplication::arguments();
+    
+  cng.dirPath = QApplication::applicationDirPath();
+  cng.initPath = cng.dirPath + "/svmonitor.ini"; if (args.size() == 2) cng.initPath = args[1];
 
-	init(cng.initPath);
-	statusMess(tr("Инициализация параметров успешно"));
-	
+  init(cng.initPath);
+  statusMess(tr("Инициализация параметров успешно"));
+  
     auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs, cng.packetSz));
     graphPanels_[this] = gp;
     ui.splitter->addWidget(gp);
     
     Connect();
 
-	load();
+  load();
 
-	sortSignalByModule();
+  sortSignalByModule();
 
-	// запуск получения данных
-	if (cng.com_ena){
+  // запуск получения данных
+  if (cng.com_ena){
 
         for (auto& port : cng.com_ports){
 
@@ -807,17 +807,17 @@ MainWin::MainWin(QWidget *parent)
 
             comReaders_.push_back(comReader);
         }    
-	}
-	else{
+  }
+  else{
 
         if (SV_TcpSrv::runServer(cng.tcp_addr.toStdString(), cng.tcp_port, true)){
 
             statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
 
-			SV_Srv::startServer(srvCng);
+      SV_Srv::startServer(srvCng);
 
-			SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
-		}
+      SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
+    }
         else
             statusMess(QString(tr("Не удалось запустить TCP сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
     }
@@ -862,16 +862,16 @@ MainWin::~MainWin(){
     if (cng.zabbix_ena)
         SV_Zbx::stopAgent();
 
-	if (db_){
-		if (!db_->saveSignals(SV_Srv::getCopySignalRef()))
-			statusMess(tr("Ошибка сохранения сигналов в БД"));
+  if (db_){
+    if (!db_->saveSignals(SV_Srv::getCopySignalRef()))
+      statusMess(tr("Ошибка сохранения сигналов в БД"));
         if (!db_->saveAttrSignals(signAttr_))
             statusMess(tr("Ошибка сохранения атрибутов в БД"));
-		if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
-			statusMess(tr("Ошибка сохранения триггеров в БД"));
-	}
+    if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
+      statusMess(tr("Ошибка сохранения триггеров в БД"));
+  }
 
-	writeSettings(cng.initPath);
+  writeSettings(cng.initPath);
 
 }
 
@@ -895,113 +895,113 @@ bool MainWin::eventFilter(QObject *target, QEvent *event){
 }
 
 void MainWin::sortSignalByModule(){
-	 
+   
     int itsz = ui.treeSignals->topLevelItemCount();
     QMap<QString, bool> isExpanded;
     for (int i = 0; i < itsz; ++i)
         isExpanded[ui.treeSignals->topLevelItem(i)->text(0)] = ui.treeSignals->topLevelItem(i)->isExpanded();
 
-	ui.treeSignals->clear();
+  ui.treeSignals->clear();
   
-	auto mref = SV_Srv::getCopyModuleRef();
+  auto mref = SV_Srv::getCopyModuleRef();
 
     for (auto& it : mref){
 
-		auto md = it.second;
+    auto md = it.second;
 
         if (md->isDelete) continue;
 
-		QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
-		
+    QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
+    
         if (isExpanded.contains(md->module.c_str()))
            root->setExpanded(isExpanded[md->module.c_str()]);
-		root->setFlags(root->flags() | Qt::ItemFlag::ItemIsEditable);
-		root->setText(0, md->module.c_str());
+    root->setFlags(root->flags() | Qt::ItemFlag::ItemIsEditable);
+    root->setText(0, md->module.c_str());
         
-		md->isEnable ? root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-green.png")):
-			root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-yel.png"));
-	
-		if (!md->isActive) root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-red.png"));
-        		
+    md->isEnable ? root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-green.png")):
+      root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-yel.png"));
+  
+    if (!md->isActive) root->setIcon(0, QIcon(":/SVMonitor/images/trafficlight-red.png"));
+            
         auto msigns = getModuleSignalsSrv(md->module.c_str());
         for (auto& sign : msigns){
-			SV_Cng::signalData* sd = SV_Srv::getSignalData(sign.toStdString());
+      SV_Base::SignalData* sd = SV_Srv::getSignalData(sign.toStdString());
 
-			if (!sd || sd->isDelete) continue;
+      if (!sd || sd->isDelete) continue;
 
-			QTreeWidgetItem* item = new QTreeWidgetItem(root);				
-			item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
-			item->setText(0, sd->name.c_str());
-			item->setText(1, SV_Cng::getSVTypeStr(sd->type).c_str());
+      QTreeWidgetItem* item = new QTreeWidgetItem(root);        
+      item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
+      item->setText(0, sd->name.c_str());
+      item->setText(1, SV_Base::getSVTypeStr(sd->type).c_str());
 
             if (signAttr_.contains(sign))
                 item->setBackgroundColor(2, signAttr_[sign].color);
             else
                 item->setBackgroundColor(2, QColor(255, 255, 255));
 
-			item->setText(3, sd->comment.c_str());
-			item->setText(4, sd->group.c_str());
+      item->setText(3, sd->comment.c_str());
+      item->setText(4, sd->group.c_str());
                        
-			item->setText(5, sign);			
-		}
-	}
-	
-	ui.treeSignals->sortByColumn(1);
+      item->setText(5, sign);      
+    }
+  }
+  
+  ui.treeSignals->sortByColumn(1);
 
-	ui.lbAllSignCnt->setText(QString::number(SV_Srv::getCopySignalRef().size()));
+  ui.lbAllSignCnt->setText(QString::number(SV_Srv::getCopySignalRef().size()));
         
 }
 
 void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
-	QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
-	
-	if (root.isEmpty() || !qobject_cast<treeWidgetExt*>(focusWidget())) return;
+  QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
+  
+  if (root.isEmpty() || !qobject_cast<treeWidgetExt*>(focusWidget())) return;
 
-	QMenu* menu = new QMenu(this);
+  QMenu* menu = new QMenu(this);
 
-	auto mref = getCopyModuleRefSrv();
+  auto mref = getCopyModuleRefSrv();
 
-	if (mref.contains(root)){
-		
+  if (mref.contains(root)){
+    
         if (mref[root]->isEnable && mref[root]->isActive){
             menu->addAction(tr("Показать все"));
             menu->addAction(tr("Отключить"));
         }
-		else{
-			menu->addAction(tr("Включить"));
-			menu->addAction(tr("Удалить"));
-		}				
-	}
-	else{
+    else{
+      menu->addAction(tr("Включить"));
+      menu->addAction(tr("Удалить"));
+    }        
+  }
+  else{
         QString module = ui.treeSignals->currentItem()->parent()->text(0);
         if (module != "Virtual"){
             menu->addAction(tr("Скрипт"));
         }
         menu->addAction(tr("Сбросить цвет"));
         menu->addAction(tr("Удалить"));
-	}
+  }
 
-	connect(menu,
-		SIGNAL(triggered(QAction*)),
-		this,
-		SLOT(contextMenuClick(QAction*))
-		);
+  connect(menu,
+    SIGNAL(triggered(QAction*)),
+    this,
+    SLOT(contextMenuClick(QAction*))
+    );
 
-	menu->exec(event->globalPos());
+  menu->exec(event->globalPos());
 }
 
 void MainWin::contextMenuClick(QAction* act){
 
-	QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
+  QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
 
-	if (root.isEmpty()) return;
+  if (root.isEmpty()) return;
 
-	auto sref = getCopySignalRefSrv();
-	auto mref = getCopyModuleRefSrv();
+  auto sref = getCopySignalRefSrv();
+  auto mref = getCopyModuleRefSrv();
 
-	// signal
-	if (mref.find(root) == mref.end()){
+  // signal
+  if (mref.find(root) == mref.end()){
 
         if (act->text() == tr("Скрипт")){
 
@@ -1043,9 +1043,9 @@ void MainWin::contextMenuClick(QAction* act){
                 sortSignalByModule();
             }
         }
-	}
-	// module
-	else{
+  }
+  // module
+  else{
         if (act->text() == tr("Показать все")){
             for (auto& s : mref[root]->signls){
                 if (sref.contains(s.c_str()) && sref[s.c_str()]->isActive){
@@ -1053,86 +1053,86 @@ void MainWin::contextMenuClick(QAction* act){
                 }
             }
         }
-		else if (act->text() ==  tr("Включить")){
+    else if (act->text() ==  tr("Включить")){
 
-			mref[root]->isEnable = true;
-			sortSignalByModule();
-		}
-		else if (act->text() ==  tr("Отключить")){
+      mref[root]->isEnable = true;
+      sortSignalByModule();
+    }
+    else if (act->text() ==  tr("Отключить")){
 
-			mref[root]->isEnable = false;
-			sortSignalByModule();
-		}
-		else if (act->text() ==  tr("Удалить")){
-				
-			QMessageBox mb;
-			mb.setText(tr("Удалить модуль со всеми сигналами?"));
-			mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-			mb.setDefaultButton(QMessageBox::No);
+      mref[root]->isEnable = false;
+      sortSignalByModule();
+    }
+    else if (act->text() ==  tr("Удалить")){
+        
+      QMessageBox mb;
+      mb.setText(tr("Удалить модуль со всеми сигналами?"));
+      mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      mb.setDefaultButton(QMessageBox::No);
 
-			switch (mb.exec()) {
-			case QMessageBox::Yes:
-				{
-					statusMess(tr("Модуль удален ") + root);
+      switch (mb.exec()) {
+      case QMessageBox::Yes:
+        {
+          statusMess(tr("Модуль удален ") + root);
 
-					mref[root]->isDelete = true;
-					
+          mref[root]->isDelete = true;
+          
                     for (auto s : sref){
                         if (QString::fromStdString(s->module) == root){
                             s->isDelete = true;
                         }
                     }
 
-					sortSignalByModule();
-				}
-				break;
-			case QMessageBox::No:
-				break;
-			}
-		}
-	}
-		
+          sortSignalByModule();
+        }
+        break;
+      case QMessageBox::No:
+        break;
+      }
+    }
+  }
+    
 }
 
 void MainWin::updateTblSignal(){
-	
-	auto sref = SV_Srv::getCopySignalRef();
+  
+  auto sref = SV_Srv::getCopySignalRef();
 
-	if (sref.size() > SV_VALUE_MAX_CNT)
+  if (sref.size() > SV_VALUE_MAX_CNT)
            statusMess(tr("Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.").
                     arg(SV_VALUE_MAX_CNT));
 
-	// посмотрим в БД что есть
-	if (db_){
-		
-		for (auto& s : sref){
+  // посмотрим в БД что есть
+  if (db_){
+    
+    for (auto& s : sref){
 
-			// только тех, которые еще не видел
-			if (!signExist_.contains(s.first.c_str())){
+      // только тех, которые еще не видел
+      if (!signExist_.contains(s.first.c_str())){
 
-				signalData sd = db_->getSignal(s.second->name.c_str(), s.second->module.c_str());
-				if (!sd.name.empty()){
-					s.second->group = sd.group;
-					s.second->comment = sd.comment;
-				}
+        SignalData sd = db_->getSignal(s.second->name.c_str(), s.second->module.c_str());
+        if (!sd.name.empty()){
+          s.second->group = sd.group;
+          s.second->comment = sd.comment;
+        }
 
                 signalAttr as = db_->getAttrSignal(s.second->name.c_str(), s.second->module.c_str());
                 if (as.color.isValid()){
                     signAttr_[QString::fromStdString(s.first)] = as;
                 }
 
-				auto trg = db_->getTrigger(s.second->name.c_str(), s.second->module.c_str());
-				int sz = trg.size();
-				for (int i = 0; i < sz; ++i)
-					SV_Trigger::addTrigger(triggerPanel_, trg[i]->name, trg[i]);
-					
-				signExist_.insert(s.first.c_str());
-			}
-		}
-	}
+        auto trg = db_->getTrigger(s.second->name.c_str(), s.second->module.c_str());
+        int sz = trg.size();
+        for (int i = 0; i < sz; ++i)
+          SV_Trigger::addTrigger(triggerPanel_, trg[i]->name, trg[i]);
+          
+        signExist_.insert(s.first.c_str());
+      }
+    }
+  }
     
-	if (!isSlowMode_)
-		sortSignalByModule();
+  if (!isSlowMode_)
+    sortSignalByModule();
 }
 
 void MainWin::updateSignals(){
@@ -1142,16 +1142,16 @@ void MainWin::updateSignals(){
 }
 
 void MainWin::moduleConnect(QString module){
-	
-	statusMess(tr("Подключен модуль: ") + module);
+  
+  statusMess(tr("Подключен модуль: ") + module);
 
-	auto mref = SV_Srv::getCopyModuleRef();
+  auto mref = SV_Srv::getCopyModuleRef();
     
-	// только тех, которые еще не видел
+  // только тех, которые еще не видел
     if (!signExist_.contains(module)){
-				            				
+                            
         auto trgOn = db_ ? db_->getTrigger(module + "On") : nullptr;
-		if (!trgOn)	{				
+    if (!trgOn)  {        
             trgOn = new SV_Trigger::triggerData();
             trgOn->name = module + "On";
             trgOn->signal = "";
@@ -1162,7 +1162,7 @@ void MainWin::moduleConnect(QString module){
             trgOn->condTOut = 0;
         }
         SV_Trigger::addTrigger(triggerPanel_, module + "On", trgOn);
-							
+              
         auto trgOff = db_ ? db_->getTrigger(module + "Off") : nullptr;
         if (!trgOff){
             trgOff = new  SV_Trigger::triggerData();
@@ -1177,10 +1177,10 @@ void MainWin::moduleConnect(QString module){
         SV_Trigger::addTrigger(triggerPanel_, module + "Off", trgOff);
 
         signExist_.insert(module);
-	}
-	
-	sortSignalByModule();
-    	
+  }
+  
+  sortSignalByModule();
+      
     auto tr = SV_Trigger::getTriggerData(triggerPanel_, module + "On");
     if (tr->isActive)
         tr->condValue = 1;
@@ -1193,7 +1193,7 @@ void MainWin::moduleConnect(QString module){
 void MainWin::moduleDisconnect(QString module){
 
     statusMess(tr("Отключен модуль: ") + module);
-		
+    
     sortSignalByModule();
 
     auto tr = SV_Trigger::getTriggerData(triggerPanel_, module + "On");
@@ -1206,12 +1206,12 @@ void MainWin::moduleDisconnect(QString module){
 }
 
 void MainWin::onTrigger(QString trigger){
-    	
+      
     SV_Trigger::triggerData* td = SV_Trigger::getTriggerData(triggerPanel_, trigger);
-		
-	QString name = td->module + QString(":") + td->signal + ":" + td->name;
+    
+  QString name = td->module + QString(":") + td->signal + ":" + td->name;
 
-	statusMess(QObject::tr("Событие: ") + name);
+  statusMess(QObject::tr("Событие: ") + name);
 
     if (db_){
         db_->saveEvent(trigger, QDateTime::currentDateTime());
@@ -1219,7 +1219,7 @@ void MainWin::onTrigger(QString trigger){
 
     if (!td->userProcPath.isEmpty()){
         QFile f(td->userProcPath);
-		if (f.exists()){
+    if (f.exists()){
 
             QStringList args = td->userProcArgs.split('\t');
             for (auto& ar : args) ar = ar.trimmed();
@@ -1227,73 +1227,73 @@ void MainWin::onTrigger(QString trigger){
             QProcess::startDetached(td->userProcPath, args);
 
             statusMess(name + QObject::tr(" Процесс запущен: ") + td->userProcPath + " args: " + td->userProcArgs);
-		}
-		else
+    }
+    else
             statusMess(name + QObject::tr(" Путь не найден: ") + td->userProcPath);
-	}
+  }
 }
 
 void MainWin::initTrayIcon(){
 
-	trayIcon_ = new QSystemTrayIcon(this);
-	QIcon trayImage(":/SVMonitor/images/logo.png");
-	trayIcon_->setIcon(trayImage);
+  trayIcon_ = new QSystemTrayIcon(this);
+  QIcon trayImage(":/SVMonitor/images/logo.png");
+  trayIcon_->setIcon(trayImage);
 
-	// Setting system tray's icon menu...
-	QMenu* trayIconMenu = new QMenu(this);
+  // Setting system tray's icon menu...
+  QMenu* trayIconMenu = new QMenu(this);
 
-	QAction* restoreAction = new QAction("Восстановить", trayIcon_);
-	QAction* quitAction = new QAction("Выход", trayIcon_);
+  QAction* restoreAction = new QAction("Восстановить", trayIcon_);
+  QAction* quitAction = new QAction("Выход", trayIcon_);
 
-	connect(restoreAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
-	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+  connect(restoreAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+  connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-	trayIconMenu->addAction(restoreAction);
-	trayIconMenu->addAction(quitAction);
+  trayIconMenu->addAction(restoreAction);
+  trayIconMenu->addAction(quitAction);
 
-	trayIcon_->setContextMenu(trayIconMenu);
+  trayIcon_->setContextMenu(trayIconMenu);
 
-	connect(trayIcon_, &QSystemTrayIcon::activated, [this](){
-		trayIcon_->hide();
-		this->showMaximized();
+  connect(trayIcon_, &QSystemTrayIcon::activated, [this](){
+    trayIcon_->hide();
+    this->showMaximized();
 
-		isSlowMode_ = false;
+    isSlowMode_ = false;
 
-		sortSignalByModule();
-	});
+    sortSignalByModule();
+  });
 }
 
 void MainWin::slowMode(){
 
-	isSlowMode_ = true;
-		
-	ui.treeSignals->clear();
+  isSlowMode_ = true;
+    
+  ui.treeSignals->clear();
 
-	this->trayIcon_->show();
-	this->hide();
+  this->trayIcon_->show();
+  this->hide();
 
 }
 
 MainWin::config MainWin::getConfig(){
 
-	return cng;
+  return cng;
 }
 
 void MainWin::updateConfig(MainWin::config cng_){
 
     cng = cng_;
 
-	srvCng.outArchiveEna  = cng.outArchiveEna;
-	srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
-	srvCng.outArchiveName = cng.outArchiveName.toStdString();
-	srvCng.outArchivePath = cng.outArchivePath.toStdString();
+  srvCng.outArchiveEna  = cng.outArchiveEna;
+  srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
+  srvCng.outArchiveName = cng.outArchiveName.toStdString();
+  srvCng.outArchivePath = cng.outArchivePath.toStdString();
 
-	SV_Srv::setConfig(srvCng);
+  SV_Srv::setConfig(srvCng);
 }
 
 QVector<uEvent> MainWin::getEvents(QDateTime bg, QDateTime en){
 
-	return db_ ? db_->getEvents(bg, en) : QVector<uEvent>();
+  return db_ ? db_->getEvents(bg, en) : QVector<uEvent>();
 }
 
 QDialog* MainWin::addNewWindow(const QRect& pos){

@@ -94,7 +94,7 @@
     <message>
         <location filename="../forms/graphPanel.ui" line="130"/>
         <source>автошкала по амплитуде [CTRL+D]</source>
-        <translation>autoscale of value [CTRL+D]</translation>
+        <translation>autoscale of Value [CTRL+D]</translation>
     </message>
     <message>
         <location filename="../forms/graphPanel.ui" line="153"/>

@@ -35,7 +35,7 @@ class thrUpdSignal {
 
 public:
 
-	thrUpdSignal(SV_Srv::config, server*, bufferData* );
+  thrUpdSignal(SV_Srv::config, server*, bufferData* );
 
     ~thrUpdSignal();
 
@@ -45,18 +45,18 @@ private:
 
     SV_Srv::config cng;
 
-	bool thrStop_ = false;
+  bool thrStop_ = false;
 
-	std::thread thr_;
+  std::thread thr_;
     bufferData* pBuffData_ = nullptr;
-	archive* pArchive_ = nullptr;
+  archive* pArchive_ = nullptr;
     server* pServ_ = nullptr;
 
     std::mutex mtx_;
 
-	void updCycle();
-	void updateSign(SV_Cng::signalData* sign, int beginPos, int valuePos);
-	void addSignal(const std::string& sign, const bufferData::inputData& bp);
-	void modConnect(const std::string& module);
-	void modDisconnect(const std::string& module);
+  void updCycle();
+  void updateSign(SV_Base::SignalData* sign, int beginPos, int valuePos);
+  void addSignal(const std::string& sign, const bufferData::inputData& bp);
+  void modConnect(const std::string& module);
+  void modDisconnect(const std::string& module);
 };

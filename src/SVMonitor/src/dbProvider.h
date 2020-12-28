@@ -46,8 +46,8 @@ public:
     QVector<SV_Trigger::triggerData*> getTrigger(const QString& signal, const QString& module);
     SV_Trigger::triggerData* getTrigger(const QString& trname);
 
-    bool saveSignals(const std::map<std::string, SV_Cng::signalData*>& signs);
-    SV_Cng::signalData getSignal(const QString& signal, const QString& module);
+    bool saveSignals(const std::map<std::string, SV_Base::SignalData*>& signs);
+    SV_Base::SignalData getSignal(const QString& signal, const QString& module);
 
     bool saveAttrSignals(const QMap<QString, signalAttr>& attr);
     signalAttr getAttrSignal(const QString& signal, const QString& module);

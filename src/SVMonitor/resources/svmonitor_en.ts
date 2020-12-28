@@ -962,7 +962,7 @@
     </message>
     <message>
         <source>пороговое значение</source>
-        <translation type="vanished">threshold value</translation>
+        <translation type="vanished">threshold Value</translation>
     </message>
     <message>
         <source>задержка срабатывания, сек</source>

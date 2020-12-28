@@ -33,12 +33,12 @@ server serv;
 
 namespace SV_Srv {
 
-	/// задать статус callback
-	/// \param pfStatusMess
-	void setStatusCBack(statusCBack cback){
+  /// задать статус callback
+  /// \param pfStatusMess
+  void setStatusCBack(statusCBack cback){
 
-		serv.pfStatusCBack = cback;
-	}
+    serv.pfStatusCBack = cback;
+  }
 
     /// старт сервера
     bool startServer(config cng){
@@ -49,37 +49,37 @@ namespace SV_Srv {
     /// стоп сервера
     void stopServer(){
 
-		serv.stopServer();
+    serv.stopServer();
     }
 
     /// задать конфиг
     void setConfig(config cng){
 
         serv.setConfig(cng);
-	}
+  }
 
     // получение данных сервером callBack
     void receiveData(std::string& inout, std::string& out){
 
-		serv.receiveData(inout, out);
-	}
+    serv.receiveData(inout, out);
+  }
 
     // обновление данных callBack
     void setOnUpdateSignalsCBack(onUpdateSignalsCBack cback){
 
-		serv.pfUpdateSignalsCBack = cback;
+    serv.pfUpdateSignalsCBack = cback;
     }
 
     // добавление сигнала callBack
     void setOnAddSignalsCBack(onAddSignalsCBack cback){
 
-		serv.pfAddSignalsCBack = cback;
-	}
+    serv.pfAddSignalsCBack = cback;
+  }
    
     void setOnModuleConnectCBack(onModuleConnectCBack cback){
 
         serv.pfModuleConnectCBack = cback;
-	}
+  }
 
     void setOnModuleDisconnectCBack(onModuleDisconnectCBack cback){
 
@@ -87,15 +87,15 @@ namespace SV_Srv {
     }
 
     // вернуть все модули
-    std::map<std::string, SV_Cng::moduleData *> getCopyModuleRef(){
+    std::map<std::string, SV_Base::ModuleData *> getCopyModuleRef(){
 
-		return serv.getCopyModuleRef();
+    return serv.getCopyModuleRef();
     };
 
     // вернуть данные модуля
-    SV_Cng::moduleData* getModuleData(const std::string& module){
+    SV_Base::ModuleData* getModuleData(const std::string& module){
 
-		return serv.getModuleData(module);
+    return serv.getModuleData(module);
     }
 
     // вернуть сигналы модуля
@@ -105,25 +105,25 @@ namespace SV_Srv {
     }
 
     // вернуть все сигналы
-    std::map<std::string, SV_Cng::signalData *> getCopySignalRef(){
+    std::map<std::string, SV_Base::SignalData *> getCopySignalRef(){
 
-		return serv.getCopySignalRef();
+    return serv.getCopySignalRef();
     };
 
     // вернуть данные сигнала
-    SV_Cng::signalData *getSignalData(const std::string& sign){
+    SV_Base::SignalData *getSignalData(const std::string& sign){
 
-		return serv.getSignalData(sign);
+    return serv.getSignalData(sign);
     }
 
     /// добавить сигнал
-    bool addSignal(SV_Cng::signalData* sd){
+    bool addSignal(SV_Base::SignalData* sd){
 
         return serv.addSignal(sd);
     }
 
     /// добавить модуль
-    bool addModule(SV_Cng::moduleData* md){
+    bool addModule(SV_Base::ModuleData* md){
 
         return serv.addModule(md);
     }

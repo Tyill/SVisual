@@ -244,9 +244,9 @@ QByteArray webServer::jsonGetLastSignalData(const QStringList& snames){
         for (int i = 0; i < SV_PACKETSZ; ++i){
 
             switch (sd->type){
-              case SV_Cng::valueType::tBool: jnVals.append(sd->lastData.vals[i].tBool); break;
-              case SV_Cng::valueType::tInt: jnVals.append(sd->lastData.vals[i].tInt); break;
-              case SV_Cng::valueType::tFloat: jnVals.append(sd->lastData.vals[i].tFloat); break;
+              case SV_Base::ValueType::BOOL: jnVals.append(sd->lastData.vals[i].BOOL); break;
+              case SV_Base::ValueType::INT: jnVals.append(sd->lastData.vals[i].INT); break;
+              case SV_Base::ValueType::FLOAT: jnVals.append(sd->lastData.vals[i].FLOAT); break;
             }
         }
         jnSign["vals"] = jnVals;

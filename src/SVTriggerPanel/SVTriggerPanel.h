@@ -41,15 +41,15 @@
 
 namespace SV_Trigger {
    
-	struct config {
+  struct config {
 
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
-		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-				cycleRecMs(cycleRecMs_),
-				packetSz(packetSz_) {}
-	};
+    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+        cycleRecMs(cycleRecMs_),
+        packetSz(packetSz_) {}
+  };
 
     /// тип события
     enum class eventType {
@@ -88,16 +88,16 @@ namespace SV_Trigger {
 
     SVTRIGGERPANEL_API void startUpdateThread(QDialog* panel);
    
-    typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
-	SVTRIGGERPANEL_API void setGetCopySignalRef(QDialog* panel, pf_getCopySignalRef f);
+    typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
+  SVTRIGGERPANEL_API void setGetCopySignalRef(QDialog* panel, pf_getCopySignalRef f);
 
-    typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
+    typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
     SVTRIGGERPANEL_API void setGetSignalData(QDialog* panel, pf_getSignalData f);
 
-    typedef QMap<QString, SV_Cng::moduleData*>(*pf_getCopyModuleRef)();
+    typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
     SVTRIGGERPANEL_API void setGetCopyModuleRef(QDialog* panel, pf_getCopyModuleRef f);
 
-    typedef SV_Cng::moduleData *(*pf_getModuleData)(const QString &module);
+    typedef SV_Base::ModuleData *(*pf_getModuleData)(const QString &module);
     SVTRIGGERPANEL_API void setGetModuleData(QDialog* panel, pf_getModuleData f);
     
     typedef void(*pf_onTriggerCBack)(const QString& name);

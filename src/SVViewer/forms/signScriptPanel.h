@@ -76,7 +76,7 @@ public:
     }
     ~signScriptPanel() = default;
 
-    void showSignScript(const QString& signal, const QString& module, SV_Cng::valueType type){
+    void showSignScript(const QString& signal, const QString& module, SV_Base::ValueType type){
 
         sFileName_ = signal + module + ".lua";
 
@@ -99,8 +99,8 @@ public:
           
             QString stext = "ctm = getTimeValue(\"" + module + "\", \"" + signal + "\"); \n";
 
-            if (type == SV_Cng::valueType::tBool)     stext += "cval = getBoolValue(";
-            else if (type == SV_Cng::valueType::tInt) stext += "cval = getIntValue(";
+            if (type == SV_Base::ValueType::BOOL)     stext += "cval = getBoolValue(";
+            else if (type == SV_Base::ValueType::INT) stext += "cval = getIntValue(";
             else                                      stext += "cval = getFloatValue(";
             
             stext += "\"" + module + "\", \"" + signal + "\");";
@@ -112,8 +112,8 @@ public:
 
             stext += "\n\n";
 
-            if (type == SV_Cng::valueType::tBool)     stext += "setBoolValue(";
-            else if (type == SV_Cng::valueType::tInt) stext += "setIntValue(";
+            if (type == SV_Base::ValueType::BOOL)     stext += "setBoolValue(";
+            else if (type == SV_Base::ValueType::INT) stext += "setIntValue(";
             else                                      stext += "setFloatValue(";
 
             stext += "\"" + signal + "Virt" + "\", cval + valOffs, ctm + tmOffs);";

@@ -46,33 +46,33 @@ namespace SV_Script {
         player = 1,
     };
 
-	struct config {
+  struct config {
 
-		int cycleRecMs;
-		int packetSz;
+    int cycleRecMs;
+    int packetSz;
 
-		config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-				cycleRecMs(cycleRecMs_),
-				packetSz(packetSz_) {}
-	};
+    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+        cycleRecMs(cycleRecMs_),
+        packetSz(packetSz_) {}
+  };
 
     SVSCRIPTPANEL_API QDialog* createScriptPanel(QWidget* parent, config, modeGr);
 
     SVSCRIPTPANEL_API void startUpdateThread(QDialog* stPanel);
       
-    typedef QMap<QString, SV_Cng::signalData*>(*pf_getCopySignalRef)();
-	SVSCRIPTPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
+    typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
+  SVSCRIPTPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
 
-    typedef SV_Cng::moduleData *(*pf_getModuleData)(const QString &module);
+    typedef SV_Base::ModuleData *(*pf_getModuleData)(const QString &module);
     SVSCRIPTPANEL_API void setGetModuleData(QDialog* stPanel, pf_getModuleData f);
 
-    typedef SV_Cng::signalData *(*pf_getSignalData)(const QString &sign);
-	SVSCRIPTPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
+    typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
+  SVSCRIPTPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
-    typedef bool(*pf_addSignal)(SV_Cng::signalData*);
+    typedef bool(*pf_addSignal)(SV_Base::SignalData*);
     SVSCRIPTPANEL_API void setAddSignal(QDialog* stPanel, pf_addSignal f);
 
-    typedef bool(*pf_addModule)(SV_Cng::moduleData*);
+    typedef bool(*pf_addModule)(SV_Base::ModuleData*);
     SVSCRIPTPANEL_API void setAddModule(QDialog* stPanel, pf_addModule f);
 
     typedef void(*pf_changeSignColor)(const QString &module, const QString &sign, const QColor& color);
@@ -87,7 +87,7 @@ namespace SV_Script {
     SVSCRIPTPANEL_API void refreshScript(QDialog* stPanel, const QString& fname);
 
     typedef bool(*pf_loadSignalData)(const QString& sign);
-	SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
+  SVSCRIPTPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 
     // обновление данных callBack
     typedef void(*pf_updateSignalsCBack)();

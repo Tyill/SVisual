@@ -44,21 +44,21 @@ namespace SV_Web {
         if (wServer.isListening())
           wServer.close();
     }
-    	
-	  void setGetCopySignalRef(pf_getCopySignalRef f) {
+      
+    void setGetCopySignalRef(pf_getCopySignalRef f) {
 
         wServer.pfGetCopySignalRef = f; 
-  	}
+    }
 
     void setGetCopyModuleRef(pf_getCopyModuleRef f){
 
         wServer.pfGetCopyModuleRef = f;
     }
 
-	  void setGetSignalData(pf_getSignalData f) {
+    void setGetSignalData(pf_getSignalData f) {
 
         wServer.pfGetSignalData = f;
-	  }
+    }
 
     
 }

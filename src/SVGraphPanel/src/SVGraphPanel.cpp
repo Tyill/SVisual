@@ -31,10 +31,10 @@
 
 namespace SV_Graph {
 
-	QWidget *createGraphPanel(QWidget *parent, const SV_Graph::config& cng) {
-				     
-		return new graphPanel(parent, cng);
-	}
+  QWidget *createGraphPanel(QWidget *parent, const SV_Graph::config& cng) {
+             
+    return new graphPanel(parent, cng);
+  }
 
     void setGraphSetting(QWidget *gp, const graphSetting& gs){
 
@@ -62,17 +62,17 @@ namespace SV_Graph {
             return QVector<axisAttr>();
     }
 
-	void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f) {
+  void setGetCopySignalRef(QWidget *gp, pf_getCopySignalRef f) {
 
-		if (gp && f)
-			((graphPanel*) gp)->pfGetCopySignalRef = f;
-	}
+    if (gp && f)
+      ((graphPanel*) gp)->pfGetCopySignalRef = f;
+  }
 
-	void setGetSignalData(QWidget *gp, pf_getSignalData f) {
+  void setGetSignalData(QWidget *gp, pf_getSignalData f) {
 
-		if (gp && f)
-			((graphPanel*) gp)->pfGetSignalData = f;
-	}
+    if (gp && f)
+      ((graphPanel*) gp)->pfGetSignalData = f;
+  }
 
     void setGetSignalAttr(QWidget *gp, pf_getSignalAttr f){
 
@@ -80,43 +80,43 @@ namespace SV_Graph {
             ((graphPanel*)gp)->pfGetSignalAttr = f;
     }
 
-	void setLoadSignalData(QWidget *gp, pf_loadSignalData f) {
+  void setLoadSignalData(QWidget *gp, pf_loadSignalData f) {
 
-		if (gp && f)
-			((graphPanel*) gp)->pfLoadSignalData = f;
-	}
-	
+    if (gp && f)
+      ((graphPanel*) gp)->pfLoadSignalData = f;
+  }
+  
     void addSignal(QWidget *gp, QString sname, int section) {
 
-		if (gp)
+    if (gp)
             ((graphPanel*)gp)->addSignalOnGraph(sname, section);
-	}
+  }
 
-	void update(QWidget *gp) {
+  void update(QWidget *gp) {
 
-		if (gp)
-			((graphPanel*) gp)->updateSignals();
-	}
+    if (gp)
+      ((graphPanel*) gp)->updateSignals();
+  }
 
-	QPair<qint64, qint64> getTimeInterval(QWidget *gp) {
+  QPair<qint64, qint64> getTimeInterval(QWidget *gp) {
 
-		if (gp)
-			return ((graphPanel*) gp)->getTimeInterval();
+    if (gp)
+      return ((graphPanel*) gp)->getTimeInterval();
 
-		return QPair<qint64, qint64>();
-	}
+    return QPair<qint64, qint64>();
+  }
 
-	void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime) {
+  void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime) {
 
-		if (gp) {
+    if (gp) {
 
-			((graphPanel*)gp)->setTimeInterval(stTime, enTime);
+      ((graphPanel*)gp)->setTimeInterval(stTime, enTime);
 
-			((graphPanel*)gp)->ui.axisTime->update();
+      ((graphPanel*)gp)->ui.axisTime->update();
 
-			((graphPanel*)gp)->resizeByValue();
-		}
-	}
+      ((graphPanel*)gp)->resizeByValue();
+    }
+  }
 
     QVector<QVector<QString>> getLocateSignals(QWidget *gp){
 

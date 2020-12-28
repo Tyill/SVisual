@@ -30,22 +30,22 @@
 
 extern MainWin* mainWin;
 
-using namespace SV_Cng;
+using namespace SV_Base;
 
 thrLoadData::thrLoadData(QStringList files){
 
-	QThread* thr = new QThread(this);
-		
-	this->moveToThread(thr);
-	connect(thr, &QThread::started, [this, files](){
+  QThread* thr = new QThread(this);
+    
+  this->moveToThread(thr);
+  connect(thr, &QThread::started, [this, files](){
         bool ok = mainWin->loadData(files);
         emit finished(ok);
-	});
-	connect(this, &thrLoadData::finished, [this, thr](){
-		thr->quit();
-	});
+  });
+  connect(this, &thrLoadData::finished, [this, thr](){
+    thr->quit();
+  });
 
-	thr->start();
+  thr->start();
 }
 
 bool MainWin::loadModuleVals(QString path){
@@ -73,7 +73,7 @@ bool MainWin::loadModuleVals(QString path){
 
     QDataStream dataStream(&file);
 
-    int valSz = sizeof(uint64_t) + sizeof(value) * SV_PACKETSZ,
+    int valSz = sizeof(uint64_t) + sizeof(Value) * SV_PACKETSZ,
         vheadSz = sizeof(valueData),
         patchNum = 0;
 
@@ -135,19 +135,19 @@ bool MainWin::loadModuleVals(QString path){
             }
 
             if (!moduleRef_.contains(vr->module)) {
-                moduleRef_.insert(vr->module, new moduleData(vr->module));
+                moduleRef_.insert(vr->module, new ModuleData(vr->module));
                 moduleRef_[vr->module]->isActive = true;
             }
 
             moduleRef_[vr->module]->signls.push_back(sign.toStdString());
 
             if (!groupRef_.contains(vr->group)){
-                groupRef_.insert(vr->group, new groupData(vr->group));
+                groupRef_.insert(vr->group, new GroupData(vr->group));
                 groupRef_[vr->group]->isActive = true;
             }
-			groupRef_[vr->group]->signls.push_back(sign.toStdString());
+      groupRef_[vr->group]->signls.push_back(sign.toStdString());
 
-            auto sd = new signalData();
+            auto sd = new SignalData();
             sd->name = vr->name;
             sd->module = vr->module;
             sd->group = vr->group;
@@ -155,7 +155,7 @@ bool MainWin::loadModuleVals(QString path){
             sd->type = vr->type;
             sd->isActive = true;
 
-			signalRef_[sign] = sd;
+      signalRef_[sign] = sd;
 
             int szVl = vheadSz + vr->vlCnt * valSz;
             itData += szVl;
@@ -172,7 +172,7 @@ bool MainWin::loadModuleVals(QString path){
 
 bool loadSignalData(const QString& sign){
    
-    QMap<QString, signalData*> sref = getCopySignalRef();
+    QMap<QString, SignalData*> sref = getCopySignalRef();
     if (!sref.contains(sign))
         return false;
 
@@ -196,12 +196,12 @@ bool loadSignalData(const QString& sign){
                 
         int csz = sref[sign]->buffData.size(),
             newsz = csz + path->signls[sign].vlsCnt,
-            vlSz = sizeof(value) * SV_PACKETSZ;
+            vlSz = sizeof(Value) * SV_PACKETSZ;
 
         sdata->buffData.resize(newsz);
 
         int buffSz = vlSz * path->signls[sign].vlsCnt;
-        value* buff = new value[buffSz];
+        Value* buff = new Value[buffSz];
         memset(buff, 0, buffSz);
 
         for (int i = csz, j = 0; i < newsz; ++i, ++j)
@@ -272,7 +272,7 @@ bool loadSignalData(const QString& sign){
     if (!isNewFile) 
         return ok && !sdata->buffData.empty();
 
-    std::sort(sdata->buffData.begin(), sdata->buffData.end(), [](recData& left, recData& right) {
+    std::sort(sdata->buffData.begin(), sdata->buffData.end(), [](RecData& left, RecData& right) {
         return left.beginTime < right.beginTime;
     });
 
@@ -282,23 +282,23 @@ bool loadSignalData(const QString& sign){
 
     double minValue = INT32_MAX, maxValue = -INT32_MAX;
 
-    if (sdata->type == valueType::tInt){
+    if (sdata->type == ValueType::INT){
         for (auto& val : sdata->buffData){
 
             for (int i = 0; i < SV_PACKETSZ; ++i){
 
-                if (val.vals[i].tInt > maxValue) maxValue = val.vals[i].tInt;
-                if (val.vals[i].tInt < minValue) minValue = val.vals[i].tInt;
+                if (val.vals[i].INT > maxValue) maxValue = val.vals[i].INT;
+                if (val.vals[i].INT < minValue) minValue = val.vals[i].INT;
             }
         }
     }
-    else if (sdata->type == valueType::tFloat){
+    else if (sdata->type == ValueType::FLOAT){
         for (auto& val : sdata->buffData){
 
             for (int i = 0; i < SV_PACKETSZ; ++i){
 
-                if (val.vals[i].tFloat > maxValue) maxValue = val.vals[i].tFloat;
-                if (val.vals[i].tFloat < minValue) minValue = val.vals[i].tFloat;
+                if (val.vals[i].FLOAT > maxValue) maxValue = val.vals[i].FLOAT;
+                if (val.vals[i].FLOAT < minValue) minValue = val.vals[i].FLOAT;
             }
         }
     }

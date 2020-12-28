@@ -69,28 +69,28 @@ const QString VERSION = "1.1.8";
 
 MainWin* mainWin = nullptr;
 
-using namespace SV_Cng;
+using namespace SV_Base;
 
 
 bool loadSignalData(const QString& sign);
 
-QMap<QString, signalData*> getCopySignalRef(){
+QMap<QString, SignalData*> getCopySignalRef(){
     return mainWin->signalRef_;
 }
 
-QMap<QString, moduleData*> getCopyModuleRef(){
+QMap<QString, ModuleData*> getCopyModuleRef(){
     return mainWin->moduleRef_;
 }
 
-signalData* getSignalData(const QString& sign){
+SignalData* getSignalData(const QString& sign){
    return mainWin->signalRef_.contains(sign) ? mainWin->signalRef_[sign] : nullptr;;
 }
 
-moduleData* getModuleData(const QString& sign){
+ModuleData* getModuleData(const QString& sign){
    return mainWin->moduleRef_.contains(sign) ? mainWin->moduleRef_[sign] : nullptr;
 }
 
-bool addSignal(SV_Cng::signalData* sd){
+bool addSignal(SV_Base::SignalData* sd){
     QMutexLocker locker(&mainWin->mtx_);
 
     QString sign = QString::fromStdString(sd->name + sd->module);
@@ -103,7 +103,7 @@ bool addSignal(SV_Cng::signalData* sd){
     return false;
 }
 
-bool addModule(SV_Cng::moduleData* md){
+bool addModule(SV_Base::ModuleData* md){
     QMutexLocker locker(&mainWin->mtx_);
 
     QString name = QString::fromStdString(md->module);
@@ -134,7 +134,7 @@ bool MainWin::writeSettings(QString pathIni){
 
     QFile file(pathIni);
 
-    QTextStream txtStream(&file);	QStringList sList;
+    QTextStream txtStream(&file);  QStringList sList;
 
     file.open(QIODevice::WriteOnly);
     txtStream << "[Param]" << endl;
@@ -150,7 +150,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
     txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << endl;
     txtStream << endl;
-	file.close();
+  file.close();
 
     return true;
 }
@@ -169,21 +169,21 @@ bool MainWin::readSignals(QString path){
 
             if (lst.size() >= 4){
 
-				std::string module = qPrintable(lst[0]);
-				std::string sname = qPrintable(lst[1]);
+        std::string module = qPrintable(lst[0]);
+        std::string sname = qPrintable(lst[1]);
                 std::string sign = sname + module;
 
                 if (signalRef_.contains(sign.c_str())) continue;
 
                 if (!moduleRef_.contains(module.c_str()))
-                    moduleRef_[module.c_str()] = new moduleData(module);
+                    moduleRef_[module.c_str()] = new ModuleData(module);
 
                 moduleRef_[module.c_str()]->signls.push_back(sign);
                 moduleRef_[module.c_str()]->isActive = false;
 
-				std::string group = (lst.size() >= 5) ? qPrintable(lst[4]) : "";
-				std::string comment = qPrintable(lst[3]);
-				std::string stype = qPrintable(lst[2]);
+        std::string group = (lst.size() >= 5) ? qPrintable(lst[4]) : "";
+        std::string comment = qPrintable(lst[3]);
+        std::string stype = qPrintable(lst[2]);
 
                 if (lst.size() >= 6){
                     signAttr_[sign.c_str()].signal = QString::fromStdString(sname);
@@ -194,12 +194,12 @@ bool MainWin::readSignals(QString path){
                 }
 
                 if (!groupRef_.contains(group.c_str()))
-                    groupRef_[group.c_str()] = new groupData(group.c_str());
+                    groupRef_[group.c_str()] = new GroupData(group.c_str());
 
                 groupRef_[group.c_str()]->signls.push_back(sign);
                 groupRef_[group.c_str()]->isActive = false;
 
-                auto sd = new signalData();
+                auto sd = new SignalData();
                 sd->name = sname;
                 sd->module = module;
                 sd->group = group;
@@ -253,30 +253,30 @@ bool MainWin::writeSignals(QString path){
 
 void MainWin::updateGroup(QString group, QString sign){
 
-	if (!groupRef_.contains(group))
-		groupRef_[group] = new groupData(group.toUtf8().data());
+  if (!groupRef_.contains(group))
+    groupRef_[group] = new GroupData(group.toUtf8().data());
 
-	std::string sname = sign.toUtf8().data();
+  std::string sname = sign.toUtf8().data();
 
-	bool isSingExist = false;
-	for (auto& s : groupRef_[group]->signls){
-	    if (s == sname){
+  bool isSingExist = false;
+  for (auto& s : groupRef_[group]->signls){
+      if (s == sname){
             isSingExist = true;
             break;
         }
-	}
+  }
 
-	if (!isSingExist)
-		groupRef_[group]->signls.push_back(sname);
+  if (!isSingExist)
+    groupRef_[group]->signls.push_back(sname);
 
 }
 
 void MainWin::load(){
 
-	ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	ui.treeSignals->setIconSize(QSize(40, 20));
+  ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  ui.treeSignals->setIconSize(QSize(40, 20));
    
-	auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
+  auto gp = SV_Graph::createGraphPanel(this, SV_Graph::config(cng.cycleRecMs,cng.packetSz, SV_Graph::modeGr::viewer));
     SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
     SV_Graph::setGetSignalData(gp, getSignalData);
     SV_Graph::setLoadSignalData(gp, loadSignalData);
@@ -300,17 +300,17 @@ void MainWin::load(){
     SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRef);
     SV_Exp::setGetSignalData(exportPanel_, getSignalData);
 
-	statPanel_ = SV_Stat::createStatPanel(this, SV_Stat::config(cng.cycleRecMs,cng.packetSz));
-	statPanel_->setWindowFlags(Qt::Window);
-	SV_Stat::setGetCopySignalRef(statPanel_, getCopySignalRef);
-	SV_Stat::setGetSignalData(statPanel_, getSignalData);
-	SV_Stat::setLoadSignalData(statPanel_, loadSignalData);
-	SV_Stat::setSetTimeInterval(statPanel_, [](qint64 st, qint64 en){
+  statPanel_ = SV_Stat::createStatPanel(this, SV_Stat::config(cng.cycleRecMs,cng.packetSz));
+  statPanel_->setWindowFlags(Qt::Window);
+  SV_Stat::setGetCopySignalRef(statPanel_, getCopySignalRef);
+  SV_Stat::setGetSignalData(statPanel_, getSignalData);
+  SV_Stat::setLoadSignalData(statPanel_, loadSignalData);
+  SV_Stat::setSetTimeInterval(statPanel_, [](qint64 st, qint64 en){
         SV_Graph::setTimeInterval(mainWin->graphPanels_[mainWin], st, en);
-	});
-	SV_Stat::setGetTimeInterval(statPanel_, [](){
+  });
+  SV_Stat::setGetTimeInterval(statPanel_, [](){
         return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
-	});
+  });
 
     scriptPanel_ = SV_Script::createScriptPanel(this, SV_Script::config(cng.cycleRecMs, cng.packetSz), SV_Script::modeGr::viewer);
     scriptPanel_->setWindowFlags(Qt::Window);
@@ -333,22 +333,22 @@ void MainWin::load(){
         QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
     });
       
-	ui.splitter->addWidget(gp);
+  ui.splitter->addWidget(gp);
     QList<int> ss; ss.append(150); ss.append(500);
     ui.splitter->setSizes(ss);
 
-	ui.progressBar->setVisible(false);
+  ui.progressBar->setVisible(false);
 
-	ui.btnSortByModule->setChecked(cng.sortByMod);
-	ui.btnSortByGroup->setChecked(!cng.sortByMod);
+  ui.btnSortByModule->setChecked(cng.sortByMod);
+  ui.btnSortByGroup->setChecked(!cng.sortByMod);
 
-	readSignals(QApplication::applicationDirPath() + "/svsignals.txt");
+  readSignals(QApplication::applicationDirPath() + "/svsignals.txt");
 }
 
 void MainWin::Connect(){
 
-	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(actionOpenData()));
-	connect(ui.actionStat, SIGNAL(triggered()), this, SLOT(actionOpenStat()));
+  connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(actionOpenData()));
+  connect(ui.actionStat, SIGNAL(triggered()), this, SLOT(actionOpenStat()));
 
     connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
         if (moduleRef_.contains(item->text(0))){
@@ -393,7 +393,7 @@ void MainWin::Connect(){
     });
     connect(ui.treeSignals, &QTreeWidget::itemChanged, [this](QTreeWidgetItem* item, int column){
         QString sign = item->text(5);
-        signalData* sd = getSignalData(sign);
+        SignalData* sd = getSignalData(sign);
 
         if (!sd) return;
 
@@ -407,16 +407,16 @@ void MainWin::Connect(){
             case 4: sd->comment = item->text(4).toUtf8().data(); break;
         }
     });
-	connect(ui.actionExit, &QAction::triggered, [this]() { 
-		this->close();
-	});
-	connect(ui.actionExport, &QAction::triggered, [this]() {
+  connect(ui.actionExit, &QAction::triggered, [this]() { 
+    this->close();
+  });
+  connect(ui.actionExport, &QAction::triggered, [this]() {
         if (exportPanel_) exportPanel_->showNormal();
-	});
+  });
     connect(ui.actionNewWin, &QAction::triggered, [this]() {
 
         addNewWindow(QRect());
-    });		
+    });    
     connect(ui.actionUpFont, &QAction::triggered, [this]() {
 
         QFont ft = QApplication::font();
@@ -444,40 +444,40 @@ void MainWin::Connect(){
         if (graphSettPanel_) graphSettPanel_->showNormal();
     });
 
-	connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
-		this->ui.btnSortByGroup->setChecked(true);
-		this->ui.btnSortByModule->setChecked(false);
-		cng.sortByMod = false;
-		sortSignalByGroupOrModule(false);
-	});
+  connect(ui.btnSortByGroup, &QPushButton::clicked, [this]() {
+    this->ui.btnSortByGroup->setChecked(true);
+    this->ui.btnSortByModule->setChecked(false);
+    cng.sortByMod = false;
+    sortSignalByGroupOrModule(false);
+  });
 
-	connect(ui.btnSortByModule, &QPushButton::clicked, [this]() {
-		this->ui.btnSortByModule->setChecked(true);
-		this->ui.btnSortByGroup->setChecked(false);
-		cng.sortByMod = true;
-		sortSignalByGroupOrModule(true);
-	});
+  connect(ui.btnSortByModule, &QPushButton::clicked, [this]() {
+    this->ui.btnSortByModule->setChecked(true);
+    this->ui.btnSortByGroup->setChecked(false);
+    cng.sortByMod = true;
+    sortSignalByGroupOrModule(true);
+  });
 
-	connect(ui.actionPrint, &QAction::triggered, [this]() {
+  connect(ui.actionPrint, &QAction::triggered, [this]() {
 
-		QPrinter printer(QPrinter::HighResolution);
-		printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
-		printer.setFullPage(false);
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
+    printer.setFullPage(false);
 
-		QPrintDialog printDialog(&printer, this);
-		if (printDialog.exec() == QDialog::Accepted) {
+    QPrintDialog printDialog(&printer, this);
+    if (printDialog.exec() == QDialog::Accepted) {
 
-			QPainter painter(&printer);
+      QPainter painter(&printer);
 
-			double xscale = printer.pageRect().width() / double(graphPanels_[this]->width());
+      double xscale = printer.pageRect().width() / double(graphPanels_[this]->width());
             double yscale = printer.pageRect().height() / double(graphPanels_[this]->height());
-			double scale = qMin(xscale, yscale);
-			painter.translate(printer.paperRect().x(), printer.paperRect().y());
-			painter.scale(scale, scale);
+      double scale = qMin(xscale, yscale);
+      painter.translate(printer.paperRect().x(), printer.paperRect().y());
+      painter.scale(scale, scale);
 
             graphPanels_[this]->render(&painter);
-		}
-	});
+    }
+  });
 
     connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
 
@@ -554,7 +554,7 @@ void MainWin::Connect(){
         for (auto& g : grps){
             settings.beginGroup(g);
 
-            QString locate = settings.value("locate").toString();
+            QString locate = settings.Value("locate").toString();
             QObject* win = this;
             if (locate != "0"){
 
@@ -566,7 +566,7 @@ void MainWin::Connect(){
             int sect = 0;
             while (true){
 
-                QString str = settings.value("section" + QString::number(sect), "").toString();
+                QString str = settings.Value("section" + QString::number(sect), "").toString();
                 if (str.isEmpty()) break;
 
                 QStringList signs = str.split(' ');
@@ -580,7 +580,7 @@ void MainWin::Connect(){
             int axisInx = 0;
             while (true){
 
-                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                QString str = settings.Value("axisAttr" + QString::number(axisInx), "").toString();
                 if (str.isEmpty()) break;
 
                 QStringList attr = str.split(' ');
@@ -611,67 +611,67 @@ void MainWin::Connect(){
         QDesktopServices::openUrl(QUrl::fromLocalFile(QApplication::applicationDirPath() + "/SVManualRU.pdf"));
 #endif
     });    
-	connect(ui.actionProgram, &QAction::triggered, [this]() {
-	QMessageBox::about(this, tr("About SVisual"),
-			tr("<h2>SVViewer </h2>"
-			"<p>Программное обеспечение предназначенное"
-			"<p>для анализа сигналов с устройст."
+  connect(ui.actionProgram, &QAction::triggered, [this]() {
+  QMessageBox::about(this, tr("About SVisual"),
+      tr("<h2>SVViewer </h2>"
+      "<p>Программное обеспечение предназначенное"
+      "<p>для анализа сигналов с устройст."
             "<p>2017"));
-	});
+  });
 }
 
 bool MainWin::init(QString initPath){
     
-	QSettings settings(initPath, QSettings::IniFormat);
-	settings.beginGroup("Param");
+  QSettings settings(initPath, QSettings::IniFormat);
+  settings.beginGroup("Param");
 
-	cng.cycleRecMs =  settings.value("cycleRecMs", 100).toInt();
-	cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
-	cng.packetSz = settings.value("packetSz", 10).toInt();
-	cng.packetSz = qMax(cng.packetSz, 1);
+  cng.cycleRecMs =  settings.Value("cycleRecMs", 100).toInt();
+  cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
+  cng.packetSz = settings.Value("packetSz", 10).toInt();
+  cng.packetSz = qMax(cng.packetSz, 1);
 
-	cng.selOpenDir = settings.value("selOpenDir", "").toString();
-	cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
-		
-    cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
-    cng.graphSett.transparent = settings.value("transparent", "100").toInt();
-    cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
+  cng.selOpenDir = settings.Value("selOpenDir", "").toString();
+  cng.sortByMod = settings.Value("sortByMod", 1).toInt() == 1;
+    
+    cng.graphSett.lineWidth = settings.Value("lineWidth", "2").toInt();
+    cng.graphSett.transparent = settings.Value("transparent", "100").toInt();
+    cng.graphSett.darkTheme = settings.Value("darkTheme", "0").toInt() == 1;
 
     QFont ft = QApplication::font();
-    int fsz = settings.value("fontSz", ft.pointSize()).toInt();
+    int fsz = settings.Value("fontSz", ft.pointSize()).toInt();
     ft.setPointSize(fsz);
     QApplication::setFont(ft);
 
-	if (!QFile(initPath).exists())
-		writeSettings(initPath);
+  if (!QFile(initPath).exists())
+    writeSettings(initPath);
 
-	return true;
+  return true;
 
 }
 
 MainWin::MainWin(QWidget *parent)
-	: QMainWindow(parent)
+  : QMainWindow(parent)
 {
-	ui.setupUi(this);
+  ui.setupUi(this);
 
-	mainWin = this;
+  mainWin = this;
 
-	this->setWindowTitle(QString("SVViewer ") + VERSION);
+  this->setWindowTitle(QString("SVViewer ") + VERSION);
 
-	QStringList args = QApplication::arguments();
-	cng.initPath = QApplication::applicationDirPath(); if (args.size() == 2) cng.initPath = args[1];
-	init(cng.initPath + "/sviewer.ini");
+  QStringList args = QApplication::arguments();
+  cng.initPath = QApplication::applicationDirPath(); if (args.size() == 2) cng.initPath = args[1];
+  init(cng.initPath + "/sviewer.ini");
 
-	Connect();
+  Connect();
 
-	load();
+  load();
 
 }
 
 MainWin::~MainWin()
-{	
-	writeSettings(cng.initPath + "/sviewer.ini");
-	writeSignals(cng.initPath + "/svsignals.txt");
+{  
+  writeSettings(cng.initPath + "/sviewer.ini");
+  writeSignals(cng.initPath + "/svsignals.txt");
 }
 
 void MainWin::updateGraphSetting(const SV_Graph::graphSetting& gs){
@@ -711,25 +711,25 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
     for (int i = 0; i < itsz; ++i)
         isExpanded[ui.treeSignals->topLevelItem(i)->text(0)] = ui.treeSignals->topLevelItem(i)->isExpanded();
 
-	ui.treeSignals->clear();
-	        	
-	int scnt = 0;
-	if (byModule){
-        QMap<QString, signalData*> sref;
-        QMap<QString, moduleData*> mref;
+  ui.treeSignals->clear();
+            
+  int scnt = 0;
+  if (byModule){
+        QMap<QString, SignalData*> sref;
+        QMap<QString, ModuleData*> mref;
         { QMutexLocker locker(&mainWin->mtx_); 
           mref = getCopyModuleRef();
           sref = getCopySignalRef();
         }        
 
-		ui.treeSignals->headerItem()->setText(3, tr("Группа"));
-		
+    ui.treeSignals->headerItem()->setText(3, tr("Группа"));
+    
         for (auto md : mref){
 
             if (!md->isActive) continue;
 
-			QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
-			
+      QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
+      
             if (isExpanded.contains(md->module.c_str())){
                 root->setExpanded(isExpanded[md->module.c_str()]);
             }
@@ -737,109 +737,109 @@ void MainWin::sortSignalByGroupOrModule(bool byModule){
 
             auto signls = getModuleSignals(QString::fromStdString(md->module));
             for (auto& sname : signls){
-                				
+                        
                 if (!sref.contains(sname) || !sref[sname]->isActive) continue;
-				++scnt;
-				
-				QTreeWidgetItem* item = new QTreeWidgetItem(root);
-				item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
-				item->setText(0, sref[sname]->name.c_str());
-				item->setText(1, SV_Cng::getSVTypeStr(sref[sname]->type).c_str());
+        ++scnt;
+        
+        QTreeWidgetItem* item = new QTreeWidgetItem(root);
+        item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
+        item->setText(0, sref[sname]->name.c_str());
+        item->setText(1, SV_Base::getSVTypeStr(sref[sname]->type).c_str());
 
                 if (signAttr_.contains(sname))
                     item->setBackgroundColor(2, signAttr_[sname].color);
                 else
                     item->setBackgroundColor(2, QColor(255, 255, 255));
 
-				item->setText(3, sref[sname]->group.c_str());
-				item->setText(4, sref[sname]->comment.c_str());
-				item->setText(5, sname);
-			}
-		}
-	}
-	else {
+        item->setText(3, sref[sname]->group.c_str());
+        item->setText(4, sref[sname]->comment.c_str());
+        item->setText(5, sname);
+      }
+    }
+  }
+  else {
 
-        QMap<QString, signalData*> sref;
+        QMap<QString, SignalData*> sref;
         { QMutexLocker locker(&mainWin->mtx_);
           sref = getCopySignalRef();
         }
 
-		ui.treeSignals->headerItem()->setText(3, tr("Модуль"));
+    ui.treeSignals->headerItem()->setText(3, tr("Модуль"));
 
-		for (auto grp : groupRef_){
+    for (auto grp : groupRef_){
 
             if (!grp->isActive) continue;
 
             if (grp->signls.empty()) continue;
 
-			QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
+      QTreeWidgetItem* root = new QTreeWidgetItem(ui.treeSignals);
 
             if (isExpanded.contains(grp->group.c_str()))
                 root->setExpanded(isExpanded[grp->group.c_str()]);
             root->setText(0, grp->group.c_str());
-					
+          
             for (auto& s : grp->signls){
 
-				QString sname = s.c_str();
+        QString sname = s.c_str();
 
                 if (!sref.contains(sname) || !sref[sname]->isActive) continue;
-				++scnt;
+        ++scnt;
 
-				QTreeWidgetItem* item = new QTreeWidgetItem(root);
-				item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
-				item->setText(0, sref[sname]->name.c_str());
-				item->setText(1, SV_Cng::getSVTypeStr(sref[sname]->type).c_str());
+        QTreeWidgetItem* item = new QTreeWidgetItem(root);
+        item->setFlags(item->flags() | Qt::ItemFlag::ItemIsEditable);
+        item->setText(0, sref[sname]->name.c_str());
+        item->setText(1, SV_Base::getSVTypeStr(sref[sname]->type).c_str());
 
                 if (signAttr_.contains(sname))
                     item->setBackgroundColor(2, signAttr_[sname].color);
                 else
                     item->setBackgroundColor(2, QColor(255, 255, 255));
 
-				item->setText(3, sref[sname]->module.c_str());
-				item->setText(4, sref[sname]->comment.c_str());
-				item->setText(5, sname);
-			}
-		}
-	}
+        item->setText(3, sref[sname]->module.c_str());
+        item->setText(4, sref[sname]->comment.c_str());
+        item->setText(5, sname);
+      }
+    }
+  }
 
-	ui.treeSignals->sortByColumn(1);
+  ui.treeSignals->sortByColumn(1);
 
-	ui.lbAllSignCnt->setText(QString::number(scnt));
-	
+  ui.lbAllSignCnt->setText(QString::number(scnt));
+  
 }
 
 void MainWin::loadDataFinished(bool ok){
 
-	if (ok){
-		ui.lbStatusMess->setText(cng.selOpenDir);
-				
-		sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
-	}
-	else
-		ui.lbStatusMess->setText(tr("Файл не удалось прочитать"));
-			
-	ui.progressBar->setVisible(false);
+  if (ok){
+    ui.lbStatusMess->setText(cng.selOpenDir);
+        
+    sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
+  }
+  else
+    ui.lbStatusMess->setText(tr("Файл не удалось прочитать"));
+      
+  ui.progressBar->setVisible(false);
 
-	thrLoadData_->deleteLater();
-	
+  thrLoadData_->deleteLater();
+  
 }
 
 void MainWin::actionOpenData(){
-	
-	QStringList files = QFileDialog::getOpenFileNames(this,
-		tr("Добавление файлов данных"), cng.selOpenDir,
-		"dat files (*.dat)");
+  
+  QStringList files = QFileDialog::getOpenFileNames(this,
+    tr("Добавление файлов данных"), cng.selOpenDir,
+    "dat files (*.dat)");
 
-	if (files.isEmpty()) return;
+  if (files.isEmpty()) return;
 
-	ui.progressBar->setVisible(true);
+  ui.progressBar->setVisible(true);
 
-	thrLoadData_ = new thrLoadData(files);
-	connect(thrLoadData_, SIGNAL(finished(bool)), this, SLOT(loadDataFinished(bool)));
+  thrLoadData_ = new thrLoadData(files);
+  connect(thrLoadData_, SIGNAL(finished(bool)), this, SLOT(loadDataFinished(bool)));
 }
 
 void MainWin::actionOpenStat(){
-		
+    
     statPanel_->showNormal();
 }
 

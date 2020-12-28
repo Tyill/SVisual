@@ -31,30 +31,30 @@
 
 class exportPanel : public QDialog
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
 
-	SV_Exp::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+  SV_Exp::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
     SV_Exp::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
-	SV_Exp::pf_getSignalData pfGetSignalData = nullptr;
-	SV_Exp::pf_loadSignalData pfLoadSignalData= nullptr;
-	SV_Exp::pf_setTimeInterval pfSetTimeInterval = nullptr;
-	SV_Exp::pf_getTimeInterval pfGetTimeInterval = nullptr;
+  SV_Exp::pf_getSignalData pfGetSignalData = nullptr;
+  SV_Exp::pf_loadSignalData pfLoadSignalData= nullptr;
+  SV_Exp::pf_setTimeInterval pfSetTimeInterval = nullptr;
+  SV_Exp::pf_getTimeInterval pfGetTimeInterval = nullptr;
 
     exportPanel(QWidget *parent, SV_Exp::config);
     ~exportPanel();
-	
+  
 private:
-	Ui::ExportPanelClass ui;
-	
+  Ui::ExportPanelClass ui;
+  
     QString selModule_, selSignal_, selDirMem_;
 
 private:
     void showEvent(QShowEvent * event);
 
     SV_Exp::config cng;
-    	
+      
     QSet<QString> expSignals_;
 
     void updateTableSignal();
@@ -65,9 +65,9 @@ private:
     void exportToTXT(QString fileName);
     void exportToJSON(QString fileName);
 
-private slots:	
+private slots:  
     void selModule(QListWidgetItem* item);
-	void addSignalOnExport();
+  void addSignalOnExport();
     void delSignalFromExport();
 };
 

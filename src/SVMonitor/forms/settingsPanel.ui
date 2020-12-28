@@ -509,7 +509,7 @@
           <property name="maximum">
            <number>60000</number>
           </property>
-          <property name="value">
+          <property name="Value">
            <number>100</number>
           </property>
          </widget>
@@ -529,7 +529,7 @@
           <property name="maximum">
            <number>1000</number>
           </property>
-          <property name="value">
+          <property name="Value">
            <number>10</number>
           </property>
          </widget>

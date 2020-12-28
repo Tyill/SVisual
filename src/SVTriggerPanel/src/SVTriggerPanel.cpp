@@ -31,19 +31,19 @@ namespace SV_Trigger {
     QDialog *createTriggerPanel(QWidget *parent, config cng) {
 
         return new triggerPanel(parent, cng);
-	}
+  }
 
     void startUpdateThread(QDialog* stp){
 
         if (stp)
             ((triggerPanel*)stp)->startUpdateThread();
     }
-   	
-	void setGetCopySignalRef(QDialog *stp, pf_getCopySignalRef f) {
+     
+  void setGetCopySignalRef(QDialog *stp, pf_getCopySignalRef f) {
 
-		if (stp)
+    if (stp)
             ((triggerPanel*)stp)->pfGetCopySignalRef = f;
-	}
+  }
 
     void setGetCopyModuleRef(QDialog* stp, pf_getCopyModuleRef f){
 
@@ -57,12 +57,12 @@ namespace SV_Trigger {
             ((triggerPanel*)stp)->pfGetModuleData = f;
     }
 
-	void setGetSignalData(QDialog *stp, pf_getSignalData f) {
+  void setGetSignalData(QDialog *stp, pf_getSignalData f) {
 
-		if (stp)
+    if (stp)
             ((triggerPanel*)stp)->pfGetSignalData = f;
-	}
-    	        	
+  }
+                
     // вернуть все триггеры
     QMap<QString, triggerData*> getCopyTriggerRef(QDialog *stp){
 

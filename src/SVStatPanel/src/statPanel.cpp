@@ -27,51 +27,51 @@
 #include "SVConfig/SVConfigLimits.h"
 
 
-using namespace SV_Cng;
+using namespace SV_Base;
 
 statPanel::statPanel(QWidget *parent, SV_Stat::config cng_){
-		
-	setParent(parent);
-	
+    
+  setParent(parent);
+  
 #ifdef SV_EN
-	QTranslator translator;
-	translator.load(":/SVStat/svstatpanel_en.qm");
-	QCoreApplication::installTranslator(&translator);
+  QTranslator translator;
+  translator.load(":/SVStat/svstatpanel_en.qm");
+  QCoreApplication::installTranslator(&translator);
 #endif
 
-	setAcceptDrops(true);
+  setAcceptDrops(true);
 
-	cng = cng_;
+  cng = cng_;
 
-	ui.setupUi(this);
+  ui.setupUi(this);
 
-	ui.txtDiapMin->setEnabled(false);
-	ui.txtDiapMax->setEnabled(false);
+  ui.txtDiapMin->setEnabled(false);
+  ui.txtDiapMax->setEnabled(false);
 
-	connect(ui.chbDiapEna, &QCheckBox::stateChanged, [this]() {
-		if (ui.chbDiapEna->isChecked()){
-			diapEna_ = true;
-			ui.txtDiapMin->setEnabled(true);
-			ui.txtDiapMax->setEnabled(true);
-			selectSignalChange();
-		}
-		else{
-			diapEna_ = false;
-			ui.txtDiapMin->setEnabled(false);
-			ui.txtDiapMax->setEnabled(false);
-			selectSignalChange();
-		}
-	});
+  connect(ui.chbDiapEna, &QCheckBox::stateChanged, [this]() {
+    if (ui.chbDiapEna->isChecked()){
+      diapEna_ = true;
+      ui.txtDiapMin->setEnabled(true);
+      ui.txtDiapMax->setEnabled(true);
+      selectSignalChange();
+    }
+    else{
+      diapEna_ = false;
+      ui.txtDiapMin->setEnabled(false);
+      ui.txtDiapMax->setEnabled(false);
+      selectSignalChange();
+    }
+  });
 
-	connect(ui.chbWinDiap, SIGNAL(stateChanged(int)), SLOT(selectSignalChange()));
-	connect(ui.chbFront, SIGNAL(stateChanged(int)), SLOT(selectSignalChange()));
+  connect(ui.chbWinDiap, SIGNAL(stateChanged(int)), SLOT(selectSignalChange()));
+  connect(ui.chbFront, SIGNAL(stateChanged(int)), SLOT(selectSignalChange()));
 
-	connect(ui.wgtGraph, SIGNAL(selValueChange()), this, SLOT(graphValueChange()));
-	connect(ui.cmbSignals, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSignalChange()));
-	connect(ui.listSignTimeChange, SIGNAL(currentRowChanged(int)), this, SLOT(selectSignalTime(int)));
-	connect(ui.txtDiapMin, SIGNAL(textChanged(QString)), this, SLOT(selectSignalChange()));
-	connect(ui.txtDiapMax, SIGNAL(textChanged(QString)), this, SLOT(selectSignalChange()));
-	connect(ui.txtValue, SIGNAL(textChanged(QString)), ui.wgtGraph, SLOT(setTargPos(QString)));
+  connect(ui.wgtGraph, SIGNAL(selValueChange()), this, SLOT(graphValueChange()));
+  connect(ui.cmbSignals, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSignalChange()));
+  connect(ui.listSignTimeChange, SIGNAL(currentRowChanged(int)), this, SLOT(selectSignalTime(int)));
+  connect(ui.txtDiapMin, SIGNAL(textChanged(QString)), this, SLOT(selectSignalChange()));
+  connect(ui.txtDiapMax, SIGNAL(textChanged(QString)), this, SLOT(selectSignalChange()));
+  connect(ui.txtValue, SIGNAL(textChanged(QString)), ui.wgtGraph, SLOT(setTargPos(QString)));
 
 }
 
@@ -82,164 +82,164 @@ statPanel::~statPanel(){
 
 void statPanel::selectSignalChange(){
 
-	QString sign = ui.cmbSignals->currentData().toString();	
+  QString sign = ui.cmbSignals->currentData().toString();  
 
-	if (sign.isEmpty()) return;
+  if (sign.isEmpty()) return;
 
-	sign_[sign].hist = calcHist(sign);
+  sign_[sign].hist = calcHist(sign);
 
-	ui.wgtGraph->setGraphPnt(sign_[sign].hist);
+  ui.wgtGraph->setGraphPnt(sign_[sign].hist);
 
-	graphValueChange();
+  graphValueChange();
 }
 
-QVector<recData> statPanel::getSignData(QString sname){
-		
-	signalData* sdata = pfGetSignalData(sname);
+QVector<RecData> statPanel::getSignData(QString sname){
+    
+  SignalData* sdata = pfGetSignalData(sname);
 
-	if (!ui.chbWinDiap->isChecked()){
+  if (!ui.chbWinDiap->isChecked()){
 
-		int sz = sdata->buffData.size();
-		QVector<recData> res(sz);
-		for (int i =0; i < sz; ++i)
-			res[i] = sdata->buffData[i];
+    int sz = sdata->buffData.size();
+    QVector<RecData> res(sz);
+    for (int i =0; i < sz; ++i)
+      res[i] = sdata->buffData[i];
 
-		return res;
-	}
+    return res;
+  }
 
-	QPair<qint64, qint64> tmInterval = pfGetTimeInterval ? pfGetTimeInterval() : QPair<qint64, qint64>();
-		
-	int znSz = sdata->buffData.size();
+  QPair<qint64, qint64> tmInterval = pfGetTimeInterval ? pfGetTimeInterval() : QPair<qint64, qint64>();
+    
+  int znSz = sdata->buffData.size();
 
-	uint64_t tmZnBegin = sdata->buffMinTime,
-		tmZnEnd = sdata->buffMaxTime,
-		tmMinInterval = tmInterval.first,
-		tmMaxInterval = tmInterval.second;
+  uint64_t tmZnBegin = sdata->buffMinTime,
+    tmZnEnd = sdata->buffMaxTime,
+    tmMinInterval = tmInterval.first,
+    tmMaxInterval = tmInterval.second;
 
-	if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QVector<recData>();
+  if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QVector<RecData>();
 
 
-	QVector<recData> res;
-		
-	tmZnEnd = sdata->buffData[0].beginTime + SV_CYCLESAVE_MS;
-	uint64_t tmZnEndPrev = sdata->buffData[0].beginTime;
+  QVector<RecData> res;
+    
+  tmZnEnd = sdata->buffData[0].beginTime + SV_CYCLESAVE_MS;
+  uint64_t tmZnEndPrev = sdata->buffData[0].beginTime;
 
-	int z = 0, pntPrev = 0;
-	while (tmZnBegin < tmMaxInterval){
+  int z = 0, pntPrev = 0;
+  while (tmZnBegin < tmMaxInterval){
 
-		if (tmZnEnd > tmMinInterval){
-			res.append(sdata->buffData[z]);
-		}
+    if (tmZnEnd > tmMinInterval){
+      res.append(sdata->buffData[z]);
+    }
 
-		z++;
+    z++;
 
-		if (z < znSz){
-			tmZnBegin = sdata->buffData[z].beginTime,
-			tmZnEnd = sdata->buffData[z].beginTime + SV_CYCLESAVE_MS;
-		}
-		else break;
-	}
+    if (z < znSz){
+      tmZnBegin = sdata->buffData[z].beginTime,
+      tmZnEnd = sdata->buffData[z].beginTime + SV_CYCLESAVE_MS;
+    }
+    else break;
+  }
 
-	return res;
+  return res;
 }
 
 void statPanel::dragEnterEvent(QDragEnterEvent *event)
 {
-	if (qobject_cast<QTreeWidget *>(event->source()) ||
-		qobject_cast<QLabel *>(event->source())) {
+  if (qobject_cast<QTreeWidget *>(event->source()) ||
+    qobject_cast<QLabel *>(event->source())) {
 
-		event->accept();
+    event->accept();
 
-	}
+  }
 }
 
 void statPanel::dragMoveEvent(QDragMoveEvent *event){
 
-	if (qobject_cast<QTreeWidget *>(event->source()) ||
-		qobject_cast<QLabel *>(event->source())) {
+  if (qobject_cast<QTreeWidget *>(event->source()) ||
+    qobject_cast<QLabel *>(event->source())) {
 
-		event->accept();
+    event->accept();
 
-	}
+  }
 }
 
 void statPanel::dropEvent(QDropEvent *event)
 {
-	QLabel* lb = qobject_cast<QLabel*>(event->source());
+  QLabel* lb = qobject_cast<QLabel*>(event->source());
 
-	if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
+  if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
 
-		QString sname = event->mimeData()->text();
+    QString sname = event->mimeData()->text();
 
-		if (!sname.isEmpty()){
+    if (!sname.isEmpty()){
 
-			pfLoadSignalData(sname);
-			
-			signalData* sdata = pfGetSignalData(sname);
+      pfLoadSignalData(sname);
+      
+      SignalData* sdata = pfGetSignalData(sname);
 
-			if (!sign_.contains(sname)){
+      if (!sign_.contains(sname)){
 
-				sign_.insert(sname, graphSignData{ sname, sdata->name.c_str() });
-			}
-									
-			ui.cmbSignals->addItem(sdata->name.c_str());
+        sign_.insert(sname, graphSignData{ sname, sdata->name.c_str() });
+      }
+                  
+      ui.cmbSignals->addItem(sdata->name.c_str());
 
-			ui.cmbSignals->setItemData(ui.cmbSignals->count() - 1, sname);
+      ui.cmbSignals->setItemData(ui.cmbSignals->count() - 1, sname);
 
-			ui.cmbSignals->setCurrentIndex(ui.cmbSignals->count() - 1);
-					
-			if (ui.cmbSignals->count() == 1) selectSignalChange();
-		}
+      ui.cmbSignals->setCurrentIndex(ui.cmbSignals->count() - 1);
+          
+      if (ui.cmbSignals->count() == 1) selectSignalChange();
+    }
 
-		event->accept();
-	}
+    event->accept();
+  }
 }
 
 QVector<QPair<int,int>> statPanel::calcHist(QString sname){
-		
-	vars_ = getSignData(sname);
+    
+  vars_ = getSignData(sname);
 
     QMap<int, int> hist; 
     int bDuration = 0, prevVal = 0;
 
-	if (diapEna_){
+  if (diapEna_){
 
-		int minVal = ui.txtDiapMin->text().toInt();
-		int maxVal = ui.txtDiapMax->text().toInt();
-		int sz = vars_.size();
-		bool isOnlyFront = ui.chbFront->isChecked();
-				
-		signalData* sdata = pfGetSignalData(sname);
+    int minVal = ui.txtDiapMin->text().toInt();
+    int maxVal = ui.txtDiapMax->text().toInt();
+    int sz = vars_.size();
+    bool isOnlyFront = ui.chbFront->isChecked();
+        
+    SignalData* sdata = pfGetSignalData(sname);
 
-		switch (sdata->type)
-		{
-		case valueType::tBool:{
-			bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, valSData{ 0, 0 });
-			for (int i = 0; i < sz; ++i){
+    switch (sdata->type)
+    {
+    case ValueType::BOOL:{
+      bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, valSData{ 0, 0 });
+      for (int i = 0; i < sz; ++i){
 
-				for (int j = 0; j < SV_PACKETSZ; ++j){
+        for (int j = 0; j < SV_PACKETSZ; ++j){
 
-					bool val = vars_[i].vals[j].tBool;
+          bool val = vars_[i].vals[j].BOOL;
 
-					if (val){
-						if (!isOnlyFront || (val != prev)) hist[0]++;
+          if (val){
+            if (!isOnlyFront || (val != prev)) hist[0]++;
                         if (val != prev) sign_[sname].valData[0].changeCnt++;
 
-						if (val) sign_[sname].valData[0].duration++;
-					}
-					prev = val;
-				}
-			}
-		}
-			break;
+            if (val) sign_[sname].valData[0].duration++;
+          }
+          prev = val;
+        }
+      }
+    }
+      break;
 
-        case valueType::tInt:
+        case ValueType::INT:
            
             for (int i = 0; i < sz; ++i){
 
                 for (int j = 0; j < SV_PACKETSZ; ++j){
 
-                    int val = vars_[i].vals[j].tInt;
+                    int val = vars_[i].vals[j].INT;
 
                     if ((minVal <= val) && (val <= maxVal)){
 
@@ -258,248 +258,248 @@ QVector<QPair<int,int>> statPanel::calcHist(QString sname){
                 }
             }
         
-			break;
-		case valueType::tFloat:
-			
-			for (int i = 0; i < sz; ++i){
+      break;
+    case ValueType::FLOAT:
+      
+      for (int i = 0; i < sz; ++i){
 
-				for (int j = 0; j < SV_PACKETSZ; ++j){
+        for (int j = 0; j < SV_PACKETSZ; ++j){
 
-					int val = vars_[i].vals[j].tFloat > 0 ? vars_[i].vals[j].tFloat + 0.5 : vars_[i].vals[j].tFloat - 0.5;
-										
-					if ((minVal <= val) && (val <= maxVal)){
-												
-						if (!hist.contains(val)){
-							hist.insert(val, 1);
-							sign_[sname].valData.insert(val, valSData{ 1, 1 });
-						}
-						else{
-							if (!isOnlyFront || (val != prevVal)) hist[val]++;
-							if (val != prevVal) sign_[sname].valData[val].changeCnt++;
-							sign_[sname].valData[val].duration++;
-						}
+          int val = vars_[i].vals[j].FLOAT > 0 ? vars_[i].vals[j].FLOAT + 0.5 : vars_[i].vals[j].FLOAT - 0.5;
+                    
+          if ((minVal <= val) && (val <= maxVal)){
+                        
+            if (!hist.contains(val)){
+              hist.insert(val, 1);
+              sign_[sname].valData.insert(val, valSData{ 1, 1 });
+            }
+            else{
+              if (!isOnlyFront || (val != prevVal)) hist[val]++;
+              if (val != prevVal) sign_[sname].valData[val].changeCnt++;
+              sign_[sname].valData[val].duration++;
+            }
 
-						prevVal = val;
-					}
-				}
-			}
-			break;
-		default:
-			break;
-		}
+            prevVal = val;
+          }
+        }
+      }
+      break;
+    default:
+      break;
+    }
 
-	}
-	else{
-		
-		int sz = vars_.size();
-		bool isOnlyFront = ui.chbFront->isChecked();
-		int prevVal = 0;
-		signalData* sdata = pfGetSignalData(sname);
+  }
+  else{
+    
+    int sz = vars_.size();
+    bool isOnlyFront = ui.chbFront->isChecked();
+    int prevVal = 0;
+    SignalData* sdata = pfGetSignalData(sname);
 
-		switch (sdata->type)
-		{
-			case valueType::tBool:{
-				bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, valSData{ 0, 0 });
-				for (int i = 0; i < sz; ++i){
+    switch (sdata->type)
+    {
+      case ValueType::BOOL:{
+        bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, valSData{ 0, 0 });
+        for (int i = 0; i < sz; ++i){
 
-					for (int j = 0; j < SV_PACKETSZ; ++j){
+          for (int j = 0; j < SV_PACKETSZ; ++j){
 
-						bool val = vars_[i].vals[j].tBool;
-						
-						if (val){
-							if (!isOnlyFront || (val != prev)) hist[0]++;
-							if (val != prev) sign_[sname].valData[0].changeCnt++;
+            bool val = vars_[i].vals[j].BOOL;
+            
+            if (val){
+              if (!isOnlyFront || (val != prev)) hist[0]++;
+              if (val != prev) sign_[sname].valData[0].changeCnt++;
 
-							if (val) sign_[sname].valData[0].duration++;
-						}
-						prev = val;
-					}
-				}
-				}
-			break;
+              if (val) sign_[sname].valData[0].duration++;
+            }
+            prev = val;
+          }
+        }
+        }
+      break;
 
-			case valueType::tInt:			
-				for (int i = 0; i < sz; ++i){
+      case ValueType::INT:      
+        for (int i = 0; i < sz; ++i){
 
-					for (int j = 0; j < SV_PACKETSZ; ++j){
-					
-						int val = vars_[i].vals[j].tInt;
-												
-						if (!hist.contains(val)){
-							hist.insert(val, 1);
-							sign_[sname].valData.insert(val, valSData{ 1, 1 });
-						}
-						else{
-							if (!isOnlyFront || (val != prevVal)) hist[val]++;
-							if (val != prevVal) sign_[sname].valData[val].changeCnt++;
-							sign_[sname].valData[val].duration++;
-						}
+          for (int j = 0; j < SV_PACKETSZ; ++j){
+          
+            int val = vars_[i].vals[j].INT;
+                        
+            if (!hist.contains(val)){
+              hist.insert(val, 1);
+              sign_[sname].valData.insert(val, valSData{ 1, 1 });
+            }
+            else{
+              if (!isOnlyFront || (val != prevVal)) hist[val]++;
+              if (val != prevVal) sign_[sname].valData[val].changeCnt++;
+              sign_[sname].valData[val].duration++;
+            }
 
-						prevVal = val;
-					}
-				}
-				break;
-			case valueType::tFloat:
-				
-				for (int i = 0; i < sz; ++i){
+            prevVal = val;
+          }
+        }
+        break;
+      case ValueType::FLOAT:
+        
+        for (int i = 0; i < sz; ++i){
 
-					for (int j = 0; j < SV_PACKETSZ; ++j){
+          for (int j = 0; j < SV_PACKETSZ; ++j){
 
-						int val = vars_[i].vals[j].tFloat > 0 ? vars_[i].vals[j].tFloat + 0.5 : vars_[i].vals[j].tFloat - 0.5;
-						
-						if (!hist.contains(val)){
-							hist.insert(val, 1);
-							sign_[sname].valData.insert(val, valSData{ 1, 1 });
-						}
-						else{
-							if (!isOnlyFront || (val != prevVal)) hist[val]++;
-							if (val != prevVal) sign_[sname].valData[val].changeCnt++;
-							sign_[sname].valData[val].duration++;
-						}
+            int val = vars_[i].vals[j].FLOAT > 0 ? vars_[i].vals[j].FLOAT + 0.5 : vars_[i].vals[j].FLOAT - 0.5;
+            
+            if (!hist.contains(val)){
+              hist.insert(val, 1);
+              sign_[sname].valData.insert(val, valSData{ 1, 1 });
+            }
+            else{
+              if (!isOnlyFront || (val != prevVal)) hist[val]++;
+              if (val != prevVal) sign_[sname].valData[val].changeCnt++;
+              sign_[sname].valData[val].duration++;
+            }
 
-						prevVal = val;
-					}
-				}
-				break;
-			default:
-				break;
-		}	
-	}
+            prevVal = val;
+          }
+        }
+        break;
+      default:
+        break;
+    }  
+  }
 
-	QVector<QPair<int, int>> res;
-	QList<int> keys = hist.keys(); int sz = keys.size();
-	for (int i = 0; i < sz; ++i){
+  QVector<QPair<int, int>> res;
+  QList<int> keys = hist.keys(); int sz = keys.size();
+  for (int i = 0; i < sz; ++i){
 
-		res.append(QPair<int,int>(keys[i], hist[keys[i]]));		
+    res.append(QPair<int,int>(keys[i], hist[keys[i]]));    
 
-		sign_[sname].valData[keys[i]].duration *= SV_CYCLEREC_MS;
+    sign_[sname].valData[keys[i]].duration *= SV_CYCLEREC_MS;
 
-		sign_[sname].valData[keys[i]].durationMean = (double)sign_[sname].valData[keys[i]].duration / sign_[sname].valData[keys[i]].changeCnt + 0.5;
-	}	
-			
-	return res;
+    sign_[sname].valData[keys[i]].durationMean = (double)sign_[sname].valData[keys[i]].duration / sign_[sname].valData[keys[i]].changeCnt + 0.5;
+  }  
+      
+  return res;
 }
 
 void statPanel::listTimeUpdate(QString sname, int selVal){
-			
-	ui.listSignTimeChange->clear();
-	
-	signalData* sdata = pfGetSignalData(sname);
+      
+  ui.listSignTimeChange->clear();
+  
+  SignalData* sdata = pfGetSignalData(sname);
 
-	if (sign_[sname].valData.contains(selVal)){
-		int duration = sign_[sname].valData[selVal].duration / 1000.0 + 0.5;
-		ui.txtDurationFull->setText(QString::number(duration));
-		ui.txtDurationMean->setText(QString::number(sign_[sname].valData[selVal].durationMean));
-		
-	}
-	if (sdata->type == valueType::tBool)
-		ui.txtDurationMean->setText(QString::number(sign_[sname].valData[0].durationMean));
+  if (sign_[sname].valData.contains(selVal)){
+    int duration = sign_[sname].valData[selVal].duration / 1000.0 + 0.5;
+    ui.txtDurationFull->setText(QString::number(duration));
+    ui.txtDurationMean->setText(QString::number(sign_[sname].valData[selVal].durationMean));
+    
+  }
+  if (sdata->type == ValueType::BOOL)
+    ui.txtDurationMean->setText(QString::number(sign_[sname].valData[0].durationMean));
 
-	if (sname.isEmpty() || (!ui.chbFront->isChecked() && (sdata->type != valueType::tBool))) return;
-		
-	int sz = vars_.size(); QStringList itTimes; int prev = 0;
-	switch (sdata->type)
-	{
-		case valueType::tBool:
-			
-			for (int i = 0; i < sz; ++i){
+  if (sname.isEmpty() || (!ui.chbFront->isChecked() && (sdata->type != ValueType::BOOL))) return;
+    
+  int sz = vars_.size(); QStringList itTimes; int prev = 0;
+  switch (sdata->type)
+  {
+    case ValueType::BOOL:
+      
+      for (int i = 0; i < sz; ++i){
 
-				for (int j = 0; j < SV_PACKETSZ; ++j){
+        for (int j = 0; j < SV_PACKETSZ; ++j){
 
-					int val = vars_[i].vals[j].tBool;
+          int val = vars_[i].vals[j].BOOL;
 
-					if (val && (val != prev)){
-						itTimes.append(QDateTime::fromMSecsSinceEpoch(vars_[i].beginTime + j * SV_CYCLEREC_MS).toString("yyyy.MM.dd hh:mm:ss:zzz"));
-					}
-					prev = val;
-				}
-			}
-		break;
+          if (val && (val != prev)){
+            itTimes.append(QDateTime::fromMSecsSinceEpoch(vars_[i].beginTime + j * SV_CYCLEREC_MS).toString("yyyy.MM.dd hh:mm:ss:zzz"));
+          }
+          prev = val;
+        }
+      }
+    break;
 
-	case valueType::tInt:
+  case ValueType::INT:
 
-		for (int i = 0; i < sz; ++i){
+    for (int i = 0; i < sz; ++i){
 
-			for (int j = 0; j < SV_PACKETSZ; ++j){
+      for (int j = 0; j < SV_PACKETSZ; ++j){
 
-				int val = vars_[i].vals[j].tInt;
+        int val = vars_[i].vals[j].INT;
 
-				if ((val != prev) && (val == selVal)){
-					itTimes.append(QDateTime::fromMSecsSinceEpoch(vars_[i].beginTime + j * SV_CYCLEREC_MS).toString("yyyy.MM.dd hh:mm:ss:zzz"));
-				}
-				prev = val;
-			}
-		}
-		break;
-	case valueType::tFloat:
+        if ((val != prev) && (val == selVal)){
+          itTimes.append(QDateTime::fromMSecsSinceEpoch(vars_[i].beginTime + j * SV_CYCLEREC_MS).toString("yyyy.MM.dd hh:mm:ss:zzz"));
+        }
+        prev = val;
+      }
+    }
+    break;
+  case ValueType::FLOAT:
 
-		for (int i = 0; i < sz; ++i){
+    for (int i = 0; i < sz; ++i){
 
-			for (int j = 0; j < SV_PACKETSZ; ++j){
+      for (int j = 0; j < SV_PACKETSZ; ++j){
 
-				int val = vars_[i].vals[j].tFloat;
+        int val = vars_[i].vals[j].FLOAT;
 
-				if ((val != prev) && (val == selVal)){
-					itTimes.append(QDateTime::fromMSecsSinceEpoch(vars_[i].beginTime + j * SV_CYCLEREC_MS).toString("yyyy.MM.dd hh:mm:ss:zzz"));
-				}
-				prev = val;
-			}
-		}
-		break;
-	default:
-		break;
-	}
-	ui.listSignTimeChange->addItems(itTimes);
+        if ((val != prev) && (val == selVal)){
+          itTimes.append(QDateTime::fromMSecsSinceEpoch(vars_[i].beginTime + j * SV_CYCLEREC_MS).toString("yyyy.MM.dd hh:mm:ss:zzz"));
+        }
+        prev = val;
+      }
+    }
+    break;
+  default:
+    break;
+  }
+  ui.listSignTimeChange->addItems(itTimes);
 
-	ui.txtHistValue->setText(QString::number(itTimes.size()));	
+  ui.txtHistValue->setText(QString::number(itTimes.size()));  
 }
 
 void statPanel::graphValueChange(){
 
-	ui.txtCurrArea->setText(QString::number(ui.wgtGraph->getAreaByPos()));
-	
-	QPoint vp = ui.wgtGraph->getTargPos();
+  ui.txtCurrArea->setText(QString::number(ui.wgtGraph->getAreaByPos()));
+  
+  QPoint vp = ui.wgtGraph->getTargPos();
 
-	ui.txtValue->setText(QString::number(vp.x()));
-	
-	ui.txtHistValue->setText(QString::number(vp.y()));
-	
-	QString sname = ui.cmbSignals->currentData().toString();
+  ui.txtValue->setText(QString::number(vp.x()));
+  
+  ui.txtHistValue->setText(QString::number(vp.y()));
+  
+  QString sname = ui.cmbSignals->currentData().toString();
 
-	int mx = Mx(sign_[sname].hist);
-	ui.txtMx->setText(QString::number(mx));
+  int mx = Mx(sign_[sname].hist);
+  ui.txtMx->setText(QString::number(mx));
 
-	listTimeUpdate(sname, vp.x());
+  listTimeUpdate(sname, vp.x());
 }
 
 void statPanel::selectSignalTime(int row){
 
-	QListWidgetItem* item = ui.listSignTimeChange->currentItem();
+  QListWidgetItem* item = ui.listSignTimeChange->currentItem();
 
-	if (!item) return;
-		
-	QDateTime dt = QDateTime::fromString(item->text(),"yyyy.MM.dd hh:mm:ss:zzz");
+  if (!item) return;
+    
+  QDateTime dt = QDateTime::fromString(item->text(),"yyyy.MM.dd hh:mm:ss:zzz");
 
-	if (pfSetTimeInterval)
-    	pfSetTimeInterval(dt.addSecs(-1).toMSecsSinceEpoch(), dt.addSecs(1).toMSecsSinceEpoch());
-	
+  if (pfSetTimeInterval)
+      pfSetTimeInterval(dt.addSecs(-1).toMSecsSinceEpoch(), dt.addSecs(1).toMSecsSinceEpoch());
+  
 }
 
 // Mx Hist
 int statPanel::Mx(QVector<QPair<int, int>>& hist)
 {
-	int64_t Square = 0;
-	int64_t Mx = 0;
+  int64_t Square = 0;
+  int64_t Mx = 0;
 
-	int sz = hist.size();
-	for (int i = 0; i < sz; i++)
-	{
-		Mx += hist[i].first * hist[i].second;
-		Square += hist[i].second;
-	}
+  int sz = hist.size();
+  for (int i = 0; i < sz; i++)
+  {
+    Mx += hist[i].first * hist[i].second;
+    Square += hist[i].second;
+  }
 
-	if (Square > 0) return (double)Mx / Square + 0.5;
+  if (Square > 0) return (double)Mx / Square + 0.5;
 
-	return 0;
+  return 0;
 }
 

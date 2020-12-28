@@ -32,106 +32,106 @@ using namespace std;
 
 client::~client(){
 
-	if (isConnect_)
+  if (isConnect_)
         SV_TcpCln::disconnect();
 
-	thrStop_ = true;
-	if (thr_.joinable()) thr_.join();
+  thrStop_ = true;
+  if (thr_.joinable()) thr_.join();
 }
 
 void client::setConfig(config cng_){
 
     std::lock_guard<std::mutex> lck(mtxUpdValue_);
 
-	cng = cng_;
+  cng = cng_;
 }
 
 bool client::connect(const char* moduleName, const char* ipAddr, int port){
 
     std::lock_guard<std::mutex> lck(mtxConnect_);
 
-	if (isConnect_) return true;
+  if (isConnect_) return true;
 
-	if ((strlen(moduleName) == 0) || (strlen(moduleName) >= SV_NAMESZ)){
-		return false;
-	}
+  if ((strlen(moduleName) == 0) || (strlen(moduleName) >= SV_NAMESZ)){
+    return false;
+  }
 
-	if (strstr(moduleName, "=end=") || strstr(moduleName, "=begin=")){
-		return false;
-	}
+  if (strstr(moduleName, "=end=") || strstr(moduleName, "=begin=")){
+    return false;
+  }
 
-	module_ = moduleName;
-	addrServ_ = ipAddr;
-	portServ_ = port;
+  module_ = moduleName;
+  addrServ_ = ipAddr;
+  portServ_ = port;
 
-	isConnect_ = SV_TcpCln::connect(ipAddr, port);
-			
-	if (isConnect_){
+  isConnect_ = SV_TcpCln::connect(ipAddr, port);
+      
+  if (isConnect_){
         thr_ = std::thread([](client *lp) { lp->sendCyc(); }, this);
-	}
+  }
 
-	return isConnect_;
+  return isConnect_;
 }
 
 void client::disconnect(){
 
     std::lock_guard<std::mutex> lck(mtxConnect_);
 
-	if (isConnect_) 
+  if (isConnect_) 
         SV_TcpCln::disconnect();
 
-	thrStop_ = true;
-	if (thr_.joinable()) thr_.join();
+  thrStop_ = true;
+  if (thr_.joinable()) thr_.join();
 }
 
-bool client::addValue(const char* name, SV_Cng::valueType type, SV_Cng::value val, bool onlyPosFront){
+bool client::addValue(const char* name, SV_Base::ValueType type, SV_Base::Value val, bool onlyPosFront){
 
-	if (!isConnect_) return false;
-    		
-	if (values_.find(name) == values_.end()){
+  if (!isConnect_) return false;
+        
+  if (values_.find(name) == values_.end()){
 
-		if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ)){
-			return false;
-		}
+    if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ)){
+      return false;
+    }
 
-		if (strstr(name, "=end=") || strstr(name, "=begin=")){
-			return false;
-		}
-		valueRec* vd = new valueRec();
-		memset(vd, 0, sizeof(valueRec));
-		strcpy(vd->name, name);
-		vd->type = type;
-		vd->isOnlyFront = onlyPosFront;
+    if (strstr(name, "=end=") || strstr(name, "=begin=")){
+      return false;
+    }
+    valueRec* vd = new valueRec();
+    memset(vd, 0, sizeof(valueRec));
+    strcpy(vd->name, name);
+    vd->type = type;
+    vd->isOnlyFront = onlyPosFront;
 
         mtxUpdValue_.lock();
 
-		values_.insert(pair<string, valueRec*>(name, vd));
-		values_[name]->vals = new SV_Cng::value[SV_PACKETSZ];
-		memset(values_[name]->vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
+    values_.insert(pair<string, valueRec*>(name, vd));
+    values_[name]->vals = new SV_Base::Value[SV_PACKETSZ];
+    memset(values_[name]->vals, 0, sizeof(SV_Base::Value) * SV_PACKETSZ);
 
         mtxUpdValue_.unlock();
-	}
-	
-	valueRec* vr = values_[name];
-	
-	if (!isWrite_){
+  }
+  
+  valueRec* vr = values_[name];
+  
+  if (!isWrite_){
 
-		vr->vals[curCycCnt_] = val;
-		vr->isActive = true;
-	}
-	else {
+    vr->vals[curCycCnt_] = val;
+    vr->isActive = true;
+  }
+  else {
         std::lock_guard<std::mutex> lck(mtxUpdValue_);
 
-		vr->vals[curCycCnt_] = val;
-		vr->isActive = true;
+    vr->vals[curCycCnt_] = val;
+    vr->isActive = true;
     }
-	
-	return true;
+  
+  return true;
 }
 
 bool client::sendData(){
-		
-	if (values_.empty()) return true;
+    
+  if (values_.empty()) return true;
 
     size_t SINT = sizeof(int),
         /*     val name    type      vals           */
@@ -143,34 +143,34 @@ bool client::sendData(){
 
         /*                dataSz                    */
         arrSz = startSz + SINT + dataSz + endSz;
-	    
+      
     char* arr = new char[arrSz];
     memset(arr, 0, arrSz);
 
-	memcpy(arr, "=begin=", startSz); offs += startSz;
+  memcpy(arr, "=begin=", startSz); offs += startSz;
 
-	memcpy(arr + offs, &dataSz, SINT); offs += SINT;
+  memcpy(arr + offs, &dataSz, SINT); offs += SINT;
 
-	memcpy(arr + offs, module_.data(), SV_NAMESZ); offs += SV_NAMESZ;
-		
-	int cnt = 0;
-	for (auto& it : values_){
-				
-		memcpy(arr + offs + vlSz*cnt, it.second->name, SV_NAMESZ);
-		memcpy(arr + offs + vlSz*cnt + SV_NAMESZ, &it.second->type, SINT);
-		memcpy(arr + offs + vlSz*cnt + SV_NAMESZ + SINT, it.second->vals, SV_PACKETSZ * SINT);
+  memcpy(arr + offs, module_.data(), SV_NAMESZ); offs += SV_NAMESZ;
+    
+  int cnt = 0;
+  for (auto& it : values_){
+        
+    memcpy(arr + offs + vlSz*cnt, it.second->name, SV_NAMESZ);
+    memcpy(arr + offs + vlSz*cnt + SV_NAMESZ, &it.second->type, SINT);
+    memcpy(arr + offs + vlSz*cnt + SV_NAMESZ + SINT, it.second->vals, SV_PACKETSZ * SINT);
 
-		++cnt;
-	}
-		
-	memcpy(arr + offs + vlSz*cnt, "=end=", endSz);
+    ++cnt;
+  }
+    
+  memcpy(arr + offs + vlSz*cnt, "=end=", endSz);
 
     string out;
-	bool ok = SV_TcpCln::sendData(string(arr, arrSz), out, false, true);
+  bool ok = SV_TcpCln::sendData(string(arr, arrSz), out, false, true);
 
-	delete[] arr;
+  delete[] arr;
 
-	return ok;
+  return ok;
 
 }
 
@@ -180,51 +180,51 @@ void client::sendCyc(){
              prevTm = cTm;
              
     int tmDiff = SV_CYCLEREC_MS;
-		
-	while (!thrStop_ ){
-		
-		if (!isConnect_)
-			isConnect_ = SV_TcpCln::connect(addrServ_, portServ_);
+    
+  while (!thrStop_ ){
+    
+    if (!isConnect_)
+      isConnect_ = SV_TcpCln::connect(addrServ_, portServ_);
 
-		cTm = SV_Aux::CurrDateTimeSinceEpochMs();
-		tmDiff = int(cTm - prevTm) - (SV_CYCLEREC_MS - tmDiff); 
+    cTm = SV_Aux::CurrDateTimeSinceEpochMs();
+    tmDiff = int(cTm - prevTm) - (SV_CYCLEREC_MS - tmDiff); 
         
         prevTm = cTm;
 
-		mtxUpdValue_.lock();
-		isWrite_ = true;
+    mtxUpdValue_.lock();
+    isWrite_ = true;
 
-		int prevCyc = curCycCnt_ - 1;
+    int prevCyc = curCycCnt_ - 1;
         if (prevCyc < 0) 
             prevCyc = SV_PACKETSZ - 1;
 
-		for (auto it = values_.begin(); it != values_.end(); ++it){
-						
-			if (!it->second->isActive){
-				it->second->vals[curCycCnt_] = it->second->vals[prevCyc];
-								
-				if ((it->second->type == SV_Cng::valueType::tBool) && it->second->isOnlyFront)
-					it->second->vals[curCycCnt_].tBool = false;
-			}
-					
-			it->second->isActive = false;
-		}
-		
-		int next = curCycCnt_ + 1;
-		
-		if (next >= SV_PACKETSZ) {
+    for (auto it = values_.begin(); it != values_.end(); ++it){
+            
+      if (!it->second->isActive){
+        it->second->vals[curCycCnt_] = it->second->vals[prevCyc];
+                
+        if ((it->second->type == SV_Base::ValueType::BOOL) && it->second->isOnlyFront)
+          it->second->vals[curCycCnt_].BOOL = false;
+      }
+          
+      it->second->isActive = false;
+    }
+    
+    int next = curCycCnt_ + 1;
+    
+    if (next >= SV_PACKETSZ) {
 
-			isConnect_ = (isConnect_) ? sendData() : false;
+      isConnect_ = (isConnect_) ? sendData() : false;
 
-			curCycCnt_ = 0;
-		}
-		else 
+      curCycCnt_ = 0;
+    }
+    else 
             ++curCycCnt_;
 
-		isWrite_ = false;
-		mtxUpdValue_.unlock();
+    isWrite_ = false;
+    mtxUpdValue_.unlock();
 
-		if ((SV_CYCLEREC_MS - tmDiff) > 0)
-			SV_Aux::SleepMs(SV_CYCLEREC_MS - tmDiff);
-	}
+    if ((SV_CYCLEREC_MS - tmDiff) > 0)
+      SV_Aux::SleepMs(SV_CYCLEREC_MS - tmDiff);
+  }
 }

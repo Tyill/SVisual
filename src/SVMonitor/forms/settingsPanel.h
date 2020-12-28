@@ -29,31 +29,31 @@
 
 class settingsPanel : public QDialog
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	settingsPanel(QWidget *parent = 0);
-	~settingsPanel();
+  settingsPanel(QWidget *parent = 0);
+  ~settingsPanel();
 
     QString selDirArch_;
 
-	Ui::settingsPanelClass ui;
+  Ui::settingsPanelClass ui;
 
 private:
-	
-	bool selParamLoad_ = false;
-	
-	void showEvent(QShowEvent * event);
+  
+  bool selParamLoad_ = false;
+  
+  void showEvent(QShowEvent * event);
 
     MainWin* mainWin_ = nullptr;
 
     QVector<QPair<QLineEdit*, QComboBox*>> comPorts_;
 
 private slots:
-	void saveChange();
+  void saveChange();
     void addCOM(QString port = "", QString speed = "", int row = -1);
     void delCOM();
     void selDirArch();
-	void paramChange();
+  void paramChange();
 
 };

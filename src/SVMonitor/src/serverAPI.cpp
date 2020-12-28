@@ -25,29 +25,29 @@
 #include "stdafx.h"
 #include "SVServer/SVServer.h"
 
-QMap<QString, SV_Cng::moduleData *> getCopyModuleRefSrv(){
+QMap<QString, SV_Base::ModuleData *> getCopyModuleRefSrv(){
 
-	QMap<QString, SV_Cng::moduleData *> cmref;
+  QMap<QString, SV_Base::ModuleData *> cmref;
 
-	auto mref = SV_Srv::getCopyModuleRef();
-	for (auto& s : mref)
-		cmref.insert(QString::fromStdString(s.first), s.second);
+  auto mref = SV_Srv::getCopyModuleRef();
+  for (auto& s : mref)
+    cmref.insert(QString::fromStdString(s.first), s.second);
 
-	return cmref;
+  return cmref;
 };
 
-QMap<QString, SV_Cng::signalData *> getCopySignalRefSrv(){
+QMap<QString, SV_Base::SignalData *> getCopySignalRefSrv(){
 
-	QMap<QString, SV_Cng::signalData*> csref;
+  QMap<QString, SV_Base::SignalData*> csref;
 
-	auto sref = SV_Srv::getCopySignalRef();
-	for (auto& s : sref)
-		csref.insert(QString::fromStdString(s.first), s.second);
+  auto sref = SV_Srv::getCopySignalRef();
+  for (auto& s : sref)
+    csref.insert(QString::fromStdString(s.first), s.second);
 
-	return csref;
+  return csref;
 };
 
-SV_Cng::moduleData* getModuleDataSrv(const QString& module){
+SV_Base::ModuleData* getModuleDataSrv(const QString& module){
 
     return SV_Srv::getModuleData(module.toUtf8().data());
 };
@@ -63,9 +63,9 @@ QVector<QString> getModuleSignalsSrv(const QString& module){
     return res;
 };
 
-SV_Cng::signalData* getSignalDataSrv(const QString& sing){
+SV_Base::SignalData* getSignalDataSrv(const QString& sing){
 
-	return SV_Srv::getSignalData(sing.toUtf8().data());
+  return SV_Srv::getSignalData(sing.toUtf8().data());
 };
 
 bool loadSignalDataSrv(const QString& name){
@@ -73,12 +73,12 @@ bool loadSignalDataSrv(const QString& name){
     return SV_Srv::signalBufferEna(name.toUtf8().data());
 }
 
-bool addSignalSrv(SV_Cng::signalData* sd){
+bool addSignalSrv(SV_Base::SignalData* sd){
 
     return SV_Srv::addSignal(sd);
 }
 
-bool addModuleSrv(SV_Cng::moduleData* md){
+bool addModuleSrv(SV_Base::ModuleData* md){
 
     return SV_Srv::addModule(md);
 }

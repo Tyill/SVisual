@@ -70,9 +70,9 @@ QString zbxServer::getLastValueStr(const QString& sname){
         auto val = sdata->lastData.vals[SV_PACKETSZ - 1]; 
 
         switch (sdata->type){
-        case SV_Cng::valueType::tBool:  return val.tBool ? "1" : "0";
-        case SV_Cng::valueType::tInt:   return QString::number(val.tInt);
-        case SV_Cng::valueType::tFloat: return QString::number(val.tFloat);
+        case SV_Base::ValueType::BOOL:  return val.BOOL ? "1" : "0";
+        case SV_Base::ValueType::INT:   return QString::number(val.INT);
+        case SV_Base::ValueType::FLOAT: return QString::number(val.FLOAT);
         default: return "0";
         }
     }

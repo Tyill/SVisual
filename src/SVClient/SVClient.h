@@ -26,43 +26,43 @@
 //=============================================================================
 // SVisual
 // proj: SVClient - for send data
-// ver: 1.0.0.1
+// ver: 1.0.2
 //=============================================================================
 
 #pragma once
 
 #ifdef _WIN32
-    #ifdef SVCLDLL_EXPORTS
-        #define SV_API extern "C" __declspec(dllexport)
-    #else
-        #define SV_API extern "C" __declspec(dllimport)
-    #endif
+  #ifdef SVCLDLL_EXPORTS
+    #define SV_API extern "C" __declspec(dllexport)
+  #else
+    #define SV_API extern "C" __declspec(dllimport)
+  #endif
 #else
-    #define SV_API extern "C"
+  #define SV_API extern "C"
 #endif
 
-namespace SV_Cln {
+namespace SV{
 
-    // connect of server
-    // moduleName - module (leng max 24)
-    // ipAddrServ - ip
-    SV_API bool svConnect(const char *moduleName, const char *ipAddrServ, int portServ);
+  // connect of server
+  // moduleName - module (leng max 24)
+  // ipAddrServ - ip
+  SV_API bool svConnect(const char *moduleName, const char *ipAddrServ, int portServ);
 
-    // disconnect of server
-    SV_API void svDisconnect();
+  // disconnect of server
+  SV_API void svDisconnect();
 
-    // add value for rec
-    // name - value name (leng max 24)
-    SV_API bool svAddBoolValue(const char *name, bool value, bool onlyFront = false);
+  // add Value for rec
+  // name - Value name (leng max 24)
+  SV_API bool svAddBoolValue(const char *name, bool Value, bool onlyFront = false);
 
-    // add value for rec
-    // name - value name (leng max 24)
-    SV_API bool svAddIntValue(const char *name, int value);
+  // add Value for rec
+  // name - Value name (leng max 24)
+  SV_API bool svAddIntValue(const char *name, int Value);
 
-    // add value for rec
-    // name - value name (leng max 24)
-    SV_API bool svAddFloatValue(const char *name, float value);
+  // add Value for rec
+  // name - Value name (leng max 24)
+  SV_API bool svAddFloatValue(const char *name, float Value);
 
-    // frecuence rec
-    SV_API bool svSetParam(int cycleRecMs, int packetSz);
+  // frecuence rec
+  SV_API bool svSetParam(int cycleRecMs, int packetSz);
 }

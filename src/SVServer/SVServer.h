@@ -94,28 +94,28 @@ namespace SV_Srv {
     SVSRV_API void setOnModuleDisconnectCBack(onModuleDisconnectCBack);
 
     // вернуть все модули
-    SVSRV_API std::map<std::string, SV_Cng::moduleData*> getCopyModuleRef();
+    SVSRV_API std::map<std::string, SV_Base::ModuleData*> getCopyModuleRef();
 
     // вернуть данные модуля
-    SVSRV_API SV_Cng::moduleData* getModuleData(const std::string& module);
+    SVSRV_API SV_Base::ModuleData* getModuleData(const std::string& module);
 
     // вернуть сигналы модуля
     SVSRV_API std::vector<std::string> getModuleSignals(const std::string& module);
 
     // вернуть все сигналы
     // key = name + module
-    SVSRV_API std::map<std::string, SV_Cng::signalData*> getCopySignalRef();
+    SVSRV_API std::map<std::string, SV_Base::SignalData*> getCopySignalRef();
 
     /// вернуть данные сигнала
     /// \param sign = name + module
     /// \return
-    SVSRV_API SV_Cng::signalData* getSignalData(const std::string& sign);
+    SVSRV_API SV_Base::SignalData* getSignalData(const std::string& sign);
 
     /// добавить сигнал
-    SVSRV_API bool addSignal(SV_Cng::signalData*);
+    SVSRV_API bool addSignal(SV_Base::SignalData*);
 
     /// добавить модуль
-    SVSRV_API bool addModule(SV_Cng::moduleData*);
+    SVSRV_API bool addModule(SV_Base::ModuleData*);
 
     /// разрешить буферизацию сигнала
     /// \param sign = name + module

@@ -46,28 +46,28 @@ class MainWin : public QMainWindow
 
 public:
 
-	struct config{
+  struct config{
 
-		QString dirPath;
-		QString initPath;
+    QString dirPath;
+    QString initPath;
         QString selOpenDir;
 
-		bool outArchiveEna;        ///< запись архива активна
-		QString outArchivePath;    ///< запись архива путь
-		QString outArchiveName;    ///< запись архива имя файла
-		int outArchiveHourCnt;     ///< запись архива размер файла, час
+    bool outArchiveEna;        ///< запись архива активна
+    QString outArchivePath;    ///< запись архива путь
+    QString outArchiveName;    ///< запись архива имя файла
+    int outArchiveHourCnt;     ///< запись архива размер файла, час
 
-		int cycleRecMs;            ///< период записи - задает пользователь
-		int packetSz;              ///< размер пакета - задает пользователь
+    int cycleRecMs;            ///< период записи - задает пользователь
+    int packetSz;              ///< размер пакета - задает пользователь
 
-		bool com_ena;              ///< запись по com
+    bool com_ena;              ///< запись по com
         QVector<QPair<QString, QString>> com_ports;   ///< COM name, speed
                                    
-		QString dbPath;            ///< путь к бд
+    QString dbPath;            ///< путь к бд
 
-		// связь по TCP
-		QString tcp_addr;          ///< ip
-		int tcp_port;              ///< port
+    // связь по TCP
+    QString tcp_addr;          ///< ip
+    int tcp_port;              ///< port
 
         // web
         bool web_ena;              
@@ -82,68 +82,68 @@ public:
         int toutLoadWinStateSec;
 
         SV_Graph::graphSetting graphSett;
-	};
+  };
 
     SV_Aux::Logger lg;
 
-	MainWin(QWidget *parent = 0);
-	~MainWin();
+  MainWin(QWidget *parent = 0);
+  ~MainWin();
 
     void updateConfig(config);
     config getConfig();
 
-	QVector<uEvent> getEvents(QDateTime, QDateTime);
+  QVector<uEvent> getEvents(QDateTime, QDateTime);
 
     void updateGraphSetting(const SV_Graph::graphSetting&);
 
 private:
 
    
-	Ui::MainWin ui;
-	bool isSlowMode_ = false;
+  Ui::MainWin ui;
+  bool isSlowMode_ = false;
     
-	QVector<SerialPortReader*> comReaders_;
+  QVector<SerialPortReader*> comReaders_;
 
-	config cng;
-	SV_Srv::config srvCng;
+  config cng;
+  SV_Srv::config srvCng;
     
     QMap<QObject*, QWidget*> graphPanels_;
     QDialog* exportPanel_ = nullptr;
     QDialog* scriptPanel_ = nullptr;
     QDialog* triggerPanel_ = nullptr;
-	eventOrderWin* orderWin_ = nullptr;   
-	settingsPanel* settPanel_ = nullptr;
+  eventOrderWin* orderWin_ = nullptr;   
+  settingsPanel* settPanel_ = nullptr;
     graphSettingPanel* graphSettPanel_ = nullptr;
-	QSystemTrayIcon* trayIcon_ = nullptr;
+  QSystemTrayIcon* trayIcon_ = nullptr;
 
-	dbProvider* db_ = nullptr;
+  dbProvider* db_ = nullptr;
     
     QNetworkAccessManager* netManager_ = nullptr;
 
-	QSet<QString> signExist_;
-	
+  QSet<QString> signExist_;
+  
     QMap<QString, signalAttr> signAttr_;
 
     bool eventFilter(QObject *target, QEvent *event);
 
-	bool writeSettings(QString pathIni);
-	bool init(QString initPath);
-	void Connect();
-	void load();
+  bool writeSettings(QString pathIni);
+  bool init(QString initPath);
+  void Connect();
+  void load();
 
-	void initTrayIcon();
-	
-	void sortSignalByModule();
-	void contextMenuEvent(QContextMenuEvent * event);
+  void initTrayIcon();
+  
+  void sortSignalByModule();
+  void contextMenuEvent(QContextMenuEvent * event);
     QDialog* addNewWindow(const QRect& pos);
 
 public slots:
-	void slowMode();
-	void contextMenuClick(QAction*);
-	void updateTblSignal();
-	void updateSignals();
-	void moduleConnect(QString module);
-	void moduleDisconnect(QString module);
-	void onTrigger(QString trigger);
+  void slowMode();
+  void contextMenuClick(QAction*);
+  void updateTblSignal();
+  void updateSignals();
+  void moduleConnect(QString module);
+  void moduleDisconnect(QString module);
+  void onTrigger(QString trigger);
     void changeSignColor(QString module, QString signal, QColor color);
 };
