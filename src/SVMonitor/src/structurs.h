@@ -25,7 +25,7 @@
 #pragma once
 
 #include "stdafx.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 #include "SVTriggerPanel/SVTriggerPanel.h"
 
 // событие

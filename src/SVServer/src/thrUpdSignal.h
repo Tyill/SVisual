@@ -26,7 +26,7 @@
 
 #include "stdafx.h"
 #include <thread>
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 #include "bufferData.h"
 #include "archive.h"
 #include "server.h"

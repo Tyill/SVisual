@@ -30,7 +30,7 @@
 #include "ui_mainWin.h"
 #include "src/treeWidgetExt.h"
 #include "src/thrLoadData.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 #include "SVGraphPanel/SVGraphPanel.h"
 #include "src/structurs.h"
 

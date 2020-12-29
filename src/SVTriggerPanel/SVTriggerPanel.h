@@ -27,7 +27,7 @@
 #include <map>
 #include <string>
 #include <QtCore>
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 
 #ifdef _WIN32
 #ifdef SVTRIGGERPANEL_EXPORTS

@@ -27,7 +27,7 @@
 #include "stdafx.h"
 #include "structurs.h"
 #include "Lib/sqlite/sqlite3.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 #include "SVTriggerPanel/SVTriggerPanel.h"
 
 class dbProvider

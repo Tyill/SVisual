@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVConfig\SVConfigData.h">
+    <ClInclude Include="..\..\..\src\SVConfig\config_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVConfig\SVConfigLimits.h">
+    <ClInclude Include="..\..\..\src\SVConfig\config_limits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\SVConfig\src\SVConfigData.cpp">
+    <ClCompile Include="..\..\..\src\SVConfig\src\config_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,7 +25,7 @@
 #include "stdafx.h"
 #include "thrLoadData.h"
 #include "forms/mainWin.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_limits.h"
 #include "Lib/zlib/zlib.h"
 
 extern MainWin* mainWin;

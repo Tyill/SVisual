@@ -24,8 +24,8 @@
 //
 #pragma once
 
-#include "SVConfig/SVConfigLimits.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_limits.h"
+#include "SVConfig/config_data.h"
 
 struct valueData{
   char name[SV_NAMESZ];

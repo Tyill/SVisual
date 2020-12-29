@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/SVStat">
+        <file>stat_dialog_en.qm</file>
+    </qresource>
+</RCC>

@@ -25,8 +25,8 @@
 
 #include "stdafx.h"
 #include "webServer.h"
-#include "SVConfig/SVConfigData.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_data.h"
+#include "SVConfig/config_limits.h"
 #include "http_parser.h"
 #include <QJsonDocument>
 #include <QDir>

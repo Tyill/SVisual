@@ -27,7 +27,7 @@
 #include <QNetworkAccessManager>
 
 #include "forms/ui_mainwin.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 #include "SVServer/SVServer.h"
 #include "SVAuxFunc/mt_log.h"
 #include "SVGraphPanel/SVGraphPanel.h" 

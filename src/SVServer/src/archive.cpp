@@ -30,8 +30,8 @@
 #include "server.h"
 #include "sharedFunc.h"
 #include "SVAuxFunc/auxFunc.h"
-#include "SVConfig/SVConfigData.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_data.h"
+#include "SVConfig/config_limits.h"
 #include "Lib/zlib/zlib.h"
 
 using namespace std;

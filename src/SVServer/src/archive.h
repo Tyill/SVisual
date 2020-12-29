@@ -26,7 +26,7 @@
 
 #include "stdafx.h"
 #include "server.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 #include "SVAuxFunc/TimerDelay.h"
 #include "SVAuxFunc/Front.h"
 

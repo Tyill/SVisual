@@ -26,7 +26,7 @@
 
 #include "src/stdafx.h"
 #include "SVScriptPanel/SVScriptPanel.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_limits.h"
 #include "forms/ui_signScriptPanel.h"
 
 class signScriptPanel : public QDialog

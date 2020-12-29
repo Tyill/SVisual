@@ -27,7 +27,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include "stdafx.h"
 #include "comReader.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_limits.h"
 
 
 SerialPortReader::SerialPortReader(SerialPortReader::config cng_) : cng(cng_)

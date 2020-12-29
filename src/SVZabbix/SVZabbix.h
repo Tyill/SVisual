@@ -25,7 +25,7 @@
 #pragma once
 
 
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 
 #ifdef _WIN32
 #ifdef SVZABBIX_EXPORTS

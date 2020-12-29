@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\SVClient\src\client.cpp" />
     <ClCompile Include="..\..\..\src\SVClient\src\dllmain.cpp" />
-    <ClCompile Include="..\..\..\src\SVClient\src\SVClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\SVClient\SVClient.h" />

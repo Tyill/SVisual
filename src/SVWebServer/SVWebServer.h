@@ -25,7 +25,7 @@
 #pragma once
 
 #include <QtCore>
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_data.h"
 
 #ifdef _WIN32
 #ifdef SVWEBSERVER_EXPORTS

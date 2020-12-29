@@ -24,8 +24,8 @@
 //
 #pragma once
 
-#include "SVConfig/SVConfigData.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_data.h"
+#include "SVConfig/config_limits.h"
 #include <mutex>
 
 /// циклический буфер данных

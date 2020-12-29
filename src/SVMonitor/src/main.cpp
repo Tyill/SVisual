@@ -24,7 +24,7 @@
 //
 #include "stdafx.h"
 #include "forms/mainwin.h"
-#include "SVConfig/SVConfigLimits.h"
+#include "SVConfig/config_limits.h"
 
 int main(int argc, char *argv[])
 {

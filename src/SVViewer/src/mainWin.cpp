@@ -32,8 +32,8 @@
 #include "SVStatPanel/SVStatPanel.h"
 #include "SVScriptPanel/SVScriptPanel.h"
 #include "SVExportPanel/SVExportPanel.h" 
-#include "SVConfig/SVConfigLimits.h"
-#include "SVConfig/SVConfigData.h"
+#include "SVConfig/config_limits.h"
+#include "SVConfig/config_data.h"
 
 const QString VERSION = "1.1.8";
 // proposal https://github.com/Tyill/SVisual/issues/31

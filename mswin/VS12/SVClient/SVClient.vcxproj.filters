@@ -18,7 +18,7 @@
     <ClCompile Include="..\..\..\src\SVClient\src\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVClient\src\SVClient.cpp">
+    <ClCompile Include="..\..\..\src\SVClient\src\client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
