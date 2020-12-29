@@ -25,6 +25,7 @@
 #pragma once
 
 #include "SVConfig/config_data.h"
+#include <QtCore>
 #include <QColor>
 
 class QWidget;

@@ -67,14 +67,14 @@ namespace SV_Aux {
       }
     };
 
-#define CHECK(func, mess){                                             \
-    int sts = func;                                                    \
-    if (sts != 0){                                                     \
-      srv->error = std::string(mess) + " code " + std::to_string(sts); \
-      if (srv->errCBack)                                               \
-        srv->errCBack(srv->error);                                     \
-      return;                                                          \
-    }                                                                  \
+#define CHECK(func, mess){                                              \
+    int fsts = func;                                                    \
+    if (fsts != 0){                                                     \
+      srv->error = std::string(mess) + " code " + std::to_string(fsts); \
+      if (srv->errCBack)                                                \
+        srv->errCBack(srv->error);                                      \
+      return;                                                           \
+    }                                                                   \
   }        
     void on_close(uv_handle_t* u_client) {
       Client_m* client = static_cast<Client_m*>(u_client->data);

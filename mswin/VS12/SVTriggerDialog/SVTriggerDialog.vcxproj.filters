@@ -35,52 +35,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVTriggerPanel\src\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_triggerPanel.h">
+    <ClInclude Include="GeneratedFiles\ui_trigger_dialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVTriggerPanel\SVTriggerPanel.h">
+    <ClInclude Include="..\..\..\src\SVTriggerDialog\forms\ui_trigger_dialog.h">
+      <Filter>Form Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\SVTriggerDialog\trigger_dialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\SVTriggerPanel\src\triggerPanel.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GeneratedFiles\qrc_trigger_dialog_resource.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVTriggerPanel\src\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\SVTriggerPanel\src\SVTriggerPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_triggerPanel.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_trigger_dialog_impl.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_triggerPanel.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_trigger_dialog_impl.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_svtriggerresource.cpp">
-      <Filter>Generated Files</Filter>
+    <ClCompile Include="..\..\..\src\SVTriggerDialog\src\trigger_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\SVTriggerDialog\src\trigger_dialog_impl.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\src\SVTriggerPanel\forms\triggerPanel.h">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVTriggerPanel\forms\triggerPanel.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVTriggerPanel\resources\svtriggerresource.qrc">
+    <CustomBuild Include="..\..\..\src\SVTriggerDialog\resources\trigger_dialog_resource.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\src\SVTriggerDialog\forms\trigger_dialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\src\SVTriggerDialog\forms\trigger_dialog_impl.h">
+      <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\SVTriggerPanel\resources\svtriggerpanel_en.qm">
+    <None Include="..\..\..\src\SVTriggerDialog\resources\trigger_dialog_en.qm">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\..\src\SVTriggerPanel\resources\svtriggerpanel_en.ts">
+    <None Include="..\..\..\src\SVTriggerDialog\resources\trigger_dialog_en.ts">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -27,43 +27,35 @@
 #include <QtCore>
 #include "SVConfig/config_data.h"
 
-#ifdef _WIN32
-#ifdef SVSTATPANEL_EXPORTS
-#define SVSTATPANEL_API __declspec(dllexport)
-#else
-#define SVSTATPANEL_API __declspec(dllimport)
-#endif
-#else
-#define SVSTATPANEL_API
-#endif
+class QDialog;
 
 namespace SV_Stat {
 
-  struct config {
+  struct Config {
 
     int cycleRecMs;
     int packetSz;
 
-    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+    Config(int cycleRecMs_ = 100, int packetSz_ = 10) :
       cycleRecMs(cycleRecMs_),
       packetSz(packetSz_) {}
   };
 
-  SVSTATPANEL_API QDialog* createStatDialog(QWidget* parent, config);
+  QDialog* createStatDialog(QWidget* parent, Config);
 
   typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  SVSTATPANEL_API void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
+  void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
 
   typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
-  SVSTATPANEL_API void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
+  void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
 
   typedef bool(*pf_loadSignalData)(const QString& sign);
-  SVSTATPANEL_API void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
+  void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
 
   typedef QPair<qint64, qint64>(*pf_getTimeInterval)();
-  SVSTATPANEL_API void setGetTimeInterval(QDialog* stPanel, pf_getTimeInterval f);
+  void setGetTimeInterval(QDialog* stPanel, pf_getTimeInterval f);
 
   typedef void(*pf_setTimeInterval)(qint64, qint64);
-  SVSTATPANEL_API void setSetTimeInterval(QDialog* stPanel, pf_setTimeInterval f);
+  void setSetTimeInterval(QDialog* stPanel, pf_setTimeInterval f);
 
 }

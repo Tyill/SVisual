@@ -27,7 +27,7 @@
 
 namespace SV_Script {
 
-  QDialog *createScriptDialog(QWidget *parent, config cng, modeGr mode) {
+  QDialog *createScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
 
     return new ScriptDialog(parent, cng, mode);
   }

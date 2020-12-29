@@ -24,31 +24,25 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
+#include "SVServer/server.h"
 #include "SVConfig/config_limits.h"
+
 #include <mutex>
 
 /// циклический буфер данных
-class bufferData
+class BufferData
 {
 public:
-
-    struct config{
-        int cycleRecMs;           ///< период записи - задает пользователь
-        int packetSz;             ///< размер пакета - задает пользователь
-
-        config(int cycleRecMs_ = 100, int packetSz_ = 10) :cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
-    };
-
-    bufferData(bufferData::config);
+   
+  BufferData(const SV_Srv::Config&);
 
   /// входная переменная
-  struct inputData{
-    bool isActive = false;     ///< активна
-    std::string name;          ///< имя
-    std::string module;        ///< модуль
-    SV_Base::ValueType type;    /// тип
-        SV_Base::RecData data;      /// данные
+  struct InputData{
+    bool isActive = false;     
+    std::string name;          
+    std::string module;        
+    SV_Base::ValueType type;   
+    SV_Base::RecData data;     
   };
 
   /// обновить данные буфера
@@ -58,35 +52,33 @@ public:
   void updDataSignals(const std::string& in, uint64_t bTm);
 
   /// вернуть данные по текущей позиции чтения
-    /// \return
-  inputData getDataByReadPos();
+  /// \return
+  InputData getDataByReadPos();
 
-    /// инкремент позиции чтения
+  /// инкремент позиции чтения
   void incReadPos();
 
-    /// размер буфера
-    /// \return
+  /// размер буфера
+  /// \return
   int getBuffSize();
 
-  private:
+private:
 
-    /// запись
-    struct valueData{
-        char name[SV_NAMESZ];
-        SV_Base::ValueType type;
-        SV_Base::Value* vals;
+  /// запись
+  struct ValueData{
+    char name[SV_NAMESZ];
+    SV_Base::ValueType type;
+    SV_Base::Value* vals;
+  };
 
-        valueData() : vals(NULL){};
-    };
+  SV_Srv::Config cng;
 
-    config cng;
+  /// данные
+  static const int BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
+  InputData _buffer[BUFF_SZ];
 
-    /// данные
-    static const int buffSz_ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
-    inputData buffer_[buffSz_];
+  int _buffReadPos = 0;  ///< тек позиция чтения
+  int _buffWritePos = 0; ///< тек позиция записи
 
-    int buffReadPos_ = 0;  ///< тек позиция чтения
-  int buffWritePos_ = 0; ///< тек позиция записи
-
-  std::mutex mtx_;
+  std::mutex _mtx;
 };

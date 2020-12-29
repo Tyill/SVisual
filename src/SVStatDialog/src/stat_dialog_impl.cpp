@@ -31,7 +31,7 @@
 
 using namespace SV_Base;
 
-StatDialog::StatDialog(QWidget *parent, SV_Stat::config cng_) {
+StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_) {
 
   setParent(parent);
 

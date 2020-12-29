@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'triggerPanel.ui'
+** Form generated from reading UI file 'trigger_dialog.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.5.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_TRIGGERPANEL_H
-#define UI_TRIGGERPANEL_H
+#ifndef UI_TRIGGER_DIALOG_H
+#define UI_TRIGGER_DIALOG_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -30,18 +30,18 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_triggerPanelClass
+class Ui_TriggerDialog
 {
 public:
     QHBoxLayout *horizontalLayout_4;
     QSplitter *splitter;
-    QWidget *layoutWidget;
+    QWidget *layoutWidget1;
     QVBoxLayout *verticalLayout;
     QLabel *label_8;
     QListWidget *listModule;
     QLabel *label;
     QTableWidget *tableSignal;
-    QWidget *layoutWidget1;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout_4;
     QVBoxLayout *verticalLayout_2;
     QLabel *label_2;
@@ -78,27 +78,27 @@ public:
     QLabel *label_7;
     QLineEdit *txtUserProcArgs;
 
-    void setupUi(QDialog *triggerPanelClass)
+    void setupUi(QDialog *TriggerDialog)
     {
-        if (triggerPanelClass->objectName().isEmpty())
-            triggerPanelClass->setObjectName(QStringLiteral("triggerPanelClass"));
-        triggerPanelClass->resize(680, 595);
-        horizontalLayout_4 = new QHBoxLayout(triggerPanelClass);
+        if (TriggerDialog->objectName().isEmpty())
+            TriggerDialog->setObjectName(QStringLiteral("TriggerDialog"));
+        TriggerDialog->resize(680, 595);
+        horizontalLayout_4 = new QHBoxLayout(TriggerDialog);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        splitter = new QSplitter(triggerPanelClass);
+        splitter = new QSplitter(TriggerDialog);
         splitter->setObjectName(QStringLiteral("splitter"));
         splitter->setOrientation(Qt::Horizontal);
-        layoutWidget = new QWidget(splitter);
-        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        verticalLayout = new QVBoxLayout(layoutWidget);
+        layoutWidget1 = new QWidget(splitter);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        verticalLayout = new QVBoxLayout(layoutWidget1);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        label_8 = new QLabel(layoutWidget);
+        label_8 = new QLabel(layoutWidget1);
         label_8->setObjectName(QStringLiteral("label_8"));
 
         verticalLayout->addWidget(label_8);
 
-        listModule = new QListWidget(layoutWidget);
+        listModule = new QListWidget(layoutWidget1);
         listModule->setObjectName(QStringLiteral("listModule"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
@@ -111,12 +111,12 @@ public:
 
         verticalLayout->addWidget(listModule);
 
-        label = new QLabel(layoutWidget);
+        label = new QLabel(layoutWidget1);
         label->setObjectName(QStringLiteral("label"));
 
         verticalLayout->addWidget(label);
 
-        tableSignal = new QTableWidget(layoutWidget);
+        tableSignal = new QTableWidget(layoutWidget1);
         if (tableSignal->columnCount() < 3)
             tableSignal->setColumnCount(3);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
@@ -135,21 +135,21 @@ public:
 
         verticalLayout->addWidget(tableSignal);
 
-        splitter->addWidget(layoutWidget);
-        layoutWidget1 = new QWidget(splitter);
-        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
-        verticalLayout_4 = new QVBoxLayout(layoutWidget1);
+        splitter->addWidget(layoutWidget1);
+        layoutWidget = new QWidget(splitter);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        verticalLayout_4 = new QVBoxLayout(layoutWidget);
         verticalLayout_4->setSpacing(7);
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         verticalLayout_4->setContentsMargins(0, 0, 0, 0);
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        label_2 = new QLabel(layoutWidget1);
+        label_2 = new QLabel(layoutWidget);
         label_2->setObjectName(QStringLiteral("label_2"));
 
         verticalLayout_2->addWidget(label_2);
 
-        tableTrigger = new QTableWidget(layoutWidget1);
+        tableTrigger = new QTableWidget(layoutWidget);
         if (tableTrigger->columnCount() < 3)
             tableTrigger->setColumnCount(3);
         QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
@@ -176,27 +176,27 @@ public:
 
         horizontalLayout_3->addItem(horizontalSpacer);
 
-        txtTrigg = new QLineEdit(layoutWidget1);
+        txtTrigg = new QLineEdit(layoutWidget);
         txtTrigg->setObjectName(QStringLiteral("txtTrigg"));
 
         horizontalLayout_3->addWidget(txtTrigg);
 
-        lbIsChange = new QLabel(layoutWidget1);
+        lbIsChange = new QLabel(layoutWidget);
         lbIsChange->setObjectName(QStringLiteral("lbIsChange"));
 
         horizontalLayout_3->addWidget(lbIsChange);
 
-        btnAddTrigger = new QPushButton(layoutWidget1);
+        btnAddTrigger = new QPushButton(layoutWidget);
         btnAddTrigger->setObjectName(QStringLiteral("btnAddTrigger"));
 
         horizontalLayout_3->addWidget(btnAddTrigger);
 
-        btnChangeTrigger = new QPushButton(layoutWidget1);
+        btnChangeTrigger = new QPushButton(layoutWidget);
         btnChangeTrigger->setObjectName(QStringLiteral("btnChangeTrigger"));
 
         horizontalLayout_3->addWidget(btnChangeTrigger);
 
-        btnDelTrigger = new QPushButton(layoutWidget1);
+        btnDelTrigger = new QPushButton(layoutWidget);
         btnDelTrigger->setObjectName(QStringLiteral("btnDelTrigger"));
 
         horizontalLayout_3->addWidget(btnDelTrigger);
@@ -204,7 +204,7 @@ public:
 
         verticalLayout_4->addLayout(horizontalLayout_3);
 
-        groupBox_3 = new QGroupBox(layoutWidget1);
+        groupBox_3 = new QGroupBox(layoutWidget);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         QFont font;
         font.setBold(true);
@@ -307,7 +307,7 @@ public:
 
         verticalLayout_4->addWidget(groupBox_3);
 
-        groupBox_2 = new QGroupBox(layoutWidget1);
+        groupBox_2 = new QGroupBox(layoutWidget);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         groupBox_2->setFont(font);
         verticalLayout_3 = new QVBoxLayout(groupBox_2);
@@ -323,7 +323,7 @@ public:
         btnOpenProc = new QPushButton(groupBox_2);
         btnOpenProc->setObjectName(QStringLiteral("btnOpenProc"));
         QIcon icon;
-        icon.addFile(QStringLiteral(":/SVMonitor/images/open.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QStringLiteral(":/SVTrigger/images/open.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnOpenProc->setIcon(icon);
 
         horizontalLayout_2->addWidget(btnOpenProc);
@@ -358,78 +358,78 @@ public:
 
         verticalLayout_4->addWidget(groupBox_2);
 
-        splitter->addWidget(layoutWidget1);
+        splitter->addWidget(layoutWidget);
 
         horizontalLayout_4->addWidget(splitter);
 
 
-        retranslateUi(triggerPanelClass);
+        retranslateUi(TriggerDialog);
 
-        QMetaObject::connectSlotsByName(triggerPanelClass);
+        QMetaObject::connectSlotsByName(TriggerDialog);
     } // setupUi
 
-    void retranslateUi(QDialog *triggerPanelClass)
+    void retranslateUi(QDialog *TriggerDialog)
     {
-        triggerPanelClass->setWindowTitle(QApplication::translate("triggerPanelClass", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \321\203\320\262\320\265\320\264\320\276\320\274\320\273\320\265\320\275\320\270\320\271", 0));
-        label_8->setText(QApplication::translate("triggerPanelClass", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
-        label->setText(QApplication::translate("triggerPanelClass", "\320\241\320\270\320\263\320\275\320\260\320\273\321\213", 0));
+        TriggerDialog->setWindowTitle(QApplication::translate("TriggerDialog", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \321\203\320\262\320\265\320\264\320\276\320\274\320\273\320\265\320\275\320\270\320\271", 0));
+        label_8->setText(QApplication::translate("TriggerDialog", "\320\234\320\276\320\264\321\203\320\273\320\270", 0));
+        label->setText(QApplication::translate("TriggerDialog", "\320\241\320\270\320\263\320\275\320\260\320\273\321\213", 0));
         QTableWidgetItem *___qtablewidgetitem = tableSignal->horizontalHeaderItem(0);
-        ___qtablewidgetitem->setText(QApplication::translate("triggerPanelClass", "\320\230\320\274\321\217", 0));
+        ___qtablewidgetitem->setText(QApplication::translate("TriggerDialog", "\320\230\320\274\321\217", 0));
         QTableWidgetItem *___qtablewidgetitem1 = tableSignal->horizontalHeaderItem(1);
-        ___qtablewidgetitem1->setText(QApplication::translate("triggerPanelClass", "\320\242\320\270\320\277", 0));
+        ___qtablewidgetitem1->setText(QApplication::translate("TriggerDialog", "\320\242\320\270\320\277", 0));
         QTableWidgetItem *___qtablewidgetitem2 = tableSignal->horizontalHeaderItem(2);
-        ___qtablewidgetitem2->setText(QApplication::translate("triggerPanelClass", "\320\232\320\276\320\274\320\274\320\265\320\275\321\202\320\260\321\200\320\270\320\271", 0));
-        label_2->setText(QApplication::translate("triggerPanelClass", "\320\242\321\200\320\270\320\263\320\263\320\265\321\200\321\213", 0));
+        ___qtablewidgetitem2->setText(QApplication::translate("TriggerDialog", "\320\232\320\276\320\274\320\274\320\265\320\275\321\202\320\260\321\200\320\270\320\271", 0));
+        label_2->setText(QApplication::translate("TriggerDialog", "\320\242\321\200\320\270\320\263\320\263\320\265\321\200\321\213", 0));
         QTableWidgetItem *___qtablewidgetitem3 = tableTrigger->horizontalHeaderItem(0);
-        ___qtablewidgetitem3->setText(QApplication::translate("triggerPanelClass", "\320\230\320\274\321\217", 0));
+        ___qtablewidgetitem3->setText(QApplication::translate("TriggerDialog", "\320\230\320\274\321\217", 0));
         QTableWidgetItem *___qtablewidgetitem4 = tableTrigger->horizontalHeaderItem(1);
-        ___qtablewidgetitem4->setText(QApplication::translate("triggerPanelClass", "\320\243\321\201\320\273\320\276\320\262\320\270\320\265", 0));
-        lbIsChange->setText(QApplication::translate("triggerPanelClass", "*", 0));
-        btnAddTrigger->setText(QApplication::translate("triggerPanelClass", "\320\224\320\276\320\261\320\260\320\262\320\270\321\202\321\214", 0));
-        btnChangeTrigger->setText(QApplication::translate("triggerPanelClass", "\320\230\320\267\320\274\320\265\320\275\320\270\321\202\321\214", 0));
-        btnDelTrigger->setText(QApplication::translate("triggerPanelClass", "\320\243\320\264\320\260\320\273\320\270\321\202\321\214", 0));
-        groupBox_3->setTitle(QApplication::translate("triggerPanelClass", "\320\243\321\201\320\273\320\276\320\262\320\270\320\265 \321\201\321\200\320\260\320\261\320\260\321\202\321\213\320\262\320\260\320\275\320\270\321\217", 0));
+        ___qtablewidgetitem4->setText(QApplication::translate("TriggerDialog", "\320\243\321\201\320\273\320\276\320\262\320\270\320\265", 0));
+        lbIsChange->setText(QApplication::translate("TriggerDialog", "*", 0));
+        btnAddTrigger->setText(QApplication::translate("TriggerDialog", "\320\224\320\276\320\261\320\260\320\262\320\270\321\202\321\214", 0));
+        btnChangeTrigger->setText(QApplication::translate("TriggerDialog", "\320\230\320\267\320\274\320\265\320\275\320\270\321\202\321\214", 0));
+        btnDelTrigger->setText(QApplication::translate("TriggerDialog", "\320\243\320\264\320\260\320\273\320\270\321\202\321\214", 0));
+        groupBox_3->setTitle(QApplication::translate("TriggerDialog", "\320\243\321\201\320\273\320\276\320\262\320\270\320\265 \321\201\321\200\320\260\320\261\320\260\321\202\321\213\320\262\320\260\320\275\320\270\321\217", 0));
 #ifndef QT_NO_TOOLTIP
-        btnLess->setToolTip(QApplication::translate("triggerPanelClass", "\320\274\320\265\320\275\321\214\321\210\320\265", 0));
+        btnLess->setToolTip(QApplication::translate("TriggerDialog", "\320\274\320\265\320\275\321\214\321\210\320\265", 0));
 #endif // QT_NO_TOOLTIP
-        btnLess->setText(QApplication::translate("triggerPanelClass", "<", 0));
+        btnLess->setText(QApplication::translate("TriggerDialog", "<", 0));
 #ifndef QT_NO_TOOLTIP
-        btnEqual->setToolTip(QApplication::translate("triggerPanelClass", "\321\200\320\260\320\262\320\275\320\276", 0));
+        btnEqual->setToolTip(QApplication::translate("TriggerDialog", "\321\200\320\260\320\262\320\275\320\276", 0));
 #endif // QT_NO_TOOLTIP
-        btnEqual->setText(QApplication::translate("triggerPanelClass", "==", 0));
+        btnEqual->setText(QApplication::translate("TriggerDialog", "==", 0));
 #ifndef QT_NO_TOOLTIP
-        btnMore->setToolTip(QApplication::translate("triggerPanelClass", "\320\261\320\276\320\273\321\214\321\210\320\265", 0));
+        btnMore->setToolTip(QApplication::translate("TriggerDialog", "\320\261\320\276\320\273\321\214\321\210\320\265", 0));
 #endif // QT_NO_TOOLTIP
-        btnMore->setText(QApplication::translate("triggerPanelClass", ">", 0));
+        btnMore->setText(QApplication::translate("TriggerDialog", ">", 0));
 #ifndef QT_NO_TOOLTIP
-        btnPosFront->setToolTip(QApplication::translate("triggerPanelClass", "\320\277\320\276\320\273\320\276\320\266\320\270\321\202\320\265\320\273\321\214\320\275\321\213\320\271 \321\204\321\200\320\276\320\275\321\202", 0));
+        btnPosFront->setToolTip(QApplication::translate("TriggerDialog", "\320\277\320\276\320\273\320\276\320\266\320\270\321\202\320\265\320\273\321\214\320\275\321\213\320\271 \321\204\321\200\320\276\320\275\321\202", 0));
 #endif // QT_NO_TOOLTIP
-        btnPosFront->setText(QApplication::translate("triggerPanelClass", "FP", 0));
+        btnPosFront->setText(QApplication::translate("TriggerDialog", "FP", 0));
 #ifndef QT_NO_TOOLTIP
-        btnNegFront->setToolTip(QApplication::translate("triggerPanelClass", "\320\276\321\202\321\200\320\270\321\206\320\260\321\202\320\265\320\273\321\214\320\275\321\213\320\271 \321\204\321\200\320\276\320\275\321\202", 0));
+        btnNegFront->setToolTip(QApplication::translate("TriggerDialog", "\320\276\321\202\321\200\320\270\321\206\320\260\321\202\320\265\320\273\321\214\320\275\321\213\320\271 \321\204\321\200\320\276\320\275\321\202", 0));
 #endif // QT_NO_TOOLTIP
-        btnNegFront->setText(QApplication::translate("triggerPanelClass", "FN", 0));
+        btnNegFront->setText(QApplication::translate("TriggerDialog", "FN", 0));
 #ifndef QT_NO_TOOLTIP
-        txtCondition->setToolTip(QApplication::translate("triggerPanelClass", "\320\277\320\276\321\200\320\276\320\263\320\276\320\262\320\276\320\265 \320\267\320\275\320\260\321\207\320\265\320\275\320\270\320\265", 0));
+        txtCondition->setToolTip(QApplication::translate("TriggerDialog", "\320\277\320\276\321\200\320\276\320\263\320\276\320\262\320\276\320\265 \320\267\320\275\320\260\321\207\320\265\320\275\320\270\320\265", 0));
 #endif // QT_NO_TOOLTIP
-        label_9->setText(QApplication::translate("triggerPanelClass", "tout", 0));
+        label_9->setText(QApplication::translate("TriggerDialog", "tout", 0));
 #ifndef QT_NO_TOOLTIP
-        txtTOut->setToolTip(QApplication::translate("triggerPanelClass", "\320\267\320\260\320\264\320\265\321\200\320\266\320\272\320\260 \321\201\321\200\320\260\320\261\320\260\321\202\321\213\320\262\320\260\320\275\320\270\321\217, \321\201\320\265\320\272", 0));
+        txtTOut->setToolTip(QApplication::translate("TriggerDialog", "\320\267\320\260\320\264\320\265\321\200\320\266\320\272\320\260 \321\201\321\200\320\260\320\261\320\260\321\202\321\213\320\262\320\260\320\275\320\270\321\217, \321\201\320\265\320\272", 0));
 #endif // QT_NO_TOOLTIP
-        txtTOut->setText(QApplication::translate("triggerPanelClass", "0", 0));
-        rbtnActiv->setText(QApplication::translate("triggerPanelClass", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
-        groupBox_2->setTitle(QApplication::translate("triggerPanelClass", "\320\227\320\260\320\277\321\203\321\201\320\272 \320\277\321\200\320\276\321\206\320\265\321\201\321\201\320\260", 0));
-        label_5->setText(QApplication::translate("triggerPanelClass", "\320\237\321\203\321\202\321\214", 0));
+        txtTOut->setText(QApplication::translate("TriggerDialog", "0", 0));
+        rbtnActiv->setText(QApplication::translate("TriggerDialog", "\320\220\320\272\321\202\320\270\320\262\320\275\320\276", 0));
+        groupBox_2->setTitle(QApplication::translate("TriggerDialog", "\320\227\320\260\320\277\321\203\321\201\320\272 \320\277\321\200\320\276\321\206\320\265\321\201\321\201\320\260", 0));
+        label_5->setText(QApplication::translate("TriggerDialog", "\320\237\321\203\321\202\321\214", 0));
         btnOpenProc->setText(QString());
-        label_7->setText(QApplication::translate("triggerPanelClass", "\320\220\321\200\320\263\321\203\320\274\320\265\320\275\321\202\321\213", 0));
+        label_7->setText(QApplication::translate("TriggerDialog", "\320\220\321\200\320\263\321\203\320\274\320\265\320\275\321\202\321\213", 0));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class triggerPanelClass: public Ui_triggerPanelClass {};
+    class TriggerDialog: public Ui_TriggerDialog {};
 } // namespace Ui
 
 QT_END_NAMESPACE
 
-#endif // UI_TRIGGERPANEL_H
+#endif // UI_TRIGGER_DIALOG_H

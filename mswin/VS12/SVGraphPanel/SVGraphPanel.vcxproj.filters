@@ -35,21 +35,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVGraphPanel\forms\ui_wdgGraph.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVGraphPanel\forms\ui_axisSetting.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVGraphWidget\forms\ui_axis_setting_dialog.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVGraphWidget\forms\ui_graph_panel_widget.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVGraphWidget\forms\ui_graph_widget.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_axis_setting_dialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -192,9 +177,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\..\src\SVGraphPanel\resources\graph_panel_en.ts">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\SVGraphPanel\resources\graph_widget_en.qm">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

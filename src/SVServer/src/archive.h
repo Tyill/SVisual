@@ -24,61 +24,45 @@
 //
 #pragma once
 
-#include "stdafx.h"
-#include "server.h"
 #include "SVConfig/config_data.h"
-#include "SVAuxFunc/TimerDelay.h"
-#include "SVAuxFunc/Front.h"
+#include "SVAuxFunc/timer_delay.h"
+#include "SVAuxFunc/front.h"
+#include "SVServer/server.h"
 
 // копирование архива на диск
-class archive
+class Archive
 {
 public:
+    
+  Archive(const SV_Srv::Config&);
 
-  struct config{
-    int cycleRecMs;                ///< период записи - задает пользователь
-    int packetSz;                  ///< размер пакета - задает пользователь
+  bool copyToDisk(bool isStop);
 
-    std::string outArchivePath;    ///< запись архива путь
-    std::string outArchiveName;    ///< запись архива имя файла
-    int outArchiveHourCnt;         ///< запись архива размер файла, час
+  void addSignal(const std::string& sign);
+  void addValue(const std::string& sign, const SV_Base::RecData& rd);
 
-    config(int cycleRecMs_ = 50, int packetSz_ = 10) :
-        cycleRecMs(cycleRecMs_),
-        packetSz(packetSz_){}
-  };
-
-    archive(config, server* serv);
-
-    bool copyToDisk(bool isStop);
-
-    void addSignal(const std::string& sign);
-    void addValue(const std::string& sign, const SV_Base::RecData& rd);
-
-    void setConfig(config);
+  void setConfig(const SV_Srv::Config&);
 
 private:
 
-    config cng;
+  SV_Srv::Config cng;
 
-    server* pServ_ = nullptr;
+  std::string _copyStartTime = "";
+  std::string _copyDateMem = "";
 
-  std::string copyStartTime_ = "";
-    std::string copyDateMem_ = "";
+  int _crtFileHour = 0;
+  const int ARCH_CYCLE_MS = 600000;     // 10мин
+  int _cpySz = 0;
+  std::map<std::string, int> _valPos;
 
-  int crtFileHour_ = 0;
-  const int archCycleMs = 600000;     // 10мин
-  int cpySz_ = 0;
-  std::map<std::string, int> valPos_;
-      
-    SV_Aux::Front front_;
+  SV_Aux::Front _front;
 
-    std::map<std::string, std::vector<SV_Base::RecData>> archiveData_;
+  std::map<std::string, std::vector<SV_Base::RecData>> _archiveData;
 
   bool isCopyTimeHour();
-    std::string getOutPath(bool isStop);
 
-    bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
+  std::string getOutPath(bool isStop);
 
-    void statusMess(const std::string&);
+  bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
+
 };

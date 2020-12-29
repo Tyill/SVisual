@@ -34,22 +34,22 @@ class QWidget;
 
 namespace SV_Script {
 
-  enum class modeGr {
+  enum class ModeGr {
     viewer = 0,
     player = 1,
   };
 
-  struct config {
+  struct Config {
 
     int cycleRecMs;
     int packetSz;
 
-    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+    Config(int cycleRecMs_ = 100, int packetSz_ = 10) :
       cycleRecMs(cycleRecMs_),
       packetSz(packetSz_) {}
   };
 
-  QDialog* createScriptDialog(QWidget* parent, config, modeGr);
+  QDialog* createScriptDialog(QWidget* parent, Config, ModeGr);
 
   void startUpdateThread(QDialog* stPanel);
 

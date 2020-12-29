@@ -74,7 +74,7 @@ uint64_t getTimeValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
 
-    if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+    if (scrPanelRef->mode_ == SV_Script::ModeGr::player)
       return scrPanelRef->signBuff_[sign]->lastData.beginTime;
     else {
       if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
@@ -96,7 +96,7 @@ bool getBoolValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
 
-    if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+    if (scrPanelRef->mode_ == SV_Script::ModeGr::player)
       return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].vBool;
     else {
       if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
@@ -118,7 +118,7 @@ int getIntValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::INT)) {
 
-    if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+    if (scrPanelRef->mode_ == SV_Script::ModeGr::player)
       return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].vInt;
     else {
       if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
@@ -140,7 +140,7 @@ float getFloatValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrPanelRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT)) {
 
-    if (scrPanelRef->mode_ == SV_Script::modeGr::player)
+    if (scrPanelRef->mode_ == SV_Script::ModeGr::player)
       return scrPanelRef->signBuff_[sign]->lastData.vals[scrPanelRef->iterValue_].vFloat;
     else {
       if ((scrPanelRef->buffCPos_ == 0) && (scrPanelRef->iterValue_ == 0))
@@ -201,7 +201,7 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
   sd->lastData.vals[iterValue_] = val;
 
   // заполняем буфер
-  int vp = (mode_ == SV_Script::modeGr::player) ? sd->buffValuePos : buffCPos_;
+  int vp = (mode_ == SV_Script::ModeGr::player) ? sd->buffValuePos : buffCPos_;
 
   sd->buffData[vp].vals[iterValue_] = val;
 
@@ -214,7 +214,7 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
 
     ++vp;
 
-    if (mode_ == SV_Script::modeGr::player) {
+    if (mode_ == SV_Script::ModeGr::player) {
       int buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
 
       if (vp == buffSz) vp = 0;
@@ -326,7 +326,7 @@ bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, 
 
     pfAddSignal(sd);
 
-    if (mode_ == SV_Script::modeGr::player) {
+    if (mode_ == SV_Script::ModeGr::player) {
       pfLoadSignalData(sign);
     }
     else {
@@ -359,7 +359,7 @@ bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, 
 
 /////////////////////////////////
 
-ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::config cng_, SV_Script::modeGr mode) {
+ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::ModeGr mode) {
 
   setParent(parent);
 
@@ -938,7 +938,7 @@ void ScriptDialog::workCycle() {
 
       luaL_loadstring(luaState_, qUtf8Printable(allScr));
 
-      if (mode_ == SV_Script::modeGr::viewer) {
+      if (mode_ == SV_Script::ModeGr::viewer) {
 
         bool isNoError = false;
         while (buffCPos_ < buffSz_) {
@@ -966,7 +966,7 @@ void ScriptDialog::workCycle() {
           if (!isNoError) break;
         }
       }
-      else { // SV_Script::modeGr::player
+      else { // SV_Script::ModeGr::player
 
         bool isNoError = false;
         for (iterValue_ = 0; iterValue_ < SV_PACKETSZ; ++iterValue_) {
@@ -992,7 +992,7 @@ void ScriptDialog::workCycle() {
 
     mtx_.unlock();
 
-    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::modeGr::viewer))
+    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::ModeGr::viewer))
       pfUpdateSignalsCBack();
 
     if (!serr.isEmpty()) {

@@ -24,39 +24,37 @@
 //
 #pragma once
 
-#include "stdafx.h"
-#include <thread>
 #include "SVConfig/config_data.h"
-#include "bufferData.h"
+#include "buffer_data.h"
 #include "archive.h"
-#include "server.h"
 
-class thrUpdSignal {
+#include <thread>
+
+class ThrUpdateSignal {
 
 public:
 
-  thrUpdSignal(SV_Srv::config, server*, bufferData* );
+  ThrUpdateSignal(const SV_Srv::Config&, BufferData*);
 
-    ~thrUpdSignal();
+  ~ThrUpdateSignal();
 
-    void setArchiveConfig(SV_Srv::config);
+  void setArchiveConfig(SV_Srv::Config);
 
 private:
 
-    SV_Srv::config cng;
+  SV_Srv::Config cng;
 
-  bool thrStop_ = false;
+  bool _thrStop = false;
 
-  std::thread thr_;
-    bufferData* pBuffData_ = nullptr;
-  archive* pArchive_ = nullptr;
-    server* pServ_ = nullptr;
+  std::thread _thr;
+  BufferData* _pBuffData = nullptr;
+  Archive* _pArchive = nullptr;
 
-    std::mutex mtx_;
+  std::mutex _mtx;
 
   void updCycle();
   void updateSign(SV_Base::SignalData* sign, int beginPos, int valuePos);
-  void addSignal(const std::string& sign, const bufferData::inputData& bp);
+  void addSignal(const std::string& sign, const BufferData::InputData& bp);
   void modConnect(const std::string& module);
   void modDisconnect(const std::string& module);
 };

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>triggerPanelClass</class>
- <widget class="QDialog" name="triggerPanelClass">
+ <class>TriggerDialog</class>
+ <widget class="QDialog" name="TriggerDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -515,7 +515,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/svtriggerresource.qrc">
+               <iconset resource="../resources/trigger_dialog_resource.qrc">
                 <normaloff>:/SVTrigger/images/open.png</normaloff>:/SVTrigger/images/open.png</iconset>
               </property>
              </widget>
@@ -575,7 +575,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/svtriggerresource.qrc"/>
+  <include location="../resources/trigger_dialog_resource.qrc"/>
  </resources>
  <connections/>
 </ui>

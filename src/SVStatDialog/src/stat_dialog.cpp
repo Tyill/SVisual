@@ -27,7 +27,7 @@
 
 namespace SV_Stat {
 
-  QDialog *createStatDialog(QWidget *parent, SV_Stat::config cng) {
+  QDialog *createStatDialog(QWidget *parent, SV_Stat::Config cng) {
 
     return new StatDialog(parent, cng);
   }

@@ -40,13 +40,13 @@ public:
   SV_Stat::pf_setTimeInterval pfSetTimeInterval = nullptr;
   SV_Stat::pf_getTimeInterval pfGetTimeInterval = nullptr;
 
-  StatDialog(QWidget *parent, SV_Stat::config);
+  StatDialog(QWidget *parent, SV_Stat::Config);
   ~StatDialog();
 
 private:
   Ui::StatDialog ui;
 
-  SV_Stat::config cng;
+  SV_Stat::Config cng;
 
   struct valSData {
     int changeCnt;

@@ -61,7 +61,7 @@ public:
   SV_Script::pf_loadSignalData pfLoadSignalData = nullptr;
   SV_Script::pf_changeSignColor pfChangeSignColor = nullptr;
 
-  ScriptDialog(QWidget *parent, SV_Script::config, SV_Script::modeGr mode);
+  ScriptDialog(QWidget *parent, SV_Script::Config, SV_Script::ModeGr mode);
   ~ScriptDialog();
 
   void startUpdateThread();
@@ -77,9 +77,9 @@ public:
 private:
   Ui::ScriptDialog ui;
 
-  SV_Script::modeGr mode_;
+  SV_Script::ModeGr mode_;
 
-  SV_Script::config cng;
+  SV_Script::Config cng;
 
   lua_State* luaState_ = nullptr;
 
