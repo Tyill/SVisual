@@ -50,6 +50,9 @@ namespace SV_Aux {
     bool start(Server, const std::string& addr, uint16_t port);
 
     /// остановить сервер
-    void stop(Server);       
+    void stop(Server); 
+
+    /// ошибка
+    std::string errorStr(Server);
   }
 }

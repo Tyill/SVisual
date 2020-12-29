@@ -38,7 +38,7 @@ namespace SV_Aux {
       uv_loop_t* u_loop;
       DataCBack dataCBack;
       ErrorCBack errCBack;
-      std::thread thr;
+      std::string error;
       
       Server_m(DataCBack _dataCBack, ErrorCBack _errCBack):
         dataCBack(_dataCBack), errCBack(_errCBack){
@@ -67,14 +67,23 @@ namespace SV_Aux {
       }
     };
 
+#define CHECK(func, mess){                                             \
+    int sts = func;                                                    \
+    if (sts != 0){                                                     \
+      srv->error = std::string(mess) + " code " + std::to_string(sts); \
+      if (srv->errCBack)                                               \
+        srv->errCBack(srv->error);                                     \
+      return;                                                          \
+    }                                                                  \
+  }        
     void on_close(uv_handle_t* u_client) {
-      Client_m* client = (Client_m*)u_client->data;
+      Client_m* client = static_cast<Client_m*>(u_client->data);
       delete client;
     }
 
     void alloc_cb(uv_handle_t* u_client, size_t suggested_size, uv_buf_t* buf) {
 
-      Client_m* client = (Client_m*)u_client->data;
+      Client_m* client = static_cast<Client_m*>(u_client->data);
 
       if (client->u_buf.len < suggested_size) {
         client->u_buf.base = (char*)realloc(client->u_buf.base, suggested_size);
@@ -88,7 +97,7 @@ namespace SV_Aux {
                   
       if (nread > 0) {
 
-        Client_m* client = (Client_m*)u_client->data;
+        Client_m* client = static_cast<Client_m*>(u_client->data);
         Server_m* srv = client->server;
 
         // копим данные          
@@ -119,14 +128,6 @@ namespace SV_Aux {
 
       Server_m* srv = static_cast<Server_m*>(u_server->data);
 
-#define CHECK(func, mess){                                                  \
-    int fsts = func;                                                        \
-    if (fsts != 0){                                                         \
-      if (srv->errCBack)                                                    \
-        srv->errCBack(std::string(mess) + " code " + std::to_string(fsts)); \
-      return;                                                               \
-    }                                                                       \
-  }
       CHECK(sts, "on_connect::sts error");
            
       Client_m* client = new Client_m(srv);
@@ -141,7 +142,6 @@ namespace SV_Aux {
 
       CHECK(uv_read_start((uv_stream_t *)&client->u_client, alloc_cb, on_read),
         "on_connect::uv_read_start error");
-#undef CHECK
     }
                 
     Server create(DataCBack dcb, ErrorCBack ecb) {
@@ -156,22 +156,12 @@ namespace SV_Aux {
       Server_m* srv = static_cast<Server_m*>(_srv);
       
       if (srv->u_loop) return true;
-
-      std::string err;
+            
       std::condition_variable cval;
-      srv->thr = std::thread([&cval, srv, &addr, port, &err]() {
+      std::thread* thr = new std::thread([&cval, srv, &addr, port]() {
         
         srv->u_loop = uv_default_loop();
 
-#define CHECK(func, mess){                                       \
-    int fsts = func;                                             \
-    if (fsts != 0){                                              \
-      err = std::string(mess) + " code " + std::to_string(fsts); \
-      if (srv->errCBack)                                         \
-        srv->errCBack(err);                                      \
-      return;                                                    \
-    }                                                            \
-  }        
         CHECK(uv_tcp_init(srv->u_loop, &srv->u_server),
           "initConnection::uv_tcp_init error");
 
@@ -195,13 +185,13 @@ namespace SV_Aux {
         CHECK(uv_run(srv->u_loop, UV_RUN_DEFAULT),
           "initConnection::uv_run error");
       });
-      srv->thr.detach();
+      thr->detach();
 
       std::mutex mtx;
       std::unique_lock<std::mutex> lck(mtx);
       cval.wait_for(lck, std::chrono::milliseconds(100));
 
-      return err.empty();
+      return srv->error.empty();
     }
 
     void stop(Server _srv) {
@@ -215,6 +205,10 @@ namespace SV_Aux {
         uv_loop_close(srv->u_loop);
         uv_loop_delete(srv->u_loop);
       }      
-    }    
+    }   
+
+    std::string errorStr(Server srv) {
+      return srv ? static_cast<Server_m*>(srv)->error : "";
+    }
   }
 }
