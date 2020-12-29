@@ -24,15 +24,16 @@
 //
 #include "SVAuxFunc/aux_func.h"
 #include <fstream>
-#include <time.h>
+#include <ctime>
 #include <thread>
 #include <chrono>
-#include <math.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <cmath>
 
 #ifdef WIN32
-   #include <windows.h>
+#include <windows.h>
+#else
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 using namespace std;

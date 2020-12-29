@@ -27,7 +27,7 @@
 #include "SVAuxFunc/tcp_client.h"
 
 namespace SV_Aux{
-  namespace SV_TCPClient {
+  namespace TCPClient {
 
 #ifdef WIN32
 
@@ -105,7 +105,7 @@ int sendAll(const std::string& mess, int flags){
   return total;
 }
 
-bool sendMess(const std::string& in, std::string &out, bool disconn, bool onlySend) {
+bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySend) {
 
   if (sendAll(in, 0) == SOCKET_ERROR) {
     disconnect();
@@ -129,7 +129,7 @@ bool sendMess(const std::string& in, std::string &out, bool disconn, bool onlySe
         if (recvbuf[rlen - 1] == '\0') break;
       }
       else if (WSAGetLastError() == WSAEWOULDBLOCK) {
-        Sleep(0);
+        SV_Aux::sleepMs(0);
       }
       else break;
     }
@@ -194,7 +194,7 @@ int sendAll(const std::string& mess, int flags){
   return total;
 }
 
-bool sendMess(std::string& in, std::string &out, bool disconn, bool onlySend) {
+bool sendData(std::string& in, std::string &out, bool disconn, bool onlySend) {
 
   // Send an initial buffer
   int ret = sendAll(in.c_str(), in.size(), 0);
@@ -220,7 +220,7 @@ bool sendMess(std::string& in, std::string &out, bool disconn, bool onlySend) {
         if (recvbuf[rlen - 1] == '\0') break;
       } 
       else if (rlen == -1) {
-        SV_Aux::SleepMs(0);
+        SV_Aux::sleepMs(0);
       } 
       else break;
     }

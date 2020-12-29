@@ -25,26 +25,31 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
-namespace SV_TcpSrv {
+namespace SV_Aux {
+  namespace TCPServer {
 
+    using Server = void*;
+        
+    /// польз callback - получение данных
+    using DataCBack = std::function<void(std::string& inout, std::string& out)>;
+
+    using ErrorCBack = std::function<void(const std::string& err)>;
+    
+    /// создать сервер
+    /// \param DataCBack
+    /// \param ErrorCBack
+    /// \return Server
+    Server create(DataCBack, ErrorCBack);
+       
     /// запустить сервер
-    /// \param addr IP адрес
-    /// \param port порт
-    /// \param keepAlive не обывать связь
-    /// \param noReceive не отвечать
-    /// \param tout ждать после потери связи
+    /// \param addr
+    /// \param port
     /// \return true - ok
-    bool runServer(std::string addr, int port, bool keepAlive = false, int tout = 60);
+    bool start(Server, const std::string& addr, uint16_t port);
 
     /// остановить сервер
-    void stopServer();
-
-    /// задать польз callback - получение данных
-    typedef void(*dataCBack)(std::string &inout, std::string &out);
-    void setDataCBack(dataCBack uf);
-
-    /// задать польз callback - ошибка сервера
-    typedef void(*errorCBack)(const std::string &mess);
-    void setErrorCBack(errorCBack uf);
+    void stop(Server);       
+  }
 }

@@ -33,20 +33,16 @@ namespace SV_Aux {
 
 	private:
 		std::vector<bool> onc;
-		int oncSz;
+		int oncCount;
 
 	public:
 
-		Front() : oncSz(0) {}
+		Front() : oncCount(0) {}
 
-		/// Польжит фронт
-		/// \param en значение
-		/// \param id ИД
-		/// \return фронт
 		bool PosFront(bool en, int id) {
-			if (oncSz <= id) {
+			if (oncCount <= id) {
 				onc.resize(id + 1, false);
-				oncSz = id + 1;
+        oncCount = id + 1;
 			}
 
 			if (!onc[id] && en) {
@@ -57,15 +53,11 @@ namespace SV_Aux {
 				return false;
 			}
 		}
-
-		/// отрицательный фронт
-		/// \param en значение
-		/// \param id ИД
-		/// \return фронт
+    		
 		bool NegFront(bool en, int id) {
-			if (oncSz <= id) {
+			if (oncCount <= id) {
 				onc.resize(id + 1, true);
-				oncSz = id + 1;
+        oncCount = id + 1;
 			}
 
 			if (!onc[id] && !en) {

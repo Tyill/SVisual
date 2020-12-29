@@ -30,198 +30,191 @@
 #include "Lib/libuv/uv.h"
 #include "SVAuxFunc/tcp_server.h"
 
-namespace SV_TcpSrv {
+namespace SV_Aux {
+  namespace TCPServer {
+     
+    struct Server_m {
+      uv_tcp_t u_server;
+      uv_loop_t* u_loop;
+      DataCBack dataCBack;
+      ErrorCBack errCBack;
+      std::thread thr;
       
-#define SRVCheck(func, mess){ int fsts = func; \
- if (fsts != 0){ if (server.errCBack) server.errCBack(std::string(mess) + " " + std::to_string(fsts)); return; }}
-
-    struct client_t {
-    uv_tcp_t handle;
-    uv_write_t write_req;
-        uv_buf_t buf;
-    std::string inMess;     
-    std::string outMess;    
-
-        client_t(){
-            buf.base = nullptr;
-            buf.len = 0;
-        }
-
-        ~client_t(){
-            if (buf.base)
-              free(buf.base);
-        }
-  };
-       
-  struct server_t {
-    uv_tcp_t u_server;
-    uv_loop_t *uv_loop;
-    dataCBack dataCBack_;   
-    errorCBack errCBack;    
-
-    std::string addr;       
-    int port;               
-    int tout;               // ждать связи, мс
-    bool keepAlive;         // оставлять подключение активным
-    bool isRun;             
-
-    server_t() {
-      uv_loop = nullptr;
-      dataCBack_ = nullptr;
-      errCBack = nullptr;
-      isRun = false;
-    }
-  };
-
-    std::thread thr;
-
-   server_t server{};
-
-    void on_close(uv_handle_t *handle) {
-    client_t *client = (client_t *) handle->data;
-    delete client;
-  }
-
-    
-    void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
-         
-        client_t* client = (client_t*)handle->data;
-
-        if (client->buf.len < suggested_size){
-            client->buf.base = (char*)realloc(client->buf.base, suggested_size);
-            client->buf.len = suggested_size;
-        }
-
-        *buf = client->buf;
-  }
-
-    
-  void on_read(uv_stream_t *tcp, ssize_t nread, const uv_buf_t* buf) {
-
-    client_t* client = (client_t*)tcp->data;
-
-    if (nread > 0) {
-            
-            // копим данные          
-            auto clSz = client->inMess.size();
-            client->inMess.resize(clSz + nread);
-            memcpy((char *)client->inMess.data() + clSz, buf->base, nread);
-            
-      // передача пользователю
-      if (server.dataCBack_)
-        server.dataCBack_(client->inMess, client->outMess);
-
-      // ответ
-      if (!client->outMess.empty()) {
-
-        uv_buf_t resbuf;
-        resbuf.base = (char *) client->outMess.c_str();
-        resbuf.len = client->outMess.size() + 1;
-
-        uv_write(&client->write_req,
-                 (uv_stream_t *) &client->handle,
-                 &resbuf,
-                 1,
-                 [](uv_write_t *req, int status) {
-                   SRVCheck(status, "on_read::uv_write error");
-                 });
+      Server_m(DataCBack _dataCBack, ErrorCBack _errCBack):
+        dataCBack(_dataCBack), errCBack(_errCBack){
+        u_loop = nullptr;
+        dataCBack = nullptr;
       }
-    } else if (nread < 0) {
+    };   
 
-      if (!uv_is_closing((uv_handle_t *) client))
-        uv_close((uv_handle_t *) client, on_close);
+    struct Client_m {
+      uv_tcp_t u_client;
+      uv_write_t u_writeReq;
+      uv_buf_t u_buf;
+      Server_m* server;
+      std::string inMess;
+      std::string outMess;
+      
+      Client_m(Server_m* srv) {
+        server = srv;
+        u_buf.base = nullptr;
+        u_buf.len = 0;
+      }
+
+      ~Client_m() {
+        if (u_buf.base)
+          free(u_buf.base);
+      }
+    };
+
+    void on_close(uv_handle_t* u_client) {
+      Client_m* client = (Client_m*)u_client->data;
+      delete client;
     }
+
+    void alloc_cb(uv_handle_t* u_client, size_t suggested_size, uv_buf_t* buf) {
+
+      Client_m* client = (Client_m*)u_client->data;
+
+      if (client->u_buf.len < suggested_size) {
+        client->u_buf.base = (char*)realloc(client->u_buf.base, suggested_size);
+        client->u_buf.len = suggested_size;
+      }
+
+      *buf = client->u_buf;
+    }
+
+    void on_read(uv_stream_t* u_client, ssize_t nread, const uv_buf_t* buf) {
+                  
+      if (nread > 0) {
+
+        Client_m* client = (Client_m*)u_client->data;
+        Server_m* srv = client->server;
+
+        // копим данные          
+        auto csz = client->inMess.size();
+        client->inMess.resize(csz + nread);
+        memcpy((char*)client->inMess.data() + csz, buf->base, nread);
+
+        // передача пользователю
+        if (srv->dataCBack)
+          srv->dataCBack(client->inMess, client->outMess);
+
+        // ответ
+        if (!client->outMess.empty()) {
+          uv_buf_t resbuf;
+          resbuf.base = (char*)client->outMess.c_str();
+          resbuf.len = client->outMess.size() + 1;
+
+          uv_write(&client->u_writeReq, u_client, &resbuf, 1, nullptr);
+        }
+      }
+      else if (nread < 0) {
+        if (!uv_is_closing((uv_handle_t*)u_client))
+          uv_close((uv_handle_t*)u_client, on_close);
+      }
+    }
+
+    void on_connect(uv_stream_t* u_server, int sts) {
+
+      Server_m* srv = static_cast<Server_m*>(u_server->data);
+
+#define CHECK(func, mess){                                                  \
+    int fsts = func;                                                        \
+    if (fsts != 0){                                                         \
+      if (srv->errCBack)                                                    \
+        srv->errCBack(std::string(mess) + " code " + std::to_string(fsts)); \
+      return;                                                               \
+    }                                                                       \
   }
-        
-  void on_connect(uv_stream_t *server_handle, int sts) {
+      CHECK(sts, "on_connect::sts error");
+           
+      Client_m* client = new Client_m(srv);
+     
+      CHECK(uv_tcp_init(u_server->loop, &client->u_client),
+        "on_connect::uv_tcp_init error");
+
+      client->u_client.data = client;
+
+      CHECK(uv_accept(u_server, (uv_stream_t*)&client->u_client),
+        "on_connect::uv_accept error");
+
+      CHECK(uv_read_start((uv_stream_t *)&client->u_client, alloc_cb, on_read),
+        "on_connect::uv_read_start error");
+#undef CHECK
+    }
+                
+    Server create(DataCBack dcb, ErrorCBack ecb) {
             
-    SRVCheck(sts, "on_connect:: error");
+      return new Server_m(dcb, ecb);
+    }
+           
+    bool start(Server _srv, const std::string& addr, uint16_t port) {
+      
+      if (!_srv) return false;
+      
+      Server_m* srv = static_cast<Server_m*>(_srv);
+      
+      if (srv->u_loop) return true;
 
-    client_t *client = new client_t();
+      std::string err;
+      std::condition_variable cval;
+      srv->thr = std::thread([&cval, srv, &addr, port, &err]() {
+        
+        srv->u_loop = uv_default_loop();
 
-    SRVCheck(uv_tcp_init(server.uv_loop, &client->handle),
-       "on_connect::uv_tcp_init error");
+#define CHECK(func, mess){                                       \
+    int fsts = func;                                             \
+    if (fsts != 0){                                              \
+      err = std::string(mess) + " code " + std::to_string(fsts); \
+      if (srv->errCBack)                                         \
+        srv->errCBack(err);                                      \
+      return;                                                    \
+    }                                                            \
+  }        
+        CHECK(uv_tcp_init(srv->u_loop, &srv->u_server),
+          "initConnection::uv_tcp_init error");
 
-    client->handle.data = client;
+        CHECK(uv_tcp_keepalive(&srv->u_server, true, 60),
+          "initConnection::uv_tcp_keepalive error");
 
-    SRVCheck(uv_accept(server_handle, (uv_stream_t *) &client->handle),
-       "on_connect::uv_accept error");
+        struct sockaddr_in address;
+        CHECK(uv_ip4_addr(addr.c_str(), port, &address),
+          "initConnection::uv_ip4_addr error");
 
-    SRVCheck(uv_read_start((uv_stream_t *) &client->handle, alloc_cb, on_read),
-       "on_connect::uv_read_start error");
-  }
-       
-    void initConnection(std::condition_variable& cval) {
+        CHECK(uv_tcp_bind(&srv->u_server, (const struct sockaddr*)&address, 0),
+          "initConnection::uv_tcp_bind error");
 
-    server.uv_loop = uv_default_loop();
+        CHECK(uv_listen((uv_stream_t*)&srv->u_server, 1000, on_connect),
+          "initConnection::uv_listen error");
 
-    SRVCheck(uv_tcp_init(server.uv_loop, &server.u_server),
-       "initConnection::uv_tcp_init error");
+        srv->u_server.data = srv;
 
-    SRVCheck(uv_tcp_keepalive(&server.u_server, server.keepAlive, server.tout),
-       "initConnection::uv_tcp_keepalive error");
-
-    struct sockaddr_in address;
-    SRVCheck(uv_ip4_addr(server.addr.c_str(), server.port, &address),
-       "initConnection::uv_ip4_addr error");
-
-    SRVCheck(uv_tcp_bind(&server.u_server, (const struct sockaddr *) &address, 0),
-       "initConnection::uv_tcp_bind error");
-
-    SRVCheck(uv_listen((uv_stream_t *) &server.u_server, 1000, on_connect),
-       "initConnection::uv_listen error");
-
-    server.isRun = true;
         cval.notify_one();
 
-    SRVCheck(uv_run(server.uv_loop, UV_RUN_DEFAULT),
-       "initConnection::uv_run error");
-        
-        server.isRun = false;
+        CHECK(uv_run(srv->u_loop, UV_RUN_DEFAULT),
+          "initConnection::uv_run error");
+      });
+      srv->thr.detach();
+
+      std::mutex mtx;
+      std::unique_lock<std::mutex> lck(mtx);
+      cval.wait_for(lck, std::chrono::milliseconds(100));
+
+      return err.empty();
+    }
+
+    void stop(Server _srv) {
+
+      if (!_srv) return;
+
+      Server_m* srv = static_cast<Server_m*>(_srv);
+
+      if (srv->u_loop){
+        uv_stop(srv->u_loop);
+        uv_loop_close(srv->u_loop);
+        uv_loop_delete(srv->u_loop);
+      }      
+    }    
   }
-       
-  bool runServer(std::string addr, int port, bool keepAlive, int tout) {
-
-    if (server.isRun) return true;
-
-    server.addr = addr;
-    server.port = port;
-    server.keepAlive = keepAlive;
-    server.tout = tout;
-
-    std::condition_variable cval;
-        thr = std::thread([&cval]() {
-            initConnection(cval);
-    });
-    thr.detach();
-        
-    std::mutex mtx;
-    std::unique_lock<std::mutex> lck(mtx);
-    cval.wait_for(lck, std::chrono::milliseconds(100));
-
-    return server.isRun;
-  }
-
-    void stopServer() {
-
-    if (!server.isRun) return;
-
-    uv_stop(server.uv_loop);
-
-    uv_loop_close(server.uv_loop);
-
-    uv_loop_delete(server.uv_loop);
-  }
-        
-  void setDataCBack(dataCBack uf) {
-
-    server.dataCBack_ = uf;
-  }
-    
-  void setErrorCBack(errorCBack uf) {
-
-    server.errCBack = uf;
-  }
-
-#undef SRVCheck
 }

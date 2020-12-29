@@ -30,7 +30,7 @@
 #include <thread>
 #include <condition_variable>
 #include <mutex>
-#include "auxFunc.h"
+#include "aux_func.h"
 
 namespace SV_Aux {
   class Logger {  

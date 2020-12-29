@@ -25,7 +25,7 @@
 #pragma once
 
 #include <vector>
-#include "auxFunc.h"
+#include "aux_func.h"
 
 namespace SV_Aux {
 
