@@ -24,31 +24,32 @@
 //
 
 #include "buffer_data.h"
-#include "thr_update_signal.h"
+#include "thread_update.h"
 #include "SVAuxFunc/aux_func.h"
+#include "SVServer/server.h"
+
 #include "Lib/rapidjson/document.h"
 #include "Lib/rapidjson/stringbuffer.h"
 #include "Lib/rapidjson/writer.h"
-#include "SVServer/server.h"
 
 #include <functional>
 
 using namespace std;
 
-namespace SV_Srv {
-  
-  statusCBack pfStatusCBack = nullptr;
-  onUpdateSignalsCBack pfUpdateSignalsCBack = nullptr;
-  onAddSignalsCBack pfAddSignalsCBack = nullptr;
-  onModuleConnectCBack pfModuleConnectCBack = nullptr;
-  onModuleDisconnectCBack pfModuleDisconnectCBack = nullptr;
+SV_Srv::statusCBack pfStatusCBack = nullptr;
+SV_Srv::onUpdateSignalsCBack pfUpdateSignalsCBack = nullptr;
+SV_Srv::onAddSignalsCBack pfAddSignalsCBack = nullptr;
+SV_Srv::onModuleConnectCBack pfModuleConnectCBack = nullptr;
+SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack = nullptr;
 
-  const int BUFF_SIGN_HOUR_CNT = 2;  // жестко размер буфера, час
+const int BUFF_SIGN_HOUR_CNT = 2;  // жестко размер буфера, час
+
+namespace SV_Srv {
       
   Config cng;
   
   BufferData* _pBuffData = nullptr;
-  ThrUpdateSignal* _pthrUpdSignal = nullptr;
+  ThreadUpdate* _pthrUpdSignal = nullptr;
 
   std::map <std::string, SV_Base::ModuleData*> _moduleData;
   std::map <std::string, SV_Base::SignalData*> _signalData;
@@ -71,7 +72,7 @@ namespace SV_Srv {
 
     _pBuffData = new BufferData(cng);
 
-    _pthrUpdSignal = new ThrUpdateSignal(cng, _pBuffData);
+    _pthrUpdSignal = new ThreadUpdate(cng, _pBuffData);
     
     return true;
   }

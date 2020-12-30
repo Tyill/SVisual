@@ -27,6 +27,9 @@
 #include "SVMonitor/forms/main_win.h"
 #include "SVServer/server.h"
 
+#include <QComboBox>
+#include <QFileDialog>
+
 SettingsDialog::SettingsDialog(QWidget *parent){
 
   setParent(parent);
@@ -232,8 +235,8 @@ void SettingsDialog::saveChange(){
     cng.com_ports.push_back(qMakePair(port.first->text(), port.second->currentText()));
   }
 
-  cng.cycleRecMs = ui.spinCycleRecMs->Value();
-  cng.packetSz = ui.spinPacketSz->Value();
+  cng.cycleRecMs = ui.spinCycleRecMs->value();
+  cng.packetSz = ui.spinPacketSz->value();
 
   mainWin_->updateConfig(cng);
 

@@ -24,11 +24,14 @@
 //
 #pragma once
 
-#include <map>
-#include <string>
+#include <QObject>
 
-/////////////////////
-#include <QtWidgets>
-#include <QSystemTrayIcon>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
+class ThrLoadData : public QObject {
+  Q_OBJECT
+
+public:
+  ThrLoadData(QStringList files);
+
+signals:
+  void finished(bool ok);
+};

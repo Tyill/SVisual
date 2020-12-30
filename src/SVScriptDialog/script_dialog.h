@@ -49,7 +49,7 @@ namespace SV_Script {
       packetSz(packetSz_) {}
   };
 
-  QDialog* createScriptDialog(QWidget* parent, Config, ModeGr);
+  QDialog* getScriptDialog(QWidget* parent, Config, ModeGr);
 
   void startUpdateThread(QDialog* stPanel);
 

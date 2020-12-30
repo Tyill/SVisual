@@ -68,18 +68,15 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_) {
 
     emit req_close();
     close();
-
   });
 
   connect(ui.btnUp, &QPushButton::clicked, this, [this] {
 
     emit req_graphUp(this->objectName());
-
   });
   connect(ui.btnDn, &QPushButton::clicked, this, [this] {
 
     emit req_graphDn(this->objectName());
-
   });
 
   connect(ui.btnAxisAttr, &QPushButton::clicked, this, [this] {
@@ -838,21 +835,20 @@ void GraphWidget::getMarkersPos(QPoint& left, QPoint& right) {
 QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, bool isAlter) {
 
   //////////// Получение данных для расчета 
-
-  double tmScale = axisTime_->getTimeScale(),
-    valScale = ui.axisValue->getValScale();
-
+  
   QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
   QPair<double, double> valInterval = ui.axisValue->getValInterval();
-
-  double valMinInterval = valInterval.first,
-    valMaxInterval = valInterval.second;
-
+   
+  const int w = width(),
+            maxWidth = 600;
+  
+  double tmScale = double(tmInterval.second - tmInterval.first) / qMin(maxWidth, w),
+         coefWidth = w > maxWidth ? w /maxWidth : 1.0;
+  
+  double valScale = ui.axisValue->getValScale();
   if (isAlter) {
-    valInterval = getSignMaxMinValue(sign, tmInterval);
-    valMinInterval = valInterval.first;
-    valMaxInterval = valInterval.second;
-    valScale = (valMaxInterval - valMinInterval) / ui.plot->height();
+    valInterval = getSignMaxMinValue(sign, tmInterval);   
+    valScale = (valInterval.second - valInterval.first) / ui.plot->height();
   }
 
   QString sname = QString::fromStdString(sign->name + sign->module);
@@ -873,8 +869,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval))
     return QVector<QVector<QPair<int, int>>>();
 
-  int iBuf = sign->buffBeginPos;
-
+  size_t iBuf = sign->buffBeginPos;
   if ((cng.mode == SV_Graph::ModeGr::viewer) && (tmZnBegin < tmMinInterval)) {
 
     auto bIt = std::lower_bound(sign->buffData.begin(), sign->buffData.end(), tmMinInterval,
@@ -891,7 +886,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
 
   //////////// Получаем точки
 
-  double valPosMem = valMinInterval / valScale;
+  double valPosMem = valInterval.first / valScale;
 
   tmZnBegin = sign->buffData[iBuf].beginTime;
   tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
@@ -902,12 +897,13 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   for (int i = 0; i < SV_PACKETSZ; ++i)
     tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
 
-  int znSz = sign->buffData.size(),
-    endPos = sign->buffValuePos,
-    prevPos = -1,
+  int prevPos = -1,
     valMem = 0,
     backVal = 0,
-    prevBackVal = 0,
+    prevBackVal = 0;
+      
+  size_t znSz = sign->buffData.size(),
+    endPos = sign->buffValuePos,
     backValInd = 0,
     prevBackValInd = 0;
 
@@ -1068,7 +1064,10 @@ QPair<double, double> GraphWidget::getSignMaxMinValue(SignalData* sign, QPair<qi
 
   auto rdata = sign->buffData;
 
-  int znSz = rdata.size(), z = 0; double minVal = INT32_MAX, maxVal = -INT32_MAX;
+  size_t znSz = rdata.size(), 
+         z = 0;
+  double minVal = INT32_MAX,
+         maxVal = -INT32_MAX;
 
   switch (sign->type)
   {
@@ -1215,7 +1214,7 @@ void GraphWidget::resizeByTime() {
 
   if (signalList_.isEmpty() && signalsAlter_.isEmpty()) return;
 
-  double minTm = INT64_MAX, maxTm = -INT64_MAX;
+  uint64_t minTm = INT64_MAX, maxTm = 0;
 
   for (auto& s : signals_) {
 

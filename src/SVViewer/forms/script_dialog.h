@@ -29,8 +29,8 @@
 #include "GeneratedFiles/ui_script_dialog.h"
 
 #include <QMessageBox>
-#include <QTextStream>
 #include <QFile>
+#include <QTextStream>
 
 class SignScriptDialog : public QDialog
 {
@@ -41,9 +41,10 @@ public:
 
 #ifdef SV_EN
     QTranslator translator;
-    translator.load(":/SVMonitor/svmonitor_en.qm");
+    translator.load(":/SVViewer/svviewer_en.qm");
     QCoreApplication::installTranslator(&translator);
 #endif
+
     mainScrPanel_ = mainScrPanel;
 
     setParent(parent);
@@ -145,7 +146,7 @@ public:
 
 private:
 
-  Ui::ScriptDialog ui;
+  Ui::SignScriptDialog ui;
 
   QString sFileName_;
 

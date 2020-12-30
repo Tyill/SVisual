@@ -24,9 +24,9 @@
 //
 #pragma once
 
-#include "src/stdafx.h"
-#include "SVMonitor/forms/ui_eventOrderWin.h"
-#include "mainwin.h"
+#include "GeneratedFiles/ui_event_table_dialog.h"
+
+class MainWin;
 
 class EventTableDialog : public QDialog
 {
@@ -36,7 +36,7 @@ public:
   EventTableDialog(QWidget *parent = 0);
   ~EventTableDialog();
 
-  Ui::eventOrderClass ui;
+  Ui::EventTableDialog ui;
 
 private:
   void showEvent(QShowEvent * event);

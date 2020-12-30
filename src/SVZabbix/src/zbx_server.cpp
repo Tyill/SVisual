@@ -22,39 +22,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
 
+#include "zbx_server.h"
 #include "SVConfig/config_data.h"
-#include "buffer_data.h"
-#include "archive.h"
+#include "SVConfig/config_limits.h"
+#include <QDir>
+#include <QUrl>
 
-#include <thread>
+void ZbxServer::setConfig(const SV_Zbx::Config& cng_) {
 
-class ThrUpdateSignal {
+  cng = cng_;
+}
 
-public:
+void ZbxServer::incomingConnection(qintptr handle) {
 
-  ThrUpdateSignal(const SV_Srv::Config&, BufferData*);
+  zbxClientSocket* socket = new zbxClientSocket(this);
+  socket->setSocketDescriptor(handle);
 
-  ~ThrUpdateSignal();
+  connect(socket, SIGNAL(readyRead()), socket, SLOT(readData()));
+  connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
+}
 
-  void setArchiveConfig(SV_Srv::Config);
+zbxClientSocket::zbxClientSocket(QObject* parent)
+  : QTcpSocket(parent) {
 
-private:
+  server_ = (ZbxServer*)parent;
+}
 
-  SV_Srv::Config cng;
+void zbxClientSocket::readData() {
 
-  bool _thrStop = false;
+  QString sname = this->readAll();
 
-  std::thread _thr;
-  BufferData* _pBuffData = nullptr;
-  Archive* _pArchive = nullptr;
+  sname = sname.trimmed();
 
-  std::mutex _mtx;
+  QString sval = server_->getLastValueStr(sname);
 
-  void updCycle();
-  void updateSign(SV_Base::SignalData* sign, int beginPos, int valuePos);
-  void addSignal(const std::string& sign, const BufferData::InputData& bp);
-  void modConnect(const std::string& module);
-  void modDisconnect(const std::string& module);
-};
+  this->write(sval.toStdString().c_str());
+}
+
+QString ZbxServer::getLastValueStr(const QString& sname) {
+
+  auto sdata = pfGetSignalData(sname);
+
+  if (sdata) {
+
+    auto val = sdata->lastData.vals[SV_PACKETSZ - 1];
+
+    switch (sdata->type) {
+    case SV_Base::ValueType::BOOL:  return val.vBool ? "1" : "0";
+    case SV_Base::ValueType::INT:   return QString::number(val.vInt);
+    case SV_Base::ValueType::FLOAT: return QString::number(val.vFloat);
+    default: return "0";
+    }
+  }
+  else
+    return "0";
+}

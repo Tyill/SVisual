@@ -29,6 +29,23 @@
 #include "SVClient/SVClient.h"
 #include "SVAuxFunc/aux_func.h"
 
+#include "windows.h"
+
+BOOL WINAPI CloseHandler(DWORD CEvent)
+{ 
+  switch (CEvent)
+  {
+  case CTRL_C_EVENT: 
+  case CTRL_BREAK_EVENT:
+  case CTRL_CLOSE_EVENT:    
+  case CTRL_LOGOFF_EVENT:
+  case CTRL_SHUTDOWN_EVENT:
+    SV::svDisconnect();
+    break;
+  }
+  return TRUE;
+}
+
 int main(int argc, char *argv[]){
 
   int diap = 9; double vl = 134.6656;
@@ -38,6 +55,7 @@ int main(int argc, char *argv[]){
   else if (diap > 1) vl = int(vl * 100 + 0.5) / 100.;
   else vl = int(vl * 1000 + 0.5) / 1000.;
 
+  SetConsoleCtrlHandler((PHANDLER_ROUTINE)CloseHandler, TRUE);
 
   std::string nm = argc >= 2 ? argv[1] : "client";
 

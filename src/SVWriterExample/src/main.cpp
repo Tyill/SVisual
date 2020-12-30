@@ -22,9 +22,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "SVAuxFunc/auxFunc.h"
-#include "SVAuxFunc/serverTCP.h"
-#include "SVServer/SVServer.h"
+#include "SVAuxFunc/aux_func.h"
+#include "SVAuxFunc/tcp_server.h"
+#include "SVServer/server.h"
 #include <iostream>
 
 using  namespace std;
@@ -36,21 +36,21 @@ void statusMess(const string& mess){
 
 int main(int argc, char* argv[]){
 
-    SV_TcpSrv::setErrorCBack(statusMess);
+    SV_Aux::TCPServer::setErrorCBack(statusMess);
     SV_Srv::setStatusCBack(statusMess);
 
-    SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
+    SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
 
-    SV_Srv::config scng;
+    SV_Srv::Config scng;
     scng.outArchiveEna = true;
 
   string addr = argc > 1 ? argv[1] : "127.0.0.1";
   int port = argc > 2 ? atoi(argv[2]) : 2144;
 
-  if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer(addr, port)){
+  if (SV_Srv::startServer(scng) && SV_Aux::TCPServer::start(addr, port)){
     statusMess("Run " + addr + " " + to_string(port));
     while (true)
-      SV_Aux::SleepMs(1000);
+      SV_Aux::sleepMs(1000);
   }
   else
   {

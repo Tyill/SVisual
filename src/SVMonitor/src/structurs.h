@@ -24,23 +24,24 @@
 //
 #pragma once
 
-#include "stdafx.h"
 #include "SVConfig/config_data.h"
-#include "SVTriggerPanel/SVTriggerPanel.h"
+#include "SVTriggerDialog/trigger_dialog.h"
+
+#include <QColor>
 
 // событие
-struct uEvent{
+struct UserEvent{
   QString triggName;
   QString signal;
   QString module;
   QString sendDateTime;
 
-  SV_Trigger::eventType condType;
+  SV_Trigger::EventType condType;
   int condValue;
   int condTOut;
 };
 
-struct signalAttr{
+struct SignalAttr{
   QString signal;
   QString module;
   QColor color;

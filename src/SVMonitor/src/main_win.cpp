@@ -28,7 +28,6 @@
 #include "SVMonitor/forms/settings_dialog.h"
 #include "SVMonitor/forms/script_dialog.h"
 #include "SVMonitor/forms/graph_setting_dialog.h"
-#include "com_reader.h"
 #include "SVAuxFunc/logger.h"
 #include "SVAuxFunc/tcp_server.h"
 #include "SVGraphPanel/graph_panel.h"
@@ -36,9 +35,10 @@
 #include "SVTriggerDialog/trigger_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "SVServer/server.h"
-#include "SVWebServer/SVWebServer.h"
-#include "SVZabbix/SVZabbix.h"
+#include "SVWebServer/web_server.h"
+#include "SVZabbix/zabbix.h"
 #include "server_api.h"
+#include "com_reader.h"
 
 #include <QSettings>
 #include <QPrinter>
@@ -101,9 +101,9 @@ void MainWin::load(){
   ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
   ui.treeSignals->setIconSize(QSize(40, 20));
 
-  orderWin_ = new EventTableDialog(this); orderWin_->setWindowFlags(Qt::Window);
-  settPanel_ = new SettingsDialog(this); settPanel_->setWindowFlags(Qt::Window);
-  graphSettPanel_ = new GraphSettingDialog(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
+  eventTableDialog_ = new EventTableDialog(this); eventTableDialog_->setWindowFlags(Qt::Window);
+  settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
+  graphSettDialog_ = new GraphSettingDialog(this, cng.graphSett); graphSettDialog_->setWindowFlags(Qt::Window);
 
   SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
   SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
@@ -118,43 +118,43 @@ void MainWin::load(){
   });
   SV_Graph::setGraphSetting(graphPanels_[this], cng.graphSett);
 
-  triggerPanel_ = SV_Trigger::createTriggerPanel(this, SV_Trigger::Config(cng.cycleRecMs, cng.packetSz));
-  triggerPanel_->setWindowFlags(Qt::Window);
-  SV_Trigger::setGetCopySignalRef(triggerPanel_, getCopySignalRefSrv);
-  SV_Trigger::setGetSignalData(triggerPanel_, getSignalDataSrv);
-  SV_Trigger::setGetCopyModuleRef(triggerPanel_, getCopyModuleRefSrv);
-  SV_Trigger::setGetModuleData(triggerPanel_, getModuleDataSrv);
-  SV_Trigger::setOnTriggerCBack(triggerPanel_, [](const QString& name){
+  triggerDialog_ = SV_Trigger::getTriggerDialog(this, SV_Trigger::Config(cng.cycleRecMs, cng.packetSz));
+  triggerDialog_->setWindowFlags(Qt::Window);
+  SV_Trigger::setGetCopySignalRef(triggerDialog_, getCopySignalRefSrv);
+  SV_Trigger::setGetSignalData(triggerDialog_, getSignalDataSrv);
+  SV_Trigger::setGetCopyModuleRef(triggerDialog_, getCopyModuleRefSrv);
+  SV_Trigger::setGetModuleData(triggerDialog_, getModuleDataSrv);
+  SV_Trigger::setOnTriggerCBack(triggerDialog_, [](const QString& name){
     mainWin->onTrigger(name);
   });
 
-  scriptPanel_ = SV_Script::createScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
-  scriptPanel_->setWindowFlags(Qt::Window);
-  SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataSrv);
-  SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRefSrv);
-  SV_Script::setGetSignalData(scriptPanel_, getSignalDataSrv);
-  SV_Script::setGetModuleData(scriptPanel_, getModuleDataSrv);
-  SV_Script::setAddSignal(scriptPanel_, addSignalSrv);
-  SV_Script::setAddModule(scriptPanel_, addModuleSrv);
-  SV_Script::setAddSignalsCBack(scriptPanel_, [](){
+ /* scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
+  scriptDialog_->setWindowFlags(Qt::Window);
+  SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
+  SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
+  SV_Script::setGetSignalData(scriptDialog_, getSignalDataSrv);
+  SV_Script::setGetModuleData(scriptDialog_, getModuleDataSrv);
+  SV_Script::setAddSignal(scriptDialog_, addSignalSrv);
+  SV_Script::setAddModule(scriptDialog_, addModuleSrv);
+  SV_Script::setAddSignalsCBack(scriptDialog_, [](){
     QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
   });
-  SV_Script::setUpdateSignalsCBack(scriptPanel_, [](){
+  SV_Script::setUpdateSignalsCBack(scriptDialog_, [](){
     QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
   });
-  SV_Script::setModuleConnectCBack(scriptPanel_, [](const QString& module){
+  SV_Script::setModuleConnectCBack(scriptDialog_, [](const QString& module){
     QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
   });
-  SV_Script::setChangeSignColor(scriptPanel_, [](const QString& module, const QString& name, const QColor& clr){
+  SV_Script::setChangeSignColor(scriptDialog_, [](const QString& module, const QString& name, const QColor& clr){
     QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
-  });
+  });*/
 
-  exportPanel_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
-  exportPanel_->setWindowFlags(Qt::Window);
-  SV_Exp::setLoadSignalData(exportPanel_, loadSignalDataSrv);
-  SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRefSrv);
-  SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRefSrv);
-  SV_Exp::setGetSignalData(exportPanel_, getSignalDataSrv);
+  exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
+  exportDialog_->setWindowFlags(Qt::Window);
+  SV_Exp::setLoadSignalData(exportDialog_, loadSignalDataSrv);
+  SV_Exp::setGetCopySignalRef(exportDialog_, getCopySignalRefSrv);
+  SV_Exp::setGetCopyModuleRef(exportDialog_, getCopyModuleRefSrv);
+  SV_Exp::setGetSignalData(exportDialog_, getSignalDataSrv);
 
   SV_Srv::setStatusCBack([](const std::string& mess){
     statusMess(mess.c_str());
@@ -178,14 +178,12 @@ void MainWin::load(){
 
   SV_Zbx::setGetSignalData(getSignalDataSrv);
 
-  db_ = new dbProvider(qUtf8Printable(cng.dbPath));
-
+  db_ = new DbProvider(qUtf8Printable(cng.dbPath));
   if (db_->isConnect()){
     statusMess(tr("Подключение БД успешно"));
   }
   else{
     statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
-
     delete db_;
     db_ = nullptr;
   }
@@ -226,7 +224,7 @@ void MainWin::Connect(){
 
         if (!sd) return;
 
-        signAttr_[sign] = signalAttr{ QString::fromStdString(sd->name),
+        signAttr_[sign] = SignalAttr{ QString::fromStdString(sd->name),
           QString::fromStdString(sd->module),
           clr };
         for (auto gp : graphPanels_)
@@ -272,13 +270,13 @@ void MainWin::Connect(){
     }
   });
   connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
-    if (triggerPanel_) triggerPanel_->showNormal();
+    if (triggerDialog_) triggerDialog_->showNormal();
   });
   connect(ui.actionEventOrder, &QAction::triggered, [this]() {
-    if (orderWin_) orderWin_->showNormal();
+    if (eventTableDialog_) eventTableDialog_->showNormal();
   });
   connect(ui.actionExport, &QAction::triggered, [this]() {
-    if (exportPanel_) exportPanel_->showNormal();
+    if (exportDialog_) exportDialog_->showNormal();
   });
   connect(ui.actionNewWin, &QAction::triggered, [this]() {
 
@@ -286,16 +284,16 @@ void MainWin::Connect(){
   });
   connect(ui.actionScript, &QAction::triggered, [this]() {
 
-    SV_Script::startUpdateThread(scriptPanel_);
+    SV_Script::startUpdateThread(scriptDialog_);
 
-    scriptPanel_->showNormal();
+    scriptDialog_->showNormal();
 
   });
   connect(ui.actionSettings, &QAction::triggered, [this]() {
-    if (settPanel_) settPanel_->showNormal();
+    if (settingsDialog_) settingsDialog_->showNormal();
   });
   connect(ui.actionGraphSett, &QAction::triggered, [this]() {
-    if (graphSettPanel_) graphSettPanel_->showNormal();
+    if (graphSettDialog_) graphSettDialog_->showNormal();
   });
   connect(ui.actionUpFont, &QAction::triggered, [this]() {
 
@@ -602,6 +600,9 @@ bool MainWin::writeSettings(QString pathIni){
 
 bool MainWin::init(QString initPath){
     
+  QString logPath = cng.dirPath + "/log/svmonitor.log";
+  lg.setPathFile(qPrintable(logPath));
+
   QSettings settings(initPath, QSettings::IniFormat);
   settings.beginGroup("Param");
 
@@ -812,7 +813,7 @@ MainWin::MainWin(QWidget *parent)
   }
   else{
 
-    if (SV_Aux::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port, true)){
+    if (SV_Aux::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
 
       statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
 
@@ -846,7 +847,7 @@ MainWin::MainWin(QWidget *parent)
       statusMess(QString(tr("Не удалось запустить Zabbix агент: адрес %1 порт %2").arg(cng.zabbix_addr).arg(cng.zabbix_port)));
   }
 
-  SV_Trigger::startUpdateThread(triggerPanel_);
+  SV_Trigger::startUpdateThread(triggerDialog_);
 }
 
 MainWin::~MainWin(){
@@ -869,7 +870,7 @@ MainWin::~MainWin(){
       statusMess(tr("Ошибка сохранения сигналов в БД"));
     if (!db_->saveAttrSignals(signAttr_))
       statusMess(tr("Ошибка сохранения атрибутов в БД"));
-    if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerPanel_)))
+    if (!db_->saveTriggers(SV_Trigger::getCopyTriggerRef(triggerDialog_)))
       statusMess(tr("Ошибка сохранения триггеров в БД"));
   }
 
@@ -958,7 +959,7 @@ void MainWin::contextMenuEvent(QContextMenuEvent * event){
 
   QString root = ui.treeSignals->currentItem() ? ui.treeSignals->currentItem()->text(0) : "";
 
-  if (root.isEmpty() || !qobject_cast<treeWidgetExt*>(focusWidget())) return;
+  if (root.isEmpty() || !qobject_cast<TreeWidgetExt*>(focusWidget())) return;
 
   QMenu* menu = new QMenu(this);
 
@@ -1007,9 +1008,9 @@ void MainWin::contextMenuClick(QAction* act){
 
     if (act->text() == tr("Скрипт")){
 
-      SV_Script::startUpdateThread(scriptPanel_);
+      SV_Script::startUpdateThread(scriptDialog_);
 
-      signScriptPanel* scr = new signScriptPanel(this, scriptPanel_);
+      SignScriptDialog* scr = new SignScriptDialog(this, scriptDialog_);
       scr->setWindowFlags(Qt::Window);
 
       QString module = ui.treeSignals->currentItem()->parent()->text(0);
@@ -1118,7 +1119,7 @@ void MainWin::updateTblSignal(){
           s.second->comment = sd.comment;
         }
 
-        signalAttr as = db_->getAttrSignal(s.second->name.c_str(), s.second->module.c_str());
+        SignalAttr as = db_->getAttrSignal(s.second->name.c_str(), s.second->module.c_str());
         if (as.color.isValid()){
           signAttr_[QString::fromStdString(s.first)] = as;
         }
@@ -1126,7 +1127,7 @@ void MainWin::updateTblSignal(){
         auto trg = db_->getTrigger(s.second->name.c_str(), s.second->module.c_str());
         int sz = trg.size();
         for (int i = 0; i < sz; ++i)
-          SV_Trigger::addTrigger(triggerPanel_, trg[i]->name, trg[i]);
+          SV_Trigger::addTrigger(triggerDialog_, trg[i]->name, trg[i]);
 
         signExist_.insert(s.first.c_str());
       }
@@ -1163,7 +1164,7 @@ void MainWin::moduleConnect(QString module){
       trgOn->condValue = 0;
       trgOn->condTOut = 0;
     }
-    SV_Trigger::addTrigger(triggerPanel_, module + "On", trgOn);
+    SV_Trigger::addTrigger(triggerDialog_, module + "On", trgOn);
 
     auto trgOff = db_ ? db_->getTrigger(module + "Off") : nullptr;
     if (!trgOff){
@@ -1176,18 +1177,18 @@ void MainWin::moduleConnect(QString module){
       trgOff->condValue = 0;
       trgOff->condTOut = 0;
     }
-    SV_Trigger::addTrigger(triggerPanel_, module + "Off", trgOff);
+    SV_Trigger::addTrigger(triggerDialog_, module + "Off", trgOff);
 
     signExist_.insert(module);
   }
 
   sortSignalByModule();
 
-  auto tr = SV_Trigger::getTriggerData(triggerPanel_, module + "On");
+  auto tr = SV_Trigger::getTriggerData(triggerDialog_, module + "On");
   if (tr->isActive)
     tr->condValue = 1;
 
-  tr = SV_Trigger::getTriggerData(triggerPanel_, module + "Off");
+  tr = SV_Trigger::getTriggerData(triggerDialog_, module + "Off");
   if (tr->isActive)
     tr->condValue = 0;
 }
@@ -1198,18 +1199,18 @@ void MainWin::moduleDisconnect(QString module){
 
   sortSignalByModule();
 
-  auto tr = SV_Trigger::getTriggerData(triggerPanel_, module + "On");
+  auto tr = SV_Trigger::getTriggerData(triggerDialog_, module + "On");
   if (tr->isActive)
     tr->condValue = 0;
 
-  tr = SV_Trigger::getTriggerData(triggerPanel_, module + "Off");
+  tr = SV_Trigger::getTriggerData(triggerDialog_, module + "Off");
   if (tr->isActive)
     tr->condValue = 1;
 }
 
 void MainWin::onTrigger(QString trigger){
 
-  SV_Trigger::TriggerData* td = SV_Trigger::getTriggerData(triggerPanel_, trigger);
+  SV_Trigger::TriggerData* td = SV_Trigger::getTriggerData(triggerDialog_, trigger);
 
   QString name = td->module + QString(":") + td->signal + ":" + td->name;
 
@@ -1293,9 +1294,9 @@ void MainWin::updateConfig(MainWin::Config cng_){
   SV_Srv::setConfig(srvCng);
 }
 
-QVector<uEvent> MainWin::getEvents(QDateTime bg, QDateTime en){
+QVector<UserEvent> MainWin::getEvents(QDateTime bg, QDateTime en){
 
-  return db_ ? db_->getEvents(bg, en) : QVector<uEvent>();
+  return db_ ? db_->getEvents(bg, en) : QVector<UserEvent>();
 }
 
 QDialog* MainWin::addNewWindow(const QRect& pos){

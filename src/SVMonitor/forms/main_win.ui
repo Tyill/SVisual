@@ -80,7 +80,7 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="treeWidgetExt" name="treeSignals">
+          <widget class="TreeWidgetExt" name="treeSignals">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -207,7 +207,7 @@
      <x>0</x>
      <y>0</y>
      <width>879</width>
-     <height>31</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMain">
@@ -394,9 +394,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>treeWidgetExt</class>
+   <class>TreeWidgetExt</class>
    <extends>QTreeWidget</extends>
-   <header>src/treeWidgetExt.h</header>
+   <header>src/tree_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

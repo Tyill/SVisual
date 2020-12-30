@@ -22,30 +22,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
 
-#include "stdafx.h"
+#include "SVWebServer/web_server.h"
+#include "web_server_impl.h"
 
-class treeWidgetExt : public QTreeWidget
-{
-  Q_OBJECT
+WebServer WServer;
 
+namespace SV_Web {
 
-private:
-  QPoint startMovePos_;
+  bool startServer(const QString& addr, int port, const Config& cng) {
 
+    if (WServer.isListening()) return true;
 
-protected:
-    
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
+    WServer.setConfig(cng);
 
-public:
+    return WServer.listen(QHostAddress(addr), port);
+  }
 
-  treeWidgetExt(QWidget *parent = 0);
-  ~treeWidgetExt();
+  void stopServer() {
 
+    if (WServer.isListening())
+      WServer.close();
+  }
 
-};
+  void setGetCopySignalRef(pf_getCopySignalRef f) {
 
+    WServer.pfGetCopySignalRef = f;
+  }
 
+  void setGetCopyModuleRef(pf_getCopyModuleRef f) {
+
+    WServer.pfGetCopyModuleRef = f;
+  }
+
+  void setGetSignalData(pf_getSignalData f) {
+
+    WServer.pfGetSignalData = f;
+  }
+}

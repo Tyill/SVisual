@@ -23,12 +23,11 @@
 // THE SOFTWARE.
 //
 
+#include "SVConfig/config_limits.h"
+#include "com_reader.h"
+
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
-#include "stdafx.h"
-#include "comReader.h"
-#include "SVConfig/config_limits.h"
-
 
 SerialPortReader::SerialPortReader(SerialPortReader::Config cng_) : cng(cng_)
 {
@@ -108,6 +107,8 @@ void SerialPortReader::hReadData()
 
   isConnect_ = true;
 }
+
+void statusMess(const QString& mess);
 
 void SerialPortReader::hError(QSerialPort::SerialPortError serialPortError)
 {

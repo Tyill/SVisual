@@ -6,7 +6,7 @@ project(SVStatDialog)
 
 FILE(GLOB_RECURSE SRC_StPn "*.cpp" "*.h" "*.ui" "*.qrc")
 
-add_library(SVStatDialog SHARED ${SRC_StPn})
+add_library(SVStatDialog STATIC ${SRC_StPn})
 
 target_link_libraries(SVStatDialog SVConfig)
 

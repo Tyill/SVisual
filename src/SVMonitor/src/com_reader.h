@@ -24,9 +24,11 @@
 //
 #pragma once
 
-#include "stdafx.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+
+#include <QTimer>
+#include <string>
 
 class SerialPortReader : public QObject
 {

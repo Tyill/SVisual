@@ -26,22 +26,22 @@
 
 
 /////////////////////
-#include "stdafx.h"
+
 #include "http_parser.h"
 #include <QTcpServer>
 #include <QTcpSocket>
 
-#include "SVWebServer/SVWebServer.h"
+#include "SVWebServer/web_server.h"
 
-class webServer : public QTcpServer{
+class WebServer : public QTcpServer{
     
     Q_OBJECT
 
 public:
 
-    webServer(QObject *parent = nullptr) : QTcpServer(parent){}
+    WebServer(QObject *parent = nullptr) : QTcpServer(parent){}
 
-    ~webServer() = default;
+    ~WebServer() = default;
         
     SV_Web::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
 
@@ -49,7 +49,7 @@ public:
 
     SV_Web::pf_getSignalData pfGetSignalData = nullptr;
         
-    void setConfig(const SV_Web::config& cng);
+    void setConfig(const SV_Web::Config& cng);
 
     QByteArray jsonGetAllSignals();
     
@@ -62,7 +62,7 @@ public:
 private:
     void incomingConnection(qintptr handle) override;
 
-    SV_Web::config cng;
+    SV_Web::Config cng;
     
 };
 
@@ -85,7 +85,7 @@ private:
     QMap<QString, QString> reqFields_;
     QStringList reqSignals_;
 
-    webServer* server_ = nullptr;
+    WebServer* server_ = nullptr;
 
 
 private slots:

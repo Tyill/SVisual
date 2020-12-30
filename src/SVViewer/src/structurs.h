@@ -27,7 +27,9 @@
 #include "SVConfig/config_limits.h"
 #include "SVConfig/config_data.h"
 
-struct valueData{
+#include <QtCore>
+
+struct ValueData{
   char name[SV_NAMESZ];
   char module[SV_NAMESZ];
   char group[SV_NAMESZ];
@@ -36,7 +38,7 @@ struct valueData{
   int vlCnt;
 };
 
-struct fileData{
+struct FileData{
 
   QString file;
   int utcOffsMs;
@@ -49,14 +51,14 @@ struct fileData{
 
   QMap<QString, fsd> signls;
 
-  fileData(QString fName, int utc){
+  FileData(QString fName, int utc){
 
     file = fName;
     utcOffsMs = utc;
   }
 };
 
-struct signalAttr{
+struct SignalAttr{
     QString signal;
     QString module;
     QColor color;

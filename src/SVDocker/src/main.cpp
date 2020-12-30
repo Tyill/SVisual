@@ -22,10 +22,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "SVAuxFunc/auxFunc.h"
-#include "SVAuxFunc/serverTCP.h"
-#include "SVServer/SVServer.h"
-#include "SVWebServer/SVWebServer.h"
+#include "SVAuxFunc/aux_func.h"
+#include "SVAuxFunc/tcp_server.h"
+#include "SVServer/server.h"
+#include "SVWebServer/web_server.h"
+#include "SVConfig/config_limits.h"
 
 #include <iostream>
 
@@ -85,23 +86,23 @@ void init(const std::string& initPath, config& cng){
   QSettings settings(QString::fromStdString(initPath), QSettings::IniFormat);
   settings.beginGroup("Param");
 
-  cng.cycleRecMs =  settings.Value("cycleRecMs", 100).toInt();
+  cng.cycleRecMs =  settings.value("cycleRecMs", 100).toInt();
   cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
-  cng.packetSz = settings.Value("packetSz", 10).toInt();
+  cng.packetSz = settings.value("packetSz", 10).toInt();
   cng.packetSz = qMax(cng.packetSz, 1);
 
   // связь по TCP
-  cng.tcp_port = settings.Value("tcp_port", "2144").toInt();
+  cng.tcp_port = settings.value("tcp_port", "2144").toInt();
 
   // web
-  cng.web_port = settings.Value("web_port", "2145").toInt();
+  cng.web_port = settings.value("web_port", "2145").toInt();
 
   // копир на диск
-  cng.outArchiveEna = settings.Value("outArchiveEna", "1").toInt() == 1;
-  cng.outArchivePath = settings.Value("outArchivePath", "/home/").toString().toStdString();
+  cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
+  cng.outArchivePath = settings.value("outArchivePath", "/home/").toString().toStdString();
 
-  cng.outArchiveName = settings.Value("outFileName", "svrec").toString().toStdString();
-  cng.outArchiveHourCnt = settings.Value("outFileHourCnt", 2).toInt();
+  cng.outArchiveName = settings.value("outFileName", "svrec").toString().toStdString();
+  cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
   cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
 
   settings.endGroup();
@@ -112,8 +113,8 @@ int main(int argc, char* argv[]){
 
     QCoreApplication a(argc, argv);
 
-    SV_TcpSrv::setErrorCBack(statusMess);
-    SV_TcpSrv::setDataCBack(SV_Srv::receiveData);
+    SV_Aux::TCPServer::setErrorCBack(statusMess);
+    SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
 
   SV_Srv::setStatusCBack(statusMess);
 
@@ -122,7 +123,7 @@ int main(int argc, char* argv[]){
   std::string iniPath = argc > 1 ? argv[1] : a.applicationDirPath().toStdString() + "/svdocker.ini";
     init(iniPath, cng);
 
-    SV_Srv::config scng;
+    SV_Srv::Config scng;
 
   scng.cycleRecMs = cng.cycleRecMs;
   scng.packetSz = cng.packetSz;
@@ -131,7 +132,7 @@ int main(int argc, char* argv[]){
   scng.outArchiveName = cng.outArchiveName;
   scng.outArchivePath = cng.outArchivePath;
     
-    if (SV_Srv::startServer(scng) && SV_TcpSrv::runServer("0.0.0.0", cng.tcp_port)){
+    if (SV_Srv::startServer(scng) && SV_Aux::TCPServer::start("0.0.0.0", cng.tcp_port)){
     statusMess("TCP server run port: " + std::to_string(cng.tcp_port));
   }
   else{
@@ -143,7 +144,7 @@ int main(int argc, char* argv[]){
   SV_Web::setGetSignalData(getSignalDataSrv);
   SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-    if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::config(SV_CYCLEREC_MS, SV_PACKETSZ)))
+    if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ)))
       statusMess("WEB server run port: " + std::to_string(cng.web_port));
   else
     statusMess("WEB server not run port: " + std::to_string(cng.web_port));

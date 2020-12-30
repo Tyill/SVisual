@@ -28,7 +28,7 @@
 #include <mutex>
 #include <map>
 
-#include "ui_script_dialog.h"
+#include "GeneratedFiles/ui_script_dialog.h"
 #include "SVConfig/config_data.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "Lua/lua.hpp"
@@ -89,7 +89,7 @@ private:
 
   QMap<QString, SV_Base::SignalData*> signBuff_;
 
-  int iterValue_ = 0,
+  size_t iterValue_ = 0,
     buffCPos_ = 0,
     buffSz_ = 1;
 
@@ -108,7 +108,7 @@ private:
 
   QString exlName(QString);
 
-  void updateSign(SV_Base::SignalData* sign, int beginPos, int valuePos);
+  void updateSign(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
   bool updateBuffValue(const QString& module, const QString& signal, SV_Base::ValueType stype);
 
   void setValue(const QString& signal, SV_Base::Value Value, uint64_t time);

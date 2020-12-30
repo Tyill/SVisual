@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "ui_export_dialog.h"
+#include "GeneratedFiles/ui_export_dialog.h"
 #include "SVConfig/config_data.h"
 #include "SVExportDialog/export_dialog.h"
 
@@ -45,7 +45,7 @@ public:
   ~ExportDialog();
 
 private:
-  Ui::ExportPanelDialog ui;
+  Ui::ExportDialog ui;
   QString selModule_, selSignal_, selDirMem_;
 
 private:

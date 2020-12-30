@@ -25,7 +25,7 @@
 #pragma once
 
 #include "SVGraphPanel/graph_panel.h"
-#include "SVGraphPanel/forms/ui_graph_widget.h"
+#include "GeneratedFiles/ui_graph_widget.h"
 
 class QLabel;
 class GraphPanelWidget;

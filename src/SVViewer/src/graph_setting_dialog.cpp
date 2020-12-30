@@ -23,28 +23,48 @@
 // THE SOFTWARE.
 //
 
+#include "SVViewer/forms/graph_setting_dialog.h"
 #include "SVViewer/forms/main_win.h"
 
-#include <QApplication>
+GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting& gs) {
 
-int main(int argc, char *argv[])
-{
-#ifdef _WIN32
-  QStringList paths = QCoreApplication::libraryPaths();
-  paths.append(".");
-  paths.append("plugins");
-  QCoreApplication::setLibraryPaths(paths);
-#endif
+  setParent(parent);
 
-  QApplication a(argc, argv);
+  MainWin* mainWin = (MainWin*)parent;
 
-#ifdef SV_EN
-  QTranslator translator;
-  translator.load(":/SVViewer/svviewer_en.qm");
-  a.installTranslator(&translator);
-#endif
+  ui.setupUi(this);
 
-  MainWin w;
-  w.showMaximized();
-  return a.exec();
+  ui.slrColorTransparent->setValue(gs.transparent);
+  ui.slrPenWidth->setValue(gs.lineWidth);
+  ui.chbDarkTheme->setChecked(gs.darkTheme);
+
+  connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos) {
+
+    SV_Graph::GraphSetting gs;
+    gs.transparent = pos;
+    gs.lineWidth = ui.slrPenWidth->value();
+    gs.darkTheme = ui.chbDarkTheme->isChecked();
+
+    mainWin->updateGraphSetting(gs);
+  });
+
+  connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos) {
+
+    SV_Graph::GraphSetting gs;
+    gs.transparent = ui.slrColorTransparent->value();
+    gs.lineWidth = pos;
+    gs.darkTheme = ui.chbDarkTheme->isChecked();
+
+    mainWin->updateGraphSetting(gs);
+  });
+
+  connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin]() {
+
+    SV_Graph::GraphSetting gs;
+    gs.transparent = ui.slrColorTransparent->value();
+    gs.lineWidth = ui.slrPenWidth->value();
+    gs.darkTheme = ui.chbDarkTheme->isChecked();
+
+    mainWin->updateGraphSetting(gs);
+  });
 }

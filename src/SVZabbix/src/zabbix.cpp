@@ -22,52 +22,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
 
+#include "SVZabbix/zabbix.h"
+#include "zbx_server.h"
 
-/////////////////////
-#include "stdafx.h"
-#include <QTcpServer>
-#include <QTcpSocket>
+using namespace std;
 
-#include "SVZabbix/SVZabbix.h"
+ZbxServer zServer;
 
-class zbxServer : public QTcpServer{
-    
-    Q_OBJECT
+namespace SV_Zbx {
 
-public:
+  bool startAgent(const QString& addr, int port, const Config& cng) {
 
-    zbxServer(QObject *parent = nullptr) : QTcpServer(parent){}
+    if (zServer.isListening()) return true;
 
-    ~zbxServer() = default;
-  
-    SV_Zbx::pf_getSignalData pfGetSignalData = nullptr;
-        
-    void setConfig(const SV_Zbx::config& cng);
-   
-    QString getLastValueStr(const QString& sname);
+    zServer.setConfig(cng);
 
-private:
-    void incomingConnection(qintptr handle) override;
+    return zServer.listen(QHostAddress(addr), port);
+  }
 
-    SV_Zbx::config cng;
-    
-};
+  void stopAgent() {
 
-class zbxClientSocket : public QTcpSocket
-{
-    Q_OBJECT
+    if (zServer.isListening())
+      zServer.close();
+  }
 
-public:
-       
-    zbxClientSocket(QObject *parent);
+  void setGetSignalData(pf_getSignalData f) {
 
-private: 
-  
-    zbxServer* server_ = nullptr;
-
-
-private slots:
-    void readData();
-};
+    zServer.pfGetSignalData = f;
+  }
+}

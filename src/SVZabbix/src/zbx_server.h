@@ -22,43 +22,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "SVWebServer/SVWebServer.h"
-#include "webServer.h"
+#pragma once
 
-webServer wServer;
 
-namespace SV_Web {
+/////////////////////
 
-    bool startServer(const QString& addr, int port, const config& cng){
-               
-        if (wServer.isListening()) return true;
+#include <QTcpServer>
+#include <QTcpSocket>
 
-        wServer.setConfig(cng);
+#include "SVZabbix/zabbix.h"
 
-        return wServer.listen(QHostAddress(addr), port);
-    }
+class ZbxServer : public QTcpServer {
 
-    void stopServer(){
+  Q_OBJECT
 
-        if (wServer.isListening())
-          wServer.close();
-    }
-      
-    void setGetCopySignalRef(pf_getCopySignalRef f) {
+public:
 
-        wServer.pfGetCopySignalRef = f; 
-    }
+  ZbxServer(QObject *parent = nullptr) : QTcpServer(parent) {}
 
-    void setGetCopyModuleRef(pf_getCopyModuleRef f){
+  ~ZbxServer() = default;
 
-        wServer.pfGetCopyModuleRef = f;
-    }
+  SV_Zbx::pf_getSignalData pfGetSignalData = nullptr;
 
-    void setGetSignalData(pf_getSignalData f) {
+  void setConfig(const SV_Zbx::Config& cng);
 
-        wServer.pfGetSignalData = f;
-    }
+  QString getLastValueStr(const QString& sname);
 
-    
-}
+private:
+  void incomingConnection(qintptr handle) override;
+
+  SV_Zbx::Config cng;
+
+};
+
+class zbxClientSocket : public QTcpSocket
+{
+  Q_OBJECT
+
+public:
+
+  zbxClientSocket(QObject *parent);
+
+private:
+
+  ZbxServer* server_ = nullptr;
+
+
+  private slots:
+  void readData();
+};

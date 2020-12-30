@@ -24,37 +24,36 @@
 //
 #pragma once
 
-#include "stdafx.h"
 #include "structurs.h"
 #include "Lib/sqlite/sqlite3.h"
 #include "SVConfig/config_data.h"
-#include "SVTriggerPanel/SVTriggerPanel.h"
+#include "SVTriggerDialog/trigger_dialog.h"
 
-class dbProvider
+class DbProvider
 {
 
 public:
 
-  dbProvider(const QString& path);
+  DbProvider(const QString& path);
 
-  ~dbProvider();
+  ~DbProvider();
 
   bool isConnect();
 
-  bool saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trg);
+  bool saveTriggers(const QMap<QString, SV_Trigger::TriggerData*>& trg);
 
-  QVector<SV_Trigger::triggerData*> getTrigger(const QString& signal, const QString& module);
-  SV_Trigger::triggerData* getTrigger(const QString& trname);
+  QVector<SV_Trigger::TriggerData*> getTrigger(const QString& signal, const QString& module);
+  SV_Trigger::TriggerData* getTrigger(const QString& trname);
 
   bool saveSignals(const std::map<std::string, SV_Base::SignalData*>& signs);
   SV_Base::SignalData getSignal(const QString& signal, const QString& module);
 
-  bool saveAttrSignals(const QMap<QString, signalAttr>& attr);
-  signalAttr getAttrSignal(const QString& signal, const QString& module);
+  bool saveAttrSignals(const QMap<QString, SignalAttr>& attr);
+  SignalAttr getAttrSignal(const QString& signal, const QString& module);
   void delAttrSignal(const QString& signal, const QString& module);
 
   void saveEvent(QString trigger, QDateTime dt);
-  QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);
+  QVector<UserEvent> getEvents(QDateTime beginTime, QDateTime endTime);
 
 private:
 

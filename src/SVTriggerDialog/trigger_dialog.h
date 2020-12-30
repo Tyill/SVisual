@@ -74,7 +74,7 @@ namespace SV_Trigger {
     }
   };
 
-  QDialog* createTriggerPanel(QWidget* parent, Config);
+  QDialog* getTriggerDialog(QWidget* parent, Config);
 
   void startUpdateThread(QDialog* panel);
 

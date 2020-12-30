@@ -26,7 +26,7 @@
 #include "SVServer/server.h"
 #include "SVAuxFunc/timer_delay.h"
 #include "SVAuxFunc/aux_func.h"
-#include "thr_update_signal.h"
+#include "thread_update.h"
 #include "buffer_data.h"
 #include "archive.h"
 
@@ -40,29 +40,29 @@ extern SV_Srv::onModuleConnectCBack pfModuleConnectCBack;
 extern SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack;
 extern SV_Srv::onUpdateSignalsCBack pfUpdateSignalsCBack;
 extern SV_Srv::onAddSignalsCBack pfAddSignalsCBack;
-extern const int BUFF_SIGN_HOUR_CNT;
+extern const int BUFF_SIGN_HOUR_CNT = 2;
 
-ThrUpdateSignal::ThrUpdateSignal(const SV_Srv::Config& _cng, BufferData* pBuff):
+ThreadUpdate::ThreadUpdate(const SV_Srv::Config& _cng, BufferData* pBuff):
   cng(_cng), _pBuffData(pBuff){
     
   _pArchive = new Archive(cng);
-  _thr = std::thread(&ThrUpdateSignal::updCycle, this);
+  _thr = std::thread(&ThreadUpdate::updCycle, this);
 }
 
-ThrUpdateSignal::~ThrUpdateSignal(){
+ThreadUpdate::~ThreadUpdate(){
 
   _thrStop = true;
   if (_thr.joinable()) _thr.join();
 }
 
-void ThrUpdateSignal::setArchiveConfig(SV_Srv::Config cng_){
+void ThreadUpdate::setArchiveConfig(SV_Srv::Config cng_){
 
   cng.outArchiveEna = cng_.outArchiveEna;
 
   _pArchive->setConfig(cng_);
 }
 
-void ThrUpdateSignal::addSignal(const string& sign, const BufferData::InputData& bp){
+void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp){
 
   SignalData* sd = new SignalData();
 
@@ -97,7 +97,7 @@ void ThrUpdateSignal::addSignal(const string& sign, const BufferData::InputData&
   _pArchive->addSignal(sign);
 }
 
-void ThrUpdateSignal::updateSign(SignalData* sign, int beginPos, int valuePos){
+void ThreadUpdate::updateSign(SignalData* sign, size_t beginPos, size_t valuePos){
 
   sign->buffMinTime = sign->buffData[beginPos].beginTime;
   sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
@@ -130,19 +130,19 @@ void ThrUpdateSignal::updateSign(SignalData* sign, int beginPos, int valuePos){
 
 }
 
-void ThrUpdateSignal::modConnect(const string& module){
+void ThreadUpdate::modConnect(const string& module){
 
   if (pfModuleConnectCBack)
     pfModuleConnectCBack(module);
 }
 
-void ThrUpdateSignal::modDisconnect(const string& module){
+void ThreadUpdate::modDisconnect(const string& module){
 
   if (pfModuleDisconnectCBack)
     pfModuleDisconnectCBack(module);
 }
 
-void ThrUpdateSignal::updCycle(){
+void ThreadUpdate::updCycle(){
 
   auto sref = SV_Srv::getCopySignalRef();
   map<string, bool> signActive;
@@ -159,9 +159,9 @@ void ThrUpdateSignal::updCycle(){
   SV_Aux::TimerDelay tmDelay;
   tmDelay.update();
 
-  int buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
-  int packSz = SV_PACKETSZ * sizeof(Value);                    // размер пакета
-  int checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко:(
+  size_t buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
+  size_t packSz = SV_PACKETSZ * sizeof(Value);                    // размер пакета
+  size_t checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
 
   while (!_thrStop){
 
@@ -192,7 +192,7 @@ void ThrUpdateSignal::updCycle(){
 
       // заполняем буфер, если разрешено
       if (sd->isBuffEnable) {
-        int vp = sd->buffValuePos;
+        size_t vp = sd->buffValuePos;
         sd->buffData[vp].beginTime = bp.data.beginTime;
         memcpy(sd->buffData[vp].vals, bp.data.vals, packSz);
 

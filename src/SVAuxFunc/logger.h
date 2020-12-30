@@ -51,6 +51,11 @@ namespace SV_Aux {
       _cval.notify_one();
       if (_thrWriteMess.joinable()) _thrWriteMess.join();
     }
+
+    void setPathFile(const std::string& pathFile) {
+      createSubDirectory(pathFile);
+      _pathFile = pathFile;
+    }
     
     bool writeLine(const std::string &mess) {
 

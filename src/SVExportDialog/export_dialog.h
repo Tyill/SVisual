@@ -44,21 +44,21 @@ namespace SV_Exp {
   QDialog* createExportDialog(QWidget* parent, Config);
 
   typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
+  void setGetCopySignalRef(QDialog* expDialog, pf_getCopySignalRef f);
 
   typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
-  void setGetCopyModuleRef(QDialog* stPanel, pf_getCopyModuleRef f);
+  void setGetCopyModuleRef(QDialog* expDialog, pf_getCopyModuleRef f);
 
-  typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
-  void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
+  typedef SV_Base::SignalData*(*pf_getSignalData)(const QString &sign);
+  void setGetSignalData(QDialog* expDialog, pf_getSignalData f);
 
   typedef bool(*pf_loadSignalData)(const QString& sign);
-  void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
+  void setLoadSignalData(QDialog* expDialog, pf_loadSignalData f);
 
   typedef QPair<qint64, qint64>(*pf_getTimeInterval)();
-  void setGetTimeInterval(QDialog* stPanel, pf_getTimeInterval f);
+  void setGetTimeInterval(QDialog* expDialog, pf_getTimeInterval f);
 
   typedef void(*pf_setTimeInterval)(qint64, qint64);
-  void setSetTimeInterval(QDialog* stPanel, pf_setTimeInterval f);
+  void setSetTimeInterval(QDialog* expDialog, pf_setTimeInterval f);
 
 }

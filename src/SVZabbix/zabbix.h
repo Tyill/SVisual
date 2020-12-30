@@ -24,22 +24,27 @@
 //
 #pragma once
 
-#include "forms/ui_graphSetting.h"
-#include "forms/mainWin.h"
-#include "SVGraphPanel/SVGraphPanel.h"
+#include "SVConfig/config_data.h"
 
-class graphSettingPanel : public QDialog
-{
-  Q_OBJECT
+#include <QtCore>
 
-public:
-  graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting&);
-  ~graphSettingPanel() = default;
-  
-  Ui::graphSettingClass ui;
+namespace SV_Zbx {
 
-private:
+  struct Config {
 
-private slots:
+    int cycleRecMs;
+    int packetSz;
 
-};
+    Config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+      cycleRecMs(cycleRecMs_),
+      packetSz(packetSz_) {}
+  };
+
+  bool startAgent(const QString& addr, int port, const Config&);
+
+  void stopAgent();
+
+  typedef SV_Base::SignalData* (*pf_getSignalData)(const QString& sign);
+  void setGetSignalData(pf_getSignalData f);
+
+}

@@ -72,7 +72,7 @@
          </layout>
         </item>
         <item>
-         <widget class="treeWidgetExt" name="treeSignals">
+         <widget class="TreeWidgetExt" name="treeSignals">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -126,11 +126,11 @@
           <property name="maximum">
            <number>0</number>
           </property>
-          <property name="Value">
-           <number>-1</number>
-          </property>
           <property name="textVisible">
            <bool>false</bool>
+          </property>
+          <property name="Value" stdset="0">
+           <number>-1</number>
           </property>
          </widget>
         </item>
@@ -233,7 +233,7 @@
      <x>0</x>
      <y>0</y>
      <width>362</width>
-     <height>31</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -387,9 +387,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>treeWidgetExt</class>
+   <class>TreeWidgetExt</class>
    <extends>QTreeWidget</extends>
-   <header>src/treeWidgetExt.h</header>
+   <header>src/tree_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

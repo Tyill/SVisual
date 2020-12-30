@@ -22,8 +22,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "SVServer/SVServer.h"
+
+#include "SVServer/server.h"
 
 QMap<QString, SV_Base::ModuleData *> getCopyModuleRefSrv();
 

@@ -22,10 +22,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "treeWidgetExt.h"
 
-treeWidgetExt::treeWidgetExt(QWidget *parent){
+#include "tree_widget.h"
+
+#include <QtGui>
+#include <QApplication>
+
+TreeWidgetExt::TreeWidgetExt(QWidget *parent){
 
   this->setParent(parent);
 
@@ -35,12 +38,12 @@ treeWidgetExt::treeWidgetExt(QWidget *parent){
 
 }
 
-treeWidgetExt::~treeWidgetExt(){
+TreeWidgetExt::~TreeWidgetExt(){
 
 
 }
 
-void treeWidgetExt::mousePressEvent(QMouseEvent *event){
+void TreeWidgetExt::mousePressEvent(QMouseEvent *event){
 
   if (event->button() == Qt::LeftButton)
     startMovePos_ = event->pos();
@@ -49,7 +52,7 @@ void treeWidgetExt::mousePressEvent(QMouseEvent *event){
   QTreeWidget::mousePressEvent(event);
 }
 
-void treeWidgetExt::mouseMoveEvent(QMouseEvent *event){
+void TreeWidgetExt::mouseMoveEvent(QMouseEvent *event){
 
   if (event->buttons() & Qt::LeftButton) {
 

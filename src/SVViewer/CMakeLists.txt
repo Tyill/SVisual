@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 
 include(../cmake/qt.cmake)
-include(../cmake/mswin.cmake)
 
 project(SVViewer)
 
@@ -19,18 +18,12 @@ if(MSVC)
    target_link_libraries (SVViewer optimized qtmain)
 endif(MSVC)
 
-target_link_libraries(SVViewer SVConfig SVAuxFunc SVGraphPanel SVStatPanel SVExportPanel SVScriptPanel)
+target_link_libraries(SVViewer SVConfig SVAuxFunc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
 
 # copy mswin dependent
 if(WIN32)
-   mswin_getDependDir(DEPEND_WIN_DIR)
-   
-   add_custom_command(TARGET SVViewer PRE_BUILD
-       COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPEND_WIN_DIR}/plugins ${CMAKE_CURRENT_BINARY_DIR}/plugins)
-
-   target_link_libraries(SVViewer zlibwapi)
+   target_link_libraries(SVViewer zlib)
 else()
-
    target_link_libraries(SVViewer z)
 endif(WIN32)
 

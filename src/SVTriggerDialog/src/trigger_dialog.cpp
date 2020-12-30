@@ -27,9 +27,12 @@
 
 namespace SV_Trigger {
 
-  QDialog *createTriggerPanel(QWidget *parent, Config cng) {
+  TriggerDialog* trgDialogRef = nullptr;
 
-    return new TriggerDialog(parent, cng);
+  QDialog* getTriggerDialog(QWidget *parent, Config cng) {
+    if (!trgDialogRef)
+      trgDialogRef = new TriggerDialog(parent, cng);
+    return trgDialogRef;
   }
 
   void startUpdateThread(QDialog* stp){

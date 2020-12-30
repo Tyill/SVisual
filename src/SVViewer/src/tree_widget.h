@@ -24,6 +24,28 @@
 //
 #pragma once
 
-#include <QtCore>
-#include <QtNetwork>
+#include <QTreeWidget>
+
+class TreeWidgetExt : public QTreeWidget
+{
+  Q_OBJECT
+
+
+private:
+  QPoint startMovePos_;
+
+
+protected:
+
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+
+public:
+
+  TreeWidgetExt(QWidget *parent = 0);
+  ~TreeWidgetExt();
+
+
+};
+
 

@@ -22,11 +22,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "SVMonitor/forms/GraphSettingDialog.h"
-#include "SVMonitor/forms/mainwin.h"
 
-GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::graphSetting& gs){
+#include "SVMonitor/forms/graph_setting_dialog.h"
+#include "SVMonitor/forms/main_win.h"
+
+GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting& gs) {
 
   setParent(parent);
 
@@ -38,31 +38,31 @@ GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::graphSet
   ui.slrPenWidth->setValue(gs.lineWidth);
   ui.chbDarkTheme->setChecked(gs.darkTheme);
 
-  connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos){
+  connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos) {
 
-    SV_Graph::graphSetting gs;
+    SV_Graph::GraphSetting gs;
     gs.transparent = pos;
-    gs.lineWidth = ui.slrPenWidth->Value();
+    gs.lineWidth = ui.slrPenWidth->value();
     gs.darkTheme = ui.chbDarkTheme->isChecked();
 
     mainWin->updateGraphSetting(gs);
   });
 
-  connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos){
+  connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos) {
 
-    SV_Graph::graphSetting gs;
-    gs.transparent = ui.slrColorTransparent->Value();
+    SV_Graph::GraphSetting gs;
+    gs.transparent = ui.slrColorTransparent->value();
     gs.lineWidth = pos;
     gs.darkTheme = ui.chbDarkTheme->isChecked();
 
     mainWin->updateGraphSetting(gs);
   });
 
-  connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin](){
+  connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin]() {
 
-    SV_Graph::graphSetting gs;
-    gs.transparent = ui.slrColorTransparent->Value();
-    gs.lineWidth = ui.slrPenWidth->Value();
+    SV_Graph::GraphSetting gs;
+    gs.transparent = ui.slrColorTransparent->value();
+    gs.lineWidth = ui.slrPenWidth->value();
     gs.darkTheme = ui.chbDarkTheme->isChecked();
 
     mainWin->updateGraphSetting(gs);

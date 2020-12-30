@@ -32,7 +32,7 @@
 #pragma once
 
 #ifdef _WIN32
-  #ifdef SVCLDLL_EXPORTS
+  #ifdef SVCLIENTDLL_EXPORTS
     #define SV_API extern "C" __declspec(dllexport)
   #else
     #define SV_API extern "C" __declspec(dllimport)

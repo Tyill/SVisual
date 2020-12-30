@@ -22,33 +22,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "SVZabbix/SVZabbix.h"
-#include "zbxServer.h"
+#pragma once
 
-using namespace std;
+#include "GeneratedFiles/ui_graph_setting.h"
+#include "SVGraphPanel/graph_panel.h"
 
-zbxServer zServer;
+class GraphSettingDialog : public QDialog
+{
+  Q_OBJECT
 
-namespace SV_Zbx {
+public:
+  GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting&);
+  ~GraphSettingDialog() = default;
 
-    bool startAgent(const QString& addr, int port, const config& cng){
-               
-        if (zServer.isListening()) return true;
+  Ui::GraphSettingDialog ui;
 
-        zServer.setConfig(cng);
+private:
 
-        return zServer.listen(QHostAddress(addr), port);
-    }
+  private slots :
 
-    void stopAgent(){
-
-        if (zServer.isListening())
-          zServer.close();
-    }
-    
-    void setGetSignalData(pf_getSignalData f) {
-
-        zServer.pfGetSignalData = f;
-    }    
-}
+};

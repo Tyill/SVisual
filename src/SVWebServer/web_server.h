@@ -24,36 +24,31 @@
 //
 #pragma once
 
-
+#include <QtCore>
 #include "SVConfig/config_data.h"
 
-#ifdef _WIN32
-#ifdef SVZABBIX_EXPORTS
-#define SVZABBIX_API __declspec(dllexport)
-#else
-#define SVZABBIX_API __declspec(dllimport)
-#endif
-#else
-#define SVZABBIX_API
-#endif
+namespace SV_Web {
 
-namespace SV_Zbx {
-    
-    struct config {
-      
+  struct Config {
+
     int cycleRecMs;
     int packetSz;
 
-    config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-        cycleRecMs(cycleRecMs_),
-        packetSz(packetSz_) {}
-    };
+    Config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+      cycleRecMs(cycleRecMs_),
+      packetSz(packetSz_) {}
+  };
 
-    SVZABBIX_API bool startAgent(const QString& addr, int port, const config&);
+  bool startServer(const QString& addr, int port, const Config&);
 
-    SVZABBIX_API void stopAgent();
-    
-    typedef SV_Base::SignalData* (*pf_getSignalData)(const QString& sign);
-    SVZABBIX_API void setGetSignalData(pf_getSignalData f);        
-    
+  void stopServer();
+
+  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
+  void setGetCopySignalRef(pf_getCopySignalRef f);
+
+  typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
+  void setGetCopyModuleRef(pf_getCopyModuleRef f);
+
+  typedef SV_Base::SignalData* (*pf_getSignalData)(const QString &sign);
+  void setGetSignalData(pf_getSignalData f);
 }

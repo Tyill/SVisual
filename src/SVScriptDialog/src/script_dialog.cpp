@@ -25,11 +25,14 @@
 
 #include "SVScriptDialog/forms/script_dialog_impl.h"
 
+ScriptDialog* scrDialogRef = nullptr;
+
 namespace SV_Script {
-
-  QDialog *createScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
-
-    return new ScriptDialog(parent, cng, mode);
+    
+  QDialog* getScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
+    if (!scrDialogRef)
+      scrDialogRef = new ScriptDialog(parent, cng, mode);
+    return scrDialogRef;
   }
 
   void startUpdateThread(QDialog* stp) {

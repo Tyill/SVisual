@@ -40,23 +40,20 @@ namespace SV_Aux {
       ErrorCBack errCBack;
       std::string error;
       
-      Server_m(DataCBack _dataCBack, ErrorCBack _errCBack):
-        dataCBack(_dataCBack), errCBack(_errCBack){
-        u_loop = nullptr;
-        dataCBack = nullptr;
-      }
-    };   
+      Server_m():
+        dataCBack(nullptr), 
+        errCBack(nullptr),
+        u_loop(nullptr) {};      
+    }srv;   
 
     struct Client_m {
       uv_tcp_t u_client;
       uv_write_t u_writeReq;
       uv_buf_t u_buf;
-      Server_m* server;
       std::string inMess;
       std::string outMess;
       
-      Client_m(Server_m* srv) {
-        server = srv;
+      Client_m() {
         u_buf.base = nullptr;
         u_buf.len = 0;
       }
@@ -67,14 +64,14 @@ namespace SV_Aux {
       }
     };
 
-#define CHECK(func, mess){                                              \
-    int fsts = func;                                                    \
-    if (fsts != 0){                                                     \
-      srv->error = std::string(mess) + " code " + std::to_string(fsts); \
-      if (srv->errCBack)                                                \
-        srv->errCBack(srv->error);                                      \
-      return;                                                           \
-    }                                                                   \
+#define CHECK(func, mess){                                             \
+    int fsts = func;                                                   \
+    if (fsts != 0){                                                    \
+      srv.error = std::string(mess) + " code " + std::to_string(fsts); \
+      if (srv.errCBack)                                                \
+        srv.errCBack(srv.error);                                       \
+      return;                                                          \
+    }                                                                  \
   }        
     void on_close(uv_handle_t* u_client) {
       Client_m* client = static_cast<Client_m*>(u_client->data);
@@ -98,16 +95,15 @@ namespace SV_Aux {
       if (nread > 0) {
 
         Client_m* client = static_cast<Client_m*>(u_client->data);
-        Server_m* srv = client->server;
-
+        
         // копим данные          
         auto csz = client->inMess.size();
         client->inMess.resize(csz + nread);
         memcpy((char*)client->inMess.data() + csz, buf->base, nread);
 
         // передача пользователю
-        if (srv->dataCBack)
-          srv->dataCBack(client->inMess, client->outMess);
+        if (srv.dataCBack)
+          srv.dataCBack(client->inMess, client->outMess);
 
         // ответ
         if (!client->outMess.empty()) {
@@ -125,12 +121,10 @@ namespace SV_Aux {
     }
 
     void on_connect(uv_stream_t* u_server, int sts) {
-
-      Server_m* srv = static_cast<Server_m*>(u_server->data);
-
+            
       CHECK(sts, "on_connect::sts error");
            
-      Client_m* client = new Client_m(srv);
+      Client_m* client = new Client_m();
      
       CHECK(uv_tcp_init(u_server->loop, &client->u_client),
         "on_connect::uv_tcp_init error");
@@ -143,46 +137,36 @@ namespace SV_Aux {
       CHECK(uv_read_start((uv_stream_t *)&client->u_client, alloc_cb, on_read),
         "on_connect::uv_read_start error");
     }
-                
-    Server create(DataCBack dcb, ErrorCBack ecb) {
-            
-      return new Server_m(dcb, ecb);
-    }
-           
-    bool start(Server _srv, const std::string& addr, uint16_t port) {
-      
-      if (!_srv) return false;
-      
-      Server_m* srv = static_cast<Server_m*>(_srv);
-      
-      if (srv->u_loop) return true;
+               
+               
+    bool start(const std::string& addr, uint16_t port) {
+                 
+      if (srv.u_loop) return true;
             
       std::condition_variable cval;
-      std::thread* thr = new std::thread([&cval, srv, &addr, port]() {
+      std::thread* thr = new std::thread([&cval, &addr, port]() {
         
-        srv->u_loop = uv_default_loop();
+        srv.u_loop = uv_default_loop();
 
-        CHECK(uv_tcp_init(srv->u_loop, &srv->u_server),
+        CHECK(uv_tcp_init(srv.u_loop, &srv.u_server),
           "initConnection::uv_tcp_init error");
 
-        CHECK(uv_tcp_keepalive(&srv->u_server, true, 60),
+        CHECK(uv_tcp_keepalive(&srv.u_server, true, 60),
           "initConnection::uv_tcp_keepalive error");
 
         struct sockaddr_in address;
         CHECK(uv_ip4_addr(addr.c_str(), port, &address),
           "initConnection::uv_ip4_addr error");
 
-        CHECK(uv_tcp_bind(&srv->u_server, (const struct sockaddr*)&address, 0),
+        CHECK(uv_tcp_bind(&srv.u_server, (const struct sockaddr*)&address, 0),
           "initConnection::uv_tcp_bind error");
 
-        CHECK(uv_listen((uv_stream_t*)&srv->u_server, 1000, on_connect),
+        CHECK(uv_listen((uv_stream_t*)&srv.u_server, 1000, on_connect),
           "initConnection::uv_listen error");
-
-        srv->u_server.data = srv;
-
+               
         cval.notify_one();
 
-        CHECK(uv_run(srv->u_loop, UV_RUN_DEFAULT),
+        CHECK(uv_run(srv.u_loop, UV_RUN_DEFAULT),
           "initConnection::uv_run error");
       });
       thr->detach();
@@ -191,24 +175,29 @@ namespace SV_Aux {
       std::unique_lock<std::mutex> lck(mtx);
       cval.wait_for(lck, std::chrono::milliseconds(100));
 
-      return srv->error.empty();
+      return srv.error.empty();
     }
 
-    void stop(Server _srv) {
-
-      if (!_srv) return;
-
-      Server_m* srv = static_cast<Server_m*>(_srv);
-
-      if (srv->u_loop){
-        uv_stop(srv->u_loop);
-        uv_loop_close(srv->u_loop);
-        uv_loop_delete(srv->u_loop);
+    void stop() {      
+      if (srv.u_loop){
+        uv_stop(srv.u_loop);
+        uv_loop_close(srv.u_loop);
+        uv_loop_delete(srv.u_loop);
       }      
     }   
 
-    std::string errorStr(Server srv) {
-      return srv ? static_cast<Server_m*>(srv)->error : "";
+    bool setDataCBack(DataCBack dcb) {
+      srv.dataCBack = dcb;
+      return true;
+    }
+
+    bool setErrorCBack(ErrorCBack ecb) {
+      srv.errCBack = ecb;
+      return true;
+    }
+
+    std::string errorStr() {
+      return srv.error;
     }
   }
 }

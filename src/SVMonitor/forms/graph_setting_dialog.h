@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "SVMonitor/forms/ui_graph_setting.h"
+#include "GeneratedFiles/ui_graph_setting_dialog.h"
 #include "SVMonitor/forms/main_win.h"
 #include "SVGraphPanel/graph_panel.h"
 

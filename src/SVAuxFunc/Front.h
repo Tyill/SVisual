@@ -33,7 +33,7 @@ namespace SV_Aux {
 
 	private:
 		std::vector<bool> onc;
-		int oncCount;
+		int oncCount = 0;
 
 	public:
 

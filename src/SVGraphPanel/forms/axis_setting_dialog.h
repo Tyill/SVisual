@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "SVGraphPanel/forms/ui_axis_setting_dialog.h"
+#include "GeneratedFiles/ui_axis_setting_dialog.h"
 #include "SVGraphPanel/graph_panel.h"
 
 class AxisSettingDialog : public QDialog

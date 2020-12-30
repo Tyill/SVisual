@@ -136,7 +136,6 @@ namespace SV {
       if (!_isConnect) return false;
 
       if (_values.find(name) == _values.end()) {
-
         if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ) || 
              strstr(name, "=end=") || strstr(name, "=begin=")){
           return false;
@@ -167,7 +166,7 @@ namespace SV {
 
       if (_values.empty()) return true;
 
-      size_t SINT = sizeof(int),
+      size_t SINT = sizeof(int32_t),
              /*      val name    type      vals          */
              valSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ,
              /*       mod name            vals           */

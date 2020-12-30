@@ -71,8 +71,8 @@ namespace SV_Base {
 
     ///// буфер данных
     std::vector<RecData> buffData;
-    int buffBeginPos;
-    int buffValuePos;
+    size_t buffBeginPos;
+    size_t buffValuePos;
     uint64_t buffMinTime, buffMaxTime;
     double buffMinValue, buffMaxValue;
     ///////
@@ -86,8 +86,8 @@ namespace SV_Base {
 
       buffBeginPos = 0;
       buffValuePos = 0;
-      buffMinTime = INT32_MAX;
-      buffMaxTime = INT32_MIN;
+      buffMinTime = INT64_MAX;
+      buffMaxTime = 0;
       buffMinValue = 0;
       buffMaxValue = 0;
     }

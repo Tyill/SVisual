@@ -69,7 +69,7 @@ namespace SV_Aux {
       return currDateTimeSinceEpochMs() - _prevCycTm;
     }
         
-    bool onDelaySec(bool start, int delay, int id) {
+    bool onDelaySec(bool start, uint32_t delay, int id) {
 
       if (id >= _tmrCount){
         tmrs.resize(id + 1, TmBase{ 0, false });
@@ -88,7 +88,7 @@ namespace SV_Aux {
       return res;
     }
         
-    bool offDelaySec(bool start, int delay, int id) {
+    bool offDelaySec(bool start, uint32_t delay, int id) {
            
       if (id >= _tmrCount){
         tmrs.resize(id + 1, TmBase{ 0, false });
@@ -110,7 +110,7 @@ namespace SV_Aux {
       return (start || res);
     }
         
-    bool onDelayMS(bool start, int delay, int id) {
+    bool onDelayMS(bool start, uint32_t delay, int id) {
             
       if (id >= _tmrCount){
         tmrs.resize(id + 1, TmBase{ 0, false });
@@ -129,7 +129,7 @@ namespace SV_Aux {
       return res;
     }
         
-    bool offDelayMS(bool start, int delay, int id) {
+    bool offDelayMS(bool start, uint32_t delay, int id) {
            
       if (id >= _tmrCount){
         tmrs.resize(id + 1, TmBase{ 0, false });
@@ -171,15 +171,15 @@ namespace SV_Aux {
     };
 
     std::vector<TmBase> tmrs;
-    int _tmrCount;
+    int _tmrCount = 0;
 
     uint64_t _prevCycTm;            
     uint64_t _cycleTm;            
 
     tm _prevTm;
 
-    bool _secOnc;
-    bool _minOnc;
-    bool _hourOnc;
+    bool _secOnc = false;
+    bool _minOnc = false;
+    bool _hourOnc = false;
   };
 }

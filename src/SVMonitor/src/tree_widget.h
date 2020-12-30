@@ -24,9 +24,9 @@
 //
 #pragma once
 
-#include "stdafx.h"
+#include <QTreeWidget>
 
-class treeWidgetExt : public QTreeWidget
+class TreeWidgetExt : public QTreeWidget
 {
   Q_OBJECT
 
@@ -42,9 +42,8 @@ protected:
 
 public:
 
-  treeWidgetExt(QWidget *parent = 0);
-  ~treeWidgetExt();
-
+  TreeWidgetExt(QWidget *parent = 0);
+  ~TreeWidgetExt();
 
 };
 

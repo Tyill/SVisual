@@ -22,11 +22,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "SVMonitor/forms/EventTableDialog.h"
+
+#include "SVMonitor/forms/event_table_dialog.h"
+#include "SVMonitor/forms/main_win.h"
+#include "SVTriggerDialog/trigger_dialog.h"
 #include "structurs.h"
-#include "serverAPI.h"
-#include "SVTriggerPanel/SVTriggerPanel.h"
+#include "server_api.h"
 
 EventTableDialog::EventTableDialog(QWidget *parent){
 
@@ -48,7 +49,7 @@ EventTableDialog::~EventTableDialog(){}
 
 void EventTableDialog::showOrder(){
 
-  QVector<uEvent> events = mainWin_->getEvents(ui.txtBeginDate->dateTime(), ui.txtEndDate->dateTime());
+  QVector<UserEvent> events = mainWin_->getEvents(ui.txtBeginDate->dateTime(), ui.txtEndDate->dateTime());
 
   ui.tableEvents->clearContents();
   int sz = events.size(), rowCnt = ui.tableEvents->rowCount();

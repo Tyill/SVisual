@@ -24,8 +24,8 @@
 //
 #pragma once
 
-#include "SVMonitor/forms/ui_settingsPanel.h"
-#include "SVMonitor/forms/mainwin.h"
+#include "GeneratedFiles/ui_settings_dialog.h"
+#include "SVMonitor/forms/main_win.h"
 
 class SettingsDialog : public QDialog
 {

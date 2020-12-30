@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "SVMonitor/forms/ui_main_win.h"
+#include "GeneratedFiles/ui_main_win.h"
 #include "SVConfig/config_data.h"
 #include "SVServer/server.h"
 #include "SVAuxFunc/logger.h"
@@ -94,7 +94,7 @@ public:
   void updateConfig(Config);
   Config getConfig();
 
-  QVector<uEvent> getEvents(QDateTime, QDateTime);
+  QVector<UserEvent> getEvents(QDateTime, QDateTime);
 
   void updateGraphSetting(const SV_Graph::GraphSetting&);
 
@@ -109,21 +109,21 @@ private:
   SV_Srv::Config srvCng;
 
   QMap<QObject*, QWidget*> graphPanels_;
-  QDialog* exportPanel_ = nullptr;
-  QDialog* scriptPanel_ = nullptr;
-  QDialog* triggerPanel_ = nullptr;
-  EventTableDialog* orderWin_ = nullptr;
-  SettingsDialog* settPanel_ = nullptr;
-  GraphSettingDialog* graphSettPanel_ = nullptr;
+  QDialog* exportDialog_ = nullptr;
+  QDialog* scriptDialog_ = nullptr;
+  QDialog* triggerDialog_ = nullptr;
+  EventTableDialog* eventTableDialog_ = nullptr;
+  SettingsDialog* settingsDialog_ = nullptr;
+  GraphSettingDialog* graphSettDialog_ = nullptr;
   QSystemTrayIcon* trayIcon_ = nullptr;
 
-  dbProvider* db_ = nullptr;
+  DbProvider* db_ = nullptr;
 
   QNetworkAccessManager* netManager_ = nullptr;
 
   QSet<QString> signExist_;
 
-  QMap<QString, signalAttr> signAttr_;
+  QMap<QString, SignalAttr> signAttr_;
 
   bool eventFilter(QObject *target, QEvent *event);
 
@@ -138,7 +138,7 @@ private:
   void contextMenuEvent(QContextMenuEvent * event);
   QDialog* addNewWindow(const QRect& pos);
 
-  public slots:
+public slots:
   void slowMode();
   void contextMenuClick(QAction*);
   void updateTblSignal();

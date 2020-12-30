@@ -270,32 +270,32 @@
     </message>
 </context>
 <context>
-    <name>signScriptPanel</name>
+    <name>SignScriptDialog</name>
     <message>
-        <location filename="../forms/signScriptPanel.h" line="62"/>
-        <location filename="../forms/signScriptPanel.h" line="139"/>
+        <location filename="../forms/SignScriptDialog.h" line="62"/>
+        <location filename="../forms/SignScriptDialog.h" line="139"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.h" line="68"/>
-        <location filename="../forms/signScriptPanel.h" line="137"/>
+        <location filename="../forms/SignScriptDialog.h" line="68"/>
+        <location filename="../forms/SignScriptDialog.h" line="137"/>
         <source>Отключить</source>
         <translation>Deactivate</translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.h" line="83"/>
-        <location filename="../forms/signScriptPanel.h" line="156"/>
+        <location filename="../forms/SignScriptDialog.h" line="83"/>
+        <location filename="../forms/SignScriptDialog.h" line="156"/>
         <source>Скрипт </source>
         <translation>Script </translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.h" line="156"/>
+        <location filename="../forms/SignScriptDialog.h" line="156"/>
         <source> изменен.</source>
         <translation> is change.</translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.h" line="157"/>
+        <location filename="../forms/SignScriptDialog.h" line="157"/>
         <source>Сохранить изменения?</source>
         <translation>Save changes?</translation>
     </message>
@@ -303,43 +303,43 @@
 <context>
     <name>signScriptPanelClass</name>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="14"/>
+        <location filename="../forms/SignScriptDialog.ui" line="14"/>
         <location filename="../forms/ui_signScriptPanel.h" line="82"/>
         <source>Скрипт для сигнала</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="45"/>
+        <location filename="../forms/SignScriptDialog.ui" line="45"/>
         <location filename="../forms/ui_signScriptPanel.h" line="85"/>
         <source>[CTRL+S]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="48"/>
+        <location filename="../forms/SignScriptDialog.ui" line="48"/>
         <location filename="../forms/ui_signScriptPanel.h" line="87"/>
         <source>Сохранить</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="51"/>
+        <location filename="../forms/SignScriptDialog.ui" line="51"/>
         <location filename="../forms/ui_signScriptPanel.h" line="88"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="58"/>
+        <location filename="../forms/SignScriptDialog.ui" line="58"/>
         <location filename="../forms/ui_signScriptPanel.h" line="90"/>
         <source>[CTRL+D]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="61"/>
+        <location filename="../forms/SignScriptDialog.ui" line="61"/>
         <location filename="../forms/ui_signScriptPanel.h" line="92"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
     <message>
-        <location filename="../forms/signScriptPanel.ui" line="64"/>
+        <location filename="../forms/SignScriptDialog.ui" line="64"/>
         <location filename="../forms/ui_signScriptPanel.h" line="93"/>
         <source>Ctrl+D</source>
         <translation></translation>

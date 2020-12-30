@@ -29,30 +29,19 @@
 
 namespace SV_Aux {
   namespace TCPServer {
-
-    using Server = void*;
-        
-    /// польз callback - получение данных
+    
     using DataCBack = std::function<void(std::string& inout, std::string& out)>;
 
     using ErrorCBack = std::function<void(const std::string& err)>;
-    
-    /// создать сервер
-    /// \param DataCBack
-    /// \param ErrorCBack
-    /// \return Server
-    Server create(DataCBack, ErrorCBack);
-       
-    /// запустить сервер
-    /// \param addr
-    /// \param port
-    /// \return true - ok
-    bool start(Server, const std::string& addr, uint16_t port);
 
-    /// остановить сервер
-    void stop(Server); 
+    bool start(const std::string& addr, uint16_t port);
 
-    /// ошибка
-    std::string errorStr(Server);
+    void stop();
+
+    bool setDataCBack(DataCBack);
+
+    bool setErrorCBack(ErrorCBack);
+
+    std::string errorStr();
   }
 }

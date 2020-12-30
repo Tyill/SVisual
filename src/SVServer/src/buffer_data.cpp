@@ -40,15 +40,15 @@ BufferData::BufferData(const SV_Srv::Config& cng_){
     _buffer[i].data.vals = &buff[i * SV_PACKETSZ];
 }
 
-void BufferData::updDataSignals(const std::string& in, uint64_t bTm){
+void BufferData::updDataSignals(const std::string& indata, uint64_t bTm){
 
-  size_t sz = in.size(),
-    clSz = SV_NAMESZ + sizeof(ValueType) + sizeof(Value) * SV_PACKETSZ,
+  size_t dsz = indata.size(),
+    valSz = SV_NAMESZ + sizeof(ValueType) + sizeof(Value) * SV_PACKETSZ,
     cPos = SV_NAMESZ;
 
-  string module = in.c_str();
+  string module = indata.c_str();
 
-  size_t valCnt = std::max(size_t(0), std::min((sz - cPos) / clSz, size_t(SV_VALUE_MAX_CNT * 10))); // 10 - запас
+  size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, size_t(SV_VALUE_MAX_CNT * 10))); // 10 - запас
 
   _mtx.lock();
 
@@ -60,17 +60,16 @@ void BufferData::updDataSignals(const std::string& in, uint64_t bTm){
   _mtx.unlock();
 
   size_t vlsz = sizeof(Value) * SV_PACKETSZ;
+  while (cPos < dsz){
 
-  while (cPos < sz){
-
-    ValueData* vr = (ValueData*)(in.data() + cPos);
+    ValueData* vr = (ValueData*)(indata.data() + cPos);
 
     _buffer[buffWr].name = vr->name;
     _buffer[buffWr].module = module;
     _buffer[buffWr].type = vr->type;
     _buffer[buffWr].data.beginTime = bTm;
 
-    memcpy(_buffer[buffWr].data.vals, vr->vals, vlsz);
+    memcpy(_buffer[buffWr].data.vals, &vr->vals, vlsz);
 
     _buffer[buffWr].isActive = true;
 
@@ -78,7 +77,7 @@ void BufferData::updDataSignals(const std::string& in, uint64_t bTm){
     if (buffWr >= BUFF_SZ)
       buffWr = 0;
 
-    cPos += clSz;
+    cPos += valSz;
   }
 }
 
