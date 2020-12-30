@@ -24,7 +24,7 @@
     <ClInclude Include="..\..\..\src\SVServer\src\buffer_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVServer\src\thr_update_signal.h">
+    <ClInclude Include="..\..\..\src\SVServer\src\thread_update.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +38,10 @@
     <ClCompile Include="..\..\..\src\SVServer\src\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVServer\src\thr_update_signal.cpp">
+    <ClCompile Include="..\..\..\src\SVServer\src\server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVServer\src\server.cpp">
+    <ClCompile Include="..\..\..\src\SVServer\src\thread_update.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

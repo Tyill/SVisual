@@ -341,7 +341,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVScriptPanel.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportPanel.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies);SVStatPanel.lib;zlibwapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVScriptDialog.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportDialog.lib;SVStatDialog.lib;zlib.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -359,7 +359,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVScriptPanel.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportPanel.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies);SVStatPanel.lib;zlibwapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVScriptDialog.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportDialog.lib;SVStatDialog.lib;zlibd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -376,7 +376,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>SVScriptPanel.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportPanel.lib;Qt5PrintSupport.lib;%(AdditionalDependencies);SVStatPanel.lib;zlib.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVScriptDialog.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportDialog.lib;SVStatDialog.lib;zlib.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupport.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -393,7 +393,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>SVScriptPanel.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportPanel.lib;Qt5PrintSupport.lib;%(AdditionalDependencies);SVStatPanel.lib;zlibwapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVScriptDialog.lib;SVAuxFunc.lib;SVConfig.lib;SVGraphPanel.lib;SVExportDialog.lib;SVStatDialog.lib;zlib.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupport.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>

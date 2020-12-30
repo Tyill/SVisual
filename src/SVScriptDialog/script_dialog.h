@@ -26,7 +26,7 @@
 
 #include "SVConfig/config_data.h"
 
-#include <QString>
+#include <QtCore>
 #include <QColor>
 
 class QDialog;

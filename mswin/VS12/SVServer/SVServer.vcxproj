@@ -22,14 +22,14 @@
     <ClInclude Include="..\..\..\src\SVServer\server.h" />
     <ClInclude Include="..\..\..\src\SVServer\src\archive.h" />
     <ClInclude Include="..\..\..\src\SVServer\src\buffer_data.h" />
-    <ClInclude Include="..\..\..\src\SVServer\src\thr_update_signal.h" />
+    <ClInclude Include="..\..\..\src\SVServer\src\thread_update.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\SVServer\src\archive.cpp" />
     <ClCompile Include="..\..\..\src\SVServer\src\buffer_data.cpp" />
     <ClCompile Include="..\..\..\src\SVServer\src\dllmain.cpp" />
     <ClCompile Include="..\..\..\src\SVServer\src\server.cpp" />
-    <ClCompile Include="..\..\..\src\SVServer\src\thr_update_signal.cpp" />
+    <ClCompile Include="..\..\..\src\SVServer\src\thread_update.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{ABD50AE4-7C7E-478F-8778-BF2C19C24989}</ProjectGuid>
@@ -115,6 +115,10 @@
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVAuxFunc.lib;zlibwapi.lib;SVConfig.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <AdditionalDependencies>zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -130,6 +134,10 @@
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVAuxFunc.lib;zlib.lib;SVConfig.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <AdditionalDependencies>zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -149,6 +157,10 @@
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVAuxFunc.lib;zlibwapi.lib;SVConfig.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <AdditionalDependencies>zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -168,6 +180,10 @@
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVAuxFunc.lib;zlib.lib;SVConfig.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <AdditionalDependencies>zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

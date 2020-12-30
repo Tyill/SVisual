@@ -150,20 +150,8 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_eventOrderWin.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_mainwin.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_settingsPanel.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\SVMonitor\src\structurs.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVMonitor\forms\ui_graphSetting.h">
-      <Filter>Form Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_graph_setting_dialog.h">
       <Filter>Generated Files</Filter>

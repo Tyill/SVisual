@@ -78,7 +78,7 @@ namespace SV_Graph {
   typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
   void setGetCopySignalRef(QWidget* gp, pf_getCopySignalRef f);
 
-  typedef SV_Base::SignalData *(*pf_getSignalData)(const QString& sign);
+  typedef SV_Base::SignalData*(*pf_getSignalData)(const QString& sign);
   void setGetSignalData(QWidget* gp, pf_getSignalData f);
 
   typedef bool(*pf_loadSignalData)(const QString& sign);

@@ -69,9 +69,6 @@
     <ClInclude Include="GeneratedFiles\ui_script_dialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVScriptDialog\forms\ui_script_dialog.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\SVScriptDialog\resources\script_dialog_en.qm">

@@ -691,9 +691,7 @@ bool MainWin::init(QString initPath){
       QString locate = settings.value("locate").toString();
       QObject* win = this;
       if (locate != "0"){
-
         auto lt = locate.split(' ');
-
         win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
       }
 

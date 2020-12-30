@@ -171,7 +171,7 @@ QSize GraphWidget::sizeHint() {
   return this->size();
 }
 
-void GraphWidget::resizeEvent(QResizeEvent * event) {
+void GraphWidget::resizeEvent(QResizeEvent* event) {
 
   leftMarker_->setLimitPosX(0, ui.plot->width() - rightMarker_->width());
   leftMarker_->setLimitPosY(ui.plot->height() - rightMarker_->height(), ui.plot->height() - rightMarker_->height());
@@ -839,17 +839,18 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
   QPair<double, double> valInterval = ui.axisValue->getValInterval();
    
-  const int w = width(),
-            maxWidth = 600;
+  const int axisTimeWidth = axisTime_->width(),
+            maxWidth = 1900; // ограничение для 4К мониторов
   
-  double tmScale = double(tmInterval.second - tmInterval.first) / qMin(maxWidth, w),
-         coefWidth = w > maxWidth ? w /maxWidth : 1.0;
+  const double tmScale = double(tmInterval.second - tmInterval.first) / qMin(maxWidth, axisTimeWidth),
+               coefWidth = axisTimeWidth > maxWidth ? double(axisTimeWidth) / maxWidth : 1.0;
   
-  double valScale = ui.axisValue->getValScale();
+  double vScale = ui.axisValue->getValScale();
   if (isAlter) {
     valInterval = getSignMaxMinValue(sign, tmInterval);   
-    valScale = (valInterval.second - valInterval.first) / ui.plot->height();
+    vScale = (valInterval.second - valInterval.first) / ui.plot->height();
   }
+  const double valScale = vScale;
 
   QString sname = QString::fromStdString(sign->name + sign->module);
 
@@ -862,9 +863,10 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   //////////// Предварит поиск старт точки
 
   uint64_t tmZnBegin = sign->buffMinTime,
-    tmZnEnd = sign->buffMaxTime,
-    tmMinInterval = tmInterval.first,
-    tmMaxInterval = tmInterval.second;
+           tmZnEnd = sign->buffMaxTime;
+  
+  const uint64_t tmMinInterval = tmInterval.first,
+                 tmMaxInterval = tmInterval.second;
 
   if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval))
     return QVector<QVector<QPair<int, int>>>();
@@ -886,12 +888,12 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
 
   //////////// Получаем точки
 
-  double valPosMem = valInterval.first / valScale;
+  const double valPosMem = valInterval.first / valScale;
 
   tmZnBegin = sign->buffData[iBuf].beginTime;
   tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
 
-  uint64_t tmZnEndPrev = tmZnBegin;
+  uint64_t tmZnEndPrev = 0;
 
   QVector<double> tmPosMem;
   for (int i = 0; i < SV_PACKETSZ; ++i)
@@ -902,12 +904,13 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
     backVal = 0,
     prevBackVal = 0;
       
-  size_t znSz = sign->buffData.size(),
-    endPos = sign->buffValuePos,
-    backValInd = 0,
-    prevBackValInd = 0;
+  const size_t buffSz = sign->buffData.size(),
+               endPos = sign->buffValuePos;
+  
+  size_t backValInd = 0,
+         prevBackValInd = 0;
 
-  bool isBegin = true, isChange = false;
+  bool isChange = false;
 
   QPair<int, int> pnt;
   QVector<QVector<QPair<int, int>>> zonePnts;
@@ -915,44 +918,36 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   while (tmZnBegin < tmMaxInterval) {
 
     if (tmZnEnd > tmMinInterval) {
-
-      RecData& rd = sign->buffData[iBuf];
-
-      double tmZnBeginMem = double(tmZnBegin) / tmScale;
-
-      if ((int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) || isBegin) {
-        isBegin = false;
-
+            
+      if (int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) {
+        
         zonePnts.push_back(QVector<QPair<int, int>>());
 
         auto& backZone = zonePnts.back();
-
-        backZone.reserve(axisTime_->width());
-
-        pnt.first = tmPosMem[0] + tmZnBeginMem;
-
+        backZone.reserve(axisTimeWidth / coefWidth);
+                        
+        pnt.first = tmPosMem[0] + double(tmZnBegin) / tmScale;
+        
+        const SV_Base::Value* vals = sign->buffData[iBuf].vals;
         switch (sign->type) {
-        case ValueType::INT: pnt.second = rd.vals[0].vInt / valScale - valPosMem; break;
-        case ValueType::BOOL: pnt.second = rd.vals[0].vBool; break;
-        case ValueType::FLOAT: pnt.second = rd.vals[0].vFloat / valScale - valPosMem; break;
+        case ValueType::INT: pnt.second = vals[0].vInt / valScale - valPosMem; break;
+        case ValueType::BOOL: pnt.second = vals[0].vBool; break;
+        case ValueType::FLOAT: pnt.second = vals[0].vFloat / valScale - valPosMem; break;
         }
-
-        valMem = pnt.second;
-
-        backZone.push_back(pnt);
+                
+        backZone.push_back(qMakePair(pnt.first * coefWidth, pnt.second));
 
         if (tmPosMem.size() > 1) {
 
-          pnt.first = tmPosMem[1] + tmZnBeginMem;
+          pnt.first = tmPosMem[1] + double(tmZnBegin) / tmScale;
 
           switch (sign->type) {
-          case ValueType::INT: pnt.second = rd.vals[1].vInt / valScale - valPosMem; break;
-          case ValueType::BOOL: pnt.second = rd.vals[1].vBool; break;
-          case ValueType::FLOAT: pnt.second = rd.vals[1].vFloat / valScale - valPosMem; break;
+          case ValueType::INT: pnt.second = vals[1].vInt / valScale - valPosMem; break;
+          case ValueType::BOOL: pnt.second = vals[1].vBool; break;
+          case ValueType::FLOAT: pnt.second = vals[1].vFloat / valScale - valPosMem; break;
           }
         }
-
-        backZone.push_back(pnt);
+        backZone.push_back(qMakePair(pnt.first * coefWidth, pnt.second));
 
         backValInd = 1;
         prevBackValInd = 0;
@@ -961,26 +956,31 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
         prevBackVal = backZone[prevBackValInd].second;
 
         prevPos = pnt.first;
+        valMem = pnt.second;
       }
-
-      auto& backZone = zonePnts.back();
-
+      tmZnEndPrev = tmZnEnd;
+      
+      const SV_Base::Value* vals = sign->buffData[iBuf].vals;
+      const double tmZnBeginMem = double(tmZnBegin) / tmScale;
+      
       for (int i = 0; i < SV_PACKETSZ; ++i) {
 
         pnt.first = tmPosMem[i] + tmZnBeginMem;
 
         switch (sign->type) {
-        case ValueType::INT: pnt.second = rd.vals[i].vInt / valScale - valPosMem; break;
-        case ValueType::BOOL: pnt.second = rd.vals[i].vBool; break;
-        case ValueType::FLOAT: pnt.second = rd.vals[i].vFloat / valScale - valPosMem; break;
+        case ValueType::INT: pnt.second = vals[i].vInt / valScale - valPosMem; break;
+        case ValueType::BOOL: pnt.second = vals[i].vBool; break;
+        case ValueType::FLOAT: pnt.second = vals[i].vFloat / valScale - valPosMem; break;
         }
 
         if ((pnt.first > prevPos) || isChange) {
           prevPos = pnt.first;
+          valMem = pnt.second;
 
           isChange = !isChange;
 
-          backZone.push_back(pnt);
+          auto& backZone = zonePnts.back();
+          backZone.push_back(qMakePair(pnt.first * coefWidth, pnt.second));
           ++backValInd;
           ++prevBackValInd;
 
@@ -993,30 +993,29 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
           if (prevBackVal <= backVal) {
             if (valMem < prevBackVal) {
               prevBackVal = valMem;
-              backZone[prevBackValInd].second = valMem;
+              zonePnts.back()[prevBackValInd].second = valMem;
             }
             else if (valMem > backVal) {
               backVal = valMem;
-              backZone[backValInd].second = valMem;
+              zonePnts.back()[backValInd].second = valMem;
             }
           }
           else {
             if (valMem > prevBackVal) {
               prevBackVal = valMem;
-              backZone[prevBackValInd].second = valMem;
+              zonePnts.back()[prevBackValInd].second = valMem;
             }
             else if (valMem < backVal) {
               backVal = valMem;
-              backZone[backValInd].second = valMem;
+              zonePnts.back()[backValInd].second = valMem;
             }
           }
         }
       }
     }
-    tmZnEndPrev = tmZnEnd;
-
+    
     ++iBuf;
-    if (iBuf >= znSz) iBuf = 0;
+    if (iBuf >= buffSz) iBuf = 0;
 
     if (iBuf != endPos) {
       tmZnBegin = sign->buffData[iBuf].beginTime;
@@ -1024,8 +1023,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
     }
     else break;
   }
-
-
+  
   return zonePnts;
 }
 
