@@ -84,7 +84,7 @@ void TriggerDialog::startUpdateThread(){
 
   if (workThr_.joinable()) return;
 
-  workThr_ = std::thread([](TriggerDialog* sp){ sp->workCycle(); }, this);
+  workThr_ = std::thread(&TriggerDialog::workCycle, this);
 }
 
 void TriggerDialog::showEvent(QShowEvent* event){

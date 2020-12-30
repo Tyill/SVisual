@@ -31,8 +31,8 @@
 // событие
 struct uEvent{
   QString triggName;
-    QString signal;
-  QString module;  
+  QString signal;
+  QString module;
   QString sendDateTime;
 
   SV_Trigger::eventType condType;
@@ -41,7 +41,7 @@ struct uEvent{
 };
 
 struct signalAttr{
-    QString signal;
-    QString module;
-    QColor color;
+  QString signal;
+  QString module;
+  QColor color;
 };

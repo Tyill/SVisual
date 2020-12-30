@@ -24,25 +24,36 @@
 //
 #pragma once
 
-#include "src/stdafx.h"
-#include "forms/ui_eventOrderWin.h"
-#include "mainwin.h"
+#include "SVMonitor/forms/ui_settingsPanel.h"
+#include "SVMonitor/forms/mainwin.h"
 
-class eventOrderWin : public QDialog
+class SettingsDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  eventOrderWin(QWidget *parent = 0);
-  ~eventOrderWin();
+  SettingsDialog(QWidget *parent = 0);
+  ~SettingsDialog();
 
-  Ui::eventOrderClass ui;
+  QString selDirArch_;
+
+  Ui::SettingsDialog ui;
 
 private:
+
+  bool selParamLoad_ = false;
+
   void showEvent(QShowEvent * event);
 
   MainWin* mainWin_ = nullptr;
 
-public slots:
-  void showOrder();
+  QVector<QPair<QLineEdit*, QComboBox*>> comPorts_;
+
+  private slots:
+  void saveChange();
+  void addCOM(QString port = "", QString speed = "", int row = -1);
+  void delCOM();
+  void selDirArch();
+  void paramChange();
+
 };

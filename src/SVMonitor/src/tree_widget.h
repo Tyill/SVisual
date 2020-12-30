@@ -24,22 +24,28 @@
 //
 #pragma once
 
-#include "forms/ui_graphSetting.h"
-#include "forms/mainwin.h"
-#include "SVGraphPanel/SVGraphPanel.h"
+#include "stdafx.h"
 
-class graphSettingPanel : public QDialog
+class treeWidgetExt : public QTreeWidget
 {
   Q_OBJECT
 
-public:
-  graphSettingPanel(QWidget *parent, const SV_Graph::graphSetting&);
-  ~graphSettingPanel() = default;
-  
-  Ui::graphSettingClass ui;
 
 private:
+  QPoint startMovePos_;
 
-private slots:
+
+protected:
+
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+
+public:
+
+  treeWidgetExt(QWidget *parent = 0);
+  ~treeWidgetExt();
+
 
 };
+
+

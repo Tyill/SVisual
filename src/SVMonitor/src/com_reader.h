@@ -22,56 +22,58 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#pragma once
+
 #include "stdafx.h"
-#include "treeWidgetExt.h"
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
-treeWidgetExt::treeWidgetExt(QWidget *parent){
+class SerialPortReader : public QObject
+{
+  Q_OBJECT
 
-  this->setParent(parent);
+public:
 
-  setSelectionMode(QAbstractItemView::SingleSelection);
-  setDragEnabled(true);  
-  setDropIndicatorShown(true);
-    
-}
+  struct Config{
 
-treeWidgetExt::~treeWidgetExt(){
+    QString name;
+    int speed = 9600;
+    int cycleRecMs;           ///< период записи - задает пользователь
+    int packetSz;             ///< размер пакета - задает пользователь
 
+    Config(QString name_, int speed_, int cycleRecMs_, int packetSz_) :
+      name(name_), speed(speed_), cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
+  };
 
-}
+  SerialPortReader(Config);
+  ~SerialPortReader();
 
-void treeWidgetExt::mousePressEvent(QMouseEvent *event){
-  
-  if (event->button() == Qt::LeftButton)
-    startMovePos_ = event->pos();
-  
-  
-  QTreeWidget::mousePressEvent(event);
-}
+  bool startServer();
+  void stopServer();
 
-void treeWidgetExt::mouseMoveEvent(QMouseEvent *event){
+  bool isRunning();
 
-  if (event->buttons() & Qt::LeftButton) {
+  /// задать польз callback - получение данных
+  typedef void(*dataCBack)(std::string &inout, std::string &out);
+  void setDataCBack(dataCBack uf);
 
-    int dist = (event->pos() - startMovePos_).manhattanLength();
-    if (dist >= QApplication::startDragDistance()){
-      
-      QTreeWidgetItem *item = currentItem();
-      if (item) {
-        QMimeData *mimeData = new QMimeData;
+  public slots:
+  void hReadData();
+  void hError(QSerialPort::SerialPortError serialPortError);
+  void disconnect();
 
-        QString sign = item->text(5);
+private:
 
-        mimeData->setText(sign);
-        QDrag *drag = new QDrag(this);
-        drag->setMimeData(mimeData);
+  dataCBack ufReceiveData_ = nullptr;
 
-        drag->exec();
-      }
-    }
-  }
-  
-  QTreeWidget::mouseMoveEvent(event);
-}
+  QSerialPort* pSerialPort_ = nullptr;
+  std::string readData_;
 
+  QTimer* tmCheckConnect_ = nullptr;
+  const int checkConnTOut = 5;  // циклов для проверки
 
+  bool isConnect_ = false;
+
+  Config cng;
+
+};

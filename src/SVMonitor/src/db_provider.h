@@ -35,43 +35,43 @@ class dbProvider
 
 public:
 
-    dbProvider(const QString& path);
+  dbProvider(const QString& path);
 
-    ~dbProvider();
+  ~dbProvider();
 
-    bool isConnect();
+  bool isConnect();
 
-    bool saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trg);
+  bool saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trg);
 
-    QVector<SV_Trigger::triggerData*> getTrigger(const QString& signal, const QString& module);
-    SV_Trigger::triggerData* getTrigger(const QString& trname);
+  QVector<SV_Trigger::triggerData*> getTrigger(const QString& signal, const QString& module);
+  SV_Trigger::triggerData* getTrigger(const QString& trname);
 
-    bool saveSignals(const std::map<std::string, SV_Base::SignalData*>& signs);
-    SV_Base::SignalData getSignal(const QString& signal, const QString& module);
+  bool saveSignals(const std::map<std::string, SV_Base::SignalData*>& signs);
+  SV_Base::SignalData getSignal(const QString& signal, const QString& module);
 
-    bool saveAttrSignals(const QMap<QString, signalAttr>& attr);
-    signalAttr getAttrSignal(const QString& signal, const QString& module);
-    void delAttrSignal(const QString& signal, const QString& module);
+  bool saveAttrSignals(const QMap<QString, signalAttr>& attr);
+  signalAttr getAttrSignal(const QString& signal, const QString& module);
+  void delAttrSignal(const QString& signal, const QString& module);
 
-    void saveEvent(QString trigger, QDateTime dt);
-    QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);
+  void saveEvent(QString trigger, QDateTime dt);
+  QVector<uEvent> getEvents(QDateTime beginTime, QDateTime endTime);
 
 private:
 
-    sqlite3* db_ = nullptr;
+  sqlite3* db_ = nullptr;
 
-    bool isConnect_ = false;
+  bool isConnect_ = false;
 
-    QString pathDB_;
+  QString pathDB_;
 
-    QMutex mtx_;
+  QMutex mtx_;
 
-    bool init();
+  bool init();
 
-    bool open();
+  bool open();
 
-    void close();
+  void close();
 
-    bool query(const std::string& query,
-        std::vector<std::vector<std::string>>& result);
+  bool query(const std::string& query,
+    std::vector<std::vector<std::string>>& result);
 };

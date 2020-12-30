@@ -69,7 +69,7 @@ namespace SV_Srv {
 
     cng = _cng;
 
-    _pBuffData = new BufferData(_cng);
+    _pBuffData = new BufferData(cng);
 
     _pthrUpdSignal = new ThrUpdateSignal(cng, _pBuffData);
     
@@ -96,12 +96,12 @@ namespace SV_Srv {
     size_t stPos = inout.find("=begin="), endPos = inout.find("=end=");
     while ((stPos != std::string::npos) && (endPos != std::string::npos)){
 
-      int allSz = *(int*)(inout.c_str() + stPos + 7);
+      int allSz = *(int*)(inout.c_str() + stPos + 7); // 7 - sizeof("=begin=")
 
-      if (allSz == (endPos - stPos - 11))
+      if (allSz == (endPos - stPos - 11)) // 11 - sizeof("=begin=") + sizeof(int32)
         bePos.push_back(pair<size_t, size_t>(stPos + 11, endPos));
 
-      stPos = inout.find("=begin=", endPos + 5);
+      stPos = inout.find("=begin=", endPos + 5); // 5 - sizeof("=end=")
       if (stPos != std::string::npos){
         endPos = inout.find("=end=", stPos + 11);
       }
@@ -398,6 +398,4 @@ namespace SV_Srv {
 
     inout.clear();
   }
-
-  
 }

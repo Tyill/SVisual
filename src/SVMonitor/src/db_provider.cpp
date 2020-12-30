@@ -32,23 +32,23 @@ using namespace SV_Trigger;
 
 bool dbProvider::init(){
 
-    sqlite3_shutdown();
-    sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
-    sqlite3_initialize();
+  sqlite3_shutdown();
+  sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
+  sqlite3_initialize();
 
-    if (!open()){ return false; }
+  if (!open()){ return false; }
 
-    string req = "PRAGMA journal_mode = WAL;";
-      vector<vector<string>> results;
-    if (!query(req, results)) return false;
+  string req = "PRAGMA journal_mode = WAL;";
+  vector<vector<string>> results;
+  if (!query(req, results)) return false;
 
-    req = "PRAGMA synchronous = NORMAL;";
-    if (!query(req, results)) return false;
-        
-    sqlite3_busy_timeout(db_, 5000); 
+  req = "PRAGMA synchronous = NORMAL;";
+  if (!query(req, results)) return false;
 
-    return true;
-  }
+  sqlite3_busy_timeout(db_, 5000);
+
+  return true;
+}
 
 bool dbProvider::open(){
   return (sqlite3_open(qPrintable(pathDB_), &db_) == SQLITE_OK);
@@ -56,13 +56,13 @@ bool dbProvider::open(){
 
 void dbProvider::close(){
 
-    if (db_)
-      sqlite3_close(db_);
+  if (db_)
+    sqlite3_close(db_);
 }
 
 bool dbProvider::query(const string& query, vector<vector<string>>& results){
-  
-    QMutexLocker locker(&mtx_);
+
+  QMutexLocker locker(&mtx_);
 
   bool res = true;
   try{
@@ -93,14 +93,14 @@ bool dbProvider::query(const string& query, vector<vector<string>>& results){
 
   }
   catch (std::exception ex){ statusMess(QString("SQL::query Exception ") + ex.what()); res = false; }
-      
+
   return res;
 }
 
 dbProvider::dbProvider(const QString& filename){
-    
+
   pathDB_ = filename;
-      
+
   if (!init()) return;
 
   stringstream ss;
@@ -113,17 +113,17 @@ dbProvider::dbProvider(const QString& filename){
     "'grp' TEXT,"
     "'comment' TEXT,"
     "'type' INTEGER);";
-  
+
   if (!query(ss.str(), results)) return;
 
-    ss.str(""); ss.clear();
-    ss << "CREATE TABLE IF NOT EXISTS 'AttrSignal' ("
-        "'id' INTEGER PRIMARY KEY NOT NULL UNIQUE,"
-        "'signal' TEXT,"
-        "'module' TEXT,"
-        "'color' TEXT);";
+  ss.str(""); ss.clear();
+  ss << "CREATE TABLE IF NOT EXISTS 'AttrSignal' ("
+    "'id' INTEGER PRIMARY KEY NOT NULL UNIQUE,"
+    "'signal' TEXT,"
+    "'module' TEXT,"
+    "'color' TEXT);";
 
-    if (!query(ss.str(), results)) return;
+  if (!query(ss.str(), results)) return;
 
   ss.str(""); ss.clear();
   ss << "CREATE TABLE IF NOT EXISTS 'Trigger' ("
@@ -131,11 +131,11 @@ dbProvider::dbProvider(const QString& filename){
     "'name' TEXT,"
     "'signal' TEXT,"
     "'module' TEXT,"
-    "'isActive' INTEGER,"    
+    "'isActive' INTEGER,"
     "'condType' INTEGER,"
     "'condValue' INTEGER,"
     "'condTOut' INTEGER);";
-    
+
   if (!query(ss.str(), results)) return;
 
   ss.str(""); ss.clear();
@@ -147,16 +147,16 @@ dbProvider::dbProvider(const QString& filename){
 
   if (!query(ss.str(), results)) return;
 
-  
+
   ss.str(""); ss.clear();
   ss << "CREATE TABLE IF NOT EXISTS 'Events' ("
     "'id' INTEGER PRIMARY KEY NOT NULL UNIQUE,"
     "'trigger' TEXT,"
     "'sendDateTime' DATETIME);";
-  
+
   if (!query(ss.str(), results)) return;
 
-    isConnect_ = true;
+  isConnect_ = true;
 }
 
 dbProvider::~dbProvider(){
@@ -167,44 +167,44 @@ dbProvider::~dbProvider(){
 
 bool dbProvider::isConnect(){
 
-    return isConnect_;
+  return isConnect_;
 }
 
 bool dbProvider::saveTriggers(const QMap<QString, SV_Trigger::triggerData*>& trgData){
 
-  stringstream ss;vector<vector<string>> res;
-    
-    ss << "DELETE FROM Trigger;";
-    if (!query(ss.str(), res)) return false;
+  stringstream ss; vector<vector<string>> res;
 
-    ss.str(""); ss.clear();
-    ss << "DELETE FROM UserEventData;";
-    if (!query(ss.str(), res)) return false;
+  ss << "DELETE FROM Trigger;";
+  if (!query(ss.str(), res)) return false;
+
+  ss.str(""); ss.clear();
+  ss << "DELETE FROM UserEventData;";
+  if (!query(ss.str(), res)) return false;
 
   for (auto& tr : trgData){
-  
-        ss.str(""); ss.clear();
+
+    ss.str(""); ss.clear();
     ss << "INSERT INTO Trigger ('name','signal','module','isActive','condType','condValue','condTOut') VALUES(" <<
-            "'" << tr->name.toUtf8().constData() << "',"
-            "'" << tr->signal.toUtf8().constData() << "',"
-            "'" << tr->module.toUtf8().constData() << "',"
+      "'" << tr->name.toUtf8().constData() << "',"
+      "'" << tr->signal.toUtf8().constData() << "',"
+      "'" << tr->module.toUtf8().constData() << "',"
       "'" << (tr->isActive ? "1" : "0") << "',"
       "'" << (int)tr->condType << "',"
       "'" << tr->condValue << "',"
       "'" << tr->condTOut << "');";
-    
-    if (!query(ss.str(), res)) return false;
-    
-        /////////////////////////////////////////////////
-        ss.str(""); ss.clear();
-        ss << "INSERT INTO UserEventData ('trigger','userProcPath','userProcArgs') VALUES(" <<
-            "'" << tr->name.toUtf8().constData() << "',"
-            "'" << tr->userProcPath.toUtf8().constData() << "',"
-            "'" << tr->userProcArgs.toUtf8().constData() << "');";
 
-        if (!query(ss.str(), res)) return false;        
+    if (!query(ss.str(), res)) return false;
+
+    /////////////////////////////////////////////////
+    ss.str(""); ss.clear();
+    ss << "INSERT INTO UserEventData ('trigger','userProcPath','userProcArgs') VALUES(" <<
+      "'" << tr->name.toUtf8().constData() << "',"
+      "'" << tr->userProcPath.toUtf8().constData() << "',"
+      "'" << tr->userProcArgs.toUtf8().constData() << "');";
+
+    if (!query(ss.str(), res)) return false;
   }
-  
+
   return true;
 }
 
@@ -217,7 +217,7 @@ QVector<triggerData*> dbProvider::getTrigger(const QString& signal, const QStrin
 
   vector<vector<string>> trg; QVector<triggerData*> res;
   if (!query(ss.str(), trg)) return res;
-        
+
   int sz = trg.size();
   for (int i = 0; i < sz; ++i){
 
@@ -231,14 +231,14 @@ QVector<triggerData*> dbProvider::getTrigger(const QString& signal, const QStrin
     td->condValue = atoi(trg[i][6].c_str());
     td->condTOut = atoi(trg[i][7].c_str());
 
-        ss.str(""); ss.clear();
-        ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
+    ss.str(""); ss.clear();
+    ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
 
-        vector<vector<string>> evData;
-        if (!query(ss.str(), evData)) return res;
+    vector<vector<string>> evData;
+    if (!query(ss.str(), evData)) return res;
 
-        td->userProcPath = evData[i][2].c_str();
-        td->userProcArgs = evData[i][3].c_str();
+    td->userProcPath = evData[i][2].c_str();
+    td->userProcArgs = evData[i][3].c_str();
 
     res.push_back(td);
   }
@@ -260,21 +260,21 @@ triggerData* dbProvider::getTrigger(const QString& trname){
     td = new triggerData();
 
     td->name = trg[0][1].c_str();
-        td->signal = trg[0][2].c_str();
-        td->module = trg[0][3].c_str();
+    td->signal = trg[0][2].c_str();
+    td->module = trg[0][3].c_str();
     td->isActive = trg[0][4] == "1";
     td->condType = (eventType)atoi(trg[0][5].c_str());
     td->condValue = atoi(trg[0][6].c_str());
     td->condTOut = atoi(trg[0][7].c_str());
 
-        ss.str(""); ss.clear();
-        ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
+    ss.str(""); ss.clear();
+    ss << "SELECT * FROM UserEventData WHERE trigger = '" << td->name.toUtf8().data() << "';";
 
-        vector<vector<string>> evData;
-        if (!query(ss.str(), evData)) return td;
+    vector<vector<string>> evData;
+    if (!query(ss.str(), evData)) return td;
 
-        td->userProcPath = evData[0][2].c_str();
-        td->userProcArgs = evData[0][3].c_str();
+    td->userProcPath = evData[0][2].c_str();
+    td->userProcArgs = evData[0][3].c_str();
   }
 
   return td;
@@ -290,8 +290,8 @@ bool dbProvider::saveSignals(const std::map<std::string, SignalData*>& signs){
 
     res.clear();
     if (!query(ss.str(), res)) return false;
-        ss.str(""); ss.clear();
-    
+    ss.str(""); ss.clear();
+
     if (res.empty()){
       ss << "INSERT INTO Signal ('name','module','grp','comment','type') VALUES(" <<
         "'" << s.second->name << "',"
@@ -337,76 +337,76 @@ SignalData dbProvider::getSignal(const QString& signal, const QString& module){
 
 bool dbProvider::saveAttrSignals(const QMap<QString, signalAttr>& attr){
 
-    stringstream ss; 
-    vector<vector<string>> res;
+  stringstream ss;
+  vector<vector<string>> res;
 
-    for (auto& att : attr){
+  for (auto& att : attr){
 
-        ss.str(""); 
-        ss << "SELECT * FROM AttrSignal WHERE signal = '" << att.signal.toUtf8().data() << "' AND "
-                                         << " module = '" << att.module.toUtf8().data() << "';";
+    ss.str("");
+    ss << "SELECT * FROM AttrSignal WHERE signal = '" << att.signal.toUtf8().data() << "' AND "
+      << " module = '" << att.module.toUtf8().data() << "';";
 
-        res.clear();
-        if (!query(ss.str(), res)) return false;
-        
-        if (res.empty()){
-            ss.str("");
-            ss << "INSERT INTO AttrSignal ('signal','module','color') VALUES(" <<
-                "'" << att.signal.toUtf8().data() << "',"
-                "'" << att.module.toUtf8().data() << "',"
-                "'" << att.color.name(QColor::HexArgb).toUtf8().data() << "');";
-        }
-        else{
-            ss.str("");
-            ss << "UPDATE AttrSignal SET "
-                "color = '" << att.color.name(QColor::HexArgb).toUtf8().data() << "' "
-                "WHERE signal = '" << att.signal.toUtf8().data() << "' AND "
-                  << " module = '" << att.module.toUtf8().data() << "';";
-        }
-        if (!query(ss.str(), res)) return false;        
+    res.clear();
+    if (!query(ss.str(), res)) return false;
+
+    if (res.empty()){
+      ss.str("");
+      ss << "INSERT INTO AttrSignal ('signal','module','color') VALUES(" <<
+        "'" << att.signal.toUtf8().data() << "',"
+        "'" << att.module.toUtf8().data() << "',"
+        "'" << att.color.name(QColor::HexArgb).toUtf8().data() << "');";
     }
+    else{
+      ss.str("");
+      ss << "UPDATE AttrSignal SET "
+        "color = '" << att.color.name(QColor::HexArgb).toUtf8().data() << "' "
+        "WHERE signal = '" << att.signal.toUtf8().data() << "' AND "
+        << " module = '" << att.module.toUtf8().data() << "';";
+    }
+    if (!query(ss.str(), res)) return false;
+  }
 
-    return true;
+  return true;
 }
 
 signalAttr dbProvider::getAttrSignal(const QString& signal, const QString& module){
 
-    stringstream ss;
+  stringstream ss;
 
-    ss << "SELECT * FROM AttrSignal WHERE signal = '" << signal.toUtf8().data() << "' AND "
-                                     << " module = '" << module.toUtf8().data() << "';";
+  ss << "SELECT * FROM AttrSignal WHERE signal = '" << signal.toUtf8().data() << "' AND "
+    << " module = '" << module.toUtf8().data() << "';";
 
-    signalAttr as;
-    vector<vector<string>> attr;
-    if (!query(ss.str(), attr)) return as;
+  signalAttr as;
+  vector<vector<string>> attr;
+  if (!query(ss.str(), attr)) return as;
 
-    if (!attr.empty()){
+  if (!attr.empty()){
 
-        QColor clr;
-        clr.setNamedColor(QString::fromStdString(attr[0][3]));
-        as.signal = signal;
-        as.module = module;
-        as.color = clr;
-    }
+    QColor clr;
+    clr.setNamedColor(QString::fromStdString(attr[0][3]));
+    as.signal = signal;
+    as.module = module;
+    as.color = clr;
+  }
 
-    return as;
+  return as;
 }
 
 void dbProvider::delAttrSignal(const QString& signal, const QString& module){
 
-    stringstream ss;
+  stringstream ss;
 
-    ss << "DELETE FROM AttrSignal WHERE signal = '" << signal.toUtf8().data() << "' AND "
-          " module = '" << module.toUtf8().data() << "';";
+  ss << "DELETE FROM AttrSignal WHERE signal = '" << signal.toUtf8().data() << "' AND "
+    " module = '" << module.toUtf8().data() << "';";
 
-    vector<vector<string>> res;
-    query(ss.str(), res);
+  vector<vector<string>> res;
+  query(ss.str(), res);
 }
 
 void dbProvider::saveEvent(QString trg, QDateTime dt){
 
   stringstream ss;
-    
+
   ss << "INSERT INTO Events ('trigger', 'sendDateTime') VALUES("
     "'" << trg.toUtf8().constData() << "',"
     "'" << qPrintable(dt.toString("yyyy-MM-dd HH:mm:ss")) << "');";
@@ -440,7 +440,7 @@ QVector<uEvent> dbProvider::getEvents(QDateTime beginDT, QDateTime endDT){
 
     vector<vector<string>> tr;
     if (!query(cmd.toStdString(), tr)) return res;
-        
+
     if (!tr.empty()){
       for (auto& r : res){
         if (r.triggName == t){

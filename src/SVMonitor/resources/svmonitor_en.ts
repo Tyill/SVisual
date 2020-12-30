@@ -498,25 +498,25 @@
 <context>
     <name>eventOrderClass</name>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="14"/>
+        <location filename="../forms/EventTableDialog.ui" line="14"/>
         <location filename="../forms/ui_eventOrderWin.h" line="112"/>
         <source>Отчет событий</source>
         <translation>Event report</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="22"/>
+        <location filename="../forms/EventTableDialog.ui" line="22"/>
         <location filename="../forms/ui_eventOrderWin.h" line="113"/>
         <source>c</source>
         <translation>from</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="32"/>
+        <location filename="../forms/EventTableDialog.ui" line="32"/>
         <location filename="../forms/ui_eventOrderWin.h" line="114"/>
         <source>по</source>
         <translation>by</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="42"/>
+        <location filename="../forms/EventTableDialog.ui" line="42"/>
         <location filename="../forms/ui_eventOrderWin.h" line="115"/>
         <source>Показать</source>
         <translation>Show</translation>
@@ -534,31 +534,31 @@
         <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="109"/>
+        <location filename="../forms/EventTableDialog.ui" line="109"/>
         <location filename="../forms/ui_eventOrderWin.h" line="123"/>
         <source>Сигнал</source>
         <translation>Signal</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="104"/>
+        <location filename="../forms/EventTableDialog.ui" line="104"/>
         <location filename="../forms/ui_eventOrderWin.h" line="121"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="94"/>
+        <location filename="../forms/EventTableDialog.ui" line="94"/>
         <location filename="../forms/ui_eventOrderWin.h" line="117"/>
         <source>Время</source>
         <translation>Time</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="99"/>
+        <location filename="../forms/EventTableDialog.ui" line="99"/>
         <location filename="../forms/ui_eventOrderWin.h" line="119"/>
         <source>Триггер</source>
         <translation>Trigger</translation>
     </message>
     <message>
-        <location filename="../forms/eventOrderWin.ui" line="114"/>
+        <location filename="../forms/EventTableDialog.ui" line="114"/>
         <location filename="../forms/ui_eventOrderWin.h" line="125"/>
         <source>Условие</source>
         <translation>Condition</translation>
@@ -615,24 +615,24 @@
     </message>
 </context>
 <context>
-    <name>settingsPanel</name>
+    <name>SettingsDialog</name>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="133"/>
+        <location filename="../src/SettingsDialog.cpp" line="133"/>
         <source>порт</source>
         <translation>port</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="148"/>
+        <location filename="../src/SettingsDialog.cpp" line="148"/>
         <source>скорость</source>
         <translation>speed</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="199"/>
+        <location filename="../src/SettingsDialog.cpp" line="199"/>
         <source>Выбор пути сохранения файлов записи</source>
         <translation>Choosing ways to preserve the recording files</translation>
     </message>
     <message>
-        <location filename="../src/settingsPanel.cpp" line="241"/>
+        <location filename="../src/SettingsDialog.cpp" line="241"/>
         <source>Изменения вступят в силу после перезагрузки</source>
         <translation>Changes will take effect after a reboot</translation>
     </message>
@@ -644,13 +644,13 @@
 <context>
     <name>settingsPanelClass</name>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="26"/>
+        <location filename="../forms/SettingsDialog.ui" line="26"/>
         <location filename="../forms/ui_settingsPanel.h" line="393"/>
         <source>Настройки</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="32"/>
+        <location filename="../forms/SettingsDialog.ui" line="32"/>
         <location filename="../forms/ui_settingsPanel.h" line="394"/>
         <source>Получение данных</source>
         <translation>Retrieving data</translation>
@@ -660,9 +660,9 @@
         <translation type="vanished">connect of the COM</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="101"/>
-        <location filename="../forms/settingsPanel.ui" line="258"/>
-        <location filename="../forms/settingsPanel.ui" line="368"/>
+        <location filename="../forms/SettingsDialog.ui" line="101"/>
+        <location filename="../forms/SettingsDialog.ui" line="258"/>
+        <location filename="../forms/SettingsDialog.ui" line="368"/>
         <location filename="../forms/ui_settingsPanel.h" line="396"/>
         <location filename="../forms/ui_settingsPanel.h" line="404"/>
         <location filename="../forms/ui_settingsPanel.h" line="408"/>
@@ -674,7 +674,7 @@
         <translation type="vanished">speed</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="40"/>
+        <location filename="../forms/SettingsDialog.ui" line="40"/>
         <location filename="../forms/ui_settingsPanel.h" line="395"/>
         <source>соединение по Ethernet</source>
         <translation>connect of the Ethernet</translation>
@@ -684,46 +684,46 @@
         <translation type="vanished">ip addr</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="127"/>
+        <location filename="../forms/SettingsDialog.ui" line="127"/>
         <location filename="../forms/ui_settingsPanel.h" line="398"/>
         <source>соединение по COM/UART</source>
         <translation>connect of COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="157"/>
+        <location filename="../forms/SettingsDialog.ui" line="157"/>
         <location filename="../forms/ui_settingsPanel.h" line="399"/>
         <source>Добавить COM/UART</source>
         <translation>Add COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="164"/>
+        <location filename="../forms/SettingsDialog.ui" line="164"/>
         <location filename="../forms/ui_settingsPanel.h" line="400"/>
         <source>Удалить COM/UART</source>
         <translation>Delete COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="305"/>
+        <location filename="../forms/SettingsDialog.ui" line="305"/>
         <location filename="../forms/ui_settingsPanel.h" line="405"/>
         <source>Zabbix агент (пассивный)</source>
         <translation>Zabbix agent (passive)</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="409"/>
+        <location filename="../forms/SettingsDialog.ui" line="409"/>
         <location filename="../forms/ui_settingsPanel.h" line="409"/>
         <source>Сохранение данных</source>
         <translation>Save data archive</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="589"/>
+        <location filename="../forms/SettingsDialog.ui" line="589"/>
         <location filename="../forms/ui_settingsPanel.h" line="424"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="201"/>
-        <location filename="../forms/settingsPanel.ui" line="311"/>
-        <location filename="../forms/settingsPanel.ui" line="418"/>
-        <location filename="../forms/settingsPanel.ui" line="424"/>
+        <location filename="../forms/SettingsDialog.ui" line="201"/>
+        <location filename="../forms/SettingsDialog.ui" line="311"/>
+        <location filename="../forms/SettingsDialog.ui" line="418"/>
+        <location filename="../forms/SettingsDialog.ui" line="424"/>
         <location filename="../forms/ui_settingsPanel.h" line="402"/>
         <location filename="../forms/ui_settingsPanel.h" line="406"/>
         <location filename="../forms/ui_settingsPanel.h" line="411"/>
@@ -732,9 +732,9 @@
         <translation>Active</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="114"/>
-        <location filename="../forms/settingsPanel.ui" line="216"/>
-        <location filename="../forms/settingsPanel.ui" line="326"/>
+        <location filename="../forms/SettingsDialog.ui" line="114"/>
+        <location filename="../forms/SettingsDialog.ui" line="216"/>
+        <location filename="../forms/SettingsDialog.ui" line="326"/>
         <location filename="../forms/ui_settingsPanel.h" line="397"/>
         <location filename="../forms/ui_settingsPanel.h" line="403"/>
         <location filename="../forms/ui_settingsPanel.h" line="407"/>
@@ -742,7 +742,7 @@
         <translation>IP address</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="195"/>
+        <location filename="../forms/SettingsDialog.ui" line="195"/>
         <location filename="../forms/ui_settingsPanel.h" line="401"/>
         <source>Web сервер</source>
         <translation>Web server</translation>
@@ -752,25 +752,25 @@
         <translation type="vanished">path</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="489"/>
+        <location filename="../forms/SettingsDialog.ui" line="489"/>
         <location filename="../forms/ui_settingsPanel.h" line="415"/>
         <source>Настройка измерений</source>
         <translation>Measurement Setup</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="497"/>
+        <location filename="../forms/SettingsDialog.ui" line="497"/>
         <location filename="../forms/ui_settingsPanel.h" line="416"/>
         <source>Период записи</source>
         <translation>Recording period</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="504"/>
+        <location filename="../forms/SettingsDialog.ui" line="504"/>
         <location filename="../forms/ui_settingsPanel.h" line="417"/>
         <source> мс</source>
         <translation>ms</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="520"/>
+        <location filename="../forms/SettingsDialog.ui" line="520"/>
         <location filename="../forms/ui_settingsPanel.h" line="418"/>
         <source>Размер пакета</source>
         <translation>Size of packet</translation>
@@ -792,19 +792,19 @@
         <translation type="obsolete">hour</translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="576"/>
+        <location filename="../forms/SettingsDialog.ui" line="576"/>
         <location filename="../forms/ui_settingsPanel.h" line="419"/>
         <source>*</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="583"/>
+        <location filename="../forms/SettingsDialog.ui" line="583"/>
         <location filename="../forms/ui_settingsPanel.h" line="421"/>
         <source>CTRL+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/settingsPanel.ui" line="586"/>
+        <location filename="../forms/SettingsDialog.ui" line="586"/>
         <location filename="../forms/ui_settingsPanel.h" line="423"/>
         <source>Сохранить</source>
         <translation>Save</translation>

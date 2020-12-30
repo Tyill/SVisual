@@ -24,10 +24,25 @@
 //
 #pragma once
 
-/////////////////////
-#include <QtWidgets>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
+#include "src/stdafx.h"
+#include "SVMonitor/forms/ui_eventOrderWin.h"
+#include "mainwin.h"
 
+class EventTableDialog : public QDialog
+{
+  Q_OBJECT
 
-void statusMess(const QString&);
+public:
+  EventTableDialog(QWidget *parent = 0);
+  ~EventTableDialog();
+
+  Ui::eventOrderClass ui;
+
+private:
+  void showEvent(QShowEvent * event);
+
+  MainWin* mainWin_ = nullptr;
+
+  public slots:
+  void showOrder();
+};

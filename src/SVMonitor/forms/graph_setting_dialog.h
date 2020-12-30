@@ -24,36 +24,24 @@
 //
 #pragma once
 
-#include "forms/ui_settingsPanel.h"
-#include "forms/mainwin.h"
+#include "SVMonitor/forms/ui_graph_setting.h"
+#include "SVMonitor/forms/main_win.h"
+#include "SVGraphPanel/graph_panel.h"
 
-class settingsPanel : public QDialog
+#include <QDialog>
+
+class GraphSettingDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  settingsPanel(QWidget *parent = 0);
-  ~settingsPanel();
+  GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting&);
+  ~GraphSettingDialog() = default;
 
-    QString selDirArch_;
-
-  Ui::settingsPanelClass ui;
+  Ui::GraphSettingDialog ui;
 
 private:
-  
-  bool selParamLoad_ = false;
-  
-  void showEvent(QShowEvent * event);
 
-    MainWin* mainWin_ = nullptr;
-
-    QVector<QPair<QLineEdit*, QComboBox*>> comPorts_;
-
-private slots:
-  void saveChange();
-    void addCOM(QString port = "", QString speed = "", int row = -1);
-    void delCOM();
-    void selDirArch();
-  void paramChange();
+  private slots :
 
 };

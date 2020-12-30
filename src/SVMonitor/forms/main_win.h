@@ -24,33 +24,35 @@
 //
 #pragma once
 
-#include <QNetworkAccessManager>
-
-#include "forms/ui_mainwin.h"
+#include "SVMonitor/forms/ui_main_win.h"
 #include "SVConfig/config_data.h"
-#include "SVServer/SVServer.h"
-#include "SVAuxFunc/mt_log.h"
-#include "SVGraphPanel/SVGraphPanel.h" 
-#include "src/dbProvider.h"
-#include "src/comReader.h"
+#include "SVServer/server.h"
+#include "SVAuxFunc/logger.h"
+#include "SVGraphPanel/graph_panel.h" 
+#include "src/db_provider.h"
+#include "src/com_reader.h"
 
-class settingsPanel;
-class graphSettingPanel;
-class eventOrderWin;
+#include <QNetworkAccessManager>
+#include <QMainWindow>
+#include <QSystemTrayIcon>
+
+class SettingsDialog;
+class GraphSettingDialog;
+class EventTableDialog;
 
 class MainWin : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
-        friend void statusMess(const QString& mess);
+    friend void statusMess(const QString& mess);
 
 public:
 
-  struct config{
+  struct Config{
 
     QString dirPath;
     QString initPath;
-        QString selOpenDir;
+    QString selOpenDir;
 
     bool outArchiveEna;        ///< запись архива активна
     QString outArchivePath;    ///< запись архива путь
@@ -61,70 +63,69 @@ public:
     int packetSz;              ///< размер пакета - задает пользователь
 
     bool com_ena;              ///< запись по com
-        QVector<QPair<QString, QString>> com_ports;   ///< COM name, speed
-                                   
+    QVector<QPair<QString, QString>> com_ports;   ///< COM name, speed
+
     QString dbPath;            ///< путь к бд
 
     // связь по TCP
     QString tcp_addr;          ///< ip
     int tcp_port;              ///< port
 
-        // web
-        bool web_ena;              
-        QString web_addr;          ///< ip
-        int web_port;              ///< port
+    // web
+    bool web_ena;
+    QString web_addr;          ///< ip
+    int web_port;              ///< port
 
-        // zabbix
-        bool zabbix_ena;              
-        QString zabbix_addr;       ///< agent ip
-        int zabbix_port;           ///< agent port
-        
-        int toutLoadWinStateSec;
+    // zabbix
+    bool zabbix_ena;
+    QString zabbix_addr;       ///< agent ip
+    int zabbix_port;           ///< agent port
 
-        SV_Graph::graphSetting graphSett;
+    int toutLoadWinStateSec;
+
+    SV_Graph::GraphSetting graphSett;
   };
 
-    SV_Aux::Logger lg;
+  SV_Aux::Logger lg;
 
   MainWin(QWidget *parent = 0);
   ~MainWin();
 
-    void updateConfig(config);
-    config getConfig();
+  void updateConfig(Config);
+  Config getConfig();
 
   QVector<uEvent> getEvents(QDateTime, QDateTime);
 
-    void updateGraphSetting(const SV_Graph::graphSetting&);
+  void updateGraphSetting(const SV_Graph::GraphSetting&);
 
 private:
-
-   
+  
   Ui::MainWin ui;
   bool isSlowMode_ = false;
-    
+
   QVector<SerialPortReader*> comReaders_;
 
-  config cng;
-  SV_Srv::config srvCng;
-    
-    QMap<QObject*, QWidget*> graphPanels_;
-    QDialog* exportPanel_ = nullptr;
-    QDialog* scriptPanel_ = nullptr;
-    QDialog* triggerPanel_ = nullptr;
-  eventOrderWin* orderWin_ = nullptr;   
-  settingsPanel* settPanel_ = nullptr;
-    graphSettingPanel* graphSettPanel_ = nullptr;
+  Config cng;
+  SV_Srv::Config srvCng;
+
+  QMap<QObject*, QWidget*> graphPanels_;
+  QDialog* exportPanel_ = nullptr;
+  QDialog* scriptPanel_ = nullptr;
+  QDialog* triggerPanel_ = nullptr;
+  EventTableDialog* orderWin_ = nullptr;
+  SettingsDialog* settPanel_ = nullptr;
+  GraphSettingDialog* graphSettPanel_ = nullptr;
   QSystemTrayIcon* trayIcon_ = nullptr;
 
   dbProvider* db_ = nullptr;
-    
-    QNetworkAccessManager* netManager_ = nullptr;
+
+  QNetworkAccessManager* netManager_ = nullptr;
 
   QSet<QString> signExist_;
-  
-    QMap<QString, signalAttr> signAttr_;
 
-    bool eventFilter(QObject *target, QEvent *event);
+  QMap<QString, signalAttr> signAttr_;
+
+  bool eventFilter(QObject *target, QEvent *event);
 
   bool writeSettings(QString pathIni);
   bool init(QString initPath);
@@ -132,12 +133,12 @@ private:
   void load();
 
   void initTrayIcon();
-  
+
   void sortSignalByModule();
   void contextMenuEvent(QContextMenuEvent * event);
-    QDialog* addNewWindow(const QRect& pos);
+  QDialog* addNewWindow(const QRect& pos);
 
-public slots:
+  public slots:
   void slowMode();
   void contextMenuClick(QAction*);
   void updateTblSignal();
@@ -145,5 +146,5 @@ public slots:
   void moduleConnect(QString module);
   void moduleDisconnect(QString module);
   void onTrigger(QString trigger);
-    void changeSignColor(QString module, QString signal, QColor color);
+  void changeSignColor(QString module, QString signal, QColor color);
 };

@@ -22,9 +22,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "forms/mainwin.h"
+
+#include "SVMonitor/forms/main_win.h"
 #include "SVConfig/config_limits.h"
+
+#include <QtCore>
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
@@ -39,10 +42,10 @@ int main(int argc, char *argv[])
 
 #ifdef SV_EN
   QTranslator translator;
-    translator.load(":/SVMonitor/svmonitor_en.qm");
+  translator.load(":/SVMonitor/svmonitor_en.qm");
   a.installTranslator(&translator);
 #endif
-  
+
   MainWin w;
   w.showMaximized();
   return a.exec();

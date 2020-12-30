@@ -30,19 +30,19 @@
 #include "SVConfig/config_limits.h"
 
 
-SerialPortReader::SerialPortReader(SerialPortReader::config cng_) : cng(cng_)
+SerialPortReader::SerialPortReader(SerialPortReader::Config cng_) : cng(cng_)
 {
-      
+
 }
 
 SerialPortReader::~SerialPortReader()
 {
-  
+
 }
 
 bool SerialPortReader::startServer(){
 
-  if (isConnect_ ) return true;
+  if (isConnect_) return true;
 
   pSerialPort_ = new QSerialPort(cng.name);
 
@@ -53,12 +53,12 @@ bool SerialPortReader::startServer(){
   pSerialPort_->setStopBits(QSerialPort::StopBits::OneStop);
 
   isConnect_ = pSerialPort_->open(QIODevice::ReadOnly);
-  
+
   connect(pSerialPort_, &QSerialPort::readyRead, this, &SerialPortReader::hReadData);
 
   connect(pSerialPort_, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
     this, &SerialPortReader::hError);
-      
+
   if (!tmCheckConnect_){
     // проверка соединения
     tmCheckConnect_ = new QTimer(this);
@@ -94,14 +94,14 @@ void SerialPortReader::disconnect(){
 }
 
 void SerialPortReader::setDataCBack(dataCBack uf){
-  
+
   ufReceiveData_ = uf;
 }
 
 void SerialPortReader::hReadData()
-{  
+{
   readData_ += pSerialPort_->readAll().toStdString();
-  
+
   std::string out;
   if (ufReceiveData_)
     ufReceiveData_(readData_, out);
@@ -111,7 +111,7 @@ void SerialPortReader::hReadData()
 
 void SerialPortReader::hError(QSerialPort::SerialPortError serialPortError)
 {
-  if (serialPortError == QSerialPort::ReadError)  
+  if (serialPortError == QSerialPort::ReadError)
     statusMess(QString(tr("%1 Ошибка получения данных").arg(cng.name)));
 
 }

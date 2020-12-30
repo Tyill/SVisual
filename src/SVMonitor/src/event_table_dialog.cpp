@@ -23,12 +23,12 @@
 // THE SOFTWARE.
 //
 #include "stdafx.h"
-#include "forms/eventOrderWin.h"
+#include "SVMonitor/forms/EventTableDialog.h"
 #include "structurs.h"
 #include "serverAPI.h"
 #include "SVTriggerPanel/SVTriggerPanel.h"
 
-eventOrderWin::eventOrderWin(QWidget *parent){
+EventTableDialog::EventTableDialog(QWidget *parent){
 
   setParent(parent);
 
@@ -44,10 +44,10 @@ eventOrderWin::eventOrderWin(QWidget *parent){
 
 }
 
-eventOrderWin::~eventOrderWin(){}
+EventTableDialog::~EventTableDialog(){}
 
-void eventOrderWin::showOrder(){
-    
+void EventTableDialog::showOrder(){
+
   QVector<uEvent> events = mainWin_->getEvents(ui.txtBeginDate->dateTime(), ui.txtEndDate->dateTime());
 
   ui.tableEvents->clearContents();
@@ -59,7 +59,7 @@ void eventOrderWin::showOrder(){
     if (i >= rowCnt){
       ui.tableEvents->insertRow(rowCnt);  ++rowCnt;
     }
-  
+
     ui.tableEvents->setItem(i, 0, new QTableWidgetItem(events[i].sendDateTime));
     ui.tableEvents->setItem(i, 1, new QTableWidgetItem(events[i].triggName));
     ui.tableEvents->setItem(i, 2, new QTableWidgetItem(events[i].module));
@@ -73,7 +73,7 @@ void eventOrderWin::showOrder(){
 
 }
 
-void eventOrderWin::showEvent(QShowEvent * event){
+void EventTableDialog::showEvent(QShowEvent * event){
 
   ui.txtBeginDate->setDateTime(QDateTime::currentDateTime());
   ui.txtBeginDate->setTime(QTime::fromString("00:00"));

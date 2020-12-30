@@ -22,8 +22,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "SVServer/SVServer.h"
+
+#include "SVServer/server.h"
+
+#include <QtCore>
 
 QMap<QString, SV_Base::ModuleData *> getCopyModuleRefSrv(){
 
@@ -49,18 +51,18 @@ QMap<QString, SV_Base::SignalData *> getCopySignalRefSrv(){
 
 SV_Base::ModuleData* getModuleDataSrv(const QString& module){
 
-    return SV_Srv::getModuleData(module.toUtf8().data());
+  return SV_Srv::getModuleData(module.toUtf8().data());
 };
 
 QVector<QString> getModuleSignalsSrv(const QString& module){
 
-    auto msign = SV_Srv::getModuleSignals(module.toUtf8().data());
+  auto msign = SV_Srv::getModuleSignals(module.toUtf8().data());
 
-    QVector<QString> res;
-    for (auto& s : msign){
-        res.push_back(QString::fromStdString(s));
-    }
-    return res;
+  QVector<QString> res;
+  for (auto& s : msign){
+    res.push_back(QString::fromStdString(s));
+  }
+  return res;
 };
 
 SV_Base::SignalData* getSignalDataSrv(const QString& sing){
@@ -70,15 +72,15 @@ SV_Base::SignalData* getSignalDataSrv(const QString& sing){
 
 bool loadSignalDataSrv(const QString& name){
 
-    return SV_Srv::signalBufferEna(name.toUtf8().data());
+  return SV_Srv::signalBufferEna(name.toUtf8().data());
 }
 
 bool addSignalSrv(SV_Base::SignalData* sd){
 
-    return SV_Srv::addSignal(sd);
+  return SV_Srv::addSignal(sd);
 }
 
 bool addModuleSrv(SV_Base::ModuleData* md){
 
-    return SV_Srv::addModule(md);
+  return SV_Srv::addModule(md);
 }

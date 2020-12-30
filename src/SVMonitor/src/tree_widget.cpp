@@ -22,30 +22,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
-
 #include "stdafx.h"
+#include "treeWidgetExt.h"
 
-class treeWidgetExt : public QTreeWidget
-{
-  Q_OBJECT
+treeWidgetExt::treeWidgetExt(QWidget *parent){
 
+  this->setParent(parent);
 
-private:
-  QPoint startMovePos_;
+  setSelectionMode(QAbstractItemView::SingleSelection);
+  setDragEnabled(true);
+  setDropIndicatorShown(true);
 
+}
 
-protected:
-    
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  
-public:
-
-  treeWidgetExt(QWidget *parent = 0);
-  ~treeWidgetExt();
+treeWidgetExt::~treeWidgetExt(){
 
 
-};
+}
+
+void treeWidgetExt::mousePressEvent(QMouseEvent *event){
+
+  if (event->button() == Qt::LeftButton)
+    startMovePos_ = event->pos();
+
+
+  QTreeWidget::mousePressEvent(event);
+}
+
+void treeWidgetExt::mouseMoveEvent(QMouseEvent *event){
+
+  if (event->buttons() & Qt::LeftButton) {
+
+    int dist = (event->pos() - startMovePos_).manhattanLength();
+    if (dist >= QApplication::startDragDistance()){
+
+      QTreeWidgetItem *item = currentItem();
+      if (item) {
+        QMimeData *mimeData = new QMimeData;
+
+        QString sign = item->text(5);
+
+        mimeData->setText(sign);
+        QDrag *drag = new QDrag(this);
+        drag->setMimeData(mimeData);
+
+        drag->exec();
+      }
+    }
+  }
+
+  QTreeWidget::mouseMoveEvent(event);
+}
 
 

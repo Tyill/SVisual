@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>settingsPanelClass</class>
- <widget class="QDialog" name="settingsPanelClass">
+ <class>SettingsDialog</class>
+ <widget class="QDialog" name="SettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -509,7 +509,7 @@
           <property name="maximum">
            <number>60000</number>
           </property>
-          <property name="Value">
+          <property name="Value" stdset="0">
            <number>100</number>
           </property>
          </widget>
@@ -529,7 +529,7 @@
           <property name="maximum">
            <number>1000</number>
           </property>
-          <property name="Value">
+          <property name="Value" stdset="0">
            <number>10</number>
           </property>
          </widget>

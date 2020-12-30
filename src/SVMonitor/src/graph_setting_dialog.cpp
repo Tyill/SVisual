@@ -22,58 +22,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
-
 #include "stdafx.h"
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
+#include "SVMonitor/forms/GraphSettingDialog.h"
+#include "SVMonitor/forms/mainwin.h"
 
-class SerialPortReader : public QObject
-{
-  Q_OBJECT
+GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::graphSetting& gs){
 
-public:
+  setParent(parent);
 
-  struct config{
+  MainWin* mainWin = (MainWin*)parent;
 
-    QString name;
-    int speed = 9600;
-    int cycleRecMs;           ///< период записи - задает пользователь
-    int packetSz;             ///< размер пакета - задает пользователь
+  ui.setupUi(this);
 
-    config(QString name_, int speed_, int cycleRecMs_, int packetSz_) :
-      name(name_), speed(speed_), cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
-  };
+  ui.slrColorTransparent->setValue(gs.transparent);
+  ui.slrPenWidth->setValue(gs.lineWidth);
+  ui.chbDarkTheme->setChecked(gs.darkTheme);
 
-  SerialPortReader(config);
-  ~SerialPortReader();
+  connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos){
 
-  bool startServer();
-  void stopServer();
+    SV_Graph::graphSetting gs;
+    gs.transparent = pos;
+    gs.lineWidth = ui.slrPenWidth->Value();
+    gs.darkTheme = ui.chbDarkTheme->isChecked();
 
-  bool isRunning();
+    mainWin->updateGraphSetting(gs);
+  });
 
-  /// задать польз callback - получение данных
-  typedef void(*dataCBack)(std::string &inout, std::string &out);
-  void setDataCBack(dataCBack uf);
+  connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos){
 
-public slots:
-  void hReadData();
-  void hError(QSerialPort::SerialPortError serialPortError);
-  void disconnect();
+    SV_Graph::graphSetting gs;
+    gs.transparent = ui.slrColorTransparent->Value();
+    gs.lineWidth = pos;
+    gs.darkTheme = ui.chbDarkTheme->isChecked();
 
-private:
+    mainWin->updateGraphSetting(gs);
+  });
 
-  dataCBack ufReceiveData_ = nullptr;
+  connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin](){
 
-  QSerialPort* pSerialPort_ = nullptr;
-  std::string readData_;
+    SV_Graph::graphSetting gs;
+    gs.transparent = ui.slrColorTransparent->Value();
+    gs.lineWidth = ui.slrPenWidth->Value();
+    gs.darkTheme = ui.chbDarkTheme->isChecked();
 
-  QTimer* tmCheckConnect_ = nullptr;
-  const int checkConnTOut = 5;  // циклов для проверки
+    mainWin->updateGraphSetting(gs);
+  });
 
-  bool isConnect_ = false;
-  
-  config cng;
-    
-};
+}
