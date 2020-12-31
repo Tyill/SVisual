@@ -26,14 +26,14 @@
 
 #include "GeneratedFiles/ui_event_table_dialog.h"
 
-class MainWin;
+class DbProvider;
 
 class EventTableDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  EventTableDialog(QWidget *parent = 0);
+  EventTableDialog(DbProvider* db, QWidget *parent = 0);
   ~EventTableDialog();
 
   Ui::EventTableDialog ui;
@@ -41,8 +41,8 @@ public:
 private:
   void showEvent(QShowEvent * event);
 
-  MainWin* mainWin_ = nullptr;
+  DbProvider* db_ = nullptr;
 
-  public slots:
+public slots:
   void showOrder();
 };

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "SVConfig/config_data.h"
+#include <map>
 
 namespace SV_Srv {
 
@@ -35,7 +36,7 @@ namespace SV_Srv {
     std::string outArchivePath;  ///< запись архива путь
     std::string outArchiveName;  ///< запись архива имя файла
     int outArchiveHourCnt;       ///< запись архива размер файла, час
-
+                                 
     int cycleRecMs;              ///< период записи - задает пользователь
     int packetSz;                ///< размер пакета - задает пользователь
 

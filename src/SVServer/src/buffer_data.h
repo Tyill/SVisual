@@ -34,7 +34,10 @@ class BufferData
 {
 public:
    
-  BufferData(const SV_Srv::Config&);
+  BufferData() = default;
+
+  /// инициализировать буфер
+  void init(const SV_Srv::Config&);
 
   /// входная переменная
   struct InputData{
@@ -49,7 +52,7 @@ public:
   /// \param in новые данные
   /// \param bTm отметка времени, мс
   /// \return true - ok
-  void updDataSignals(const std::string& in, uint64_t bTm);
+  void updateDataSignals(const std::string& in, uint64_t bTm);
 
   /// вернуть данные по текущей позиции чтения
   /// \return
@@ -57,11 +60,7 @@ public:
 
   /// инкремент позиции чтения
   void incReadPos();
-
-  /// размер буфера
-  /// \return
-  int getBuffSize();
-
+  
 private:
 
   /// запись
@@ -74,11 +73,11 @@ private:
   SV_Srv::Config cng;
 
   /// данные
-  static const int BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
+  static const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
   InputData _buffer[BUFF_SZ];
 
-  int _buffReadPos = 0;  ///< тек позиция чтения
-  int _buffWritePos = 0; ///< тек позиция записи
+  size_t _buffReadPos = 0;  ///< тек позиция чтения
+  size_t _buffWritePos = 0; ///< тек позиция записи
 
   std::mutex _mtx;
 };

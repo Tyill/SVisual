@@ -25,7 +25,6 @@
 
 #include "SVMonitor/forms/settings_dialog.h"
 #include "SVMonitor/forms/main_win.h"
-#include "SVServer/server.h"
 
 #include <QComboBox>
 #include <QFileDialog>

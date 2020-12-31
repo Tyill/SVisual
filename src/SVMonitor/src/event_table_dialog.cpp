@@ -24,32 +24,24 @@
 //
 
 #include "SVMonitor/forms/event_table_dialog.h"
-#include "SVMonitor/forms/main_win.h"
-#include "SVTriggerDialog/trigger_dialog.h"
-#include "structurs.h"
-#include "server_api.h"
+#include "db_provider.h"
 
-EventTableDialog::EventTableDialog(QWidget *parent){
-
-  setParent(parent);
-
-  mainWin_ = (MainWin*)parent;
-
+EventTableDialog::EventTableDialog(DbProvider* db, QWidget *parent):
+  QDialog(parent), db_(db){
+    
   ui.setupUi(this);
 
   ui.txtBeginDate->setCalendarPopup(true);
   ui.txtEndDate->setCalendarPopup(true);
 
-
   connect(ui.btnShowOrder, SIGNAL(clicked()), this, SLOT(showOrder()));
-
 }
 
 EventTableDialog::~EventTableDialog(){}
 
 void EventTableDialog::showOrder(){
 
-  QVector<UserEvent> events = mainWin_->getEvents(ui.txtBeginDate->dateTime(), ui.txtEndDate->dateTime());
+  QVector<UserEvent> events = db_ ? db_->getEvents(ui.txtBeginDate->dateTime(), ui.txtEndDate->dateTime()) : QVector<UserEvent>();
 
   ui.tableEvents->clearContents();
   int sz = events.size(), rowCnt = ui.tableEvents->rowCount();

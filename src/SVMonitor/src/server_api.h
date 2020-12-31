@@ -25,15 +25,15 @@
 
 #include "SVServer/server.h"
 
-QMap<QString, SV_Base::ModuleData *> getCopyModuleRefSrv();
+QMap<QString, SV_Base::ModuleData*> getCopyModuleRefSrv();
 
-QMap<QString, SV_Base::SignalData *> getCopySignalRefSrv();
+QMap<QString, SV_Base::SignalData*> getCopySignalRefSrv();
 
 SV_Base::SignalData* getSignalDataSrv(const QString& sing);
 
-SV_Base::ModuleData* getModuleDataSrv(const QString& md);
+SV_Base::ModuleData* getModuleDataSrv(const QString& module);
 
-QVector<QString> getModuleSignalsSrv(const QString& md);
+QVector<QString> getModuleSignalsSrv(const QString& module);
 
 bool loadSignalDataSrv(const QString& name);
 

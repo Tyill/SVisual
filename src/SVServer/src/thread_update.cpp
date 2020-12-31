@@ -42,24 +42,24 @@ extern SV_Srv::onUpdateSignalsCBack pfUpdateSignalsCBack;
 extern SV_Srv::onAddSignalsCBack pfAddSignalsCBack;
 extern const int BUFF_SIGN_HOUR_CNT = 2;
 
-ThreadUpdate::ThreadUpdate(const SV_Srv::Config& _cng, BufferData* pBuff):
-  cng(_cng), _pBuffData(pBuff){
+ThreadUpdate::ThreadUpdate(const SV_Srv::Config& _cng, BufferData& buff):
+  cng(_cng), _buffData(buff){
     
-  _pArchive = new Archive(cng);
-  _thr = std::thread(&ThreadUpdate::updCycle, this);
+  _archive.init(cng);
+  _thr = std::thread(&ThreadUpdate::updateCycle, this);
 }
 
 ThreadUpdate::~ThreadUpdate(){
 
   _thrStop = true;
-  if (_thr.joinable()) _thr.join();
+  if (_thr.joinable()) _thr.join();  
 }
 
-void ThreadUpdate::setArchiveConfig(SV_Srv::Config cng_){
+void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
 
   cng.outArchiveEna = cng_.outArchiveEna;
 
-  _pArchive->setConfig(cng_);
+  _archive.setConfig(cng_);
 }
 
 void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp){
@@ -94,20 +94,20 @@ void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp
 
   SV_Srv::addSignal(sd);
 
-  _pArchive->addSignal(sign);
+  _archive.addSignal(sign);
 }
 
-void ThreadUpdate::updateSign(SignalData* sign, size_t beginPos, size_t valuePos){
+void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valuePos){
 
   sign->buffMinTime = sign->buffData[beginPos].beginTime;
   sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
 
-  double minValue = sign->buffMinValue, maxValue = sign->buffMaxValue;
+  double minValue = sign->buffMinValue,
+         maxValue = sign->buffMaxValue;
 
   if (sign->type == ValueType::INT){
 
     Value* vl = sign->buffData[valuePos].vals;
-
     for (int i = 0; i < SV_PACKETSZ; ++i){
 
       if (vl[i].vInt > maxValue) maxValue = vl[i].vInt;
@@ -127,22 +127,21 @@ void ThreadUpdate::updateSign(SignalData* sign, size_t beginPos, size_t valuePos
 
   sign->buffMinValue = minValue;
   sign->buffMaxValue = maxValue;
-
 }
 
-void ThreadUpdate::modConnect(const string& module){
+void ThreadUpdate::moduleConnect(const string& module){
 
   if (pfModuleConnectCBack)
     pfModuleConnectCBack(module);
 }
 
-void ThreadUpdate::modDisconnect(const string& module){
+void ThreadUpdate::moduleDisconnect(const string& module){
 
   if (pfModuleDisconnectCBack)
     pfModuleDisconnectCBack(module);
 }
 
-void ThreadUpdate::updCycle(){
+void ThreadUpdate::updateCycle(){
 
   auto sref = SV_Srv::getCopySignalRef();
   map<string, bool> signActive;
@@ -168,51 +167,51 @@ void ThreadUpdate::updCycle(){
     tmDelay.update();
 
     bool isNewSign = false, isBuffActive = false; string sign;
-    BufferData::InputData bp = _pBuffData->getDataByReadPos();
-    while (bp.isActive){
+    BufferData::InputData bufPos = _buffData.getDataByReadPos();
+    while (bufPos.isActive){
 
       isBuffActive = true;
 
-      sign = bp.name + bp.module;
+      sign = bufPos.name + bufPos.module;
 
       if (sref.find(sign) == sref.end()){
-        addSignal(sign, bp);
+        addSignal(sign, bufPos);
         sref[sign] = SV_Srv::getSignalData(sign);
-        mref[bp.module] = SV_Srv::getModuleData(bp.module);;
+        mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);;
         isNewSign = true;
       }
 
-      auto sd = sref[sign];
+      auto signData = sref[sign];
 
       signActive[sign] = true;
-      moduleActive[sd->module] = true;
+      moduleActive[signData->module] = true;
 
-      sd->lastData.beginTime = bp.data.beginTime;
-      memcpy(sd->lastData.vals, bp.data.vals, packSz);
+      signData->lastData.beginTime = bufPos.data.beginTime;
+      memcpy(signData->lastData.vals, bufPos.data.vals, packSz);
 
       // заполняем буфер, если разрешено
-      if (sd->isBuffEnable) {
-        size_t vp = sd->buffValuePos;
-        sd->buffData[vp].beginTime = bp.data.beginTime;
-        memcpy(sd->buffData[vp].vals, bp.data.vals, packSz);
+      if (signData->isBuffEnable) {
+        size_t vp = signData->buffValuePos;
+        signData->buffData[vp].beginTime = bufPos.data.beginTime;
+        memcpy(signData->buffData[vp].vals, bufPos.data.vals, packSz);
 
-        updateSign(sd, sd->buffBeginPos, vp);
+        updateSignal(signData, signData->buffBeginPos, vp);
 
         ++vp;
         if (vp == buffSz) vp = 0;
-        sd->buffValuePos = vp;
+        signData->buffValuePos = vp;
 
-        if (vp == sd->buffBeginPos) {
-          ++sd->buffBeginPos;
-          if (sd->buffBeginPos >= buffSz) sd->buffBeginPos = 0;
+        if (vp == signData->buffBeginPos) {
+          ++signData->buffBeginPos;
+          if (signData->buffBeginPos >= buffSz) signData->buffBeginPos = 0;
         }
       }
 
       if (cng.outArchiveEna)
-        _pArchive->addValue(sign, bp.data);
+        _archive.addValue(sign, bufPos.data);
 
-      _pBuffData->incReadPos();
-      bp = _pBuffData->getDataByReadPos();
+      _buffData.incReadPos();
+      bufPos = _buffData.getDataByReadPos();
     }
 
     if (isBuffActive && pfUpdateSignalsCBack)
@@ -223,7 +222,7 @@ void ThreadUpdate::updCycle(){
 
     // архив
     if (cng.outArchiveEna && tmDelay.hourOnc())
-      _pArchive->copyToDisk(false);
+      _archive.copyToDisk(false);
 
     // проверка связи
     if (tmDelay.onDelaySec(true, checkConnectTout, 0)){
@@ -239,10 +238,10 @@ void ThreadUpdate::updCycle(){
         if (m.first == "Virtual") continue;
 
         if (!mref[m.first]->isActive && m.second)
-          modConnect(m.first);
+          moduleConnect(m.first);
 
         else if (mref[m.first]->isActive && !m.second)
-          modDisconnect(m.first);
+          moduleDisconnect(m.first);
 
         mref[m.first]->isActive = m.second;
         m.second = false;
@@ -255,6 +254,6 @@ void ThreadUpdate::updCycle(){
   }
 
   if (cng.outArchiveEna)
-    _pArchive->copyToDisk(true);
+    _archive.copyToDisk(true);
 }
 

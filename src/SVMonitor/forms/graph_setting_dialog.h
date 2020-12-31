@@ -25,17 +25,14 @@
 #pragma once
 
 #include "GeneratedFiles/ui_graph_setting_dialog.h"
-#include "SVMonitor/forms/main_win.h"
 #include "SVGraphPanel/graph_panel.h"
-
-#include <QDialog>
 
 class GraphSettingDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting&);
+  GraphSettingDialog(const SV_Graph::GraphSetting&, QWidget* parent);
   ~GraphSettingDialog() = default;
 
   Ui::GraphSettingDialog ui;

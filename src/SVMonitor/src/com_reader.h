@@ -24,11 +24,10 @@
 //
 #pragma once
 
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
-
-#include <QTimer>
 #include <string>
+#include <QObject>
+
+class QSerialPort;
 
 class SerialPortReader : public QObject
 {
@@ -47,35 +46,26 @@ public:
       name(name_), speed(speed_), cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
   };
 
-  SerialPortReader(Config);
-  ~SerialPortReader();
+  SerialPortReader(const Config&, QObject* parant = nullptr);
 
-  bool startServer();
-  void stopServer();
-
-  bool isRunning();
+  bool start();
+  void stop();
 
   /// задать польз callback - получение данных
-  typedef void(*dataCBack)(std::string &inout, std::string &out);
-  void setDataCBack(dataCBack uf);
+  typedef void(*DataCBack)(std::string &inout, std::string &out);
+  void setDataCBack(DataCBack uf);
 
-  public slots:
+public slots:
   void hReadData();
-  void hError(QSerialPort::SerialPortError serialPortError);
-  void disconnect();
 
 private:
 
-  dataCBack ufReceiveData_ = nullptr;
+  DataCBack ufReceiveData_ = nullptr;
 
   QSerialPort* pSerialPort_ = nullptr;
   std::string readData_;
-
-  QTimer* tmCheckConnect_ = nullptr;
-  const int checkConnTOut = 5;  // циклов для проверки
-
+    
   bool isConnect_ = false;
 
   Config cng;
-
 };

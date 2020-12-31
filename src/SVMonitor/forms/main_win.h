@@ -25,20 +25,20 @@
 #pragma once
 
 #include "GeneratedFiles/ui_main_win.h"
-#include "SVConfig/config_data.h"
-#include "SVServer/server.h"
 #include "SVAuxFunc/logger.h"
-#include "SVGraphPanel/graph_panel.h" 
-#include "src/db_provider.h"
-#include "src/com_reader.h"
+#include "SVGraphPanel/graph_panel.h"
+#include "SVMonitor/src/structurs.h"
 
-#include <QNetworkAccessManager>
 #include <QMainWindow>
-#include <QSystemTrayIcon>
 
 class SettingsDialog;
 class GraphSettingDialog;
 class EventTableDialog;
+class QTimer;
+class QNetworkAccessManager;
+class QSystemTrayIcon;
+class DbProvider;
+class SerialPortReader;
 
 class MainWin : public QMainWindow
 {
@@ -91,11 +91,9 @@ public:
   MainWin(QWidget *parent = 0);
   ~MainWin();
 
-  void updateConfig(Config);
+  void updateConfig(const Config&);
   Config getConfig();
-
-  QVector<UserEvent> getEvents(QDateTime, QDateTime);
-
+  
   void updateGraphSetting(const SV_Graph::GraphSetting&);
 
 private:
@@ -106,7 +104,6 @@ private:
   QVector<SerialPortReader*> comReaders_;
 
   Config cng;
-  SV_Srv::Config srvCng;
 
   QMap<QObject*, QWidget*> graphPanels_;
   QDialog* exportDialog_ = nullptr;
@@ -124,12 +121,13 @@ private:
   QSet<QString> signExist_;
 
   QMap<QString, SignalAttr> signAttr_;
+  QTimer* tmWinSetts_;
 
   bool eventFilter(QObject *target, QEvent *event);
 
   bool writeSettings(QString pathIni);
   bool init(QString initPath);
-  void Connect();
+  void connects();
   void load();
 
   void initTrayIcon();

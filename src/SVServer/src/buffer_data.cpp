@@ -30,30 +30,28 @@
 using namespace std;
 using namespace SV_Base;
 
-BufferData::BufferData(const SV_Srv::Config& cng_){
-
+void BufferData::init(const SV_Srv::Config& cng_) {
+  
   cng = cng_;
 
   Value* buff = new Value[SV_PACKETSZ * BUFF_SZ];
   memset(buff, 0, SV_PACKETSZ * BUFF_SZ * sizeof(Value));
-  for (int i = 0; i < BUFF_SZ; ++i)
+  for (size_t i = 0; i < BUFF_SZ; ++i)
     _buffer[i].data.vals = &buff[i * SV_PACKETSZ];
 }
 
-void BufferData::updDataSignals(const std::string& indata, uint64_t bTm){
+void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
 
   size_t dsz = indata.size(),
     valSz = SV_NAMESZ + sizeof(ValueType) + sizeof(Value) * SV_PACKETSZ,
     cPos = SV_NAMESZ;
-
-  string module = indata.c_str();
-
-  size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, size_t(SV_VALUE_MAX_CNT * 10))); // 10 - запас
+  
+  size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, BUFF_SZ));
 
   _mtx.lock();
 
-  int buffWr = _buffWritePos;
-  _buffWritePos += int(valCnt);
+  size_t buffWr = _buffWritePos;
+  _buffWritePos += valCnt;
 
   if (_buffWritePos >= BUFF_SZ) _buffWritePos -= BUFF_SZ;
 
@@ -65,7 +63,7 @@ void BufferData::updDataSignals(const std::string& indata, uint64_t bTm){
     ValueData* vr = (ValueData*)(indata.data() + cPos);
 
     _buffer[buffWr].name = vr->name;
-    _buffer[buffWr].module = module;
+    _buffer[buffWr].module = indata.c_str();
     _buffer[buffWr].type = vr->type;
     _buffer[buffWr].data.beginTime = bTm;
 
@@ -74,8 +72,7 @@ void BufferData::updDataSignals(const std::string& indata, uint64_t bTm){
     _buffer[buffWr].isActive = true;
 
     ++buffWr;
-    if (buffWr >= BUFF_SZ)
-      buffWr = 0;
+    if (buffWr == BUFF_SZ) buffWr = 0;
 
     cPos += valSz;
   }
@@ -86,12 +83,7 @@ void BufferData::incReadPos(){
   _buffer[_buffReadPos].isActive = false;
   ++_buffReadPos;
 
-  if (_buffReadPos >= BUFF_SZ) _buffReadPos = 0;
-}
-
-int BufferData::getBuffSize(){
-
-  return BUFF_SZ;
+  if (_buffReadPos == BUFF_SZ) _buffReadPos = 0;
 }
 
 BufferData::InputData BufferData::getDataByReadPos(){

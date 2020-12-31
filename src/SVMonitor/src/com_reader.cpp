@@ -26,24 +26,21 @@
 #include "SVConfig/config_limits.h"
 #include "com_reader.h"
 
+#include <QTimer>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-SerialPortReader::SerialPortReader(SerialPortReader::Config cng_) : cng(cng_)
-{
+void statusMess(const QString& mess);
 
+SerialPortReader::SerialPortReader(const Config& cng_, QObject* parent):
+  QObject(parent), cng(cng_){
 }
 
-SerialPortReader::~SerialPortReader()
-{
+bool SerialPortReader::start(){
 
-}
-
-bool SerialPortReader::startServer(){
-
-  if (isConnect_) return true;
-
-  pSerialPort_ = new QSerialPort(cng.name);
+  if (pSerialPort_) return true;
+  
+  pSerialPort_ = new QSerialPort(cng.name, this);
 
   pSerialPort_->setBaudRate((QSerialPort::BaudRate)cng.speed);
   pSerialPort_->setDataBits(QSerialPort::DataBits::Data8);
@@ -56,43 +53,32 @@ bool SerialPortReader::startServer(){
   connect(pSerialPort_, &QSerialPort::readyRead, this, &SerialPortReader::hReadData);
 
   connect(pSerialPort_, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
-    this, &SerialPortReader::hError);
+    [this](QSerialPort::SerialPortError serialPortError) {
+    if (serialPortError == QSerialPort::ReadError)
+      statusMess(QString(tr("%1 Ошибка получения данных").arg(cng.name)));
+  });
 
-  if (!tmCheckConnect_){
-    // проверка соединения
-    tmCheckConnect_ = new QTimer(this);
-    connect(tmCheckConnect_, &QTimer::timeout, [=]() {
-
-      if (!pSerialPort_->isOpen())
-        isConnect_ = pSerialPort_->open(QIODevice::ReadOnly);
-      else{
-        if (!isConnect_) pSerialPort_->close();
-        else isConnect_ = false;
-      }
-    });
-
-    tmCheckConnect_->start(SV_CYCLESAVE_MS * checkConnTOut);
-  }
-
+  // проверка соединения  
+  QTimer* tmCheckConnect = new QTimer(this);
+  connect(tmCheckConnect, &QTimer::timeout, [=]() {
+    if (!pSerialPort_->isOpen())
+      isConnect_ = pSerialPort_->open(QIODevice::ReadOnly);
+    else{
+      if (!isConnect_) pSerialPort_->close();
+      else isConnect_ = false;
+    }
+  });
+  tmCheckConnect->start(SV_CYCLESAVE_MS * 5);
+  
   return true;
 }
 
-void SerialPortReader::stopServer(){
+void SerialPortReader::stop(){
 
   if (pSerialPort_ && pSerialPort_->isOpen()) pSerialPort_->close();
 }
 
-bool SerialPortReader::isRunning(){
-
-  return pSerialPort_ && pSerialPort_->isOpen();
-}
-
-void SerialPortReader::disconnect(){
-
-  if (pSerialPort_ && pSerialPort_->isOpen()) pSerialPort_->close();
-}
-
-void SerialPortReader::setDataCBack(dataCBack uf){
+void SerialPortReader::setDataCBack(DataCBack uf){
 
   ufReceiveData_ = uf;
 }
@@ -106,13 +92,4 @@ void SerialPortReader::hReadData()
     ufReceiveData_(readData_, out);
 
   isConnect_ = true;
-}
-
-void statusMess(const QString& mess);
-
-void SerialPortReader::hError(QSerialPort::SerialPortError serialPortError)
-{
-  if (serialPortError == QSerialPort::ReadError)
-    statusMess(QString(tr("%1 Ошибка получения данных").arg(cng.name)));
-
 }

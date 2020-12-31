@@ -22,29 +22,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#pragma once
 
-#include "SVMonitor/forms/main_win.h"
+#include "GeneratedFiles/ui_subscript_dialog.h"
+#include "SVConfig/config_data.h"
 
-#include <QApplication>
-
-int main(int argc, char *argv[])
+class SubScriptDialog : public QDialog
 {
-#ifdef _WIN32
-  QStringList paths = QCoreApplication::libraryPaths();
-  paths.append(".");
-  paths.append("plugins");
-  QCoreApplication::setLibraryPaths(paths);
-#endif
+  Q_OBJECT
 
-  QApplication a(argc, argv);
+public:
+  SubScriptDialog(QDialog* mainScrPanel, QWidget* parent);
+  ~SubScriptDialog() = default;
 
-#ifdef SV_EN
-  QTranslator translator;
-  translator.load(":/SVMonitor/svmonitor_en.qm");
-  a.installTranslator(&translator);
-#endif
+  void showSignScript(const QString& signal, const QString& module, SV_Base::ValueType type);
 
-  MainWin w;
-  w.showMaximized();
-  return a.exec();
-}
+private:
+
+  Ui::SubScriptDialog ui;
+
+  QString sFileName_;
+
+  QDialog* mainScrPanel_ = nullptr;
+
+  void closeEvent(QCloseEvent* e);
+
+  void saveScript();
+};
+
+
+

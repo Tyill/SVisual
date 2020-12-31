@@ -26,13 +26,11 @@
 #include "buffer_data.h"
 #include "thread_update.h"
 #include "SVAuxFunc/aux_func.h"
-#include "SVServer/server.h"
 
 #include "Lib/rapidjson/document.h"
 #include "Lib/rapidjson/stringbuffer.h"
 #include "Lib/rapidjson/writer.h"
 
-#include <functional>
 
 using namespace std;
 
@@ -48,8 +46,8 @@ namespace SV_Srv {
       
   Config cng;
   
-  BufferData* _pBuffData = nullptr;
-  ThreadUpdate* _pthrUpdSignal = nullptr;
+  BufferData _buffData;
+  ThreadUpdate* _pThrUpdSignal = nullptr;
 
   std::map <std::string, SV_Base::ModuleData*> _moduleData;
   std::map <std::string, SV_Base::SignalData*> _signalData;
@@ -66,27 +64,27 @@ namespace SV_Srv {
 
     std::lock_guard<std::mutex> lck(_mtx);
 
-    if (_pthrUpdSignal) return true;
+    if (_pThrUpdSignal) return true;
 
     cng = _cng;
 
-    _pBuffData = new BufferData(cng);
+    _buffData.init(cng);
 
-    _pthrUpdSignal = new ThreadUpdate(cng, _pBuffData);
+    _pThrUpdSignal = new ThreadUpdate(cng, _buffData);
     
     return true;
   }
 
   void stopServer(){
 
-    if (_pthrUpdSignal)
-      delete _pthrUpdSignal;
+    if (_pThrUpdSignal)
+      delete _pThrUpdSignal;
   }
     
   void setConfig(const Config& cng){
         
-    if (_pthrUpdSignal)
-      _pthrUpdSignal->setArchiveConfig(cng);
+    if (_pThrUpdSignal)
+      _pThrUpdSignal->setArchiveConfig(cng);
   }
 
   void jsonRequestData(std::string &inout, std::string &out);
@@ -115,7 +113,7 @@ namespace SV_Srv {
       stPos = bePos[i].first;
       endPos = bePos[i].second;
 
-      _pBuffData->updDataSignals(string(inout.data() + stPos, inout.data() + endPos),
+      _buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
         bTm - (sz - i) * SV_CYCLESAVE_MS);
     }
        
@@ -168,7 +166,7 @@ namespace SV_Srv {
     return _moduleData.find(module) != _moduleData.end() ? _moduleData[module]->signls : std::vector<std::string>();
   }
 
-  std::map<std::string, SV_Base::SignalData *> getCopySignalRef(){
+  std::map<std::string, SV_Base::SignalData*> getCopySignalRef(){
 
     std::lock_guard<std::mutex> lck(_mtx);
 
@@ -177,7 +175,7 @@ namespace SV_Srv {
     return sref;
   };
 
-  SV_Base::SignalData *getSignalData(const std::string& sign){
+  SV_Base::SignalData* getSignalData(const std::string& sign){
 
     std::lock_guard<std::mutex> lck(_mtx);
 
@@ -185,21 +183,23 @@ namespace SV_Srv {
   }
 
   bool addSignal(SV_Base::SignalData* sd){
-
+    
+    if (!sd) return false;
+    
     std::lock_guard<std::mutex> lck(_mtx);
-
-    string sign = sd->name + sd->module;
+        
     bool ok = false;
-    if (sd && (_signalData.find(sign) == _signalData.end())) {
+    string sign = sd->name + sd->module;
+    if (_signalData.find(sign) == _signalData.end()) {
       _signalData[sign] = sd;
       _moduleData[sd->module]->signls.push_back(sign);
       ok = true;
     }
-    return  ok;
+    return ok;
   }
 
   bool addModule(SV_Base::ModuleData* md){
-
+       
     std::lock_guard<std::mutex> lck(_mtx);
 
     bool ok = false;

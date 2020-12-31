@@ -24,8 +24,9 @@
 //
 
 #include "db_provider.h"
-#include <sstream>
+#include "Lib/sqlite/sqlite3.h"
 
+#include <sstream>
 #include <QtCore>
 #include <QColor>
 
@@ -167,7 +168,6 @@ DbProvider::DbProvider(const QString& filename) {
 DbProvider::~DbProvider() {
 
   close();
-
 }
 
 bool DbProvider::isConnect() {

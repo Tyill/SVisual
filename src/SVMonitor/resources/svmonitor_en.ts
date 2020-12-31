@@ -457,7 +457,7 @@
     </message>
     <message>
         <source>Подключен модуль &apos;</source>
-        <translation type="vanished">Connect module &apos;</translation>
+        <translation type="vanished">connects module &apos;</translation>
     </message>
     <message>
         <source>Отключен модуль &apos;</source>
@@ -811,32 +811,32 @@
     </message>
 </context>
 <context>
-    <name>SignScriptDialog</name>
+    <name>SubScriptDialog</name>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="61"/>
-        <location filename="../forms/SignScriptDialog.h" line="138"/>
+        <location filename="../forms/SubScriptDialog.h" line="61"/>
+        <location filename="../forms/SubScriptDialog.h" line="138"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="67"/>
-        <location filename="../forms/SignScriptDialog.h" line="136"/>
+        <location filename="../forms/SubScriptDialog.h" line="67"/>
+        <location filename="../forms/SubScriptDialog.h" line="136"/>
         <source>Отключить</source>
         <translation>Deactivate</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="82"/>
-        <location filename="../forms/SignScriptDialog.h" line="155"/>
+        <location filename="../forms/SubScriptDialog.h" line="82"/>
+        <location filename="../forms/SubScriptDialog.h" line="155"/>
         <source>Скрипт </source>
         <translation>Script </translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="155"/>
+        <location filename="../forms/SubScriptDialog.h" line="155"/>
         <source> изменен.</source>
         <translation> is change.</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="156"/>
+        <location filename="../forms/SubScriptDialog.h" line="156"/>
         <source>Сохранить изменения?</source>
         <translation>Save changes?</translation>
     </message>
@@ -844,37 +844,37 @@
 <context>
     <name>signScriptPanelClass</name>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="14"/>
+        <location filename="../forms/SubScriptDialog.ui" line="14"/>
         <source>Скрипт для сигнала</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="45"/>
+        <location filename="../forms/SubScriptDialog.ui" line="45"/>
         <source>[CTRL+S]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="48"/>
+        <location filename="../forms/SubScriptDialog.ui" line="48"/>
         <source>Сохранить</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="51"/>
+        <location filename="../forms/SubScriptDialog.ui" line="51"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="58"/>
+        <location filename="../forms/SubScriptDialog.ui" line="58"/>
         <source>[CTRL+D]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="61"/>
+        <location filename="../forms/SubScriptDialog.ui" line="61"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="64"/>
+        <location filename="../forms/SubScriptDialog.ui" line="64"/>
         <source>Ctrl+D</source>
         <translation></translation>
     </message>

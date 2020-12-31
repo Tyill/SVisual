@@ -32,6 +32,7 @@
 #include <string>
 #include <mutex>
 #include <thread>
+#include <map>
 
 struct Config {
 

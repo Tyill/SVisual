@@ -66,7 +66,7 @@ bool connect(const std::string& addr, int port, bool noBlock) {
     return false;
   }
 
-  // Connect to server.
+  // connects to server.
   if (connect(_socket, adInfo->ai_addr, (int)adInfo->ai_addrlen) == SOCKET_ERROR) {
     closesocket(_socket);
     return false;

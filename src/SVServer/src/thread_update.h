@@ -24,7 +24,6 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
 #include "buffer_data.h"
 #include "archive.h"
 
@@ -34,11 +33,11 @@ class ThreadUpdate{
 
 public:
 
-  ThreadUpdate(const SV_Srv::Config&, BufferData*);
+  ThreadUpdate(const SV_Srv::Config&, BufferData&);
 
   ~ThreadUpdate();
 
-  void setArchiveConfig(SV_Srv::Config);
+  void setArchiveConfig(const SV_Srv::Config&);
 
 private:
 
@@ -47,14 +46,14 @@ private:
   bool _thrStop = false;
 
   std::thread _thr;
-  BufferData* _pBuffData = nullptr;
-  Archive* _pArchive = nullptr;
+  BufferData& _buffData;
+  Archive _archive;
 
   std::mutex _mtx;
 
-  void updCycle();
-  void updateSign(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
+  void updateCycle();
+  void updateSignal(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
   void addSignal(const std::string& sign, const BufferData::InputData& bp);
-  void modConnect(const std::string& module);
-  void modDisconnect(const std::string& module);
+  void moduleConnect(const std::string& module);
+  void moduleDisconnect(const std::string& module);
 };

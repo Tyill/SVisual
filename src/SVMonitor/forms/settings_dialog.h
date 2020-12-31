@@ -25,7 +25,10 @@
 #pragma once
 
 #include "GeneratedFiles/ui_settings_dialog.h"
-#include "SVMonitor/forms/main_win.h"
+
+class MainWin;
+class QLineEdit;
+class QComboBox;
 
 class SettingsDialog : public QDialog
 {
@@ -49,11 +52,10 @@ private:
 
   QVector<QPair<QLineEdit*, QComboBox*>> comPorts_;
 
-  private slots:
+private slots:
   void saveChange();
   void addCOM(QString port = "", QString speed = "", int row = -1);
   void delCOM();
   void selDirArch();
   void paramChange();
-
 };

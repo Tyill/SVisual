@@ -24,7 +24,6 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
 #include "SVTriggerDialog/trigger_dialog.h"
 
 #include <QColor>

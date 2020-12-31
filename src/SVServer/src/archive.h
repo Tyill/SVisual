@@ -24,17 +24,19 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
-#include "SVAuxFunc/timer_delay.h"
 #include "SVAuxFunc/front.h"
 #include "SVServer/server.h"
+
+#include <map>
 
 // копирование архива на диск
 class Archive
 {
 public:
     
-  Archive(const SV_Srv::Config&);
+  Archive() = default;
+
+  void init(const SV_Srv::Config&);
 
   bool copyToDisk(bool isStop);
 
@@ -50,10 +52,10 @@ private:
   std::string _copyStartTime = "";
   std::string _copyDateMem = "";
 
-  int _crtFileHour = 0;
-  const int ARCH_CYCLE_MS = 600000;     // 10мин
-  int _cpySz = 0;
-  std::map<std::string, int> _valPos;
+  uint32_t _crtFileHour = 0;
+  const uint32_t ARCH_CYCLE_MS = 600000;     // 10мин
+  size_t _copySz = 0;
+  std::map<std::string, uint32_t> _valPos;
 
   SV_Aux::Front _front;
 

@@ -35,15 +35,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVGraphPanel\forms\ui_axis_setting_dialog.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVGraphPanel\forms\ui_graph_panel_widget.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVGraphPanel\forms\ui_graph_widget.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\SVGraphPanel\graph_panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>

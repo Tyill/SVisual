@@ -26,17 +26,16 @@
 #include "SVMonitor/forms/main_win.h"
 #include "SVMonitor/forms/event_table_dialog.h"
 #include "SVMonitor/forms/settings_dialog.h"
-#include "SVMonitor/forms/script_dialog.h"
+#include "SVMonitor/forms/subscript_dialog.h"
 #include "SVMonitor/forms/graph_setting_dialog.h"
-#include "SVAuxFunc/logger.h"
+#include "SVMonitor/src/db_provider.h"
 #include "SVAuxFunc/tcp_server.h"
-#include "SVGraphPanel/graph_panel.h"
 #include "SVExportDialog/export_dialog.h"
-#include "SVTriggerDialog/trigger_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "SVServer/server.h"
 #include "SVWebServer/web_server.h"
 #include "SVZabbix/zabbix.h"
+#include "SVConfig/config_limits.h"
 #include "server_api.h"
 #include "com_reader.h"
 
@@ -51,6 +50,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMenu>
+#include <QSystemTrayIcon>
 
 const QString VERSION = "1.1.8";
 // proposal https://github.com/Tyill/SVisual/issues/31
@@ -101,9 +101,8 @@ void MainWin::load(){
   ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
   ui.treeSignals->setIconSize(QSize(40, 20));
 
-  eventTableDialog_ = new EventTableDialog(this); eventTableDialog_->setWindowFlags(Qt::Window);
   settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
-  graphSettDialog_ = new GraphSettingDialog(this, cng.graphSett); graphSettDialog_->setWindowFlags(Qt::Window);
+  graphSettDialog_ = new GraphSettingDialog(cng.graphSett, this); graphSettDialog_->setWindowFlags(Qt::Window);
 
   SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
   SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
@@ -128,7 +127,7 @@ void MainWin::load(){
     mainWin->onTrigger(name);
   });
 
- /* scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
+  scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
   scriptDialog_->setWindowFlags(Qt::Window);
   SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
   SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
@@ -147,7 +146,7 @@ void MainWin::load(){
   });
   SV_Script::setChangeSignColor(scriptDialog_, [](const QString& module, const QString& name, const QColor& clr){
     QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
-  });*/
+  });
 
   exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
   exportDialog_->setWindowFlags(Qt::Window);
@@ -187,13 +186,15 @@ void MainWin::load(){
     delete db_;
     db_ = nullptr;
   }
+  eventTableDialog_ = new EventTableDialog(db_, this); 
+  eventTableDialog_->setWindowFlags(Qt::Window);
 
   /////////////////////
   initTrayIcon();
 
 }
 
-void MainWin::Connect(){
+void MainWin::connects(){
 
   connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
     auto mref = SV_Srv::getCopyModuleRef();
@@ -211,6 +212,7 @@ void MainWin::Connect(){
 
     auto sign = item->text(5);
     if (column == 0){
+      if (tmWinSetts_->isActive()) tmWinSetts_->stop();
       SV_Graph::addSignal(graphPanels_[this], sign);
     }
     else {
@@ -285,9 +287,7 @@ void MainWin::Connect(){
   connect(ui.actionScript, &QAction::triggered, [this]() {
 
     SV_Script::startUpdateThread(scriptDialog_);
-
     scriptDialog_->showNormal();
-
   });
   connect(ui.actionSettings, &QAction::triggered, [this]() {
     if (settingsDialog_) settingsDialog_->showNormal();
@@ -417,6 +417,8 @@ void MainWin::Connect(){
     QSettings settings(fname, QSettings::IniFormat);
     settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
+    if (tmWinSetts_->isActive()) tmWinSetts_->stop();
+
     auto grps = settings.childGroups();
     for (auto& g : grps){
       settings.beginGroup(g);
@@ -442,6 +444,7 @@ void MainWin::Connect(){
 
         ++sect;
       }
+
 
       QVector< SV_Graph::AxisAttributes> axisAttrs;
       int axisInx = 0;
@@ -610,8 +613,6 @@ bool MainWin::init(QString initPath){
   cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
   cng.packetSz = settings.value("packetSz", 10).toInt();
   cng.packetSz = qMax(cng.packetSz, 1);
-
-
   cng.selOpenDir = settings.value("selOpenDir", "").toString();
 
   QFont ft = QApplication::font();
@@ -671,12 +672,11 @@ bool MainWin::init(QString initPath){
   cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
 
   cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
-
-
+  
   settings.endGroup();
 
-  QTimer* tmWinSetts = new QTimer(this);
-  connect(tmWinSetts, &QTimer::timeout, [this, initPath, tmWinSetts]() {
+  tmWinSetts_ = new QTimer(this);
+  connect(tmWinSetts_, &QTimer::timeout, [this, initPath]() {
 
     QSettings settings(initPath, QSettings::IniFormat);
     settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
@@ -740,20 +740,13 @@ bool MainWin::init(QString initPath){
 
       settings.endGroup();
     }
-    tmWinSetts->deleteLater();
+    tmWinSetts_->stop();
   });
-  tmWinSetts->start(cng.toutLoadWinStateSec * 1000);
+  tmWinSetts_->start(cng.toutLoadWinStateSec * 1000);
 
   if (!QFile(initPath).exists())
     writeSettings(initPath);
-
-  srvCng.cycleRecMs = cng.cycleRecMs;
-  srvCng.packetSz = cng.packetSz;
-  srvCng.outArchiveEna = cng.outArchiveEna;
-  srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
-  srvCng.outArchiveName = cng.outArchiveName.toStdString();
-  srvCng.outArchivePath = cng.outArchivePath.toStdString();
-
+    
   return true;
 }
 
@@ -778,45 +771,44 @@ MainWin::MainWin(QWidget *parent)
   graphPanels_[this] = gp;
   ui.splitter->addWidget(gp);
 
-  Connect();
+  connects();
 
   load();
 
   sortSignalByModule();
 
   // запуск получения данных
-  if (cng.com_ena){
+  SV_Srv::Config srvCng; {
+    srvCng.cycleRecMs = cng.cycleRecMs;
+    srvCng.packetSz = cng.packetSz;
+    srvCng.outArchiveEna = cng.outArchiveEna;
+    srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
+    srvCng.outArchiveName = cng.outArchiveName.toStdString();
+    srvCng.outArchivePath = cng.outArchivePath.toStdString();
+  }
 
+  if (cng.com_ena){
     for (auto& port : cng.com_ports){
 
       if (port.first.isEmpty() || port.second.isEmpty()) continue;
 
       SerialPortReader::Config ccng(port.first, port.second.toInt(), cng.cycleRecMs, cng.packetSz);
-
-      auto comReader = new SerialPortReader(ccng);
-
-      if (comReader->startServer()) {
-
-        statusMess(QString(tr("Прослушивание %1 порта запущено")).arg(port.first));
-
+      auto comReader = new SerialPortReader(ccng, this);
+      if (comReader->start()) {
+        statusMess(QString(tr("Прослушивание %1 порта запущено")).arg(port.first)); 
         SV_Srv::startServer(srvCng);
-
         comReader->setDataCBack(SV_Srv::receiveData);
-      }
-      else
+      } else {
         statusMess(QString(tr("%1 порт недоступен")).arg(port.first));
-
+      }
       comReaders_.push_back(comReader);
     }
   }
   else{
 
     if (SV_Aux::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
-
       statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
-
       SV_Srv::startServer(srvCng);
-
       SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
     }
     else
@@ -825,20 +817,15 @@ MainWin::MainWin(QWidget *parent)
 
   // web
   if (cng.web_ena){
-
     if (SV_Web::startServer(cng.web_addr, cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ))){
-
-      statusMess(QString(tr("WEB cервер запущен: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));
-    }
+      statusMess(QString(tr("WEB cервер запущен: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));    }
     else
       statusMess(QString(tr("Не удалось запустить WEB сервер: адрес %1 порт %2").arg(cng.web_addr).arg(cng.web_port)));
   }
 
   // zabbix
   if (cng.zabbix_ena){
-
     if (SV_Zbx::startAgent(cng.zabbix_addr, cng.zabbix_port, SV_Zbx::Config(SV_CYCLEREC_MS, SV_PACKETSZ))){
-
       statusMess(QString(tr("Zabbix агент запущен: адрес %1 порт %2").arg(cng.zabbix_addr).arg(cng.zabbix_port)));
     }
     else
@@ -853,8 +840,8 @@ MainWin::~MainWin(){
   SV_Srv::stopServer();
 
   for (auto comReader : comReaders_){
-    if (comReader && comReader->isRunning())
-      comReader->stopServer();
+    if (comReader)
+      comReader->stop();
   }
 
   if (cng.web_ena)
@@ -873,7 +860,6 @@ MainWin::~MainWin(){
   }
 
   writeSettings(cng.initPath);
-
 }
 
 void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs){
@@ -1008,7 +994,7 @@ void MainWin::contextMenuClick(QAction* act){
 
       SV_Script::startUpdateThread(scriptDialog_);
 
-      SignScriptDialog* scr = new SignScriptDialog(this, scriptDialog_);
+      SubScriptDialog* scr = new SubScriptDialog(scriptDialog_, this);
       scr->setWindowFlags(Qt::Window);
 
       QString module = ui.treeSignals->currentItem()->parent()->text(0);
@@ -1016,7 +1002,6 @@ void MainWin::contextMenuClick(QAction* act){
       auto sd = getSignalDataSrv(root + module);
 
       scr->showSignScript(root, module, sd->type);
-
     }
     else if (act->text() == tr("Сбросить цвет")){
 
@@ -1050,6 +1035,7 @@ void MainWin::contextMenuClick(QAction* act){
     if (act->text() == tr("Показать все")){
       for (auto& s : mref[root]->signls){
         if (sref.contains(s.c_str()) && sref[s.c_str()]->isActive){
+          if (tmWinSetts_->isActive()) tmWinSetts_->stop();
           SV_Graph::addSignal(graphPanels_[this], QString::fromStdString(s));
         }
       }
@@ -1257,9 +1243,7 @@ void MainWin::initTrayIcon(){
   connect(trayIcon_, &QSystemTrayIcon::activated, [this](){
     trayIcon_->hide();
     this->showMaximized();
-
     isSlowMode_ = false;
-
     sortSignalByModule();
   });
 }
@@ -1280,21 +1264,17 @@ MainWin::Config MainWin::getConfig(){
   return cng;
 }
 
-void MainWin::updateConfig(MainWin::Config cng_){
-
-  cng = cng_;
-
-  srvCng.outArchiveEna = cng.outArchiveEna;
-  srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
-  srvCng.outArchiveName = cng.outArchiveName.toStdString();
-  srvCng.outArchivePath = cng.outArchivePath.toStdString();
-
+void MainWin::updateConfig(const MainWin::Config& newCng){
+    
+  SV_Srv::Config srvCng; {
+    srvCng.cycleRecMs = cng.cycleRecMs;
+    srvCng.packetSz = cng.packetSz;
+    srvCng.outArchiveEna = newCng.outArchiveEna;
+    srvCng.outArchiveHourCnt = newCng.outArchiveHourCnt;
+    srvCng.outArchiveName = newCng.outArchiveName.toStdString();
+    srvCng.outArchivePath = newCng.outArchivePath.toStdString();
+  }
   SV_Srv::setConfig(srvCng);
-}
-
-QVector<UserEvent> MainWin::getEvents(QDateTime bg, QDateTime en){
-
-  return db_ ? db_->getEvents(bg, en) : QVector<UserEvent>();
 }
 
 QDialog* MainWin::addNewWindow(const QRect& pos){

@@ -25,9 +25,8 @@
 #pragma once
 
 #include "structurs.h"
-#include "Lib/sqlite/sqlite3.h"
-#include "SVConfig/config_data.h"
-#include "SVTriggerDialog/trigger_dialog.h"
+
+class sqlite3;
 
 class DbProvider
 {

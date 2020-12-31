@@ -27,7 +27,6 @@
 #include <fstream>
 #include "archive.h"
 #include "SVAuxFunc/aux_func.h"
-#include "SVConfig/config_data.h"
 #include "SVConfig/config_limits.h"
 #include "Lib/zlib/zlib.h"
 
@@ -37,88 +36,47 @@ using namespace SV_Aux;
 
 extern SV_Srv::statusCBack pfStatusCBack;
 
-Archive::Archive(const SV_Srv::Config& _cng):
-  cng(_cng){
-  
+void Archive::init(const SV_Srv::Config& cng_) {
+
+  cng = cng_;
   _copyStartTime = currDateTimeEx();
   _copyDateMem = currDateS();
-
-  _cpySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
+  _copySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
 }
 
 void Archive::setConfig(const SV_Srv::Config& cng_){
-
+    
   cng.outArchivePath = cng_.outArchivePath;
   cng.outArchiveName = cng_.outArchiveName;
   cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
 }
 
-bool Archive::isCopyTimeHour(){
+void Archive::addSignal(const string& sign) {
 
-  time_t t = time(nullptr);
-  tm* lct = localtime(&t);
+  if (_archiveData.find(sign) != _archiveData.end()) return;
 
-  if (_front.PosFront(lct->tm_min == 0, 0)) ++_crtFileHour;
+  _archiveData[sign] = vector<RecData>(_copySz);
 
-  bool req = false;
+  _valPos[sign] = 0;
 
-  bool isCheck = cng.outArchiveHourCnt % 2 == 0;    // кратно 2м часам?
-  bool isHourCheck = lct->tm_hour % 2 == 0;
-  bool isNDay = _front.PosFront(lct->tm_hour == 0, 1);
-  if (((_crtFileHour >= cng.outArchiveHourCnt) || isNDay) && (!isCheck || isHourCheck)){
-    _crtFileHour = 0;
-    req = true;
-  }
-
-  return req;
+  Value* buff = new Value[SV_PACKETSZ * _copySz];
+  memset(buff, 0, SV_PACKETSZ * _copySz * sizeof(Value));
+  for (size_t i = 0; i < _copySz; ++i)
+    _archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
 }
 
-string Archive::getOutPath(bool isStop){
+void Archive::addValue(const string& sign, const RecData& rd) {
 
-  string cDate = currDateS();
-  if (cDate != _copyDateMem){
-    cDate = _copyDateMem;
-    _copyDateMem = currDateS();
-  }
+  uint32_t vp = _valPos[sign];
 
-  string path = cng.outArchivePath + cDate + "/";
+  _archiveData[sign][vp].beginTime = rd.beginTime;
+  memcpy(_archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(Value));
 
-  createSubDirectory(path);
+  ++_valPos[sign];
 
-  int utcOffs = hourOffsFromUTC();
+  if (_valPos[sign] == _copySz) {
 
-  string fName = cng.outArchiveName + "_temp" + "UTC" + to_string(utcOffs) + ".dat";
-
-  if (isCopyTimeHour() || isStop){
-
-    string templ = path + fName;
-    fName = cng.outArchiveName + "_" + _copyStartTime + "UTC" + to_string(utcOffs) + ".dat";
-    rename(templ.c_str(), (path + fName).c_str());
-
-    _copyStartTime = currDateTimeEx().c_str();
-  }
-
-  return path + fName;
-}
-
-bool Archive::compressData(size_t insz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr){
-
-  try{
-
-    uLong compressed_size = compressBound(uLong(insz));
-
-    if (outArr.size() < compressed_size)
-      outArr.resize(compressed_size);
-
-    int res = compress((Bytef*)outArr.data(), &compressed_size, (Bytef*)inArr.data(), uLong(insz));
-
-    outsz = compressed_size;
-
-    return res == Z_OK;
-
-  }catch (exception e){
-    if (pfStatusCBack) pfStatusCBack("Archive::compressData exception " + string(e.what()));
-    return false;
+    copyToDisk(false);
   }
 }
 
@@ -126,23 +84,24 @@ bool Archive::copyToDisk(bool isStop){
 
   try{
 
-    size_t dsz = _archiveData.size();
-    if (dsz == 0)
+    size_t dataSz = _archiveData.size();
+    if (dataSz == 0)
       return true;
 
     size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
 
-    size_t sint = sizeof(int),
+    size_t intSz = sizeof(int32_t),
       tmSz = sizeof(uint64_t),
       vlSz = sizeof(Value) * SV_PACKETSZ;
 
     //                name        module      group       comment      type    vCnt
-    size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + sint + sint;
+    size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
 
-    vector<char> inArr((tmSz + vlSz) * _cpySz * SMAXCNT + headSz * SMAXCNT),
+    vector<char> inArr((tmSz + vlSz) * _copySz * SMAXCNT + headSz * SMAXCNT),
       compArr;
 
-    vector<string> keys; keys.reserve(dsz);
+    vector<string> keys;
+    keys.reserve(dataSz);
     for (auto &it : _archiveData) keys.push_back(it.first);
 
     fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
@@ -151,7 +110,7 @@ bool Archive::copyToDisk(bool isStop){
       return false;
 
     size_t sCnt = 0, csize = 0;
-    for (size_t i = 0; i < dsz; ++i) {
+    for (size_t i = 0; i < dataSz; ++i) {
 
       auto sign = SV_Srv::getSignalData(keys[i]);
 
@@ -159,17 +118,17 @@ bool Archive::copyToDisk(bool isStop){
 
       char* pIn = inArr.data();
 
-      int vCnt = _valPos[sn];
+      uint32_t vCnt = _valPos[sn];
       if (vCnt > 0) {
         memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
         memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
         memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
         memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-        memcpy(pIn + csize, &sign->type, sint);                   csize += sint;
-        memcpy(pIn + csize, &vCnt, sint);                         csize += sint;
+        memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
+        memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
 
-        for (int j = 0; j < vCnt; ++j) {
-          memcpy(pIn + csize, &_archiveData[sn][j].beginTime, tmSz);  csize += tmSz;
+        for (uint32_t j = 0; j < vCnt; ++j) {
+          memcpy(pIn + csize, &_archiveData[sn][j].beginTime, tmSz); csize += tmSz;
           memcpy(pIn + csize, _archiveData[sn][j].vals, vlSz);       csize += vlSz;
         }
 
@@ -178,7 +137,7 @@ bool Archive::copyToDisk(bool isStop){
         ++sCnt;
       }
 
-      if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dsz - 1)))) {
+      if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dataSz - 1)))) {
         sCnt = 0;
 
         size_t compSz = 0;
@@ -189,7 +148,7 @@ bool Archive::copyToDisk(bool isStop){
           return false;
         };
 
-        file.write((char *)&compSz, sizeof(int));
+        file.write((char *)&compSz, sizeof(int)); // sizeof(int), потому что compSz int сначала был, сейчас уже не изменить:(
         file.write((char *)&csize, sizeof(int));
         file.write((char *)compArr.data(), compSz);
 
@@ -205,32 +164,72 @@ bool Archive::copyToDisk(bool isStop){
   }
 }
 
-void Archive::addSignal(const string& sign){
+bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
 
-  if (_archiveData.find(sign) != _archiveData.end()) return;
+  try {
 
-  _archiveData[sign] = vector<RecData>(_cpySz);
+    uLong compressedSz = compressBound(uLong(inSz));
 
-  _valPos[sign] = 0;
+    if (outArr.size() < compressedSz)
+      outArr.resize(compressedSz);
 
-  Value* buff = new Value[SV_PACKETSZ * _cpySz];
-  memset(buff, 0, SV_PACKETSZ * _cpySz * sizeof(Value));
-  for (int i = 0; i < _cpySz; ++i)
-    _archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
+    int res = compress((Bytef*)outArr.data(), &compressedSz, (Bytef*)inArr.data(), uLong(inSz));
 
-}
+    outsz = compressedSz;
 
-void Archive::addValue(const string& sign, const RecData& rd){
+    return res == Z_OK;
 
-  int vp = _valPos[sign];
-
-  _archiveData[sign][vp].beginTime = rd.beginTime;
-  memcpy(_archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(Value));
-
-  ++_valPos[sign];
-
-  if (_valPos[sign] == _cpySz){
-
-    copyToDisk(false);
+  }
+  catch (exception e) {
+    if (pfStatusCBack) pfStatusCBack("Archive::compressData exception " + string(e.what()));
+    return false;
   }
 }
+
+string Archive::getOutPath(bool isStop) {
+
+  string cDate = currDateS();
+  if (cDate != _copyDateMem) {
+    cDate = _copyDateMem;
+    _copyDateMem = currDateS();
+  }
+
+  string path = cng.outArchivePath + cDate + "/";
+
+  createSubDirectory(path);
+
+  int utcOffs = hourOffsFromUTC();
+
+  string fName = cng.outArchiveName + "_temp" + "UTC" + to_string(utcOffs) + ".dat";
+
+  if (isCopyTimeHour() || isStop) {
+
+    string templ = path + fName;
+    fName = cng.outArchiveName + "_" + _copyStartTime + "UTC" + to_string(utcOffs) + ".dat";
+    rename(templ.c_str(), (path + fName).c_str());
+
+    _copyStartTime = currDateTimeEx().c_str();
+  }
+
+  return path + fName;
+}
+
+bool Archive::isCopyTimeHour() {
+
+  time_t t = time(nullptr);
+  tm* lct = localtime(&t);
+
+  if (_front.PosFront(lct->tm_min == 0, 0)) ++_crtFileHour;
+
+  bool req = false;
+  bool isCheck = cng.outArchiveHourCnt % 2 == 0;    // кратно 2м часам?
+  bool isHourCheck = lct->tm_hour % 2 == 0;
+  bool isNDay = _front.PosFront(lct->tm_hour == 0, 1);
+  if (((int(_crtFileHour) >= cng.outArchiveHourCnt) || isNDay) && (!isCheck || isHourCheck)) {
+    _crtFileHour = 0;
+    req = true;
+  }
+
+  return req;
+}
+
