@@ -46,14 +46,14 @@
     <CustomBuild Include="..\..\..\src\SVStatDialog\src\hist_widget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVStatDialog\forms\stat_dialog_impl.h">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVStatDialog\forms\stat_dialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVStatDialog\resources\stat_dialog_resource.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\src\SVStatDialog\forms\stat_dialog_impl.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

@@ -67,7 +67,7 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVExportDialog\forms\export_dialog_impl.h">
-      <Filter>Form Files</Filter>
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

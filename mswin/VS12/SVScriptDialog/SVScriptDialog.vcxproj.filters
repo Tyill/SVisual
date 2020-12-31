@@ -42,7 +42,7 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVScriptDialog\forms\script_dialog_impl.h">
-      <Filter>Form Files</Filter>
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
