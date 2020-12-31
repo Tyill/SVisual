@@ -160,7 +160,7 @@ void ThreadUpdate::updateCycle(){
 
   size_t buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
   size_t packSz = SV_PACKETSZ * sizeof(Value);                    // размер пакета
-  size_t checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
+  uint32_t checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
 
   while (!_thrStop){
 

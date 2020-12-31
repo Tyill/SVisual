@@ -223,7 +223,7 @@ QVector<TriggerData*> DbProvider::getTrigger(const QString& signal, const QStrin
   vector<vector<string>> trg; QVector<TriggerData*> res;
   if (!query(ss.str(), trg)) return res;
 
-  int sz = trg.size();
+  size_t sz = trg.size();
   for (int i = 0; i < sz; ++i) {
 
     TriggerData* td = new TriggerData();
@@ -427,8 +427,10 @@ QVector<UserEvent> DbProvider::getEvents(QDateTime beginDT, QDateTime endDT) {
   vector<vector<string>> evt; QVector<UserEvent> res;
   if (!query(cmd.toStdString(), evt)) return res;
 
-  int sz = evt.size(); res.reserve(sz); QSet<QString> trgs;
-  for (int i = 0; i < sz; ++i) {
+  size_t sz = evt.size();
+  res.reserve(int(sz));
+  QSet<QString> trgs;
+  for (size_t i = 0; i < sz; ++i) {
 
     UserEvent ed;
 

@@ -907,8 +907,8 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   const size_t buffSz = sign->buffData.size(),
                endPos = sign->buffValuePos;
   
-  size_t backValInd = 0,
-         prevBackValInd = 0;
+  int backValInd = 0,
+      prevBackValInd = 0;
 
   bool isChange = false;
 

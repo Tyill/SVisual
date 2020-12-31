@@ -87,7 +87,7 @@ void clientSocket::readData() {
   };
   parser_settings.on_header_field = [](http_parser* parser, const char* url, size_t length) {
 
-    QString fld = QString::fromLocal8Bit(url, length);
+    QString fld = QString::fromLocal8Bit(url, (int)length);
 
     ((clientSocket*)parser->data)->cField_ = fld;
     ((clientSocket*)parser->data)->reqFields_[fld] = "";
@@ -98,7 +98,7 @@ void clientSocket::readData() {
 
     QString fld = ((clientSocket*)parser->data)->cField_;
 
-    ((clientSocket*)parser->data)->reqFields_[fld] = QString::fromLocal8Bit(url, length);
+    ((clientSocket*)parser->data)->reqFields_[fld] = QString::fromLocal8Bit(url, (int)length);
 
     return 0;
   };

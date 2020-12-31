@@ -82,9 +82,9 @@ namespace SV_Aux {
 
       Client_m* client = static_cast<Client_m*>(u_client->data);
 
-      if (client->u_buf.len < suggested_size) {
+      if (client->u_buf.len < (ULONG)suggested_size) {
         client->u_buf.base = (char*)realloc(client->u_buf.base, suggested_size);
-        client->u_buf.len = suggested_size;
+        client->u_buf.len = (ULONG)suggested_size;
       }
 
       *buf = client->u_buf;
@@ -109,7 +109,7 @@ namespace SV_Aux {
         if (!client->outMess.empty()) {
           uv_buf_t resbuf;
           resbuf.base = (char*)client->outMess.c_str();
-          resbuf.len = client->outMess.size() + 1;
+          resbuf.len = (ULONG)client->outMess.size() + 1;
 
           uv_write(&client->u_writeReq, u_client, &resbuf, 1, nullptr);
         }
