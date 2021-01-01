@@ -75,7 +75,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/iconResAuto.png</normaloff>:/SVGp/images/iconResAuto.png</iconset>
             </property>
             <property name="iconSize">
@@ -104,7 +104,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/iconResByTime.png</normaloff>:/SVGp/images/iconResByTime.png</iconset>
             </property>
             <property name="iconSize">
@@ -133,7 +133,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/iconResByValue.png</normaloff>:/SVGp/images/iconResByValue.png</iconset>
             </property>
             <property name="shortcut">
@@ -156,7 +156,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/bw.png</normaloff>:/SVGp/images/bw.png</iconset>
             </property>
             <property name="shortcut">
@@ -179,7 +179,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/color_wheel.png</normaloff>:/SVGp/images/color_wheel.png</iconset>
             </property>
             <property name="shortcut">
@@ -202,7 +202,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/scalePos.png</normaloff>:/SVGp/images/scalePos.png</iconset>
             </property>
             <property name="iconSize">
@@ -234,7 +234,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/scaleNeg.png</normaloff>:/SVGp/images/scaleNeg.png</iconset>
             </property>
             <property name="iconSize">
@@ -266,7 +266,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/ascale.png</normaloff>:/SVGp/images/ascale.png</iconset>
             </property>
             <property name="iconSize">
@@ -301,7 +301,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../resources/graph_panel_resource.qrc">
+             <iconset resource="../../SVMonitor/resources/resource.qrc">
               <normaloff>:/SVGp/images/player_stop.png</normaloff>:/SVGp/images/player_stop.png</iconset>
             </property>
             <property name="iconSize">
@@ -419,7 +419,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../resources/graph_panel_resource.qrc">:/SVGp/images/SVLabel.png</pixmap>
+             <pixmap resource="../../SVMonitor/resources/resource.qrc">:/SVGp/images/SVLabel.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -464,8 +464,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>773</width>
-            <height>174</height>
+            <width>768</width>
+            <height>189</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -623,8 +623,9 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resources/graph_panel_resource.qrc"/>
-  <include location="../resources/graph_panel_resource.qrc"/>
+  <include location="../../SVMonitor/resources/resource.qrc"/>
+  <include location="../../SVMonitor/resources/resource.qrc"/>
+  <include location="../../SVMonitor/resources/resource.qrc"/>
   <include location="../resources/graph_panel_resource.qrc"/>
  </resources>
  <connections/>

@@ -515,7 +515,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../resources/trigger_dialog_resource.qrc">
+               <iconset resource="../../SVMonitor/resources/resource.qrc">
                 <normaloff>:/SVTrigger/images/open.png</normaloff>:/SVTrigger/images/open.png</iconset>
               </property>
              </widget>
@@ -575,7 +575,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/trigger_dialog_resource.qrc"/>
+  <include location="../../SVMonitor/resources/resource.qrc"/>
  </resources>
  <connections/>
 </ui>

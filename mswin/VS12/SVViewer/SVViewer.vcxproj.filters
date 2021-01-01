@@ -44,9 +44,6 @@
     <CustomBuild Include="..\..\..\src\SVViewer\forms\main_win.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVViewer\forms\script_dialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVViewer\src\load_data.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -59,43 +56,16 @@
     <CustomBuild Include="..\..\..\src\SVViewer\forms\main_win.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVViewer\forms\script_dialog.ui">
+    <CustomBuild Include="..\..\..\src\SVViewer\forms\subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\src\SVViewer\forms\subscript_dialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GeneratedFiles\qrc_resource.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_graphSettingPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_mainWin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_signScriptPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_thrLoadData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_treeWidgetExt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_graphSettingPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_mainWin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_signScriptPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_thrLoadData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_treeWidgetExt.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\SVViewer\src\graph_setting_dialog.cpp">
       <Filter>Source Files</Filter>
@@ -124,12 +94,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_main_win.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_script_dialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_script_dialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_load_data.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -142,26 +106,17 @@
     <ClCompile Include="GeneratedFiles\Release\moc_tree_widget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_subscript_dialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_subscript_dialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\SVViewer\src\subscript_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVViewer\forms\ui_mainWin.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVViewer\forms\ui_graphSetting.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVViewer\forms\ui_signScriptPanel.h">
-      <Filter>Form Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_signScriptPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_graphSetting.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_mainWin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\SVViewer\src\structurs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -171,15 +126,12 @@
     <ClInclude Include="GeneratedFiles\ui_main_win.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_script_dialog.h">
+    <ClInclude Include="GeneratedFiles\ui_subscript_dialog.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\SVViewer\resources\svviewer_en.ts">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\SVViewer\resources\svviewer_en.qm">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -64,9 +64,6 @@
     <CustomBuild Include="..\..\..\src\SVGraphPanel\src\plot_widget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVGraphPanel\resources\graph_panel_resource.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVGraphPanel\forms\axis_setting_dialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -141,9 +138,6 @@
     <ClCompile Include="..\..\..\src\SVGraphPanel\src\plot_widget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_graph_panel_resource.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_axis_setting_dialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -164,9 +158,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\SVGraphPanel\resources\graph_panel_en.qm">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\..\src\SVGraphPanel\resources\graph_panel_en.ts">
       <Filter>Resource Files</Filter>
     </None>

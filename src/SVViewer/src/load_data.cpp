@@ -25,7 +25,6 @@
 
 #include "load_data.h"
 #include "SVViewer/forms/main_win.h"
-#include "SVConfig/config_limits.h"
 #include "Lib/zlib/zlib.h"
 
 extern MainWin* mainWin;
@@ -100,7 +99,7 @@ bool MainWin::loadModuleVals(QString path) {
     ////
 
     int cPos = 0, itData = 0;
-    while (itData < dataSz) {
+    while (itData < (int)dataSz) {
 
       ValueData* vr = (ValueData*)(outArr.data() + itData);
 
@@ -194,24 +193,24 @@ bool loadSignalData(const QString& sign) {
 
     QDataStream dataStream(&file);
 
-    int csz = sref[sign]->buffData.size(),
+    size_t csz = sref[sign]->buffData.size(),
       newsz = csz + path->signls[sign].vlsCnt,
       vlSz = sizeof(Value) * SV_PACKETSZ;
 
     sdata->buffData.resize(newsz);
 
-    int buffSz = vlSz * path->signls[sign].vlsCnt;
+    size_t buffSz = vlSz * path->signls[sign].vlsCnt;
     Value* buff = new Value[buffSz];
     memset(buff, 0, buffSz);
 
-    for (int i = csz, j = 0; i < newsz; ++i, ++j)
+    for (size_t i = csz, j = 0; i < newsz; ++i, ++j)
       sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
 
     int psz = path->signls[sign].patchApos.size(),
       posMem = 0,
       patchNum = 0,
       tmSz = sizeof(uint64_t),
-      valSz = tmSz + vlSz,
+      valSz = tmSz + (int)vlSz,
       vheadSz = sizeof(ValueData);
 
     uLong comprSz = 0,
@@ -243,15 +242,15 @@ bool loadSignalData(const QString& sign) {
 
         int offs = path->signls[sign].patchApos[i].second;
 
-        if (offs > dataSz) break;
+        if (offs > (int)dataSz) break;
 
-        int vlCnt = ((ValueData*)(outArr.data() + offs))->vlCnt;
+        size_t vlCnt = (size_t)((ValueData*)(outArr.data() + offs))->vlCnt;
 
         offs += vheadSz;
 
         Bytef* pData = outArr.data() + offs;
 
-        for (int j = 0; j < vlCnt; ++j) {
+        for (size_t j = 0; j < vlCnt; ++j) {
           sdata->buffData[csz + j].beginTime = *(uint64_t*)(pData + j * valSz) + path->utcOffsMs;
           memcpy(sdata->buffData[csz + j].vals, pData + j * valSz + tmSz, vlSz);
         }

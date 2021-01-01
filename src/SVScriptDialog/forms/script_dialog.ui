@@ -40,7 +40,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../resources/script_dialog_resource.qrc">
+        <iconset resource="../../SVMonitor/resources/resource.qrc">
          <normaloff>:/SVScript/images/add.png</normaloff>:/SVScript/images/add.png</iconset>
        </property>
        <property name="iconSize">
@@ -115,7 +115,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../resources/script_dialog_resource.qrc">
+            <iconset resource="../../SVMonitor/resources/resource.qrc">
              <normaloff>:/SVScript/images/arrow-dn.png</normaloff>:/SVScript/images/arrow-dn.png</iconset>
            </property>
            <property name="iconSize">
@@ -135,7 +135,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../resources/script_dialog_resource.qrc">
+            <iconset resource="../../SVMonitor/resources/resource.qrc">
              <normaloff>:/SVScript/images/arrow-up.png</normaloff>:/SVScript/images/arrow-up.png</iconset>
            </property>
            <property name="iconSize">
@@ -269,7 +269,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/script_dialog_resource.qrc"/>
+  <include location="../../SVMonitor/resources/resource.qrc"/>
  </resources>
  <connections/>
 </ui>

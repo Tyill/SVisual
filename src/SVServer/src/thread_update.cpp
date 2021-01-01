@@ -166,13 +166,14 @@ void ThreadUpdate::updateCycle(){
 
     tmDelay.update();
 
-    bool isNewSign = false, isBuffActive = false; string sign;
+    bool isNewSign = false, isBuffActive = false;
+    
     BufferData::InputData bufPos = _buffData.getDataByReadPos();
     while (bufPos.isActive){
 
       isBuffActive = true;
 
-      sign = bufPos.name + bufPos.module;
+      string sign = bufPos.name + bufPos.module;
 
       if (sref.find(sign) == sref.end()){
         addSignal(sign, bufPos);

@@ -26,13 +26,12 @@
 #define MAINWIN_H
 
 #include "GeneratedFiles/ui_main_win.h"
-#include "SVViewer/src/tree_widget.h"
-#include "SVViewer/src/load_data.h"
 #include "SVConfig/config_data.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVViewer/src/structurs.h"
 
 class GraphSettingDialog;
+class ThrLoadData;
 
 class MainWin : public QMainWindow
 {

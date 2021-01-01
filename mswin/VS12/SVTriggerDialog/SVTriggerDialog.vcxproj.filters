@@ -43,9 +43,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GeneratedFiles\qrc_trigger_dialog_resource.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_trigger_dialog_impl.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -60,9 +57,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\src\SVTriggerDialog\resources\trigger_dialog_resource.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVTriggerDialog\forms\trigger_dialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -71,9 +65,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\SVTriggerDialog\resources\trigger_dialog_en.qm">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\..\src\SVTriggerDialog\resources\trigger_dialog_en.ts">
       <Filter>Resource Files</Filter>
     </None>

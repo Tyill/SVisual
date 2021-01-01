@@ -2,13 +2,42 @@
     <qresource prefix="/SVViewer">
         <file>images/Graph.png</file>
         <file>images/open.png</file>
-        <file>images/iconImpuls.png</file>
-        <file>images/iconSin.png</file>
         <file>images/logo.png</file>
         <file>images/print.png</file>
         <file>svviewer_en.qm</file>
         <file>images/export.png</file>
         <file>images/add.png</file>
         <file>images/script.png</file>
+    </qresource>
+	<qresource prefix="/SVGp">
+        <file>images/bw.png</file>
+        <file>images/color_wheel.png</file>
+        <file>images/iconResByValue.png</file>
+        <file>images/iconResByTime.png</file>
+        <file>images/player_stop.png</file>
+        <file>images/scaleNeg.png</file>
+        <file>images/scalePos.png</file>
+        <file>images/SVLabel.png</file>
+        <file>images/player_play.png</file>
+        <file>images/arrowDn.png</file>
+        <file>images/arrowUp.png</file>
+        <file>images/iconResAuto.png</file>
+        <file>images/ascale.png</file>
+        <file>graph_panel_en.qm</file>
+    </qresource>
+	<qresource prefix="/SVExp">
+        <file>images/arrow-left.png</file>
+        <file>images/arrow-right.png</file>
+        <file>export_dialog_en.qm</file> 
+    </qresource> 
+	 <qresource prefix="/SVScript">
+        <file>images/arrow-dn.png</file>
+        <file>images/arrow-up.png</file>
+        <file>images/add.png</file>
+        <file>images/open.png</file>
+        <file>script_dialog_en.qm</file>
+    </qresource>
+	<qresource prefix="/SVStat">
+        <file>stat_dialog_en.qm</file>
     </qresource>
 </RCC>

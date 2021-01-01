@@ -33,6 +33,11 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\SVStatDialog\stat_dialog.h">
@@ -48,9 +53,6 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVStatDialog\forms\stat_dialog.ui">
       <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVStatDialog\resources\stat_dialog_resource.qrc">
-      <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVStatDialog\forms\stat_dialog_impl.h">
       <Filter>Header Files</Filter>
@@ -72,9 +74,6 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_stat_dialog_impl.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_stat_dialog_resource.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_hist_widget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
@@ -83,7 +82,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\SVStatDialog\resources\stat_dialog_en.qm">
+    <None Include="svstatdialog_en.ts">
+      <Filter>Translation Files</Filter>
+    </None>
+    <None Include="..\..\..\src\SVStatDialog\resources\stat_dialog_en.ts">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

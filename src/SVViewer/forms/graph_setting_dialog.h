@@ -37,8 +37,5 @@ public:
 
   Ui::GraphSettingDialog ui;
 
-private:
-
-  private slots :
 
 };

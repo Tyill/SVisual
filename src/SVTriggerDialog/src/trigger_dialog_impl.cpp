@@ -34,7 +34,7 @@ TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_){
 
 #ifdef SV_EN
   QTranslator translator;
-  translator.load(":/SVTrigger/svtriggerpanel_en.qm");
+  translator.load(":/SVTrigger/trigger_dialog_en.qm");
   QCoreApplication::installTranslator(&translator);
 #endif
 

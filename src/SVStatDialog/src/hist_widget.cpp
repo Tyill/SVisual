@@ -50,8 +50,8 @@ void HistWidget::setGraphPnt(vector<pair<int, int>> pnts) {
 
   grPnts_.clear();
 
-  int sz = pnts.size();
-  for (int i = 0; i < sz; ++i)
+  size_t sz = pnts.size();
+  for (size_t i = 0; i < sz; ++i)
     grPnts_.push_back(QPair<int, int>(pnts[i].first, pnts[i].second));
 
   update();

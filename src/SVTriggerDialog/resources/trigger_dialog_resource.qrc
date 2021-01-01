@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/SVTrigger">
-        <file>images/open.png</file>
-        <file>trigger_dialog_en.qm</file>
-    </qresource>
-</RCC>

@@ -2,95 +2,131 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
-    <name>ScriptPanelClass</name>
+    <name>ScriptDialog</name>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="14"/>
+        <location filename="../src/script_dialog_impl.cpp" line="436"/>
+        <source> изменен.</source>
+        <translation>changed.</translation>
+    </message>
+    <message>
+        <location filename="../src/script_dialog_impl.cpp" line="437"/>
+        <source>Сохранить изменения?</source>
+        <translation>Save changes?</translation>
+    </message>
+    <message>
+        <location filename="../src/script_dialog_impl.cpp" line="586"/>
+        <source>Удалить</source>
+        <translation>Delete</translation>
+    </message>
+    <message>
+        <location filename="../src/script_dialog_impl.cpp" line="807"/>
+        <source>Скрипт с таким именем уже существует</source>
+        <translation>A script with the same name already exists</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="14"/>
         <source>Пользовательские скрипты</source>
         <translation>Custom scripts</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="37"/>
+        <location filename="../forms/script_dialog.ui" line="37"/>
         <source>Создать скрипт</source>
         <translation>Create a script</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="79"/>
+        <location filename="../forms/script_dialog.ui" line="79"/>
         <source>Все скрипты</source>
         <translation>All scripts</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="86"/>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="174"/>
+        <location filename="../forms/script_dialog.ui" line="86"/>
+        <location filename="../forms/script_dialog.ui" line="174"/>
         <source>Имя</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="112"/>
-        <source>Удалить из активных</source>
-        <translation>Remove from active</translation>
-    </message>
-    <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="132"/>
+        <location filename="../forms/script_dialog.ui" line="112"/>
         <source>Добавить в активные</source>
         <translation>Add to active</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="167"/>
+        <location filename="../forms/script_dialog.ui" line="132"/>
+        <source>Удалить из активных</source>
+        <translation>Remove from active</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="167"/>
         <source>Активные скрипты</source>
         <translation>Active Scripts</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="240"/>
+        <location filename="../forms/script_dialog.ui" line="240"/>
         <source>CTRL + S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="243"/>
+        <location filename="../forms/script_dialog.ui" line="243"/>
         <source>Сохранить</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="246"/>
+        <location filename="../forms/script_dialog.ui" line="246"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="253"/>
+        <location filename="../forms/script_dialog.ui" line="253"/>
         <source>CTRL + D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="256"/>
+        <location filename="../forms/script_dialog.ui" line="256"/>
         <source>Очистить</source>
         <translation>Clear</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/forms/ScriptDialog.ui" line="259"/>
+        <location filename="../forms/script_dialog.ui" line="259"/>
         <source>Ctrl+D</source>
         <translation></translation>
     </message>
 </context>
 <context>
-    <name>ScriptDialog</name>
+    <name>ScriptPanelClass</name>
     <message>
-        <location filename="../../../src/SVScriptPanel/src/ScriptDialog.cpp" line="408"/>
-        <source> изменен.</source>
-        <translation>changed.</translation>
+        <source>Пользовательские скрипты</source>
+        <translation type="vanished">Custom scripts</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/src/ScriptDialog.cpp" line="409"/>
-        <source>Сохранить изменения?</source>
-        <translation>Save changes?</translation>
+        <source>Создать скрипт</source>
+        <translation type="vanished">Create a script</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/src/ScriptDialog.cpp" line="522"/>
-        <source>Удалить</source>
-        <translation>Delete</translation>
+        <source>Все скрипты</source>
+        <translation type="vanished">All scripts</translation>
     </message>
     <message>
-        <location filename="../../../src/SVScriptPanel/src/ScriptDialog.cpp" line="646"/>
-        <source>Скрипт с таким именем уже существует</source>
-        <translation>A script with the same name already exists</translation>
+        <source>Имя</source>
+        <translation type="vanished">Name</translation>
+    </message>
+    <message>
+        <source>Удалить из активных</source>
+        <translation type="vanished">Remove from active</translation>
+    </message>
+    <message>
+        <source>Добавить в активные</source>
+        <translation type="vanished">Add to active</translation>
+    </message>
+    <message>
+        <source>Активные скрипты</source>
+        <translation type="vanished">Active Scripts</translation>
+    </message>
+    <message>
+        <source>Сохранить</source>
+        <translation type="vanished">Save</translation>
+    </message>
+    <message>
+        <source>Очистить</source>
+        <translation type="vanished">Clear</translation>
     </message>
 </context>
 </TS>

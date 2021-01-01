@@ -4,168 +4,260 @@
 <context>
     <name>TriggerDialog</name>
     <message>
-        <location filename="../src/TriggerDialog.cpp" line="379"/>
+        <location filename="../src/trigger_dialog_impl.cpp" line="381"/>
         <source>Выбор процесса</source>
         <translation>Select of process</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="14"/>
+        <source>Настройка уведомлений</source>
+        <translation>Configure Notifications</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="27"/>
+        <source>Модули</source>
+        <translation>Modules</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="53"/>
+        <source>Сигналы</source>
+        <translation>Signals</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="88"/>
+        <location filename="../forms/trigger_dialog.ui" line="153"/>
+        <source>Имя</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="93"/>
+        <source>Тип</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="98"/>
+        <source>Комментарий</source>
+        <translation>Comment</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="115"/>
+        <source>Триггеры</source>
+        <translation>Triggers</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="158"/>
+        <source>Условие</source>
+        <translation>Condition</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="187"/>
+        <source>*</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="194"/>
+        <source>Добавить</source>
+        <translation>Added</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="201"/>
+        <source>Изменить</source>
+        <translation>Change</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="208"/>
+        <source>Удалить</source>
+        <translation>Delete</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="223"/>
+        <source>Условие срабатывания</source>
+        <translation>Trigger condition</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="249"/>
+        <source>меньше</source>
+        <translation>LESS</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="252"/>
+        <source>&lt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="283"/>
+        <source>равно</source>
+        <translation>equally</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="286"/>
+        <source>==</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="314"/>
+        <source>больше</source>
+        <translation>MORE</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="317"/>
+        <source>&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="345"/>
+        <source>положительный фронт</source>
+        <translation>positive front</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="348"/>
+        <source>FP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="376"/>
+        <source>отрицательный фронт</source>
+        <translation>negative front</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="379"/>
+        <source>FN</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="395"/>
+        <source>пороговое значение</source>
+        <translation>threshold Value</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="408"/>
+        <source>tout</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="421"/>
+        <source>задержка срабатывания, сек</source>
+        <translation>response delay, sec</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="424"/>
+        <source>0</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="460"/>
+        <source>Активно</source>
+        <translation>Actively</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="494"/>
+        <source>Запуск процесса</source>
+        <translation>Running process</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="508"/>
+        <source>Путь</source>
+        <translation>Path</translation>
+    </message>
+    <message>
+        <location filename="../forms/trigger_dialog.ui" line="552"/>
+        <source>Аргументы</source>
+        <translation>Args</translation>
     </message>
 </context>
 <context>
     <name>triggerPanelClass</name>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="14"/>
         <source>Настройка уведомлений</source>
-        <translation>Configure Notifications</translation>
+        <translation type="vanished">Configure Notifications</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="27"/>
         <source>Модули</source>
-        <translation>Modules</translation>
+        <translation type="vanished">Modules</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="53"/>
         <source>Сигналы</source>
-        <translation>Signals</translation>
+        <translation type="vanished">Signals</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="88"/>
-        <location filename="../forms/TriggerDialog.ui" line="153"/>
         <source>Имя</source>
-        <translation>Name</translation>
+        <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="93"/>
         <source>Тип</source>
-        <translation>Type</translation>
+        <translation type="vanished">Type</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="98"/>
         <source>Комментарий</source>
-        <translation>Comment</translation>
+        <translation type="vanished">Comment</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="115"/>
         <source>Триггеры</source>
-        <translation>Triggers</translation>
+        <translation type="vanished">Triggers</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="158"/>
         <source>Условие</source>
-        <translation>Condition</translation>
+        <translation type="vanished">Condition</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="187"/>
-        <source>*</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="194"/>
         <source>Добавить</source>
-        <translation>Added</translation>
+        <translation type="vanished">Added</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="201"/>
         <source>Изменить</source>
-        <translation>Change</translation>
+        <translation type="vanished">Change</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="208"/>
         <source>Удалить</source>
-        <translation>Delete</translation>
+        <translation type="vanished">Delete</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="223"/>
         <source>Условие срабатывания</source>
-        <translation>Trigger condition</translation>
+        <translation type="vanished">Trigger condition</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="249"/>
         <source>меньше</source>
-        <translation>LESS</translation>
+        <translation type="vanished">LESS</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="252"/>
-        <source>&lt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="283"/>
         <source>равно</source>
-        <translation>equally</translation>
+        <translation type="vanished">equally</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="286"/>
-        <source>==</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="314"/>
         <source>больше</source>
-        <translation>MORE</translation>
+        <translation type="vanished">MORE</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="317"/>
-        <source>&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="345"/>
         <source>положительный фронт</source>
-        <translation>positive front</translation>
+        <translation type="vanished">positive front</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="348"/>
-        <source>FP</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="376"/>
         <source>отрицательный фронт</source>
-        <translation>negative front</translation>
+        <translation type="vanished">negative front</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="379"/>
-        <source>FN</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="395"/>
         <source>пороговое значение</source>
-        <translation>threshold Value</translation>
+        <translation type="vanished">threshold Value</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="408"/>
-        <source>tout</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="421"/>
         <source>задержка срабатывания, сек</source>
-        <translation>response delay, sec</translation>
+        <translation type="vanished">response delay, sec</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="424"/>
-        <source>0</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/TriggerDialog.ui" line="460"/>
         <source>Активно</source>
-        <translation>Actively</translation>
+        <translation type="vanished">Actively</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="494"/>
         <source>Запуск процесса</source>
-        <translation>Running process</translation>
+        <translation type="vanished">Running process</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="508"/>
         <source>Путь</source>
-        <translation>Path</translation>
+        <translation type="vanished">Path</translation>
     </message>
     <message>
-        <location filename="../forms/TriggerDialog.ui" line="552"/>
         <source>Аргументы</source>
-        <translation>Args</translation>
+        <translation type="vanished">Args</translation>
     </message>
 </context>
 </TS>

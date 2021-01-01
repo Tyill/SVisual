@@ -224,7 +224,7 @@ QVector<TriggerData*> DbProvider::getTrigger(const QString& signal, const QStrin
   if (!query(ss.str(), trg)) return res;
 
   size_t sz = trg.size();
-  for (int i = 0; i < sz; ++i) {
+  for (size_t i = 0; i < sz; ++i) {
 
     TriggerData* td = new TriggerData();
 

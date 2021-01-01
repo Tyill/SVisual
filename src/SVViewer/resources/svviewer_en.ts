@@ -2,113 +2,118 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>GraphSettingDialog</name>
+    <message>
+        <location filename="../forms/graph_setting.ui" line="20"/>
+        <source>Вид графика</source>
+        <translation>View graphics</translation>
+    </message>
+    <message>
+        <location filename="../forms/graph_setting.ui" line="26"/>
+        <source>Прозрачность</source>
+        <translation>Transparency</translation>
+    </message>
+    <message>
+        <location filename="../forms/graph_setting.ui" line="58"/>
+        <source>Толщина линии</source>
+        <translation>Line thickness</translation>
+    </message>
+    <message>
+        <location filename="../forms/graph_setting.ui" line="93"/>
+        <source>Черный фон</source>
+        <translation>Dark theme</translation>
+    </message>
+</context>
+<context>
     <name>MainWin</name>
     <message>
-        <location filename="../forms/mainWin.ui" line="14"/>
-        <location filename="../forms/ui_mainWin.h" line="279"/>
+        <location filename="../forms/main_win.ui" line="14"/>
         <source>SVViewer</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="52"/>
-        <location filename="../forms/ui_mainWin.h" line="301"/>
+        <location filename="../forms/main_win.ui" line="52"/>
         <source>Модули</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="65"/>
-        <location filename="../forms/ui_mainWin.h" line="302"/>
+        <location filename="../forms/main_win.ui" line="65"/>
         <source>Группы</source>
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="99"/>
-        <location filename="../forms/ui_mainWin.h" line="308"/>
+        <location filename="../forms/main_win.ui" line="99"/>
         <source>Имя</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="104"/>
-        <location filename="../forms/ui_mainWin.h" line="307"/>
+        <location filename="../forms/main_win.ui" line="104"/>
         <source>Тип</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="109"/>
-        <location filename="../forms/ui_mainWin.h" line="306"/>
+        <location filename="../forms/main_win.ui" line="109"/>
         <source>Цвет</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="114"/>
-        <location filename="../forms/ui_mainWin.h" line="305"/>
-        <location filename="../src/mainWin.cpp" line="707"/>
+        <location filename="../forms/main_win.ui" line="114"/>
+        <location filename="../src/main_win.cpp" line="732"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="119"/>
-        <location filename="../forms/ui_mainWin.h" line="304"/>
+        <location filename="../forms/main_win.ui" line="119"/>
         <source>Комментарий</source>
         <translation>Comment</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="241"/>
-        <location filename="../forms/ui_mainWin.h" line="313"/>
+        <location filename="../forms/main_win.ui" line="241"/>
         <source>Файл</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="249"/>
-        <location filename="../forms/ui_mainWin.h" line="314"/>
+        <location filename="../forms/main_win.ui" line="249"/>
         <source>Помощь</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="256"/>
-        <location filename="../forms/ui_mainWin.h" line="315"/>
+        <location filename="../forms/main_win.ui" line="256"/>
         <source>Вид</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="289"/>
-        <location filename="../forms/ui_mainWin.h" line="282"/>
+        <location filename="../forms/main_win.ui" line="289"/>
         <source>Открыть</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="292"/>
-        <location filename="../forms/ui_mainWin.h" line="284"/>
+        <location filename="../forms/main_win.ui" line="292"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="297"/>
-        <location filename="../forms/ui_mainWin.h" line="285"/>
+        <location filename="../forms/main_win.ui" line="297"/>
         <source>Выход</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="320"/>
-        <location filename="../forms/ui_mainWin.h" line="288"/>
+        <location filename="../forms/main_win.ui" line="320"/>
         <source>Печать</source>
         <translation>Print</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="329"/>
-        <location filename="../forms/ui_mainWin.h" line="289"/>
+        <location filename="../forms/main_win.ui" line="329"/>
         <source>Экспорт</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="338"/>
-        <location filename="../forms/ui_mainWin.h" line="290"/>
+        <location filename="../forms/main_win.ui" line="338"/>
         <source>Новое окно</source>
         <translation>New window</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="343"/>
-        <location filename="../forms/ui_mainWin.h" line="291"/>
+        <location filename="../forms/main_win.ui" line="343"/>
         <source>Сохранить состояние окон</source>
         <translation>Save state windows</translation>
     </message>
@@ -117,52 +122,44 @@
         <translation type="vanished">Save current state</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="348"/>
-        <location filename="../forms/ui_mainWin.h" line="292"/>
+        <location filename="../forms/main_win.ui" line="348"/>
         <source>Загрузить состояние окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="353"/>
-        <location filename="../forms/ui_mainWin.h" line="293"/>
+        <location filename="../forms/main_win.ui" line="353"/>
         <source>Увеличить размер шрифта</source>
         <translation>Increase font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="356"/>
-        <location filename="../forms/ui_mainWin.h" line="294"/>
+        <location filename="../forms/main_win.ui" line="356"/>
         <source>Ctrl+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="361"/>
-        <location filename="../forms/ui_mainWin.h" line="295"/>
+        <location filename="../forms/main_win.ui" line="361"/>
         <source>Уменьшить размер шрифта</source>
         <translation>Decrease font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="364"/>
-        <location filename="../forms/ui_mainWin.h" line="296"/>
+        <location filename="../forms/main_win.ui" line="364"/>
         <source>Ctrl+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="373"/>
-        <location filename="../forms/ui_mainWin.h" line="297"/>
-        <location filename="../src/mainWin.cpp" line="854"/>
-        <location filename="../src/mainWin.cpp" line="896"/>
+        <location filename="../forms/main_win.ui" line="373"/>
+        <location filename="../src/main_win.cpp" line="885"/>
+        <location filename="../src/main_win.cpp" line="928"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="378"/>
-        <location filename="../forms/ui_mainWin.h" line="298"/>
+        <location filename="../forms/main_win.ui" line="378"/>
         <source>График</source>
         <translation>Graph</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="383"/>
-        <location filename="../forms/ui_mainWin.h" line="299"/>
+        <location filename="../forms/main_win.ui" line="383"/>
         <source>Руководство пользователя</source>
         <translation>User manual</translation>
     </message>
@@ -175,56 +172,54 @@
         <translation type="vanished">Add</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="306"/>
-        <location filename="../forms/ui_mainWin.h" line="286"/>
+        <location filename="../forms/main_win.ui" line="306"/>
         <source>Статистика</source>
         <translation>Stat</translation>
     </message>
     <message>
-        <location filename="../forms/mainWin.ui" line="311"/>
-        <location filename="../forms/ui_mainWin.h" line="287"/>
+        <location filename="../forms/main_win.ui" line="311"/>
         <source>О программе</source>
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="471"/>
+        <location filename="../src/main_win.cpp" line="492"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="530"/>
+        <location filename="../src/main_win.cpp" line="551"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="601"/>
+        <location filename="../src/main_win.cpp" line="622"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="602"/>
+        <location filename="../src/main_win.cpp" line="623"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="743"/>
+        <location filename="../src/main_win.cpp" line="774"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="795"/>
+        <location filename="../src/main_win.cpp" line="826"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="836"/>
-        <location filename="../src/mainWin.cpp" line="875"/>
+        <location filename="../src/main_win.cpp" line="867"/>
+        <location filename="../src/main_win.cpp" line="906"/>
         <source>Показать все</source>
         <translation>Show all</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="855"/>
-        <location filename="../src/mainWin.cpp" line="884"/>
+        <location filename="../src/main_win.cpp" line="887"/>
+        <location filename="../src/main_win.cpp" line="916"/>
         <source>Сбросить цвет</source>
         <translation>Reset color</translation>
     </message>
@@ -237,112 +232,101 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/mainWin.cpp" line="806"/>
+        <location filename="../src/main_win.cpp" line="837"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>
 </context>
 <context>
-    <name>graphSettingClass</name>
-    <message>
-        <location filename="../forms/graphSetting.ui" line="20"/>
-        <location filename="../forms/ui_graphSetting.h" line="104"/>
-        <source>Вид графика</source>
-        <translation>View graphics</translation>
-    </message>
-    <message>
-        <location filename="../forms/graphSetting.ui" line="26"/>
-        <location filename="../forms/ui_graphSetting.h" line="105"/>
-        <source>Прозрачность</source>
-        <translation>Transparency</translation>
-    </message>
-    <message>
-        <location filename="../forms/graphSetting.ui" line="58"/>
-        <location filename="../forms/ui_graphSetting.h" line="106"/>
-        <source>Толщина линии</source>
-        <translation>Line thickness</translation>
-    </message>
-    <message>
-        <location filename="../forms/graphSetting.ui" line="93"/>
-        <location filename="../forms/ui_graphSetting.h" line="107"/>
-        <source>Черный фон</source>
-        <translation>Dark theme</translation>
-    </message>
-</context>
-<context>
     <name>SignScriptDialog</name>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="62"/>
-        <location filename="../forms/SignScriptDialog.h" line="139"/>
+        <location filename="../forms/script_dialog.ui" line="14"/>
+        <source>Скрипт для сигнала</source>
+        <translation>Script for signal</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="45"/>
+        <source>[CTRL+S]</source>
+        <translation>[CTRL+S]</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="48"/>
+        <source>Сохранить</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="51"/>
+        <source>Ctrl+S</source>
+        <translation>Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="58"/>
+        <source>[CTRL+D]</source>
+        <translation>[CTRL+D]</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.ui" line="61"/>
+        <location filename="../forms/script_dialog.h" line="65"/>
+        <location filename="../forms/script_dialog.h" line="142"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="68"/>
-        <location filename="../forms/SignScriptDialog.h" line="137"/>
+        <location filename="../forms/script_dialog.ui" line="64"/>
+        <source>Ctrl+D</source>
+        <translation>Ctrl+D</translation>
+    </message>
+    <message>
+        <location filename="../forms/script_dialog.h" line="71"/>
+        <location filename="../forms/script_dialog.h" line="140"/>
         <source>Отключить</source>
         <translation>Deactivate</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="83"/>
-        <location filename="../forms/SignScriptDialog.h" line="156"/>
+        <location filename="../forms/script_dialog.h" line="86"/>
+        <location filename="../forms/script_dialog.h" line="159"/>
         <source>Скрипт </source>
         <translation>Script </translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="156"/>
+        <location filename="../forms/script_dialog.h" line="159"/>
         <source> изменен.</source>
         <translation> is change.</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.h" line="157"/>
+        <location filename="../forms/script_dialog.h" line="160"/>
         <source>Сохранить изменения?</source>
         <translation>Save changes?</translation>
     </message>
 </context>
 <context>
+    <name>graphSettingClass</name>
+    <message>
+        <source>Вид графика</source>
+        <translation type="vanished">View graphics</translation>
+    </message>
+    <message>
+        <source>Прозрачность</source>
+        <translation type="vanished">Transparency</translation>
+    </message>
+    <message>
+        <source>Толщина линии</source>
+        <translation type="vanished">Line thickness</translation>
+    </message>
+    <message>
+        <source>Черный фон</source>
+        <translation type="vanished">Dark theme</translation>
+    </message>
+</context>
+<context>
     <name>signScriptPanelClass</name>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="14"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="82"/>
-        <source>Скрипт для сигнала</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SignScriptDialog.ui" line="45"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="85"/>
-        <source>[CTRL+S]</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SignScriptDialog.ui" line="48"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="87"/>
         <source>Сохранить</source>
-        <translation>Save</translation>
+        <translation type="vanished">Save</translation>
     </message>
     <message>
-        <location filename="../forms/SignScriptDialog.ui" line="51"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="88"/>
-        <source>Ctrl+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SignScriptDialog.ui" line="58"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="90"/>
-        <source>[CTRL+D]</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SignScriptDialog.ui" line="61"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="92"/>
         <source>Включить</source>
-        <translation>Activate</translation>
-    </message>
-    <message>
-        <location filename="../forms/SignScriptDialog.ui" line="64"/>
-        <location filename="../forms/ui_signScriptPanel.h" line="93"/>
-        <source>Ctrl+D</source>
-        <translation></translation>
+        <translation type="vanished">Activate</translation>
     </message>
 </context>
 </TS>

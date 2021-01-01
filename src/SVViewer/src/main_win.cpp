@@ -27,13 +27,14 @@
 #include <QPrintDialog>
 #include "SVViewer/forms/main_win.h"
 #include "SVViewer/forms/graph_setting_dialog.h"
-#include "SVViewer/forms/script_dialog.h"
+#include "SVViewer/forms/subscript_dialog.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVStatDialog/stat_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "SVExportDialog/export_dialog.h" 
 #include "SVConfig/config_limits.h"
 #include "SVConfig/config_data.h"
+#include "load_data.h"
 
 #include <QColorDialog>
 #include <QFileDialog>
@@ -929,7 +930,7 @@ void MainWin::contextMenuClick(QAction* act) {
 
     SV_Script::startUpdateThread(scriptPanel_);
 
-    SignScriptDialog* scr = new SignScriptDialog(this, scriptPanel_);
+    SubScriptDialog* scr = new SubScriptDialog(scriptPanel_, this);
     scr->setWindowFlags(Qt::Window);
 
     QString sign = ui.treeSignals->currentItem()->text(5);

@@ -803,9 +803,7 @@ MainWin::MainWin(QWidget *parent)
       }
       comReaders_.push_back(comReader);
     }
-  }
-  else{
-
+  }else{
     if (SV_Aux::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
       statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
       SV_Srv::startServer(srvCng);
@@ -837,11 +835,12 @@ MainWin::MainWin(QWidget *parent)
 
 MainWin::~MainWin(){
 
-  SV_Srv::stopServer();
-
-  for (auto comReader : comReaders_){
-    if (comReader)
-      comReader->stop();
+  if (cng.com_ena){
+    for (auto comReader : comReaders_){
+      if (comReader) comReader->stop();
+    }
+  }else{    
+    SV_Aux::TCPServer::stop();
   }
 
   if (cng.web_ena)
@@ -849,6 +848,8 @@ MainWin::~MainWin(){
 
   if (cng.zabbix_ena)
     SV_Zbx::stopAgent();
+
+  SV_Srv::stopServer();
 
   if (db_){
     if (!db_->saveSignals(SV_Srv::getCopySignalRef()))
@@ -1275,6 +1276,8 @@ void MainWin::updateConfig(const MainWin::Config& newCng){
     srvCng.outArchivePath = newCng.outArchivePath.toStdString();
   }
   SV_Srv::setConfig(srvCng);
+
+  cng = newCng;
 }
 
 QDialog* MainWin::addNewWindow(const QRect& pos){

@@ -2,6 +2,77 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>EventTableDialog</name>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="14"/>
+        <source>Отчет событий</source>
+        <translation>Event report</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="22"/>
+        <source>c</source>
+        <translation>from</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="32"/>
+        <source>по</source>
+        <translation>by</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="42"/>
+        <source>Показать</source>
+        <translation>Show</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="94"/>
+        <source>Время</source>
+        <translation>Time</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="99"/>
+        <source>Триггер</source>
+        <translation>Trigger</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="104"/>
+        <source>Модуль</source>
+        <translation>Module</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="109"/>
+        <source>Сигнал</source>
+        <translation>Signal</translation>
+    </message>
+    <message>
+        <location filename="../forms/event_table_dialog.ui" line="114"/>
+        <source>Условие</source>
+        <translation>Condition</translation>
+    </message>
+</context>
+<context>
+    <name>GraphSettingDialog</name>
+    <message>
+        <location filename="../forms/graph_setting_dialog.ui" line="20"/>
+        <source>Вид графика</source>
+        <translation>View graphics</translation>
+    </message>
+    <message>
+        <location filename="../forms/graph_setting_dialog.ui" line="26"/>
+        <source>Прозрачность</source>
+        <translation>Transparency</translation>
+    </message>
+    <message>
+        <location filename="../forms/graph_setting_dialog.ui" line="58"/>
+        <source>Толщина линии</source>
+        <translation>Line thickness</translation>
+    </message>
+    <message>
+        <location filename="../forms/graph_setting_dialog.ui" line="93"/>
+        <source>Черный фон</source>
+        <translation>Dark theme</translation>
+    </message>
+</context>
+<context>
     <name>MainWin</name>
     <message>
         <source>SVisualMonitorDEMO</source>
@@ -9,140 +80,117 @@
         <translation type="vanished">SVisualMonitor</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="72"/>
-        <location filename="../forms/ui_mainwin.h" line="311"/>
+        <location filename="../forms/main_win.ui" line="72"/>
         <source>Тихий режим</source>
         <translation>Quiet mode</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="313"/>
-        <location filename="../forms/ui_mainwin.h" line="295"/>
+        <location filename="../forms/main_win.ui" line="313"/>
         <source>О программе</source>
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="52"/>
-        <location filename="../forms/ui_mainwin.h" line="310"/>
+        <location filename="../forms/main_win.ui" line="52"/>
         <source>Модули</source>
         <translation>Modules</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="14"/>
-        <location filename="../forms/ui_mainwin.h" line="287"/>
+        <location filename="../forms/main_win.ui" line="14"/>
         <source>SVMonitor</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="107"/>
-        <location filename="../forms/ui_mainwin.h" line="317"/>
+        <location filename="../forms/main_win.ui" line="107"/>
         <source>Имя</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="112"/>
-        <location filename="../forms/ui_mainwin.h" line="316"/>
+        <location filename="../forms/main_win.ui" line="112"/>
         <source>Тип</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="117"/>
-        <location filename="../forms/ui_mainwin.h" line="315"/>
+        <location filename="../forms/main_win.ui" line="117"/>
         <source>Цвет</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="122"/>
-        <location filename="../forms/ui_mainwin.h" line="314"/>
+        <location filename="../forms/main_win.ui" line="122"/>
         <source>Комментарий</source>
         <translation>Comment</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="127"/>
-        <location filename="../forms/ui_mainwin.h" line="313"/>
+        <location filename="../forms/main_win.ui" line="127"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="215"/>
-        <location filename="../forms/ui_mainwin.h" line="321"/>
+        <location filename="../forms/main_win.ui" line="215"/>
         <source>Файл</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="224"/>
-        <location filename="../forms/ui_mainwin.h" line="322"/>
+        <location filename="../forms/main_win.ui" line="224"/>
         <source>Помощь</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="232"/>
-        <location filename="../forms/ui_mainwin.h" line="323"/>
+        <location filename="../forms/main_win.ui" line="232"/>
         <source>Вид</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="267"/>
-        <location filename="../forms/ui_mainwin.h" line="289"/>
+        <location filename="../forms/main_win.ui" line="267"/>
         <source>Выход</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="276"/>
-        <location filename="../forms/ui_mainwin.h" line="290"/>
+        <location filename="../forms/main_win.ui" line="276"/>
         <source>Добавить</source>
         <translation>Add</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="285"/>
-        <location filename="../forms/ui_mainwin.h" line="291"/>
+        <location filename="../forms/main_win.ui" line="285"/>
         <source>Сигналы</source>
         <translation>Signals</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="294"/>
-        <location filename="../forms/ui_mainwin.h" line="292"/>
+        <location filename="../forms/main_win.ui" line="294"/>
         <source>Настройка уведомлений</source>
         <translation>Configuring notifications</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="299"/>
-        <location filename="../forms/ui_mainwin.h" line="293"/>
+        <location filename="../forms/main_win.ui" line="299"/>
         <source>Настройки</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="308"/>
-        <location filename="../forms/ui_mainwin.h" line="294"/>
+        <location filename="../forms/main_win.ui" line="308"/>
         <source>Отчет событий</source>
         <translation>Event report</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="318"/>
-        <location filename="../forms/ui_mainwin.h" line="296"/>
+        <location filename="../forms/main_win.ui" line="318"/>
         <source>Проверить обновления</source>
         <translation>Check for Updates</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="327"/>
-        <location filename="../forms/ui_mainwin.h" line="297"/>
+        <location filename="../forms/main_win.ui" line="327"/>
         <source>Печать</source>
         <translation>Print</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="336"/>
-        <location filename="../forms/ui_mainwin.h" line="298"/>
+        <location filename="../forms/main_win.ui" line="336"/>
         <source>Экспорт</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="345"/>
-        <location filename="../forms/ui_mainwin.h" line="299"/>
+        <location filename="../forms/main_win.ui" line="345"/>
         <source>Новое окно</source>
         <translation>New window</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="350"/>
-        <location filename="../forms/ui_mainwin.h" line="300"/>
+        <location filename="../forms/main_win.ui" line="350"/>
         <source>Сохранить состояние окон</source>
         <translation>Save state windows</translation>
     </message>
@@ -151,52 +199,44 @@
         <translation type="vanished">Save current state</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="355"/>
-        <location filename="../forms/ui_mainwin.h" line="301"/>
+        <location filename="../forms/main_win.ui" line="355"/>
         <source>Загрузить состояние окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="360"/>
-        <location filename="../forms/ui_mainwin.h" line="302"/>
+        <location filename="../forms/main_win.ui" line="360"/>
         <source>Увеличить размер шрифта</source>
         <translation>Increase font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="363"/>
-        <location filename="../forms/ui_mainwin.h" line="303"/>
+        <location filename="../forms/main_win.ui" line="363"/>
         <source>Ctrl+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="368"/>
-        <location filename="../forms/ui_mainwin.h" line="304"/>
+        <location filename="../forms/main_win.ui" line="368"/>
         <source>Уменьшить размер шрифта</source>
         <translation>Decrease font size</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="371"/>
-        <location filename="../forms/ui_mainwin.h" line="305"/>
+        <location filename="../forms/main_win.ui" line="371"/>
         <source>Ctrl+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="380"/>
-        <location filename="../forms/ui_mainwin.h" line="306"/>
-        <location filename="../src/mainwin.cpp" line="977"/>
-        <location filename="../src/mainwin.cpp" line="1004"/>
+        <location filename="../forms/main_win.ui" line="380"/>
+        <location filename="../src/main_win.cpp" line="966"/>
+        <location filename="../src/main_win.cpp" line="993"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="385"/>
-        <location filename="../forms/ui_mainwin.h" line="307"/>
+        <location filename="../forms/main_win.ui" line="385"/>
         <source>График</source>
         <translation>Graph</translation>
     </message>
     <message>
-        <location filename="../forms/mainwin.ui" line="390"/>
-        <location filename="../forms/ui_mainwin.h" line="308"/>
+        <location filename="../forms/main_win.ui" line="390"/>
         <source>Руководство пользователя</source>
         <translation>User manual</translation>
     </message>
@@ -213,7 +253,7 @@
         <translation type="vanished">Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="490"/>
+        <location filename="../src/main_win.cpp" line="499"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
@@ -235,63 +275,63 @@
         <translation type="vanished">Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="177"/>
+        <location filename="../src/main_win.cpp" line="182"/>
         <source>Подключение БД успешно</source>
         <translation>Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="179"/>
+        <location filename="../src/main_win.cpp" line="185"/>
         <source>Подключение БД ошибка: </source>
         <translation>Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="327"/>
+        <location filename="../src/main_win.cpp" line="333"/>
         <source>Доступна новая версия: </source>
         <translation>New version available: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="329"/>
+        <location filename="../src/main_win.cpp" line="335"/>
         <source>У вас самая новая версия</source>
         <translation>You have the newest version</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="343"/>
+        <location filename="../src/main_win.cpp" line="349"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="400"/>
+        <location filename="../src/main_win.cpp" line="406"/>
         <source>Состояние успешно сохранено</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="405"/>
+        <location filename="../src/main_win.cpp" line="411"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="473"/>
+        <location filename="../src/main_win.cpp" line="482"/>
         <source>Состояние успешно загружено</source>
         <translation>Load state succes</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="772"/>
+        <location filename="../src/main_win.cpp" line="768"/>
         <source>Инициализация параметров успешно</source>
         <translation>Initialization successfully settings</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="839"/>
+        <location filename="../src/main_win.cpp" line="829"/>
         <source>Zabbix агент запущен: адрес %1 порт %2</source>
         <translation>Zabbix agent running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="842"/>
+        <location filename="../src/main_win.cpp" line="832"/>
         <source>Не удалось запустить Zabbix агент: адрес %1 порт %2</source>
         <translation>Unable to start the agent Zabbix: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="966"/>
-        <location filename="../src/mainwin.cpp" line="1047"/>
+        <location filename="../src/main_win.cpp" line="955"/>
+        <location filename="../src/main_win.cpp" line="1035"/>
         <source>Показать все</source>
         <translation>Show all</translation>
     </message>
@@ -300,32 +340,32 @@
         <translation type="vanished">Not found ini file %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="797"/>
+        <location filename="../src/main_win.cpp" line="798"/>
         <source>Прослушивание %1 порта запущено</source>
         <translation>Listening port %1 running</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="804"/>
+        <location filename="../src/main_win.cpp" line="802"/>
         <source>%1 порт недоступен</source>
         <translation>%1 port is not available</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="813"/>
+        <location filename="../src/main_win.cpp" line="810"/>
         <source>TCP cервер запущен: адрес %1 порт %2</source>
         <translation>TCP server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="820"/>
+        <location filename="../src/main_win.cpp" line="815"/>
         <source>Не удалось запустить TCP сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server TCP: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="828"/>
+        <location filename="../src/main_win.cpp" line="821"/>
         <source>WEB cервер запущен: адрес %1 порт %2</source>
         <translation>WEB server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="831"/>
+        <location filename="../src/main_win.cpp" line="823"/>
         <source>Не удалось запустить WEB сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server WEB: address of %1 port %2</translation>
     </message>
@@ -338,17 +378,17 @@
         <translation type="vanished">Unable to start the server tcp: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="865"/>
+        <location filename="../src/main_win.cpp" line="855"/>
         <source>Ошибка сохранения сигналов в БД</source>
         <translation>Error save signals in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="867"/>
+        <location filename="../src/main_win.cpp" line="857"/>
         <source>Ошибка сохранения атрибутов в БД</source>
         <translation>Error save attributs in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="869"/>
+        <location filename="../src/main_win.cpp" line="859"/>
         <source>Ошибка сохранения триггеров в БД</source>
         <translation>Error save triggers in DB</translation>
     </message>
@@ -357,12 +397,12 @@
         <translation type="vanished">Error save events in DB</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1100"/>
+        <location filename="../src/main_win.cpp" line="1089"/>
         <source>Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.</source>
         <translation>Signal limit exceeded:% 1. Stable work is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1144"/>
+        <location filename="../src/main_win.cpp" line="1133"/>
         <source>Подключен модуль: </source>
         <translation>Module is connected: </translation>
     </message>
@@ -371,7 +411,7 @@
         <translation type="vanished">Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1193"/>
+        <location filename="../src/main_win.cpp" line="1182"/>
         <source>Отключен модуль: </source>
         <translation>Module is disconnected: </translation>
     </message>
@@ -384,43 +424,43 @@
         <translation type="vanished">Close an application. Saving options error</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="967"/>
-        <location filename="../src/mainwin.cpp" line="1059"/>
+        <location filename="../src/main_win.cpp" line="956"/>
+        <location filename="../src/main_win.cpp" line="1048"/>
         <source>Отключить</source>
         <translation>Shut off</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="970"/>
-        <location filename="../src/mainwin.cpp" line="1054"/>
+        <location filename="../src/main_win.cpp" line="959"/>
+        <location filename="../src/main_win.cpp" line="1043"/>
         <source>Включить</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="971"/>
-        <location filename="../src/mainwin.cpp" line="980"/>
-        <location filename="../src/mainwin.cpp" line="1032"/>
-        <location filename="../src/mainwin.cpp" line="1064"/>
+        <location filename="../src/main_win.cpp" line="960"/>
+        <location filename="../src/main_win.cpp" line="969"/>
+        <location filename="../src/main_win.cpp" line="1020"/>
+        <location filename="../src/main_win.cpp" line="1053"/>
         <source>Удалить</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="979"/>
-        <location filename="../src/mainwin.cpp" line="1018"/>
+        <location filename="../src/main_win.cpp" line="968"/>
+        <location filename="../src/main_win.cpp" line="1006"/>
         <source>Сбросить цвет</source>
         <translation>Reset color</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1039"/>
+        <location filename="../src/main_win.cpp" line="1027"/>
         <source>Сигнал удален </source>
         <translation>The signal is deleted </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1067"/>
+        <location filename="../src/main_win.cpp" line="1056"/>
         <source>Удалить модуль со всеми сигналами?</source>
         <translation>Remove the module with all the signals?</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1074"/>
+        <location filename="../src/main_win.cpp" line="1063"/>
         <source>Модуль удален </source>
         <translation>Module removed </translation>
     </message>
@@ -464,17 +504,17 @@
         <translation type="vanished">Disconnect module &apos;</translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1212"/>
+        <location filename="../src/main_win.cpp" line="1201"/>
         <source>Событие: </source>
         <translation>Event: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1227"/>
+        <location filename="../src/main_win.cpp" line="1216"/>
         <source> Процесс запущен: </source>
         <translation>Process is run: </translation>
     </message>
     <message>
-        <location filename="../src/mainwin.cpp" line="1230"/>
+        <location filename="../src/main_win.cpp" line="1219"/>
         <source> Путь не найден: </source>
         <translation>Path is not found: </translation>
     </message>
@@ -490,36 +530,220 @@
         <translation type="vanished">Error receiving data</translation>
     </message>
     <message>
-        <location filename="../src/comReader.cpp" line="115"/>
+        <location filename="../src/com_reader.cpp" line="58"/>
         <source>%1 Ошибка получения данных</source>
         <translation>%1 Error receiving data</translation>
     </message>
 </context>
 <context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="26"/>
+        <source>Настройки</source>
+        <translation>Settings</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="32"/>
+        <source>Получение данных</source>
+        <translation>Retrieving data</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="40"/>
+        <source>соединение по Ethernet</source>
+        <translation>connect of the Ethernet</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="101"/>
+        <location filename="../forms/settings_dialog.ui" line="258"/>
+        <location filename="../forms/settings_dialog.ui" line="368"/>
+        <location filename="../src/settings_dialog.cpp" line="135"/>
+        <source>порт</source>
+        <translation>port</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="114"/>
+        <location filename="../forms/settings_dialog.ui" line="216"/>
+        <location filename="../forms/settings_dialog.ui" line="326"/>
+        <source>IP адрес</source>
+        <translation>IP address</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="127"/>
+        <source>соединение по COM/UART</source>
+        <translation>connect of COM/UART</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="157"/>
+        <source>Добавить COM/UART</source>
+        <translation>Add COM/UART</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="164"/>
+        <source>Удалить COM/UART</source>
+        <translation>Delete COM/UART</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="195"/>
+        <source>Web сервер</source>
+        <translation>Web server</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="201"/>
+        <location filename="../forms/settings_dialog.ui" line="311"/>
+        <location filename="../forms/settings_dialog.ui" line="418"/>
+        <location filename="../forms/settings_dialog.ui" line="424"/>
+        <source>Активно</source>
+        <translation>Active</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="305"/>
+        <source>Zabbix агент (пассивный)</source>
+        <translation>Zabbix agent (passive)</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="409"/>
+        <source>Сохранение данных</source>
+        <translation>Save data archive</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="489"/>
+        <source>Настройка измерений</source>
+        <translation>Measurement Setup</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="497"/>
+        <source>Период записи</source>
+        <translation>Recording period</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="504"/>
+        <source> мс</source>
+        <translation>ms</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="520"/>
+        <source>Размер пакета</source>
+        <translation>Size of packet</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="576"/>
+        <source>*</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="583"/>
+        <source>CTRL+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="586"/>
+        <source>Сохранить</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="589"/>
+        <source>Ctrl+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/settings_dialog.cpp" line="150"/>
+        <source>скорость</source>
+        <translation>speed</translation>
+    </message>
+    <message>
+        <location filename="../src/settings_dialog.cpp" line="201"/>
+        <source>Выбор пути сохранения файлов записи</source>
+        <translation>Choosing ways to preserve the recording files</translation>
+    </message>
+    <message>
+        <location filename="../src/settings_dialog.cpp" line="243"/>
+        <source>Изменения вступят в силу после перезагрузки</source>
+        <translation>Changes will take effect after a reboot</translation>
+    </message>
+    <message>
+        <source>Требуется перезагрузка</source>
+        <translation type="obsolete">Requires restart</translation>
+    </message>
+</context>
+<context>
+    <name>SubScriptDialog</name>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="14"/>
+        <source>Скрипт для сигнала</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="45"/>
+        <source>[CTRL+S]</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="48"/>
+        <source>Сохранить</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="51"/>
+        <source>Ctrl+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="58"/>
+        <source>[CTRL+D]</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="61"/>
+        <location filename="../src/subscript_dialog.cpp" line="54"/>
+        <location filename="../src/subscript_dialog.cpp" line="128"/>
+        <source>Включить</source>
+        <translation>Activate</translation>
+    </message>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="64"/>
+        <source>Ctrl+D</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/subscript_dialog.cpp" line="58"/>
+        <location filename="../src/subscript_dialog.cpp" line="126"/>
+        <source>Отключить</source>
+        <translation>Deactivate</translation>
+    </message>
+    <message>
+        <location filename="../src/subscript_dialog.cpp" line="72"/>
+        <location filename="../src/subscript_dialog.cpp" line="137"/>
+        <source>Скрипт </source>
+        <translation>Script </translation>
+    </message>
+    <message>
+        <location filename="../src/subscript_dialog.cpp" line="137"/>
+        <source> изменен.</source>
+        <translation> is change.</translation>
+    </message>
+    <message>
+        <location filename="../src/subscript_dialog.cpp" line="138"/>
+        <source>Сохранить изменения?</source>
+        <translation>Save changes?</translation>
+    </message>
+</context>
+<context>
     <name>eventOrderClass</name>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="14"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="112"/>
         <source>Отчет событий</source>
-        <translation>Event report</translation>
+        <translation type="vanished">Event report</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="22"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="113"/>
         <source>c</source>
-        <translation>from</translation>
+        <translation type="vanished">from</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="32"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="114"/>
         <source>по</source>
-        <translation>by</translation>
+        <translation type="vanished">by</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="42"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="115"/>
         <source>Показать</source>
-        <translation>Show</translation>
+        <translation type="vanished">Show</translation>
     </message>
     <message>
         <source>Время срабатывания</source>
@@ -534,34 +758,24 @@
         <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="109"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="123"/>
         <source>Сигнал</source>
-        <translation>Signal</translation>
+        <translation type="vanished">Signal</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="104"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="121"/>
         <source>Модуль</source>
-        <translation>Module</translation>
+        <translation type="vanished">Module</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="94"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="117"/>
         <source>Время</source>
-        <translation>Time</translation>
+        <translation type="vanished">Time</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="99"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="119"/>
         <source>Триггер</source>
-        <translation>Trigger</translation>
+        <translation type="vanished">Trigger</translation>
     </message>
     <message>
-        <location filename="../forms/EventTableDialog.ui" line="114"/>
-        <location filename="../forms/ui_eventOrderWin.h" line="125"/>
         <source>Условие</source>
-        <translation>Condition</translation>
+        <translation type="vanished">Condition</translation>
     </message>
     <message>
         <source>Атрибуты</source>
@@ -571,28 +785,20 @@
 <context>
     <name>graphSettingClass</name>
     <message>
-        <location filename="../forms/graphSetting.ui" line="20"/>
-        <location filename="../forms/ui_graphSetting.h" line="104"/>
         <source>Вид графика</source>
-        <translation>View graphics</translation>
+        <translation type="vanished">View graphics</translation>
     </message>
     <message>
-        <location filename="../forms/graphSetting.ui" line="26"/>
-        <location filename="../forms/ui_graphSetting.h" line="105"/>
         <source>Прозрачность</source>
-        <translation>Transparency</translation>
+        <translation type="vanished">Transparency</translation>
     </message>
     <message>
-        <location filename="../forms/graphSetting.ui" line="58"/>
-        <location filename="../forms/ui_graphSetting.h" line="106"/>
         <source>Толщина линии</source>
-        <translation>Line thickness</translation>
+        <translation type="vanished">Line thickness</translation>
     </message>
     <message>
-        <location filename="../forms/graphSetting.ui" line="93"/>
-        <location filename="../forms/ui_graphSetting.h" line="107"/>
         <source>Черный фон</source>
-        <translation>Dark theme</translation>
+        <translation type="vanished">Dark theme</translation>
     </message>
 </context>
 <context>
@@ -615,165 +821,86 @@
     </message>
 </context>
 <context>
-    <name>SettingsDialog</name>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="133"/>
-        <source>порт</source>
-        <translation>port</translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="148"/>
-        <source>скорость</source>
-        <translation>speed</translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="199"/>
-        <source>Выбор пути сохранения файлов записи</source>
-        <translation>Choosing ways to preserve the recording files</translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="241"/>
-        <source>Изменения вступят в силу после перезагрузки</source>
-        <translation>Changes will take effect after a reboot</translation>
-    </message>
-    <message>
-        <source>Требуется перезагрузка</source>
-        <translation type="obsolete">Requires restart</translation>
-    </message>
-</context>
-<context>
     <name>settingsPanelClass</name>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="26"/>
-        <location filename="../forms/ui_settingsPanel.h" line="393"/>
         <source>Настройки</source>
-        <translation>Settings</translation>
+        <translation type="vanished">Settings</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="32"/>
-        <location filename="../forms/ui_settingsPanel.h" line="394"/>
         <source>Получение данных</source>
-        <translation>Retrieving data</translation>
+        <translation type="vanished">Retrieving data</translation>
     </message>
     <message>
         <source>соединение по COM</source>
         <translation type="vanished">connect of the COM</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="101"/>
-        <location filename="../forms/SettingsDialog.ui" line="258"/>
-        <location filename="../forms/SettingsDialog.ui" line="368"/>
-        <location filename="../forms/ui_settingsPanel.h" line="396"/>
-        <location filename="../forms/ui_settingsPanel.h" line="404"/>
-        <location filename="../forms/ui_settingsPanel.h" line="408"/>
         <source>порт</source>
-        <translation>port</translation>
+        <translation type="vanished">port</translation>
     </message>
     <message>
         <source>скорость</source>
         <translation type="vanished">speed</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="40"/>
-        <location filename="../forms/ui_settingsPanel.h" line="395"/>
         <source>соединение по Ethernet</source>
-        <translation>connect of the Ethernet</translation>
+        <translation type="vanished">connect of the Ethernet</translation>
     </message>
     <message>
         <source>ip адрес</source>
         <translation type="vanished">ip addr</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="127"/>
-        <location filename="../forms/ui_settingsPanel.h" line="398"/>
         <source>соединение по COM/UART</source>
-        <translation>connect of COM/UART</translation>
+        <translation type="vanished">connect of COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="157"/>
-        <location filename="../forms/ui_settingsPanel.h" line="399"/>
         <source>Добавить COM/UART</source>
-        <translation>Add COM/UART</translation>
+        <translation type="vanished">Add COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="164"/>
-        <location filename="../forms/ui_settingsPanel.h" line="400"/>
         <source>Удалить COM/UART</source>
-        <translation>Delete COM/UART</translation>
+        <translation type="vanished">Delete COM/UART</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="305"/>
-        <location filename="../forms/ui_settingsPanel.h" line="405"/>
         <source>Zabbix агент (пассивный)</source>
-        <translation>Zabbix agent (passive)</translation>
+        <translation type="vanished">Zabbix agent (passive)</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="409"/>
-        <location filename="../forms/ui_settingsPanel.h" line="409"/>
         <source>Сохранение данных</source>
-        <translation>Save data archive</translation>
+        <translation type="vanished">Save data archive</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="589"/>
-        <location filename="../forms/ui_settingsPanel.h" line="424"/>
-        <source>Ctrl+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SettingsDialog.ui" line="201"/>
-        <location filename="../forms/SettingsDialog.ui" line="311"/>
-        <location filename="../forms/SettingsDialog.ui" line="418"/>
-        <location filename="../forms/SettingsDialog.ui" line="424"/>
-        <location filename="../forms/ui_settingsPanel.h" line="402"/>
-        <location filename="../forms/ui_settingsPanel.h" line="406"/>
-        <location filename="../forms/ui_settingsPanel.h" line="411"/>
-        <location filename="../forms/ui_settingsPanel.h" line="413"/>
         <source>Активно</source>
-        <translation>Active</translation>
+        <translation type="vanished">Active</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="114"/>
-        <location filename="../forms/SettingsDialog.ui" line="216"/>
-        <location filename="../forms/SettingsDialog.ui" line="326"/>
-        <location filename="../forms/ui_settingsPanel.h" line="397"/>
-        <location filename="../forms/ui_settingsPanel.h" line="403"/>
-        <location filename="../forms/ui_settingsPanel.h" line="407"/>
         <source>IP адрес</source>
-        <translation>IP address</translation>
+        <translation type="vanished">IP address</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="195"/>
-        <location filename="../forms/ui_settingsPanel.h" line="401"/>
         <source>Web сервер</source>
-        <translation>Web server</translation>
+        <translation type="vanished">Web server</translation>
     </message>
     <message>
         <source>путь</source>
         <translation type="vanished">path</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="489"/>
-        <location filename="../forms/ui_settingsPanel.h" line="415"/>
         <source>Настройка измерений</source>
-        <translation>Measurement Setup</translation>
+        <translation type="vanished">Measurement Setup</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="497"/>
-        <location filename="../forms/ui_settingsPanel.h" line="416"/>
         <source>Период записи</source>
-        <translation>Recording period</translation>
+        <translation type="vanished">Recording period</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="504"/>
-        <location filename="../forms/ui_settingsPanel.h" line="417"/>
         <source> мс</source>
-        <translation>ms</translation>
+        <translation type="vanished">ms</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="520"/>
-        <location filename="../forms/ui_settingsPanel.h" line="418"/>
         <source>Размер пакета</source>
-        <translation>Size of packet</translation>
+        <translation type="vanished">Size of packet</translation>
     </message>
     <message>
         <source>интервал</source>
@@ -792,91 +919,19 @@
         <translation type="obsolete">hour</translation>
     </message>
     <message>
-        <location filename="../forms/SettingsDialog.ui" line="576"/>
-        <location filename="../forms/ui_settingsPanel.h" line="419"/>
-        <source>*</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SettingsDialog.ui" line="583"/>
-        <location filename="../forms/ui_settingsPanel.h" line="421"/>
-        <source>CTRL+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SettingsDialog.ui" line="586"/>
-        <location filename="../forms/ui_settingsPanel.h" line="423"/>
         <source>Сохранить</source>
-        <translation>Save</translation>
-    </message>
-</context>
-<context>
-    <name>SubScriptDialog</name>
-    <message>
-        <location filename="../forms/SubScriptDialog.h" line="61"/>
-        <location filename="../forms/SubScriptDialog.h" line="138"/>
-        <source>Включить</source>
-        <translation>Activate</translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.h" line="67"/>
-        <location filename="../forms/SubScriptDialog.h" line="136"/>
-        <source>Отключить</source>
-        <translation>Deactivate</translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.h" line="82"/>
-        <location filename="../forms/SubScriptDialog.h" line="155"/>
-        <source>Скрипт </source>
-        <translation>Script </translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.h" line="155"/>
-        <source> изменен.</source>
-        <translation> is change.</translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.h" line="156"/>
-        <source>Сохранить изменения?</source>
-        <translation>Save changes?</translation>
+        <translation type="vanished">Save</translation>
     </message>
 </context>
 <context>
     <name>signScriptPanelClass</name>
     <message>
-        <location filename="../forms/SubScriptDialog.ui" line="14"/>
-        <source>Скрипт для сигнала</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.ui" line="45"/>
-        <source>[CTRL+S]</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.ui" line="48"/>
         <source>Сохранить</source>
-        <translation>Save</translation>
+        <translation type="vanished">Save</translation>
     </message>
     <message>
-        <location filename="../forms/SubScriptDialog.ui" line="51"/>
-        <source>Ctrl+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.ui" line="58"/>
-        <source>[CTRL+D]</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.ui" line="61"/>
         <source>Включить</source>
-        <translation>Activate</translation>
-    </message>
-    <message>
-        <location filename="../forms/SubScriptDialog.ui" line="64"/>
-        <source>Ctrl+D</source>
-        <translation></translation>
+        <translation type="vanished">Activate</translation>
     </message>
 </context>
 <context>

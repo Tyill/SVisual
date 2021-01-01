@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
+    <width>742</width>
     <height>551</height>
    </rect>
   </property>
@@ -115,7 +115,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../resources/export_dialog_resource.qrc">
+          <iconset resource="../../SVMonitor/resources/resource.qrc">
            <normaloff>:/SVExp/images/arrow-right.png</normaloff>:/SVExp/images/arrow-right.png</iconset>
          </property>
          <property name="iconSize">
@@ -151,7 +151,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../resources/export_dialog_resource.qrc">
+          <iconset resource="../../SVMonitor/resources/resource.qrc">
            <normaloff>:/SVExp/images/arrow-left.png</normaloff>:/SVExp/images/arrow-left.png</iconset>
          </property>
          <property name="iconSize">
@@ -360,7 +360,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/export_dialog_resource.qrc"/>
+  <include location="../../SVMonitor/resources/resource.qrc"/>
  </resources>
  <connections/>
 </ui>

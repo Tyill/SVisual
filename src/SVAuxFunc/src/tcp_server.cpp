@@ -39,6 +39,7 @@ namespace SV_Aux {
       DataCBack dataCBack;
       ErrorCBack errCBack;
       std::string error;
+      std::thread thr;
       
       Server_m():
         dataCBack(nullptr), 
@@ -137,14 +138,13 @@ namespace SV_Aux {
       CHECK(uv_read_start((uv_stream_t *)&client->u_client, alloc_cb, on_read),
         "on_connect::uv_read_start error");
     }
-               
-               
+                   
     bool start(const std::string& addr, uint16_t port) {
                  
       if (srv.u_loop) return true;
             
       std::condition_variable cval;
-      std::thread* thr = new std::thread([&cval, &addr, port]() {
+      srv.thr = std::thread([&cval, &addr, port]() {
         
         srv.u_loop = uv_default_loop();
 
@@ -169,8 +169,7 @@ namespace SV_Aux {
         CHECK(uv_run(srv.u_loop, UV_RUN_DEFAULT),
           "initConnection::uv_run error");
       });
-      thr->detach();
-
+            
       std::mutex mtx;
       std::unique_lock<std::mutex> lck(mtx);
       cval.wait_for(lck, std::chrono::milliseconds(100));
@@ -180,9 +179,14 @@ namespace SV_Aux {
 
     void stop() {      
       if (srv.u_loop){
-        uv_stop(srv.u_loop);
-        uv_loop_close(srv.u_loop);
-        uv_loop_delete(srv.u_loop);
+        uv_async_t async;
+        uv_async_init(srv.u_loop, &async, [](uv_async_t* handle){
+          uv_stop(srv.u_loop);
+          uv_loop_close(srv.u_loop);
+        });
+        uv_async_send(&async);
+
+        if (srv.thr.joinable()) srv.thr.join();
       }      
     }   
 

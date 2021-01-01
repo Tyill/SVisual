@@ -35,9 +35,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\src\SVScriptDialog\resources\script_dialog_resource.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\src\SVScriptDialog\forms\script_dialog.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -51,9 +48,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\SVScriptDialog\src\script_dialog_impl.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_script_dialog_resource.cpp">
-      <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_script_dialog_impl.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -71,13 +65,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\SVScriptDialog\resources\script_dialog_en.qm">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\..\src\SVScriptDialog\resources\script_dialog_en.ts">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\SVScriptDialog\resources\svscriptpanel_en.qm">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -59,16 +59,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_graph_panel_resource.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_axis_setting_dialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -307,26 +297,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
     </CustomBuild>
-    <None Include="..\..\..\src\SVGraphPanel\resources\graph_panel_en.qm" />
     <None Include="..\..\..\src\SVGraphPanel\resources\graph_panel_en.ts" />
-    <CustomBuild Include="..\..\..\src\SVGraphPanel\resources\graph_panel_resource.qrc">
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(FullPath);..\..\..\src\SVGraphPanel\resources\images\bw.png;..\..\..\src\SVGraphPanel\resources\images\color_wheel.png;..\..\..\src\SVGraphPanel\resources\images\iconResByValue.png;..\..\..\src\SVGraphPanel\resources\images\iconResByTime.png;..\..\..\src\SVGraphPanel\resources\images\player_stop.png;..\..\..\src\SVGraphPanel\resources\images\scaleNeg.png;..\..\..\src\SVGraphPanel\resources\images\scalePos.png;..\..\..\src\SVGraphPanel\resources\images\SVLabel.png;..\..\..\src\SVGraphPanel\resources\images\player_play.png;..\..\..\src\SVGraphPanel\resources\images\arrowDn.png;..\..\..\src\SVGraphPanel\resources\images\arrowUp.png;..\..\..\src\SVGraphPanel\resources\images\iconResAuto.png;..\..\..\src\SVGraphPanel\resources\images\ascale.png;..\..\..\src\SVGraphPanel\resources\graph_widget_en.qm;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Rcc%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(FullPath);..\..\..\src\SVGraphPanel\resources\images\bw.png;..\..\..\src\SVGraphPanel\resources\images\color_wheel.png;..\..\..\src\SVGraphPanel\resources\images\iconResByValue.png;..\..\..\src\SVGraphPanel\resources\images\iconResByTime.png;..\..\..\src\SVGraphPanel\resources\images\player_stop.png;..\..\..\src\SVGraphPanel\resources\images\scaleNeg.png;..\..\..\src\SVGraphPanel\resources\images\scalePos.png;..\..\..\src\SVGraphPanel\resources\images\SVLabel.png;..\..\..\src\SVGraphPanel\resources\images\player_play.png;..\..\..\src\SVGraphPanel\resources\images\arrowDn.png;..\..\..\src\SVGraphPanel\resources\images\arrowUp.png;..\..\..\src\SVGraphPanel\resources\images\iconResAuto.png;..\..\..\src\SVGraphPanel\resources\images\ascale.png;..\..\..\src\SVGraphPanel\resources\graph_widget_en.qm;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Rcc%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(FullPath);..\..\..\src\SVGraphPanel\resources\images\bw.png;..\..\..\src\SVGraphPanel\resources\images\color_wheel.png;..\..\..\src\SVGraphPanel\resources\images\iconResByValue.png;..\..\..\src\SVGraphPanel\resources\images\iconResByTime.png;..\..\..\src\SVGraphPanel\resources\images\player_stop.png;..\..\..\src\SVGraphPanel\resources\images\scaleNeg.png;..\..\..\src\SVGraphPanel\resources\images\scalePos.png;..\..\..\src\SVGraphPanel\resources\images\SVLabel.png;..\..\..\src\SVGraphPanel\resources\images\player_play.png;..\..\..\src\SVGraphPanel\resources\images\arrowDn.png;..\..\..\src\SVGraphPanel\resources\images\arrowUp.png;..\..\..\src\SVGraphPanel\resources\images\iconResAuto.png;..\..\..\src\SVGraphPanel\resources\images\ascale.png;..\..\..\src\SVGraphPanel\resources\graph_widget_en.qm;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Rcc%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(FullPath);..\..\..\src\SVGraphPanel\resources\images\bw.png;..\..\..\src\SVGraphPanel\resources\images\color_wheel.png;..\..\..\src\SVGraphPanel\resources\images\iconResByValue.png;..\..\..\src\SVGraphPanel\resources\images\iconResByTime.png;..\..\..\src\SVGraphPanel\resources\images\player_stop.png;..\..\..\src\SVGraphPanel\resources\images\scaleNeg.png;..\..\..\src\SVGraphPanel\resources\images\scalePos.png;..\..\..\src\SVGraphPanel\resources\images\SVLabel.png;..\..\..\src\SVGraphPanel\resources\images\player_play.png;..\..\..\src\SVGraphPanel\resources\images\arrowDn.png;..\..\..\src\SVGraphPanel\resources\images\arrowUp.png;..\..\..\src\SVGraphPanel\resources\images\iconResAuto.png;..\..\..\src\SVGraphPanel\resources\images\ascale.png;..\..\..\src\SVGraphPanel\resources\graph_widget_en.qm;%(AdditionalInputs)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Rcc%27ing %(Identity)...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
-    </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1A7AE29C-2229-461B-B187-A4E9A81D5ED1}</ProjectGuid>

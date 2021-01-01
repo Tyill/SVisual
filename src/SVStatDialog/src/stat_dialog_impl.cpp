@@ -101,7 +101,7 @@ QVector<RecData> StatDialog::getSignData(QString sname) {
 
   if (!ui.chbWinDiap->isChecked()) {
 
-    int sz = sdata->buffData.size();
+    int sz = (int)sdata->buffData.size();
     QVector<RecData> res(sz);
     for (int i = 0; i < sz; ++i)
       res[i] = sdata->buffData[i];
@@ -111,7 +111,7 @@ QVector<RecData> StatDialog::getSignData(QString sname) {
 
   QPair<qint64, qint64> tmInterval = pfGetTimeInterval ? pfGetTimeInterval() : QPair<qint64, qint64>();
 
-  int znSz = sdata->buffData.size();
+  size_t znSz = sdata->buffData.size();
 
   uint64_t tmZnBegin = sdata->buffMinTime,
     tmZnEnd = sdata->buffMaxTime,
@@ -126,18 +126,17 @@ QVector<RecData> StatDialog::getSignData(QString sname) {
   tmZnEnd = sdata->buffData[0].beginTime + SV_CYCLESAVE_MS;
   uint64_t tmZnEndPrev = sdata->buffData[0].beginTime;
 
-  int z = 0, pntPrev = 0;
+  size_t z = 0;
   while (tmZnBegin < tmMaxInterval) {
 
     if (tmZnEnd > tmMinInterval) {
       res.append(sdata->buffData[z]);
     }
 
-    z++;
-
+    ++z;
     if (z < znSz) {
-      tmZnBegin = sdata->buffData[z].beginTime,
-        tmZnEnd = sdata->buffData[z].beginTime + SV_CYCLESAVE_MS;
+      tmZnBegin = sdata->buffData[z].beginTime;
+      tmZnEnd = sdata->buffData[z].beginTime + SV_CYCLESAVE_MS;
     }
     else break;
   }

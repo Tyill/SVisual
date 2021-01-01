@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/SVExp">
-        <file>images/arrow-left.png</file>
-        <file>images/arrow-right.png</file>
-        <file>export_dialog_en.qm</file>
-    </qresource>
-</RCC>
