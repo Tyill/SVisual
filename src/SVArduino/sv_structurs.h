@@ -1,36 +1,32 @@
-//=============================================================================
-// SVisual client for MK Arduino
-//=============================================================================
-
 #pragma once
 
 #define SV_NAMESZ 24
 
 namespace svisual{
 
-enum class valueType{
-	tBool = 0,
-	tInt = 1,	
-	tFloat = 2,
+enum class ValueType{
+  tBool = 0,
+  tInt = 1,  
+  tFloat = 2,
 };
 
-union value{
-	bool tBool;
-	int tInt;
+union Value{
+  bool tBool;
+  int tInt;
     float tFloat;
 };
 
-struct valueRec{
-	bool isActive;
-	bool isOnlyFront;
-	char* name;	
-	valueType type;
-	value vals[SV_PACKETSZ];
+struct ValueRec{
+  bool isActive;
+  bool isOnlyFront;
+  char* name;  
+  ValueType type;
+  Value vals[SV_PACKETSZ];
 };
 
-struct dataRef{
-	char name[SV_NAMESZ];
-	long int type;  // tBool = 0, tInt = 1, tFloat = 2
-	value vals[SV_PACKETSZ];
-};		
+struct DataRef{
+  char name[SV_NAMESZ];
+  long int type;  // tBool = 0, tInt = 1, tFloat = 2
+  Value vals[SV_PACKETSZ];
+};    
 }
