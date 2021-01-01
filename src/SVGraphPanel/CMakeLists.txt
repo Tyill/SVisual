@@ -4,13 +4,9 @@ include(../cmake/qt.cmake)
 
 project(SVGraphPanel)
 
-if(WIN32)
-    add_definitions(-DSVGRAPHPANEL_EXPORTS)
-endif(WIN32)
+FILE(GLOB_RECURSE SRC_GrWdg "*.cpp" "*.h" "*.ui" "*.qrc")
 
-FILE(GLOB_RECURSE SRC_GrPn "*.cpp" "*.h" "*.ui" "*.qrc")
-
-add_library(SVGraphPanel SHARED ${SRC_GrPn})
+add_library(SVGraphPanel STATIC ${SRC_GrWdg})
 
 target_link_libraries(SVGraphPanel SVConfig)
 

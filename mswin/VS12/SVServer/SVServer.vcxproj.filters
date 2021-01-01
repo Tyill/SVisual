@@ -15,25 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVServer\SVServer.h">
+    <ClInclude Include="..\..\..\src\SVServer\server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\SVServer\src\archive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVServer\src\bufferData.h">
+    <ClInclude Include="..\..\..\src\SVServer\src\buffer_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVServer\src\server.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVServer\src\sharedFunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVServer\src\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVServer\src\thrUpdSignal.h">
+    <ClInclude Include="..\..\..\src\SVServer\src\thread_update.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,7 +32,7 @@
     <ClCompile Include="..\..\..\src\SVServer\src\archive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVServer\src\bufferData.cpp">
+    <ClCompile Include="..\..\..\src\SVServer\src\buffer_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\SVServer\src\dllmain.cpp">
@@ -50,13 +41,7 @@
     <ClCompile Include="..\..\..\src\SVServer\src\server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVServer\src\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\SVServer\src\SVServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\SVServer\src\thrUpdSignal.cpp">
+    <ClCompile Include="..\..\..\src\SVServer\src\thread_update.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -15,39 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\auxFunc.h">
+    <ClInclude Include="..\..\..\src\SVAuxFunc\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\clientTCP.h">
+    <ClInclude Include="..\..\..\src\SVAuxFunc\tcp_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\Front.h">
+    <ClInclude Include="..\..\..\src\SVAuxFunc\tcp_server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\mt_log.h">
+    <ClInclude Include="..\..\..\src\SVAuxFunc\aux_func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\serverTCP.h">
+    <ClInclude Include="..\..\..\src\SVAuxFunc\timer_delay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\TimerDelay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\SVAuxFunc\src\stdafx.h">
+    <ClInclude Include="..\..\..\src\SVAuxFunc\front.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\auxFunc.cpp">
+    <ClCompile Include="..\..\..\src\SVAuxFunc\src\aux_func.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\clientTCP.cpp">
+    <ClCompile Include="..\..\..\src\SVAuxFunc\src\tcp_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\serverTCP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\SVAuxFunc\src\stdafx.cpp">
+    <ClCompile Include="..\..\..\src\SVAuxFunc\src\tcp_server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

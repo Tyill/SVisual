@@ -22,209 +22,221 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "stdafx.h"
-#include "client.h"
-#include "SVAuxFunc/clientTCP.h"
-#include "SVAuxFunc/auxFunc.h"
+
+#include "SVClient/SVClient.h"
+#include "SVConfig/config_limits.h"
+#include "SVConfig/config_data.h"
+#include "SVAuxFunc/tcp_client.h"
+#include "SVAuxFunc/aux_func.h"
+
+#include <string>
+#include <mutex>
 #include <thread>
+#include <map>
 
-using namespace std;
+struct Config {
 
-client::~client(){
+  int cycleRecMs;
+  int packetSz;
 
-	if (isConnect_)
-        SV_TcpCln::disconnect();
+  Config(int cycleRecMs_ = 100, int packetSz_ = 10) :
+    cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
+};
 
-	thrStop_ = true;
-	if (thr_.joinable()) thr_.join();
-}
+struct ValueRec {
+  bool isActive;
+  bool isOnlyFront;
+  char name[SV_NAMESZ];
+  SV_Base::ValueType type;
+  SV_Base::Value* vals;
+};
 
-void client::setConfig(config cng_){
+bool _isConnect = false,
+     _thrStop = false;
 
-    std::lock_guard<std::mutex> lck(mtxUpdValue_);
+std::thread _thr;
+std::mutex _mtxUpdValue;
 
-	cng = cng_;
-}
+std::map<std::string, ValueRec> _values;
 
-bool client::connect(const char* moduleName, const char* ipAddr, int port){
+std::string _module, _addrServ;
+int _portServ = 0;
+int _curCycle = 0;
 
-    std::lock_guard<std::mutex> lck(mtxConnect_);
+Config cng;
 
-	if (isConnect_) return true;
+namespace SV {
 
-	if ((strlen(moduleName) == 0) || (strlen(moduleName) >= SV_NAMESZ)){
-		return false;
-	}
+    void sendCycle();
 
-	if (strstr(moduleName, "=end=") || strstr(moduleName, "=begin=")){
-		return false;
-	}
+    bool svConnect(const char *moduleName, const char *ipAddr, int port) {
+           
+      if (_isConnect) return true;
 
-	module_ = moduleName;
-	addrServ_ = ipAddr;
-	portServ_ = port;
+      if ((strlen(moduleName) == 0) || (strlen(moduleName) >= SV_NAMESZ) ||
+           strstr(moduleName, "=end=") || strstr(moduleName, "=begin=")) {
+        return false;
+      }
 
-	isConnect_ = SV_TcpCln::connect(ipAddr, port);
-			
-	if (isConnect_){
-        thr_ = std::thread([](client *lp) { lp->sendCyc(); }, this);
-	}
+      _module = moduleName;
+      _addrServ = ipAddr;
+      _portServ = port;
 
-	return isConnect_;
-}
+      _isConnect = SV_Aux::TCPClient::connect(ipAddr, port);
 
-void client::disconnect(){
+      if (_isConnect) {
+        _thr = std::thread(sendCycle);
+      }
 
-    std::lock_guard<std::mutex> lck(mtxConnect_);
-
-	if (isConnect_) 
-        SV_TcpCln::disconnect();
-
-	thrStop_ = true;
-	if (thr_.joinable()) thr_.join();
-}
-
-bool client::addValue(const char* name, SV_Cng::valueType type, SV_Cng::value val, bool onlyPosFront){
-
-	if (!isConnect_) return false;
-    		
-	if (values_.find(name) == values_.end()){
-
-		if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ)){
-			return false;
-		}
-
-		if (strstr(name, "=end=") || strstr(name, "=begin=")){
-			return false;
-		}
-		valueRec* vd = new valueRec();
-		memset(vd, 0, sizeof(valueRec));
-		strcpy(vd->name, name);
-		vd->type = type;
-		vd->isOnlyFront = onlyPosFront;
-
-        mtxUpdValue_.lock();
-
-		values_.insert(pair<string, valueRec*>(name, vd));
-		values_[name]->vals = new SV_Cng::value[SV_PACKETSZ];
-		memset(values_[name]->vals, 0, sizeof(SV_Cng::value) * SV_PACKETSZ);
-
-        mtxUpdValue_.unlock();
-	}
-	
-	valueRec* vr = values_[name];
-	
-	if (!isWrite_){
-
-		vr->vals[curCycCnt_] = val;
-		vr->isActive = true;
-	}
-	else {
-        std::lock_guard<std::mutex> lck(mtxUpdValue_);
-
-		vr->vals[curCycCnt_] = val;
-		vr->isActive = true;
+      return _isConnect;
     }
-	
-	return true;
-}
 
-bool client::sendData(){
-		
-	if (values_.empty()) return true;
+    void svDisconnect() {
+          
+      if (_isConnect)
+        SV_Aux::TCPClient::disconnect();
 
-    size_t SINT = sizeof(int),
-        /*     val name    type      vals           */
-        vlSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ,
-        /*       mod name            vals           */
-        dataSz = SV_NAMESZ + vlSz * values_.size(),
+      _thrStop = true;
+      if (_thr.joinable()) _thr.join();
+    }
 
-        startSz = 7, endSz = 5, offs = 0,
+    bool addValue(const char* name, SV_Base::ValueType type, SV_Base::Value val, bool onlyPosFront);
 
-        /*                dataSz                    */
-        arrSz = startSz + SINT + dataSz + endSz;
-	    
-    char* arr = new char[arrSz];
-    memset(arr, 0, arrSz);
+    bool svAddBoolValue(const char *name, bool value, bool onlyPosFront) {
 
-	memcpy(arr, "=begin=", startSz); offs += startSz;
+        SV_Base::Value val;
+        val.vBool = value;
+        return addValue(name, SV_Base::ValueType::BOOL, val, false);
+    }
 
-	memcpy(arr + offs, &dataSz, SINT); offs += SINT;
+    bool svAddIntValue(const char *name, int value) {
 
-	memcpy(arr + offs, module_.data(), SV_NAMESZ); offs += SV_NAMESZ;
-		
-	int cnt = 0;
-	for (auto& it : values_){
-				
-		memcpy(arr + offs + vlSz*cnt, it.second->name, SV_NAMESZ);
-		memcpy(arr + offs + vlSz*cnt + SV_NAMESZ, &it.second->type, SINT);
-		memcpy(arr + offs + vlSz*cnt + SV_NAMESZ + SINT, it.second->vals, SV_PACKETSZ * SINT);
+        SV_Base::Value val;
+        val.vInt = value;
+        return addValue(name, SV_Base::ValueType::INT, val, false);
+    }
 
-		++cnt;
-	}
-		
-	memcpy(arr + offs + vlSz*cnt, "=end=", endSz);
+    bool svAddFloatValue(const char *name, float value_in) {
 
-    string out;
-	bool ok = SV_TcpCln::sendData(string(arr, arrSz), out, false, true);
+        SV_Base::Value val;
+        val.vFloat = value_in;
+        return addValue(name, SV_Base::ValueType::FLOAT, val, false);
+    }
 
-	delete[] arr;
+    bool svSetParam(int cycleRecMs, int packetSz) {
+            
+        std::lock_guard<std::mutex> lck(_mtxUpdValue);
 
-	return ok;
+        cng = Config(cycleRecMs, packetSz);
 
-}
+        return true;
+    }
+           
+    bool addValue(const char* name, SV_Base::ValueType type, SV_Base::Value val, bool onlyPosFront) {
 
-void client::sendCyc(){
+      if (!_isConnect) return false;
 
-    uint64_t cTm = SV_Aux::CurrDateTimeSinceEpochMs(),
-             prevTm = cTm;
+      if (_values.find(name) == _values.end()) {
+        if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ) || 
+             strstr(name, "=end=") || strstr(name, "=begin=")){
+          return false;
+        }
+        ValueRec vr;
+        vr.vals = new SV_Base::Value[SV_PACKETSZ];
+        memset(vr.vals, 0, sizeof(SV_Base::Value) * SV_PACKETSZ);
+       
+        strcpy(vr.name, name);
+        vr.type = type;
+        vr.isOnlyFront = onlyPosFront;
+        vr.isActive = false;
+
+        std::lock_guard<std::mutex> lck(_mtxUpdValue);
+        _values.insert({ name, vr });
+      }
+
+      ValueRec& vr = _values[name];
+           
+      std::lock_guard<std::mutex> lck(_mtxUpdValue);
+      vr.vals[_curCycle] = val;
+      vr.isActive = true;
+     
+      return true;
+    }
+
+    bool sendData() {
+
+      if (_values.empty()) return true;
+
+      size_t SINT = sizeof(int32_t),
+             /*      val name    type      vals          */
+             valSz = SV_NAMESZ + SINT + SINT * SV_PACKETSZ,
+             /*       mod name            vals           */
+             dataSz = SV_NAMESZ + valSz * _values.size(),
              
-    int tmDiff = SV_CYCLEREC_MS;
-		
-	while (!thrStop_ ){
-		
-		if (!isConnect_)
-			isConnect_ = SV_TcpCln::connect(addrServ_, portServ_);
+             startSz = 7, endSz = 5, offs = 0, 
+             /*                dataSz                    */
+             messSz = startSz + SINT + dataSz + endSz;
 
-		cTm = SV_Aux::CurrDateTimeSinceEpochMs();
-		tmDiff = int(cTm - prevTm) - (SV_CYCLEREC_MS - tmDiff); 
-        
+      std::string data(messSz, '\0');
+
+      memcpy((char*)data.c_str(), "=begin=", startSz);               offs += startSz;
+      memcpy((char*)data.c_str() + offs, &dataSz, SINT);             offs += SINT;
+      memcpy((char*)data.c_str() + offs, _module.data(), SV_NAMESZ); offs += SV_NAMESZ;
+
+      for (const auto& v : _values) {
+        memcpy((char*)data.c_str() + offs, v.second.name, SV_NAMESZ);
+        memcpy((char*)data.c_str() + offs + SV_NAMESZ, &v.second.type, SINT);
+        memcpy((char*)data.c_str() + offs + SV_NAMESZ + SINT, v.second.vals, SV_PACKETSZ * SINT);
+        offs += valSz;
+      }
+
+      memcpy((char*)data.c_str() + offs, "=end=", endSz);
+
+      return SV_Aux::TCPClient::sendData(data, std::string(), false, true);
+    }
+
+    void sendCycle() {
+
+      uint64_t cTm = SV_Aux::currDateTimeSinceEpochMs(),
+               prevTm = cTm;
+
+      int tmDiff = SV_CYCLEREC_MS;
+
+      while (!_thrStop) {
+
+        if (!_isConnect)
+          _isConnect = SV_Aux::TCPClient::connect(_addrServ, _portServ);
+
+        cTm = SV_Aux::currDateTimeSinceEpochMs();
+        tmDiff = int(cTm - prevTm) - (SV_CYCLEREC_MS - tmDiff);
         prevTm = cTm;
+               
+        _mtxUpdValue.lock();
+        
+        int prevCyc = _curCycle - 1;
+        if (prevCyc < 0)
+          prevCyc = SV_PACKETSZ - 1;
 
-		mtxUpdValue_.lock();
-		isWrite_ = true;
+        for (auto it = _values.begin(); it != _values.end(); ++it) {
+          if (!it->second.isActive) {
+            it->second.vals[_curCycle] = it->second.vals[prevCyc];
 
-		int prevCyc = curCycCnt_ - 1;
-        if (prevCyc < 0) 
-            prevCyc = SV_PACKETSZ - 1;
-
-		for (auto it = values_.begin(); it != values_.end(); ++it){
-						
-			if (!it->second->isActive){
-				it->second->vals[curCycCnt_] = it->second->vals[prevCyc];
-								
-				if ((it->second->type == SV_Cng::valueType::tBool) && it->second->isOnlyFront)
-					it->second->vals[curCycCnt_].tBool = false;
-			}
-					
-			it->second->isActive = false;
-		}
-		
-		int next = curCycCnt_ + 1;
-		
-		if (next >= SV_PACKETSZ) {
-
-			isConnect_ = (isConnect_) ? sendData() : false;
-
-			curCycCnt_ = 0;
-		}
-		else 
-            ++curCycCnt_;
-
-		isWrite_ = false;
-		mtxUpdValue_.unlock();
-
-		if ((SV_CYCLEREC_MS - tmDiff) > 0)
-			SV_Aux::SleepMs(SV_CYCLEREC_MS - tmDiff);
-	}
+            if ((it->second.type == SV_Base::ValueType::BOOL) && it->second.isOnlyFront)
+              it->second.vals[_curCycle].vBool = false;
+          }
+          it->second.isActive = false;
+        }
+        
+        if (_curCycle < SV_PACKETSZ - 1) {
+          ++_curCycle;
+        } else {
+          _curCycle = 0;
+          _isConnect = (_isConnect) ? sendData() : false;
+        }
+        _mtxUpdValue.unlock();
+                
+        if ((SV_CYCLEREC_MS - tmDiff) > 0)
+          SV_Aux::sleepMs(SV_CYCLEREC_MS - tmDiff);
+      }
+    }
 }

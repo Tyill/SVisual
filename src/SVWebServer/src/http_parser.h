@@ -55,7 +55,7 @@ typedef unsigned __int64 uint64_t;
 /* Maximium header size allowed. If the macro is not defined
  * before including this header then the default is used. To
  * change the maximum header size, define the macro in the build
- * environment (e.g. -DHTTP_MAX_HEADER_SIZE=<value>). To remove
+ * environment (e.g. -DHTTP_MAX_HEADER_SIZE=<Value>). To remove
  * the effective limit on the size of the header, define the macro
  * to a very large number (e.g. -DHTTP_MAX_HEADER_SIZE=0x7fffffff)
  */
@@ -278,7 +278,7 @@ enum flags
   XX(UNKNOWN, "an unknown error occurred")
 
 
-/* Define HPE_* values for each errno value above */
+/* Define HPE_* values for each errno Value above */
 #define HTTP_ERRNO_GEN(n, s) HPE_##n,
 enum http_errno {
   HTTP_ERRNO_MAP(HTTP_ERRNO_GEN)
@@ -286,7 +286,7 @@ enum http_errno {
 #undef HTTP_ERRNO_GEN
 
 
-/* Get an http_errno value from an http_parser */
+/* Get an http_errno Value from an http_parser */
 #define HTTP_PARSER_ERRNO(p)            ((enum http_errno) (p)->http_errno)
 
 
@@ -424,7 +424,7 @@ int http_parser_parse_url(const char *buf, size_t buflen,
                           int is_connect,
                           struct http_parser_url *u);
 
-/* Pause or un-pause the parser; a nonzero value pauses */
+/* Pause or un-pause the parser; a nonzero Value pauses */
 void http_parser_pause(http_parser *parser, int paused);
 
 /* Checks if this is the final chunk of the body. */
