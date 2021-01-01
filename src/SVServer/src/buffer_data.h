@@ -62,14 +62,7 @@ public:
   void incReadPos();
   
 private:
-
-  /// запись
-  struct ValueData{
-    char name[SV_NAMESZ];
-    SV_Base::ValueType type;
-    SV_Base::Value* vals;
-  };
-
+    
   SV_Srv::Config cng;
 
   /// данные

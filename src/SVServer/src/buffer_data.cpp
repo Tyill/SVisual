@@ -60,14 +60,12 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
   size_t vlsz = sizeof(Value) * SV_PACKETSZ;
   while (cPos < dsz){
 
-    ValueData* vr = (ValueData*)(indata.data() + cPos);
-
-    _buffer[buffWr].name = vr->name;
+    _buffer[buffWr].name = indata.data() + cPos;
     _buffer[buffWr].module = indata.c_str();
-    _buffer[buffWr].type = vr->type;
+    _buffer[buffWr].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
     _buffer[buffWr].data.beginTime = bTm;
 
-    memcpy(_buffer[buffWr].data.vals, &vr->vals, vlsz);
+    memcpy(_buffer[buffWr].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(ValueType), vlsz);
 
     _buffer[buffWr].isActive = true;
 
