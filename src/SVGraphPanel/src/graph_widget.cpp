@@ -480,9 +480,11 @@ void GraphWidget::paintObjects() {
 
   QPair<qint64, qint64 > tmIntl = axisTime_->getTimeInterval();
   double tmScale = axisTime_->getTimeScale();
+  bool selMarker = false;
 
   if (leftMarker_->IsSelect || selLeftMark_) {
     selLeftMark_ = false;
+    selMarker = true;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
@@ -498,6 +500,7 @@ void GraphWidget::paintObjects() {
 
   if (rightMarker_->IsSelect || selRigthMark_) {
     selRigthMark_ = false;
+    selMarker = true;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
@@ -510,12 +513,14 @@ void GraphWidget::paintObjects() {
       signals_[s.sign].lbRightMarkVal->show();
     }
   }
-
-  for (auto& s : signals_){
-    if (s.type == SV_Base::ValueType::BOOL){
-      s.lb->raise();
+  
+  if (selMarker){
+    for (auto& s : signals_){
+      if (s.type == SV_Base::ValueType::BOOL){
+        s.lb->raise();
+      }
     }
-  }  
+  }
 }
 
 void GraphWidget::paintObjectsAlter() {
@@ -570,10 +575,10 @@ bool GraphWidget::eventFilter(QObject *target, QEvent *event) {
 
     paintObjects();
     if (!signalListAlter_.isEmpty()) paintObjectsAlter();
-
-
-    repaintEna_ = false;
+    
+    repaintEna_ = false;    
   }
+  
 
   if (event->type() == QEvent::MouseButtonPress) {
 
@@ -625,7 +630,6 @@ void GraphWidget::addSignal(QString sign) {
     lb->setMaximumHeight(15);
     lb->setMaximumWidth(this->fontMetrics().width(lb->text()));
     lbSignBoolMove(graphSetting_.signBoolOnTop);
-    lb->raise();
     lb->show();
   }
   lbLeftVal->setPalette(palette);
@@ -1276,7 +1280,6 @@ void GraphWidget::updateByMarker() {
     ui.plot->update();
 
     emit req_markerChange(this->objectName());
-
   }
 }
 
