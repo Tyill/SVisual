@@ -468,7 +468,6 @@ void GraphWidget::paintObjects() {
   //painter.setRenderHint(QPainter::Antialiasing);
   painter.translate(0, h);
   painter.scale(1.0, -1.0);
-
   painter.setPen(Qt::red);
 
   // leftMarker
@@ -479,46 +478,44 @@ void GraphWidget::paintObjects() {
   int mRightPosX = rightMarker_->pos().x() + rightMarker_->width() / 2;
   painter.drawLine(mRightPosX, 0, mRightPosX, h);
 
-
   QPair<qint64, qint64 > tmIntl = axisTime_->getTimeInterval();
   double tmScale = axisTime_->getTimeScale();
 
   if (leftMarker_->IsSelect || selLeftMark_) {
     selLeftMark_ = false;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
-
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
   auto sValuePnt = getSignalValueByMarkerPos(mLeftPosX);
 
   for (auto s : sValuePnt) {
-
     if (s.type != ValueType::BOOL) {
-
       signals_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signals_[s.sign].lbLeftMarkVal->setText(getSValue(s.type, s.val).c_str());
       signals_[s.sign].lbLeftMarkVal->show();
     }
   }
 
-
   if (rightMarker_->IsSelect || selRigthMark_) {
     selRigthMark_ = false;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
-
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
 
   sValuePnt = getSignalValueByMarkerPos(mRightPosX);
   for (auto s : sValuePnt) {
-
     if (s.type != ValueType::BOOL) {
-
       signals_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signals_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());
       signals_[s.sign].lbRightMarkVal->show();
     }
   }
+
+  for (auto& s : signals_){
+    if (s.type == SV_Base::ValueType::BOOL){
+      s.lb->raise();
+    }
+  }  
 }
 
 void GraphWidget::paintObjectsAlter() {
@@ -534,16 +531,12 @@ void GraphWidget::paintObjectsAlter() {
 
   if (leftMarker_->IsSelect || selLeftMark_) {
     selLeftMark_ = false;
-
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
-
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
   auto sValuePnt = getSignalAlterValueByMarkerPos(mLeftPosX);
   for (auto s : sValuePnt) {
-
     if (s.type != ValueType::BOOL) {
-
       signalsAlter_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signalsAlter_[s.sign].lbLeftMarkVal->setText(getSValue(s.type, s.val).c_str());
       signalsAlter_[s.sign].lbLeftMarkVal->show();
@@ -552,23 +545,18 @@ void GraphWidget::paintObjectsAlter() {
 
   if (rightMarker_->IsSelect || selRigthMark_) {
     selRigthMark_ = false;
-
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
-
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
 
   sValuePnt = getSignalAlterValueByMarkerPos(mRightPosX);
   for (auto s : sValuePnt) {
-
     if (s.type != ValueType::BOOL) {
-
       signalsAlter_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signalsAlter_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());
       signalsAlter_[s.sign].lbRightMarkVal->show();
     }
   }
-
 }
 
 bool GraphWidget::eventFilter(QObject *target, QEvent *event) {
@@ -635,7 +623,9 @@ void GraphWidget::addSignal(QString sign) {
     lb->setPalette(palette);
     lb->setFont(ft);
     lb->setMaximumHeight(15);
+    lb->setMaximumWidth(this->fontMetrics().width(lb->text()));
     lbSignBoolMove(graphSetting_.signBoolOnTop);
+    lb->raise();
     lb->show();
   }
   lbLeftVal->setPalette(palette);
@@ -801,7 +791,7 @@ void GraphWidget::setMarkersPos(QPoint left, QPoint right) {
   right.setX(right.x() - rightMarker_->width() / 2);
 
   leftMarker_->setPos(left);
-  rightMarker_->setPos(right);
+  rightMarker_->setPos(right);  
 }
 
 void GraphWidget::getMarkersPos(QPoint& left, QPoint& right) {
