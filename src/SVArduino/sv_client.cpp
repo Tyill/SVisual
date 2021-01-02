@@ -41,7 +41,7 @@ namespace svisual{
     }
   }
 
-  bool connectOfEthernet(const char* moduleName, const char* macAddrModule, const char* ipAddrModule, const char* ipAddrServ, int portServ){
+  bool connectOfEthernet(const char* moduleName, const char* macAddrModule, const char* ipAddrModule, const char* ipAddrServ, int port){
         
     if (isConnect_) return true;
 
@@ -78,7 +78,7 @@ namespace svisual{
     return isConnect_;
   }
   
-  bool connectOfWiFi(const char* module, const char* ssid, const char* pass, const char* ipAddrServ, int portServ){
+  bool connectOfWiFi(const char* moduleName, const char* ssid, const char* pass, const char* ipAddrServ, int port){
     
     if (isConnect_) return true;
 
@@ -123,7 +123,7 @@ namespace svisual{
     return isConnect_;
   }
       
-  bool connectOfCOM(const char* module, int speed){
+  bool connectOfCOM(const char* moduleName, int speed){
   
     if (isConnect_) return true;
 
@@ -146,22 +146,22 @@ namespace svisual{
   
   bool addValue(const char* name, ValueType type, Value val, bool onlyPosFront);
 
-  bool addBoolValue(const char* name, bool value_in, bool onlyPosFront){
+  bool addBoolValue(const char* name, bool vl, bool onlyPosFront){
     Value val; 
-    val.tBool = value_in;
+    val.tBool = vl;
     return addValue(name, ValueType::tBool, val, onlyPosFront);
   }
   
-  bool addIntValue(const char* name, int value_in){
+  bool addIntValue(const char* name, int vl){
     Value val;
-    val.tInt = value_in;
-    return addValue(name, ValueType::tInt, val);  
+    val.tInt = vl;
+    return addValue(name, ValueType::tInt, val, false);  
   }
   
-  bool addFloatValue(const char* name, float value_in){
+  bool addFloatValue(const char* name, float vl){
     Value val; 
-    val.tFloat = value_in;
-    return addValue(name, ValueType::tFloat, val);  
+    val.tFloat = vl;
+    return addValue(name, ValueType::tFloat, val, false);  
   }
            
   bool addValue(const char* name, ValueType type, Value val, bool onlyPosFront){
