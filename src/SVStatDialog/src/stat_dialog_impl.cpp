@@ -180,7 +180,7 @@ void StatDialog::dropEvent(QDropEvent *event)
 
       if (!sign_.contains(sname)) {
 
-        sign_.insert(sname, graphSignData{ sname, sdata->name.c_str() });
+        sign_.insert(sname, GraphSignData{ sname, sdata->name.c_str() });
       }
 
       ui.cmbSignals->addItem(sdata->name.c_str());
@@ -215,7 +215,7 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
     switch (sdata->type)
     {
     case ValueType::BOOL: {
-      bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, valSData{ 0, 0 });
+      bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, ValSData{ 0, 0 });
       for (int i = 0; i < sz; ++i) {
 
         for (int j = 0; j < SV_PACKETSZ; ++j) {
@@ -246,7 +246,7 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
 
             if (!hist.contains(val)) {
               hist.insert(val, 1);
-              sign_[sname].valData.insert(val, valSData{ 1, 1 });
+              sign_[sname].valData.insert(val, ValSData{ 1, 1 });
             }
             else {
               if (!isOnlyFront || (val != prevVal)) hist[val]++;
@@ -272,7 +272,7 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
 
             if (!hist.contains(val)) {
               hist.insert(val, 1);
-              sign_[sname].valData.insert(val, valSData{ 1, 1 });
+              sign_[sname].valData.insert(val, ValSData{ 1, 1 });
             }
             else {
               if (!isOnlyFront || (val != prevVal)) hist[val]++;
@@ -300,7 +300,7 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
     switch (sdata->type)
     {
     case ValueType::BOOL: {
-      bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, valSData{ 0, 0 });
+      bool prev = false; hist.insert(0, 0); sign_[sname].valData.insert(0, ValSData{ 0, 0 });
       for (int i = 0; i < sz; ++i) {
 
         for (int j = 0; j < SV_PACKETSZ; ++j) {
@@ -328,7 +328,7 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
 
           if (!hist.contains(val)) {
             hist.insert(val, 1);
-            sign_[sname].valData.insert(val, valSData{ 1, 1 });
+            sign_[sname].valData.insert(val, ValSData{ 1, 1 });
           }
           else {
             if (!isOnlyFront || (val != prevVal)) hist[val]++;
@@ -350,7 +350,7 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
 
           if (!hist.contains(val)) {
             hist.insert(val, 1);
-            sign_[sname].valData.insert(val, valSData{ 1, 1 });
+            sign_[sname].valData.insert(val, ValSData{ 1, 1 });
           }
           else {
             if (!isOnlyFront || (val != prevVal)) hist[val]++;

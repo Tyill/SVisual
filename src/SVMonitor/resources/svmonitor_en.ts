@@ -71,6 +71,11 @@
         <source>Черный фон</source>
         <translation>Dark theme</translation>
     </message>
+    <message>
+        <location filename="../forms/graph_setting_dialog.ui" line="100"/>
+        <source>Булевы сигналы сверху</source>
+        <translation>Signal boolean on top</translation>
+    </message>
 </context>
 <context>
     <name>MainWin</name>
@@ -225,8 +230,8 @@
     </message>
     <message>
         <location filename="../forms/main_win.ui" line="380"/>
-        <location filename="../src/main_win.cpp" line="966"/>
-        <location filename="../src/main_win.cpp" line="993"/>
+        <location filename="../src/main_win.cpp" line="969"/>
+        <location filename="../src/main_win.cpp" line="996"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
@@ -315,7 +320,7 @@
         <translation>Load state succes</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="768"/>
+        <location filename="../src/main_win.cpp" line="770"/>
         <source>Инициализация параметров успешно</source>
         <translation>Initialization successfully settings</translation>
     </message>
@@ -330,8 +335,8 @@
         <translation>Unable to start the agent Zabbix: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="955"/>
-        <location filename="../src/main_win.cpp" line="1035"/>
+        <location filename="../src/main_win.cpp" line="958"/>
+        <location filename="../src/main_win.cpp" line="1038"/>
         <source>Показать все</source>
         <translation>Show all</translation>
     </message>
@@ -340,12 +345,12 @@
         <translation type="vanished">Not found ini file %1</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="798"/>
+        <location filename="../src/main_win.cpp" line="800"/>
         <source>Прослушивание %1 порта запущено</source>
         <translation>Listening port %1 running</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="802"/>
+        <location filename="../src/main_win.cpp" line="804"/>
         <source>%1 порт недоступен</source>
         <translation>%1 port is not available</translation>
     </message>
@@ -378,17 +383,17 @@
         <translation type="vanished">Unable to start the server tcp: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="855"/>
+        <location filename="../src/main_win.cpp" line="858"/>
         <source>Ошибка сохранения сигналов в БД</source>
         <translation>Error save signals in DB</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="857"/>
+        <location filename="../src/main_win.cpp" line="860"/>
         <source>Ошибка сохранения атрибутов в БД</source>
         <translation>Error save attributs in DB</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="859"/>
+        <location filename="../src/main_win.cpp" line="862"/>
         <source>Ошибка сохранения триггеров в БД</source>
         <translation>Error save triggers in DB</translation>
     </message>
@@ -397,12 +402,12 @@
         <translation type="vanished">Error save events in DB</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1089"/>
+        <location filename="../src/main_win.cpp" line="1092"/>
         <source>Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.</source>
         <translation>Signal limit exceeded:% 1. Stable work is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1133"/>
+        <location filename="../src/main_win.cpp" line="1136"/>
         <source>Подключен модуль: </source>
         <translation>Module is connected: </translation>
     </message>
@@ -411,7 +416,7 @@
         <translation type="vanished">Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1182"/>
+        <location filename="../src/main_win.cpp" line="1185"/>
         <source>Отключен модуль: </source>
         <translation>Module is disconnected: </translation>
     </message>
@@ -424,43 +429,43 @@
         <translation type="vanished">Close an application. Saving options error</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="956"/>
-        <location filename="../src/main_win.cpp" line="1048"/>
+        <location filename="../src/main_win.cpp" line="959"/>
+        <location filename="../src/main_win.cpp" line="1051"/>
         <source>Отключить</source>
         <translation>Shut off</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="959"/>
-        <location filename="../src/main_win.cpp" line="1043"/>
+        <location filename="../src/main_win.cpp" line="962"/>
+        <location filename="../src/main_win.cpp" line="1046"/>
         <source>Включить</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="960"/>
-        <location filename="../src/main_win.cpp" line="969"/>
-        <location filename="../src/main_win.cpp" line="1020"/>
-        <location filename="../src/main_win.cpp" line="1053"/>
+        <location filename="../src/main_win.cpp" line="963"/>
+        <location filename="../src/main_win.cpp" line="972"/>
+        <location filename="../src/main_win.cpp" line="1023"/>
+        <location filename="../src/main_win.cpp" line="1056"/>
         <source>Удалить</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="968"/>
-        <location filename="../src/main_win.cpp" line="1006"/>
+        <location filename="../src/main_win.cpp" line="971"/>
+        <location filename="../src/main_win.cpp" line="1009"/>
         <source>Сбросить цвет</source>
         <translation>Reset color</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1027"/>
+        <location filename="../src/main_win.cpp" line="1030"/>
         <source>Сигнал удален </source>
         <translation>The signal is deleted </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1056"/>
+        <location filename="../src/main_win.cpp" line="1059"/>
         <source>Удалить модуль со всеми сигналами?</source>
         <translation>Remove the module with all the signals?</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1063"/>
+        <location filename="../src/main_win.cpp" line="1066"/>
         <source>Модуль удален </source>
         <translation>Module removed </translation>
     </message>
@@ -504,17 +509,17 @@
         <translation type="vanished">Disconnect module &apos;</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1201"/>
+        <location filename="../src/main_win.cpp" line="1204"/>
         <source>Событие: </source>
         <translation>Event: </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1216"/>
+        <location filename="../src/main_win.cpp" line="1219"/>
         <source> Процесс запущен: </source>
         <translation>Process is run: </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1219"/>
+        <location filename="../src/main_win.cpp" line="1222"/>
         <source> Путь не найден: </source>
         <translation>Path is not found: </translation>
     </message>

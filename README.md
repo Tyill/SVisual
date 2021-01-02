@@ -56,24 +56,24 @@ https://www.youtube.com/watch?v=oBf4WSAncTQ&feature=youtu.be
 #include <SVClient.h>
 void setup() {
 
-	bool ok = svisual::connectOfCOM("test");
+  bool ok = svisual::connectOfCOM("test");
 
 }
 int cnt = 0;
 void loop() {
 
-	svisual::addIntValue("dfv", cnt);
+  svisual::addIntValue("dfv", cnt);
 
-	++cnt;
-	if (cnt > 10) cnt = 0;
+  ++cnt;
+  if (cnt > 10) cnt = 0;
 
-	bool odd_cnt = cnt % 2;
+  bool odd_cnt = cnt % 2;
 
-    svisual::addBoolValue("bFW", odd_cnt);
+  svisual::addBoolValue("bFW", odd_cnt);
 
-    svisual::addBoolValue("bBW", !odd_cnt);
+  svisual::addBoolValue("bBW", !odd_cnt);
 
-	delay(200);
+  delay(200);
 }
 ```
 ### As a result

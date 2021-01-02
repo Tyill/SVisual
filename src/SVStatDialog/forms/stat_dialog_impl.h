@@ -48,23 +48,23 @@ private:
 
   SV_Stat::Config cng;
 
-  struct valSData {
+  struct ValSData {
     int changeCnt;
     int duration;
     int durationMean;
   };
 
-  struct graphSignData {
+  struct GraphSignData {
     QString sign;
     QString name;
-    QMap<int, valSData> valData;
+    QMap<int, ValSData> valData;
     QVector<QPair<int, int>> hist;
   };
 
 
   bool diapEna_ = false;
 
-  QMap<QString, graphSignData> sign_;
+  QMap<QString, GraphSignData> sign_;
   QVector<SV_Base::RecData> vars_;
 
   QVector<SV_Base::RecData> getSignData(QString sign);

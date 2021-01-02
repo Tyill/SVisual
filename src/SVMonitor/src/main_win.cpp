@@ -52,9 +52,12 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-const QString VERSION = "1.1.8";
-// proposal https://github.com/Tyill/SVisual/issues/31
+const QString VERSION = "1.1.9";
+// refact
+// signal boolean on top
 
+//const QString VERSION = "1.1.8";
+// proposal https://github.com/Tyill/SVisual/issues/31
 //const QString VERSION = "1.1.7";
 // added zabbix agent
 //const QString VERSION = "1.1.6";
@@ -548,6 +551,7 @@ bool MainWin::writeSettings(QString pathIni){
   txtStream << "transparent = " << cng.graphSett.transparent << endl;
   txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
   txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << endl;
+  txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << endl;
   txtStream << endl;
   txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << endl;
   txtStream << endl;
@@ -670,6 +674,7 @@ bool MainWin::init(QString initPath){
   cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
   cng.graphSett.transparent = settings.value("transparent", "100").toInt();
   cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
+  cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
 
   cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
   

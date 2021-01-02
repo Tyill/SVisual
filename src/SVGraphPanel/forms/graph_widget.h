@@ -93,6 +93,7 @@ private:
   void paintSignalsAlter();
   void paintObjects();
   void paintObjectsAlter();
+  void lbSignBoolMove(bool isTop);
 
 public:
   Ui::GraphWidget ui;
@@ -151,7 +152,7 @@ protected:
   void resizeEvent(QResizeEvent * event);
   void keyPressEvent(QKeyEvent * event);
 
-  public slots:
+public slots:
   void axisValueChange();
   void axisTimeChange();
   void delSignal(QString sign, bool isLabelSender = true);

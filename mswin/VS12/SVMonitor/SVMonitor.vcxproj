@@ -430,7 +430,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;sqlite3.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPortd.lib;Qt5Networkd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;QtXlsxWriter.lib;sqlite3.lib;lua53.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPortd.lib;Qt5Networkd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -448,7 +448,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;sqlite3.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPortd.lib;Qt5Networkd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;QtXlsxWriter.lib;sqlite3.lib;lua53.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPortd.lib;Qt5Networkd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -465,7 +465,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;sqlite3.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPort.lib;Qt5Network.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;QtXlsxWriter.lib;sqlite3.lib;lua53.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPort.lib;Qt5Network.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -483,7 +483,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir);$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;sqlite3.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPort.lib;Qt5Network.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVAuxFunc.lib;SVConfig.lib;SVServer.lib;SVGraphPanel.lib;SVExportDialog.lib;SVScriptDialog.lib;SVTriggerDialog.lib;SVWebServer.lib;SVZabbix.lib;QtXlsxWriter.lib;sqlite3.lib;lua53.lib;zlib.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;Mswsock.lib;AdvApi32.lib;Qt5SerialPort.lib;Qt5Network.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>

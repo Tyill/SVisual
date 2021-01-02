@@ -112,6 +112,16 @@ GraphWidget::~GraphWidget() {}
 
 void GraphWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
 
+  if (gs.signBoolOnTop != graphSetting_.signBoolOnTop){    
+    lbSignBoolMove(gs.signBoolOnTop);
+  }
+  if (gs.darkTheme != graphSetting_.darkTheme){
+    for (auto& s : signals_){
+      if (s.type == SV_Base::ValueType::BOOL)
+        s.lb->setStyleSheet("color : " + QString(gs.darkTheme ? "white;" : "black;"));
+    }
+  }
+
   graphSetting_ = gs;
 }
 
@@ -121,7 +131,8 @@ void GraphWidget::setSignalAttr(const QString& sign, const SV_Graph::SignalAttri
   for (auto& s : signals_) {
     if (s.sign == sign) {
       s.color = att.color;
-      s.lb->setStyleSheet("color : " + att.color.name() + "; ");
+      if (s.type != SV_Base::ValueType::BOOL)
+        s.lb->setStyleSheet("color : " + att.color.name() + "; ");
       s.lbLeftMarkVal->setStyleSheet("color : " + att.color.name() + "; ");
       s.lbRightMarkVal->setStyleSheet("color : " + att.color.name() + "; ");
       isExist = true;
@@ -179,6 +190,7 @@ void GraphWidget::resizeEvent(QResizeEvent* event) {
   rightMarker_->setLimitPosX(0, ui.plot->width() - rightMarker_->width());
   rightMarker_->setLimitPosY(ui.plot->height() - rightMarker_->height(), ui.plot->height() - rightMarker_->height());
 
+  lbSignBoolMove(graphSetting_.signBoolOnTop);
   repaintEna_ = true;
 
   QWidget::resizeEvent(event);
@@ -235,7 +247,6 @@ void GraphWidget::paintSignals() {
 
   bool paintPnt = (tmInterv.second - tmInterv.first) < SV_CYCLESAVE_MS * 3;
 
-
   for (int s = signalList_.size() - 1; s >= 0; --s) {
 
     auto& sign = signals_[signalList_[s]];
@@ -307,22 +318,28 @@ void GraphWidget::paintSignals() {
   }
 
   int signBoolCnt = 0;
-  for (auto& s : signalsAlter_)
-    if (s.type == ValueType::BOOL)
-      ++signBoolCnt;
+  if (graphSetting_.signBoolOnTop){
+    for (auto& s : signals_){
+      if (s.type == ValueType::BOOL) ++signBoolCnt;
+    }
+  }
 
   for (int s = signalList_.size() - 1; s >= 0; --s) {
 
     auto& sign = signals_[signalList_[s]];
 
     if (sign.type == ValueType::BOOL) {
-
+            
       QColor clr = sign.color;
       clr.setAlpha(128);
       painter.setBrush(clr);
       painter.setPen(sign.color);
 
-      int znSz = sign.pnts.size(), sDist = 15, sH = 10;
+      int znSz = sign.pnts.size(), sDist = 15, sH = 10, topOffset = 0;
+      if (graphSetting_.signBoolOnTop){
+        topOffset = h - 5;
+        sDist *= -1;
+      }
       for (int z = 0; z < znSz; ++z) {
 
         QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
@@ -331,28 +348,26 @@ void GraphWidget::paintSignals() {
         for (int i = 1; i < sz; ++i) {
 
           if ((prevVal == 0) && ((zonePnts[i].second > 0) || (i == (sz - 1)))) {
-            painter.drawLine(zonePnts[prevPos - 1].first, signBoolCnt * sDist + 1, zonePnts[i].first, signBoolCnt * sDist + 1);
+            painter.drawLine(zonePnts[prevPos - 1].first, signBoolCnt * sDist + 1 + topOffset, zonePnts[i].first, signBoolCnt * sDist + 1 + topOffset);
 
             prevVal = 1;
             prevPos = i;
           }
           else if ((prevVal > 0) && ((zonePnts[i].second == 0) || (i == (sz - 1)))) {
 
-            painter.drawRect(QRect(QPoint(zonePnts[prevPos - 1].first, signBoolCnt * sDist + 1),
-              QPoint(zonePnts[i - 1].first, signBoolCnt * sDist + 1 + sH)));
+            painter.drawRect(QRect(QPoint(zonePnts[prevPos - 1].first, signBoolCnt * sDist + 1 + topOffset),
+              QPoint(zonePnts[i - 1].first, signBoolCnt * sDist + 1 + sH + topOffset)));
 
             prevVal = 0;
             prevPos = i;
           }
-
         }
       }
-      ++signBoolCnt;
+      signBoolCnt += graphSetting_.signBoolOnTop ? -1 : 1;
     }
   }
 
   painter.end();
-
 }
 
 void GraphWidget::paintSignalsAlter() {
@@ -378,115 +393,68 @@ void GraphWidget::paintSignalsAlter() {
   for (int s = signalListAlter_.size() - 1; s >= 0; --s) {
 
     auto& sign = signalsAlter_[signalListAlter_[s]];
+    
+    QColor clr = sign.color;
+    clr.setAlpha(graphSetting_.transparent);
+    painter.setBrush(clr);
 
-    if (sign.type != ValueType::BOOL) {
+    bool isFillGraph = graphSetting_.transparent > 0;
 
-      QColor clr = sign.color;
-      clr.setAlpha(graphSetting_.transparent);
-      painter.setBrush(clr);
+    int znSz = sign.pnts.size();
+    for (int z = 0; z < znSz; ++z) {
 
-      bool isFillGraph = graphSetting_.transparent > 0;
+      QPen pen(sign.color);
+      pen.setWidth(graphSetting_.lineWidth);
+      painter.setPen(pen);
 
-      int znSz = sign.pnts.size();
-      for (int z = 0; z < znSz; ++z) {
+      QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
+      int zsz = zonePnts.size();
 
-        QPen pen(sign.color);
-        pen.setWidth(graphSetting_.lineWidth);
-        painter.setPen(pen);
+      for (int i = 1; i < zsz; ++i)
+        painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
 
-        QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
-        int zsz = zonePnts.size();
+      if (isFillGraph) {
 
-        for (int i = 1; i < zsz; ++i)
-          painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+        float yPos = 0;
+        if ((valInterval.first < 0) && (valInterval.second > 0))
+          yPos = h - valInterval.second / valScale;
+        else if ((valInterval.first < 0) && (valInterval.second <= 0))
+          yPos = h;
 
-        if (isFillGraph) {
+        painter.setPen(clr);
 
-          float yPos = 0;
-          if ((valInterval.first < 0) && (valInterval.second > 0))
-            yPos = h - valInterval.second / valScale;
-          else if ((valInterval.first < 0) && (valInterval.second <= 0))
-            yPos = h;
+        QPainterPath pp;
+        pp.moveTo(zonePnts[0].first, yPos);
 
-          painter.setPen(clr);
+        double step = 1024.0 / zsz, cxPos = 0;
+        int prevxPos = -1;
 
-          QPainterPath pp;
-          pp.moveTo(zonePnts[0].first, yPos);
+        for (int i = 0; i < zsz; ++i) {
 
-          double step = 1024.0 / zsz, cxPos = 0;
-          int prevxPos = -1;
-
-          for (int i = 0; i < zsz; ++i) {
-
-            if (int(cxPos) > prevxPos) {
-              prevxPos = int(cxPos);
-              pp.lineTo(zonePnts[i].first, zonePnts[i].second);
-            }
-            cxPos += step;
+          if (int(cxPos) > prevxPos) {
+            prevxPos = int(cxPos);
+            pp.lineTo(zonePnts[i].first, zonePnts[i].second);
           }
-
-          pp.lineTo(zonePnts.back().first, yPos);
-
-          painter.drawPath(pp);
+          cxPos += step;
         }
 
-        if (paintPnt) {
-          QPen ptPen(sign.color);
-          ptPen.setCapStyle(Qt::RoundCap);
-          ptPen.setWidth(10);
-          painter.setPen(ptPen);
-          for (int i = 0; i < zsz; ++i) {
-            painter.drawPoint(zonePnts[i].first, zonePnts[i].second);
-          }
-        }
+        pp.lineTo(zonePnts.back().first, yPos);
+
+        painter.drawPath(pp);
       }
 
-    }
-  }
-
-  int signBoolCnt = 0;
-  for (int s = signalListAlter_.size() - 1; s >= 0; --s) {
-
-    auto& sign = signalsAlter_[signalListAlter_[s]];
-
-    if (sign.type == ValueType::BOOL) {
-
-      QColor clr = sign.color;
-      clr.setAlpha(128);
-      painter.setBrush(clr);
-      painter.setPen(sign.color);
-
-      int znSz = sign.pnts.size(), sDist = 15, sH = 10;
-      for (int z = 0; z < znSz; ++z) {
-
-        QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
-
-        int sz = zonePnts.size(), prevPos = 1, prevVal = zonePnts[0].second;
-        for (int i = 1; i < sz; ++i) {
-
-          if ((prevVal == 0) && ((zonePnts[i].second > 0) || (i == (sz - 1)))) {
-            painter.drawLine(zonePnts[prevPos - 1].first, signBoolCnt * sDist + 1, zonePnts[i].first, signBoolCnt * sDist + 1);
-
-            prevVal = 1;
-            prevPos = i;
-          }
-          else if ((prevVal > 0) && ((zonePnts[i].second == 0) || (i == (sz - 1)))) {
-
-            painter.drawRect(QRect(QPoint(zonePnts[prevPos - 1].first, signBoolCnt * sDist + 1),
-              QPoint(zonePnts[i - 1].first, signBoolCnt * sDist + 1 + sH)));
-
-            prevVal = 0;
-            prevPos = i;
-          }
-
+      if (paintPnt) {
+        QPen ptPen(sign.color);
+        ptPen.setCapStyle(Qt::RoundCap);
+        ptPen.setWidth(10);
+        painter.setPen(ptPen);
+        for (int i = 0; i < zsz; ++i) {
+          painter.drawPoint(zonePnts[i].first, zonePnts[i].second);
         }
       }
-      ++signBoolCnt;
     }
-
-  }
+  }    
   painter.end();
-
 }
 
 void GraphWidget::paintObjects() {
@@ -630,91 +598,101 @@ bool GraphWidget::eventFilter(QObject *target, QEvent *event) {
 
 void GraphWidget::addSignal(QString sign) {
 
-  if (!signals_.contains(sign)) {
-
-    int num = signals_.size() + 1;
-
-    colorCnt_ += 30;
-
-    QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
-
-    DragLabel* lb = new DragLabel(this);
-    QLabel* lbLeftVal = new QLabel(ui.plot);
-    QLabel* lbRightVal = new QLabel(ui.plot);
-
-    SignalData* sd = grPanel_->pfGetSignalData(sign);
-
-    SV_Graph::SignalAttributes sAttr;
-    if (grPanel_->pfGetSignalAttr(sign, sAttr))
-      clr = sAttr.color;
-
-    signals_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal, sd });
-    signalList_.push_front(sign);
-
-    QPalette palette = lb->palette();
-    palette.setColor(lb->foregroundRole(), clr);
-    lb->setPalette(palette);
-    lb->setText((sd->name + " " + sd->comment).c_str());
-    lb->setSignal(sign);
-    ui.vLayoutSignName->insertWidget(0, lb);
-    lbLeftVal->setPalette(palette);
-    lbRightVal->setPalette(palette);
-
-    connect(lb, SIGNAL(req_delSignal(QString)), this, SLOT(delSignal(QString)));
-
-
-    if (sd->type != ValueType::BOOL) {
-
-      if (sd->buffMinValue < sd->buffMaxValue)
-        ui.axisValue->setValInterval(sd->buffMinValue - 1, sd->buffMaxValue + 1);
-      else
-        ui.axisValue->setValInterval(-100, 100);
-    }
-
-    axisValueChange();
-
-    addPosToHistory();
+  SignalData* sdata = grPanel_->pfGetSignalData(sign);
+  if (!sdata || signals_.contains(sign)){
+    return;
   }
+  
+  int num = signals_.size() + 1;
+    
+  colorCnt_ += 30;
+
+  QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+
+  DragLabel* lb = new DragLabel(this);
+  QLabel* lbLeftVal = new QLabel(ui.plot);
+  QLabel* lbRightVal = new QLabel(ui.plot);
+  
+  SV_Graph::SignalAttributes sAttr;
+  if (grPanel_->pfGetSignalAttr(sign, sAttr))
+    clr = sAttr.color;
+    
+  signals_.insert(sign, graphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
+  signalList_.push_front(sign);
+
+  QPalette palette = lb->palette();
+  palette.setColor(lb->foregroundRole(), clr);
+  lb->setPalette(palette);
+  lb->setText((sdata->name + " " + sdata->comment).c_str());
+  lb->setSignal(sign);
+  if (sdata->type != SV_Base::ValueType::BOOL){
+    ui.vLayoutSignName->insertWidget(0, lb);
+  }
+  else{
+    QFont ft = lb->font();
+    ft.setPointSize(8);
+    palette.setColor(lb->foregroundRole(), graphSetting_.darkTheme ? Qt::white : Qt::black);
+    lb->setPalette(palette);
+    lb->setFont(ft);
+    lb->setMaximumHeight(15);
+    lbSignBoolMove(graphSetting_.signBoolOnTop);
+    lb->show();
+  }
+  lbLeftVal->setPalette(palette);
+  lbRightVal->setPalette(palette);
+
+  connect(lb, SIGNAL(req_delSignal(QString)), this, SLOT(delSignal(QString)));
+  
+  if (sdata->type != ValueType::BOOL) {
+    if (sdata->buffMinValue < sdata->buffMaxValue)
+      ui.axisValue->setValInterval(sdata->buffMinValue - 1, sdata->buffMaxValue + 1);
+    else
+      ui.axisValue->setValInterval(-100, 100);
+  }
+
+  axisValueChange();
+
+  addPosToHistory();
 }
 
 void GraphWidget::addAlterSignal(QString sign) {
 
-  if (!signalsAlter_.contains(sign)) {
-
-    int num = signalsAlter_.size() + 1;
-
-    colorCnt_ += 30;
-    QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
-
-    DragLabel* lb = new DragLabel(this);
-    QLabel* lbLeftVal = new QLabel(ui.plot);
-    QLabel* lbRightVal = new QLabel(ui.plot);
-
-    SignalData* sd = grPanel_->pfGetSignalData(sign);
-
-    SV_Graph::SignalAttributes sAttr;
-    if (grPanel_->pfGetSignalAttr(sign, sAttr))
-      clr = sAttr.color;
-
-    signalsAlter_.insert(sign, graphSignData{ sign, sd->name.c_str(), sd->type, num, clr, lb, lbLeftVal, lbRightVal, sd });
-    signalListAlter_.push_front(sign);
-
-    QPalette palette = lb->palette();
-    palette.setColor(lb->foregroundRole(), clr);
-    lb->setPalette(palette);
-    lb->setText((sd->name + " " + sd->comment).c_str());
-    lb->setSignal(sign);
-    ui.vLayoutAuxSignName->insertWidget(0, lb);
-    lbLeftVal->setPalette(palette);
-    lbRightVal->setPalette(palette);
-
-    connect(lb, SIGNAL(req_delSignal(QString)), this, SLOT(delSignalAlter(QString)));
-
-    axisTimeChange();
-
-    addPosToHistory();
+  SignalData* sdata = grPanel_->pfGetSignalData(sign);
+  if (!sdata || (sdata->type == SV_Base::ValueType::BOOL) || signalsAlter_.contains(sign)){
+    return;
   }
+  
+  int num = signalsAlter_.size() + 1;
 
+  colorCnt_ += 30;
+  QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+
+  DragLabel* lb = new DragLabel(this);
+  QLabel* lbLeftVal = new QLabel(ui.plot);
+  QLabel* lbRightVal = new QLabel(ui.plot);
+    
+  SV_Graph::SignalAttributes sAttr;
+  if (grPanel_->pfGetSignalAttr(sign, sAttr))
+    clr = sAttr.color;    
+
+  signalsAlter_.insert(sign, graphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
+  signalListAlter_.push_front(sign);
+
+  QPalette palette = lb->palette();
+  palette.setColor(lb->foregroundRole(), clr);
+  lb->setPalette(palette);
+  lb->setText((sdata->name + " " + sdata->comment).c_str());
+  lb->setSignal(sign);
+  ui.vLayoutAlterSignName->insertWidget(0, lb);
+  
+  lbLeftVal->setPalette(palette);
+  lbRightVal->setPalette(palette);
+
+  connect(lb, SIGNAL(req_delSignal(QString)), this, SLOT(delSignalAlter(QString)));
+
+  axisTimeChange();
+
+  addPosToHistory();
 }
 
 QStringList GraphWidget::getAllSignals() {
@@ -723,7 +701,6 @@ QStringList GraphWidget::getAllSignals() {
 }
 
 QStringList GraphWidget::getAllAlterSignals() {
-
 
   return signalListAlter_;
 }
@@ -754,9 +731,9 @@ void GraphWidget::dragMoveEvent(QDragMoveEvent *event) {
   }
 }
 
-void GraphWidget::dropEvent(QDropEvent *event)
-{
-  DragLabel* lb = qobject_cast<DragLabel *>(event->source());
+void GraphWidget::dropEvent(QDropEvent *event){
+
+  DragLabel* lb = qobject_cast<DragLabel*>(event->source());
 
   if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
 
@@ -770,19 +747,20 @@ void GraphWidget::dropEvent(QDropEvent *event)
         grPanel_->pfLoadSignalData(sign);
 
       if (lb) {
-
-        if (signals_.contains(sign)) {
-          delSignal(sign, false);
-          addAlterSignal(sign);
-        }
-        else {
-          delSignalAlter(sign, false);
-          addSignal(sign);
+        if (sd){
+          if (signals_.contains(sign)) {
+            if (sd->type != SV_Base::ValueType::BOOL){
+              delSignal(sign, false);
+              addAlterSignal(sign);
+            }
+          }
+          else {
+            delSignalAlter(sign, false);
+            addSignal(sign);
+          }
         }
       }
       else addSignal(sign);
-
-
 
       emit req_markerChange(this->objectName());
     }
@@ -1177,6 +1155,8 @@ void GraphWidget::delSignal(QString sign, bool isLabelSender) {
     signals_[sign].lbRightMarkVal->deleteLater();
     signals_.remove(sign);
 
+    lbSignBoolMove(graphSetting_.signBoolOnTop);
+    
     repaintEna_ = true;
     ui.plot->update();
 
@@ -1539,7 +1519,7 @@ void GraphWidget::undoCmd() {
 void GraphWidget::colorUpdate() {
 
   for (auto& s : signals_) {
-
+        
     colorCnt_ += 30;
 
     int num = s.num;
@@ -1553,9 +1533,10 @@ void GraphWidget::colorUpdate() {
 
     s.color = clr;
 
-    s.lb->setStyleSheet("color : " + clr.name() + "; ");
     s.lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
     s.lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
+    if (s.type != SV_Base::ValueType::BOOL)
+      s.lb->setStyleSheet("color : " + clr.name() + "; ");    
   }
 
   for (auto& s : signalsAlter_) {
@@ -1603,4 +1584,33 @@ void GraphWidget::showMarkPos() {
 void GraphWidget::scale(bool posNeg) {
 
   ui.plot->scale(posNeg ? 5 : -5);
+}
+
+void GraphWidget::lbSignBoolMove(bool isTop){
+
+  int bcnt = 0;
+  for (auto& s : signals_){
+    if (s.type == SV_Base::ValueType::BOOL) ++bcnt;
+  }
+  if (!isTop){
+    ui.verticalSpacerTop->changeSize(0, 0);
+    for (int i = 0; i < signalList_.size(); ++i){
+      auto& s = signals_[signalList_[i]];
+      if (s.type == SV_Base::ValueType::BOOL){
+        s.lb->move(QPoint(80, height() - 21 - (bcnt - 1) * 15));        
+        --bcnt;
+      }
+    }
+  }
+  else{
+    ui.verticalSpacerTop->changeSize(0, bcnt * 15);
+    for (int i = signalList_.size() - 1; i >= 0; --i){
+      auto& s = signals_[signalList_[i]];
+      if (s.type == SV_Base::ValueType::BOOL){
+        s.lb->move(QPoint(80, 32 + (bcnt - 1) * 15));
+        --bcnt;
+      }
+    }    
+  }
+  ui.vLayoutPlot->update();
 }

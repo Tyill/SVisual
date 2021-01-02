@@ -23,6 +23,11 @@
         <source>Черный фон</source>
         <translation>Dark theme</translation>
     </message>
+    <message>
+        <location filename="../forms/graph_setting.ui" line="100"/>
+        <source>Булевы сигналы сверху</source>
+        <translation>Signal boolean on top </translation>
+    </message>
 </context>
 <context>
     <name>MainWin</name>
@@ -58,7 +63,7 @@
     </message>
     <message>
         <location filename="../forms/main_win.ui" line="114"/>
-        <location filename="../src/main_win.cpp" line="732"/>
+        <location filename="../src/main_win.cpp" line="738"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
@@ -148,8 +153,8 @@
     </message>
     <message>
         <location filename="../forms/main_win.ui" line="373"/>
-        <location filename="../src/main_win.cpp" line="885"/>
-        <location filename="../src/main_win.cpp" line="928"/>
+        <location filename="../src/main_win.cpp" line="891"/>
+        <location filename="../src/main_win.cpp" line="934"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
@@ -182,44 +187,44 @@
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="492"/>
+        <location filename="../src/main_win.cpp" line="497"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="551"/>
+        <location filename="../src/main_win.cpp" line="556"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="622"/>
+        <location filename="../src/main_win.cpp" line="627"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="623"/>
+        <location filename="../src/main_win.cpp" line="628"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="774"/>
+        <location filename="../src/main_win.cpp" line="780"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="826"/>
+        <location filename="../src/main_win.cpp" line="832"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="867"/>
-        <location filename="../src/main_win.cpp" line="906"/>
+        <location filename="../src/main_win.cpp" line="873"/>
+        <location filename="../src/main_win.cpp" line="912"/>
         <source>Показать все</source>
         <translation>Show all</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="887"/>
-        <location filename="../src/main_win.cpp" line="916"/>
+        <location filename="../src/main_win.cpp" line="893"/>
+        <location filename="../src/main_win.cpp" line="922"/>
         <source>Сбросить цвет</source>
         <translation>Reset color</translation>
     </message>
@@ -232,7 +237,7 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="837"/>
+        <location filename="../src/main_win.cpp" line="843"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>
@@ -240,61 +245,108 @@
 <context>
     <name>SignScriptDialog</name>
     <message>
-        <location filename="../forms/script_dialog.ui" line="14"/>
+        <source>Скрипт для сигнала</source>
+        <translation type="vanished">Script for signal</translation>
+    </message>
+    <message>
+        <source>[CTRL+S]</source>
+        <translation type="vanished">[CTRL+S]</translation>
+    </message>
+    <message>
+        <source>Сохранить</source>
+        <translation type="vanished">Save</translation>
+    </message>
+    <message>
+        <source>Ctrl+S</source>
+        <translation type="vanished">Ctrl+S</translation>
+    </message>
+    <message>
+        <source>[CTRL+D]</source>
+        <translation type="vanished">[CTRL+D]</translation>
+    </message>
+    <message>
+        <source>Включить</source>
+        <translation type="vanished">Activate</translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation type="vanished">Ctrl+D</translation>
+    </message>
+    <message>
+        <source>Отключить</source>
+        <translation type="vanished">Deactivate</translation>
+    </message>
+    <message>
+        <source>Скрипт </source>
+        <translation type="vanished">Script </translation>
+    </message>
+    <message>
+        <source> изменен.</source>
+        <translation type="vanished"> is change.</translation>
+    </message>
+    <message>
+        <source>Сохранить изменения?</source>
+        <translation type="vanished">Save changes?</translation>
+    </message>
+</context>
+<context>
+    <name>SubScriptDialog</name>
+    <message>
+        <location filename="../forms/subscript_dialog.ui" line="14"/>
         <source>Скрипт для сигнала</source>
         <translation>Script for signal</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.ui" line="45"/>
+        <location filename="../forms/subscript_dialog.ui" line="45"/>
         <source>[CTRL+S]</source>
         <translation>[CTRL+S]</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.ui" line="48"/>
+        <location filename="../forms/subscript_dialog.ui" line="48"/>
         <source>Сохранить</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.ui" line="51"/>
+        <location filename="../forms/subscript_dialog.ui" line="51"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.ui" line="58"/>
+        <location filename="../forms/subscript_dialog.ui" line="58"/>
         <source>[CTRL+D]</source>
         <translation>[CTRL+D]</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.ui" line="61"/>
-        <location filename="../forms/script_dialog.h" line="65"/>
-        <location filename="../forms/script_dialog.h" line="142"/>
+        <location filename="../forms/subscript_dialog.ui" line="61"/>
+        <location filename="../src/subscript_dialog.cpp" line="61"/>
+        <location filename="../src/subscript_dialog.cpp" line="137"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.ui" line="64"/>
+        <location filename="../forms/subscript_dialog.ui" line="64"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.h" line="71"/>
-        <location filename="../forms/script_dialog.h" line="140"/>
+        <location filename="../src/subscript_dialog.cpp" line="67"/>
+        <location filename="../src/subscript_dialog.cpp" line="135"/>
         <source>Отключить</source>
         <translation>Deactivate</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.h" line="86"/>
-        <location filename="../forms/script_dialog.h" line="159"/>
+        <location filename="../src/subscript_dialog.cpp" line="81"/>
+        <location filename="../src/subscript_dialog.cpp" line="146"/>
         <source>Скрипт </source>
         <translation>Script </translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.h" line="159"/>
+        <location filename="../src/subscript_dialog.cpp" line="146"/>
         <source> изменен.</source>
         <translation> is change.</translation>
     </message>
     <message>
-        <location filename="../forms/script_dialog.h" line="160"/>
+        <location filename="../src/subscript_dialog.cpp" line="147"/>
         <source>Сохранить изменения?</source>
         <translation>Save changes?</translation>
     </message>

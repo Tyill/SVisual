@@ -39,6 +39,5 @@ public:
 
 private:
 
-  private slots :
-
+  SV_Graph::GraphSetting graphSetting();
 };

@@ -36,35 +36,42 @@ GraphSettingDialog::GraphSettingDialog(const SV_Graph::GraphSetting& gs, QWidget
   ui.slrColorTransparent->setValue(gs.transparent);
   ui.slrPenWidth->setValue(gs.lineWidth);
   ui.chbDarkTheme->setChecked(gs.darkTheme);
+  ui.chbSignBoolOnTop->setChecked(gs.signBoolOnTop);
 
   connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos) {
 
-    SV_Graph::GraphSetting gs;
+    SV_Graph::GraphSetting gs = graphSetting();
     gs.transparent = pos;
-    gs.lineWidth = ui.slrPenWidth->value();
-    gs.darkTheme = ui.chbDarkTheme->isChecked();
 
     mainWin->updateGraphSetting(gs);
   });
 
   connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos) {
 
-    SV_Graph::GraphSetting gs;
-    gs.transparent = ui.slrColorTransparent->value();
+    SV_Graph::GraphSetting gs = graphSetting();
     gs.lineWidth = pos;
-    gs.darkTheme = ui.chbDarkTheme->isChecked();
 
     mainWin->updateGraphSetting(gs);
   });
 
   connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin]() {
-
-    SV_Graph::GraphSetting gs;
-    gs.transparent = ui.slrColorTransparent->value();
-    gs.lineWidth = ui.slrPenWidth->value();
-    gs.darkTheme = ui.chbDarkTheme->isChecked();
-
-    mainWin->updateGraphSetting(gs);
+        
+    mainWin->updateGraphSetting(graphSetting());
   });
 
+  connect(ui.chbSignBoolOnTop, &QCheckBox::stateChanged, [this, mainWin]() {
+        
+    mainWin->updateGraphSetting(graphSetting());
+  });
+}
+
+SV_Graph::GraphSetting GraphSettingDialog::graphSetting(){
+
+  SV_Graph::GraphSetting gs;
+  gs.transparent = ui.slrColorTransparent->value();
+  gs.lineWidth = ui.slrPenWidth->value();
+  gs.darkTheme = ui.chbDarkTheme->isChecked();
+  gs.signBoolOnTop = ui.chbSignBoolOnTop->isChecked();
+
+  return gs;
 }

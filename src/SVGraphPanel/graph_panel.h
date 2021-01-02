@@ -52,6 +52,7 @@ namespace SV_Graph {
 
   struct GraphSetting {
     bool darkTheme = false;
+    bool signBoolOnTop = false;
     int transparent = 0;
     int lineWidth = 1;
   };

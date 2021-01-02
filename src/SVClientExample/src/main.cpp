@@ -78,6 +78,8 @@ int main(int argc, char *argv[]){
     SV::svAddIntValue("абрвал0", int(sin((cp + 1) * M_PI / 180.0) * 100));
 
     SV::svAddBoolValue("sinb", cp > 100);
+    SV::svAddBoolValue("sinb1", cp > 50);
+    SV::svAddBoolValue("sinb2", cp > 0);
 
     cp += 1; if (cp > 359) cp = 0;
       

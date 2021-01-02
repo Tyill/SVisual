@@ -31,18 +31,18 @@ using  namespace std;
 
 void statusMess(const string& mess){
 
-    cout << mess << endl;
+  cout << mess << endl;
 }
 
 int main(int argc, char* argv[]){
 
-    SV_Aux::TCPServer::setErrorCBack(statusMess);
-    SV_Srv::setStatusCBack(statusMess);
+  SV_Aux::TCPServer::setErrorCBack(statusMess);
+  SV_Srv::setStatusCBack(statusMess);
 
-    SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
+  SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
 
-    SV_Srv::Config scng;
-    scng.outArchiveEna = true;
+  SV_Srv::Config scng;
+  scng.outArchiveEna = true;
 
   string addr = argc > 1 ? argv[1] : "127.0.0.1";
   int port = argc > 2 ? atoi(argv[2]) : 2144;
@@ -56,8 +56,8 @@ int main(int argc, char* argv[]){
   {
     statusMess("No run " + addr + " " + to_string(port));
     cin.get();
-    
+
   }
-    return 0;
+  return 0;
 }
 

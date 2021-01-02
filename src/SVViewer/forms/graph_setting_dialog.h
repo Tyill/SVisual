@@ -37,5 +37,7 @@ public:
 
   Ui::GraphSettingDialog ui;
 
+private:
+  SV_Graph::GraphSetting graphSetting();
 
 };
