@@ -188,10 +188,9 @@ namespace svisual{
     }
     
     vr->vals[curCycCnt_] = val;
-    vr->isActive = true;
-    vr->vals[curCycCnt_] = val; // на случай прерывания в этом месте как раз
     vr->isOnlyFront = onlyPosFront;
-    
+    vr->isActive = true;
+	
     return true;  
   }
   
