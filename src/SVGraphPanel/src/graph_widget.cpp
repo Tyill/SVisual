@@ -480,16 +480,13 @@ void GraphWidget::paintObjects() {
 
   QPair<qint64, qint64 > tmIntl = axisTime_->getTimeInterval();
   double tmScale = axisTime_->getTimeScale();
-  bool selMarker = false;
-
+    
   if (leftMarker_->IsSelect || selLeftMark_) {
     selLeftMark_ = false;
-    selMarker = true;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
-    QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
+    QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);       
   }
   auto sValuePnt = getSignalValueByMarkerPos(mLeftPosX);
-
   for (auto s : sValuePnt) {
     if (s.type != ValueType::BOOL) {
       signals_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
@@ -497,12 +494,11 @@ void GraphWidget::paintObjects() {
       signals_[s.sign].lbLeftMarkVal->show();
     }
   }
-
+    
   if (rightMarker_->IsSelect || selRigthMark_) {
     selRigthMark_ = false;
-    selMarker = true;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
-    QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
+    QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);    
   }
 
   sValuePnt = getSignalValueByMarkerPos(mRightPosX);
@@ -511,14 +507,6 @@ void GraphWidget::paintObjects() {
       signals_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signals_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());
       signals_[s.sign].lbRightMarkVal->show();
-    }
-  }
-  
-  if (selMarker){
-    for (auto& s : signals_){
-      if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->raise();
-      }
     }
   }
 }
@@ -578,7 +566,6 @@ bool GraphWidget::eventFilter(QObject *target, QEvent *event) {
     
     repaintEna_ = false;    
   }
-  
 
   if (event->type() == QEvent::MouseButtonPress) {
 
@@ -602,7 +589,7 @@ void GraphWidget::addSignal(QString sign) {
 
   QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
 
-  DragLabel* lb = new DragLabel(this);
+  DragLabel* lb = new DragLabel(ui.plot);
   QLabel* lbLeftVal = new QLabel(ui.plot);
   QLabel* lbRightVal = new QLabel(ui.plot);
   
@@ -1590,7 +1577,7 @@ void GraphWidget::lbSignBoolMove(bool isTop){
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(80, height() - 21 - (bcnt - 1) * 15));        
+        s.lb->move(QPoint(13, height() - 48 - (bcnt - 1) * 15));        
         --bcnt;
       }
     }
@@ -1600,7 +1587,7 @@ void GraphWidget::lbSignBoolMove(bool isTop){
     for (int i = signalList_.size() - 1; i >= 0; --i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(80, 32 + (bcnt - 1) * 15));
+        s.lb->move(QPoint(13, 5 + (bcnt - 1) * 15));
         --bcnt;
       }
     }    
