@@ -935,7 +935,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
         if ((pnt.first > prevPos) || isChange) {
           prevPos = pnt.first;
           valMem = pnt.second;
-
+          
           isChange = !isChange;
 
           auto& backZone = zonePnts.back();
@@ -949,7 +949,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
         else if (pnt.second != valMem) {
           valMem = pnt.second;
 
-          if (prevBackVal <= backVal) {
+          if (prevBackVal < backVal) {
             if (valMem < prevBackVal) {
               prevBackVal = valMem;
               zonePnts.back()[prevBackValInd].second = valMem;
@@ -959,7 +959,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
               zonePnts.back()[backValInd].second = valMem;
             }
           }
-          else {
+          else if(prevBackVal > backVal) {
             if (valMem > prevBackVal) {
               prevBackVal = valMem;
               zonePnts.back()[prevBackValInd].second = valMem;
@@ -968,6 +968,10 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
               backVal = valMem;
               zonePnts.back()[backValInd].second = valMem;
             }
+          }
+          else {
+            backVal = valMem;
+            zonePnts.back()[backValInd].second = valMem;
           }
         }
       }
