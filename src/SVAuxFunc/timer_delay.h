@@ -101,7 +101,10 @@ namespace SV_Aux {
       } else {
         if (tmrs[id].count > 0) {
           res = true;
-          tmrs[id].count -= _cycleTm;
+          if (tmrs[id].count > _cycleTm) 
+            tmrs[id].count -= _cycleTm;
+          else
+            tmrs[id].count = 0;
         }
       }
 
@@ -142,7 +145,10 @@ namespace SV_Aux {
       } else {
         if (tmrs[id].count > 0) {
           res = true;
-          tmrs[id].count -= _cycleTm;
+          if (tmrs[id].count > _cycleTm) 
+            tmrs[id].count -= _cycleTm;
+          else
+            tmrs[id].count = 0;
         }
       }
 
