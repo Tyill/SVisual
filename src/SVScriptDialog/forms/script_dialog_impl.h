@@ -85,7 +85,7 @@ private:
 
   std::thread workThr_;
   std::mutex mtx_;
-  bool isStopWork_ = false;
+  volatile bool isStopWork_ = false;
 
   QMap<QString, SV_Base::SignalData*> signBuff_;
 

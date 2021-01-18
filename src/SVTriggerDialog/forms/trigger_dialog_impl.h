@@ -79,7 +79,7 @@ private:
 
   std::thread workThr_;
   std::mutex mtx_;
-  bool thrStop_ = false;
+  volatile bool thrStop_ = false;
 
 
   void load();
