@@ -43,7 +43,7 @@ private:
 
   SV_Srv::Config cng;
 
-  bool _thrStop = false;
+  volatile bool _thrStop = false;
 
   std::thread _thr;
   BufferData& _buffData;
