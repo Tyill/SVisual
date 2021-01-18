@@ -51,8 +51,8 @@ struct ValueRec {
   SV_Base::Value* vals;
 };
 
-bool _isConnect = false,
-     _thrStop = false;
+volatile bool _isConnect = false,
+              _thrStop = false;
 
 std::thread _thr;
 std::mutex _mtxUpdValue;
