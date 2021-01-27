@@ -34,10 +34,8 @@ PlotWidget::PlotWidget(QWidget *parent) {
 
   setParent(parent);
 
-  QPalette p(palette());
-  p.setColor(QPalette::Background, Qt::white);
-  this->setAutoFillBackground(true);
-  this->setPalette(p);
+  setAttribute(Qt::WA_NoSystemBackground);
+
   this->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
 

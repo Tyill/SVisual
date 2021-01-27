@@ -47,6 +47,8 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_) {
 
   setParent(parent);
 
+  setAttribute(Qt::WA_NoSystemBackground);
+
   ui.setupUi(this);
 
   setAcceptDrops(true);
@@ -209,7 +211,8 @@ void GraphWidget::paintSignals() {
 
   int h = ui.plot->height(), w = ui.plot->width();
 
-  imSign_ = QImage(ui.plot->size(), QImage::Format_RGB888);
+  if ((imSign_.width() < ui.plot->width()) || (imSign_.height() < ui.plot->height()))
+    imSign_ = QImage(ui.plot->size(), QImage::Format_RGB888);
 
   if (graphSetting_.darkTheme)
     imSign_.fill(Qt::black);
