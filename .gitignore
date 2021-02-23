@@ -1,4 +1,5 @@
-mswin/VS12*
+mswin/VS12/*
+mswin/VS19/*
 .vscode
 build
 src/Builds/

@@ -29,6 +29,9 @@
 
 int main(int argc, char *argv[])
 {
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
 #ifdef _WIN32
   QStringList paths = QCoreApplication::libraryPaths();
   paths.append(".");

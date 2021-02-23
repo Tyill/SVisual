@@ -52,10 +52,13 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-const QString VERSION = "1.1.9";
+const QString VERSION = "1.2.0";
+// refact
+// qt5.5 -> qt5.15.2 
+
+//const QString VERSION = "1.1.9";
 // refact
 // signal boolean on top
-
 //const QString VERSION = "1.1.8";
 // proposal https://github.com/Tyill/SVisual/issues/31
 //const QString VERSION = "1.1.7";
