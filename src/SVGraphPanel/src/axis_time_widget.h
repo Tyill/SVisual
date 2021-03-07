@@ -58,9 +58,13 @@ public:
 
   void setTimeInterval(qint64, qint64);
 
-  QPair<qint64, qint64> getTimeInterval();
+  QPair<qint64, qint64> getTimeInterval() const {
+    return tmInterval_;
+  }
 
-  double getTimeScale();
+  double getTimeScale() const {
+    return tmScale_;
+  }
 
   QVector<int> getAxisMark();
 

@@ -201,18 +201,6 @@ void AxisTimeWidget::setTimeInterval(qint64 beginTime, qint64 endTime) {
   else if (curDashStep_ < fontMetr_ * 1.1) curDashStep_ = 2 * fontMetr_;
 }
 
-QPair<qint64, qint64> AxisTimeWidget::getTimeInterval() {
-
-  return tmInterval_;
-
-}
-
-double AxisTimeWidget::getTimeScale() {
-
-  return tmScale_;
-
-}
-
 QVector<int> AxisTimeWidget::getAxisMark() {
 
   QVector<int> mark;

@@ -64,9 +64,13 @@ public:
 
   void setValInterval(double min, double max);
 
-  QPair<double, double> getValInterval();
+  QPair<double, double> getValInterval() const {
+    return valInterval_;
+  }
 
-  double getValScale();
+  double getValScale() const {
+    return scale_;
+  }
 
   QVector<int> getAxisMark();
 

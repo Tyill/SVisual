@@ -169,17 +169,6 @@ void AxisValueWidget::setValInterval(double minv, double maxv) {
   scale_ = (valInterval_.second - valInterval_.first) / height();
 }
 
-QPair<double, double> AxisValueWidget::getValInterval() {
-
-  return valInterval_;
-
-}
-
-double AxisValueWidget::getValScale() {
-
-  return scale_;
-}
-
 QVector<int> AxisValueWidget::getAxisMark() {
 
   QVector<int> mark;
