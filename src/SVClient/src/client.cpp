@@ -33,6 +33,7 @@
 #include <mutex>
 #include <thread>
 #include <map>
+#include <cstring>
 
 struct Config {
 
@@ -192,7 +193,8 @@ namespace SV {
 
       memcpy((char*)data.c_str() + offs, "=end=", endSz);
 
-      return SV_Aux::TCPClient::sendData(data, std::string(), false, true);
+      std::string out;
+      return SV_Aux::TCPClient::sendData(data, out, false, true);
     }
 
     void sendCycle() {

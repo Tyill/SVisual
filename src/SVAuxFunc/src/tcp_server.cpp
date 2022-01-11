@@ -26,9 +26,14 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <cstring>
 
 #include "Lib/libuv/uv.h"
 #include "SVAuxFunc/tcp_server.h"
+
+#ifdef __linux__
+  #define ULONG size_t 
+#endif
 
 namespace SV_Aux {
   namespace TCPServer {

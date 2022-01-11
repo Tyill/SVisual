@@ -27,7 +27,7 @@
 #include "SVConfig/config_data.h"
 #include "SVConfig/config_limits.h"
 #include "drag_label.h"
-#include "forms/graph_Widget.h"
+#include "forms/graph_widget.h"
 
 #include <QtGui>
 #include <QScrollBar>

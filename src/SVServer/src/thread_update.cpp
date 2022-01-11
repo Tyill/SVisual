@@ -31,6 +31,7 @@
 #include "archive.h"
 
 #include <algorithm>
+#include <cstring>
 
 using namespace SV_Base;
 using namespace SV_Aux;

@@ -29,6 +29,7 @@
 #include "SVClient/SVClient.h"
 #include "SVAuxFunc/aux_func.h"
 
+#ifdef _WIN32
 #include "windows.h"
 
 BOOL WINAPI CloseHandler(DWORD CEvent)
@@ -45,6 +46,7 @@ BOOL WINAPI CloseHandler(DWORD CEvent)
   }
   return TRUE;
 }
+#endif
 
 int main(int argc, char *argv[]){
 
@@ -55,7 +57,9 @@ int main(int argc, char *argv[]){
   else if (diap > 1) vl = int(vl * 100 + 0.5) / 100.;
   else vl = int(vl * 1000 + 0.5) / 1000.;
 
+#ifdef _WIN32
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)CloseHandler, TRUE);
+#endif
 
   std::string nm = argc >= 2 ? argv[1] : "client";
 

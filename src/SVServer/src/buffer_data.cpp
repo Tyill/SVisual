@@ -26,9 +26,12 @@
 #include "buffer_data.h"
 
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 using namespace SV_Base;
+
+const size_t BufferData::BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
 
 void BufferData::init(const SV_Srv::Config& cng_) {
   

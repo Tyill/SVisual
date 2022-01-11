@@ -171,7 +171,7 @@ bool MainWin::loadModuleVals(QString path) {
 
 bool loadSignalData(const QString& sign) {
 
-  QMap<QString, SignalData*> sref = getCopySignalRef();
+  QMap<QString, SignalData*> sref = mainWin->signalRef_;
   if (!sref.contains(sign))
     return false;
 

@@ -61,13 +61,14 @@ public:
   /// инкремент позиции чтения
   void incReadPos();
   
+  static const size_t BUFF_SZ;
+
 private:
     
   SV_Srv::Config cng;
 
-  /// данные
-  static const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
-  InputData _buffer[BUFF_SZ];
+  /// данные  
+  InputData _buffer[SV_VALUE_MAX_CNT * 10]; // 10 сек - запас;
 
   size_t _buffReadPos = 0;  ///< тек позиция чтения
   size_t _buffWritePos = 0; ///< тек позиция записи

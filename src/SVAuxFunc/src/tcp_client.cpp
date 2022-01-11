@@ -26,6 +26,8 @@
 #include "SVAuxFunc/aux_func.h"
 #include "SVAuxFunc/tcp_client.h"
 
+#include <cstring>
+
 namespace SV_Aux{
   namespace TCPClient {
 
@@ -194,10 +196,10 @@ int sendAll(const std::string& mess, int flags){
   return total;
 }
 
-bool sendData(std::string& in, std::string &out, bool disconn, bool onlySend) {
+bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySend) {
 
   // Send an initial buffer
-  int ret = sendAll(in.c_str(), in.size(), 0);
+  int ret = sendAll(in, 0);
   if (ret == -1) {
     disconnect();
     return false;

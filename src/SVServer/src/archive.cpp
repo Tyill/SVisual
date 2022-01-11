@@ -25,6 +25,8 @@
 #include <chrono>
 #include <cstdio>
 #include <fstream>
+#include <cstring>
+
 #include "archive.h"
 #include "SVAuxFunc/aux_func.h"
 #include "SVConfig/config_limits.h"
