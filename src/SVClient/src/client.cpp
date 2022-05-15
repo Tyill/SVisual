@@ -107,7 +107,7 @@ namespace SV {
 
         SV_Base::Value val;
         val.vBool = value;
-        return addValue(name, SV_Base::ValueType::BOOL, val, false);
+        return addValue(name, SV_Base::ValueType::BOOL, val, onlyPosFront);
     }
 
     bool svAddIntValue(const char *name, int value) {
@@ -150,17 +150,16 @@ namespace SV {
         vr.type = type;
         vr.isOnlyFront = onlyPosFront;
         vr.isActive = false;
-
-        std::lock_guard<std::mutex> lck(_mtxUpdValue);
-        _values.insert({ name, vr });
+        { std::lock_guard<std::mutex> lck(_mtxUpdValue);
+            _values.insert({ name, vr });
+        }
       }
 
-      ValueRec& vr = _values[name];
-           
-      std::lock_guard<std::mutex> lck(_mtxUpdValue);
-      vr.vals[_curCycle] = val;
-      vr.isActive = true;
-     
+      ValueRec& vr = _values[name];           
+      { std::lock_guard<std::mutex> lck(_mtxUpdValue);
+          vr.vals[_curCycle] = val;
+          vr.isActive = true;
+      }
       return true;
     }
 
@@ -180,18 +179,19 @@ namespace SV {
 
       std::string data(messSz, '\0');
 
-      memcpy((char*)data.c_str(), "=begin=", startSz);               offs += startSz;
-      memcpy((char*)data.c_str() + offs, &dataSz, SINT);             offs += SINT;
-      memcpy((char*)data.c_str() + offs, _module.data(), SV_NAMESZ); offs += SV_NAMESZ;
+      char* dptr = (char*)data.c_str();
+      memcpy(dptr, "=begin=", startSz);               offs += startSz;
+      memcpy(dptr + offs, &dataSz, SINT);             offs += SINT;
+      memcpy(dptr + offs, _module.data(), SV_NAMESZ); offs += SV_NAMESZ;
 
       for (const auto& v : _values) {
-        memcpy((char*)data.c_str() + offs, v.second.name, SV_NAMESZ);
-        memcpy((char*)data.c_str() + offs + SV_NAMESZ, &v.second.type, SINT);
-        memcpy((char*)data.c_str() + offs + SV_NAMESZ + SINT, v.second.vals, SV_PACKETSZ * SINT);
+        memcpy(dptr + offs, v.second.name, SV_NAMESZ);
+        memcpy(dptr + offs + SV_NAMESZ, &v.second.type, SINT);
+        memcpy(dptr + offs + SV_NAMESZ + SINT, v.second.vals, SV_PACKETSZ * SINT);
         offs += valSz;
       }
 
-      memcpy((char*)data.c_str() + offs, "=end=", endSz);
+      memcpy(dptr + offs, "=end=", endSz);
 
       std::string out;
       return SV_Aux::TCPClient::sendData(data, out, false, true);
@@ -202,7 +202,8 @@ namespace SV {
       uint64_t cTm = SV_Aux::currDateTimeSinceEpochMs(),
                prevTm = cTm;
 
-      int tmDiff = SV_CYCLEREC_MS;
+      int tmDiff = SV_CYCLEREC_MS,
+          cDelay = 0;
 
       while (!_thrStop) {
 
@@ -210,35 +211,38 @@ namespace SV {
           _isConnect = SV_Aux::TCPClient::connect(_addrServ, _portServ);
 
         cTm = SV_Aux::currDateTimeSinceEpochMs();
-        tmDiff = int(cTm - prevTm) - (SV_CYCLEREC_MS - tmDiff);
+        tmDiff = int(cTm - prevTm) - cDelay;
         prevTm = cTm;
                
-        _mtxUpdValue.lock();
-        
-        int prevCyc = _curCycle - 1;
-        if (prevCyc < 0)
-          prevCyc = SV_PACKETSZ - 1;
+        { std::lock_guard<std::mutex> lck(_mtxUpdValue);
+           
+            int prevCyc = _curCycle - 1;
+            if (prevCyc < 0)
+                prevCyc = SV_PACKETSZ - 1;
 
-        for (auto it = _values.begin(); it != _values.end(); ++it) {
-          if (!it->second.isActive) {
-            it->second.vals[_curCycle] = it->second.vals[prevCyc];
+            for (auto it = _values.begin(); it != _values.end(); ++it) {
+                if (!it->second.isActive) {
+                    it->second.vals[_curCycle] = it->second.vals[prevCyc];
 
-            if ((it->second.type == SV_Base::ValueType::BOOL) && it->second.isOnlyFront)
-              it->second.vals[_curCycle].vBool = false;
-          }
-          it->second.isActive = false;
+                    if ((it->second.type == SV_Base::ValueType::BOOL) && it->second.isOnlyFront)
+                        it->second.vals[_curCycle].vBool = false;
+                }
+                it->second.isActive = false;
+            }
+
+            if (_curCycle < SV_PACKETSZ - 1) {
+                ++_curCycle;
+            }
+            else {
+                _curCycle = 0;
+                _isConnect = (_isConnect) ? sendData() : false;
+            }
         }
-        
-        if (_curCycle < SV_PACKETSZ - 1) {
-          ++_curCycle;
-        } else {
-          _curCycle = 0;
-          _isConnect = (_isConnect) ? sendData() : false;
+          
+        cDelay = (SV_CYCLEREC_MS - tmDiff) > 0 ? (SV_CYCLEREC_MS - tmDiff) : 0;
+        if (cDelay > 0) {            
+            SV_Aux::sleepMs(cDelay);
         }
-        _mtxUpdValue.unlock();
-                
-        if ((SV_CYCLEREC_MS - tmDiff) > 0)
-          SV_Aux::sleepMs(SV_CYCLEREC_MS - tmDiff);
       }
     }
 }
