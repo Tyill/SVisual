@@ -1,4 +1,6 @@
 #include <atomic>
+#include <thread>
+#include <algorithm>
 
 class SpinLock{
 public:
@@ -7,30 +9,38 @@ public:
     SpinLock(const SpinLock&) = delete;
     SpinLock& operator=(const SpinLock&) = delete;
 
-    enum Action{ READ, WRITE }
+    enum Action{ READ, WRITE };
 
     void lock(Action act){
-        bool expected = false;
-        while (!m_writerLock.compare_exchange_weak(expected, act == WRITE ? true : false)){
-            expected = false;
+        bool isBlock = false;
+        while (!m_readLock.compare_exchange_weak(isBlock, true)){
+            isBlock = false;
             std::this_thread::yield();
-        }  
-        if (act == READ){
-            ++m_readerCount;  
-        }else{
-            while (m_readerCount > 0);
+        }     
+
+        isBlock = (m_readCount.load() > 0) && (act == WRITE);
+        while (!m_writeLock.compare_exchange_weak(isBlock, act == WRITE ? true : false)){
+            isBlock = (m_readCount.load() > 0) && (act == WRITE);
+            std::this_thread::yield();
         }
+
+        if (act == READ){
+            ++m_readCount;
+        }
+        
+        m_readLock.store(false);
     }
 
     void unlock(Action act){
         if (act == READ){
-            m_readerCount = std::max(0, --m_readerCount);
+            --m_readCount;
         }else{
-            m_writerLock.exchange(false);
+            m_writeLock.store(false);
         }
     }
 
 private:
-    std::atomic_int m_readerCount = 0;
-    std::atomic_bool m_writerLock = false;
-}
+    std::atomic<int> m_readCount = 0;
+    std::atomic<bool> m_readLock = false;
+    std::atomic<bool> m_writeLock = false;
+};
