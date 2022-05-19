@@ -28,6 +28,7 @@
 #include "SVConfig/config_data.h"
 #include "SVAuxFunc/tcp_client.h"
 #include "SVAuxFunc/aux_func.h"
+#include "SVAuxFunc/spin_lock.h"
 
 #include <string>
 #include <mutex>
@@ -56,7 +57,7 @@ volatile bool _isConnect = false,
               _thrStop = false;
 
 std::thread _thr;
-std::mutex _mtxUpdValue;
+SV_Aux::SpinLock _spinLock;
 
 std::map<std::string, ValueRec> _values;
 
@@ -126,7 +127,7 @@ namespace SV {
 
     bool svSetParam(int cycleRecMs, int packetSz) {
             
-        std::lock_guard<std::mutex> lck(_mtxUpdValue);
+        SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::WRITE);
 
         cng = Config(cycleRecMs, packetSz);
 
@@ -150,13 +151,12 @@ namespace SV {
         vr.type = type;
         vr.isOnlyFront = onlyPosFront;
         vr.isActive = false;
-        { std::lock_guard<std::mutex> lck(_mtxUpdValue);
+        { SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::WRITE);
             _values.insert({ name, vr });
         }
       }
-
-      ValueRec& vr = _values[name];           
-      { std::lock_guard<std::mutex> lck(_mtxUpdValue);
+      { SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::READ);
+          ValueRec& vr = _values[name];
           vr.vals[_curCycle] = val;
           vr.isActive = true;
       }
@@ -214,7 +214,7 @@ namespace SV {
         tmDiff = int(cTm - prevTm) - cDelay;
         prevTm = cTm;
                
-        { std::lock_guard<std::mutex> lck(_mtxUpdValue);
+        { SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::WRITE);
            
             int prevCyc = _curCycle - 1;
             if (prevCyc < 0)

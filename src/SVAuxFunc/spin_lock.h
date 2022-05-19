@@ -2,6 +2,9 @@
 #include <thread>
 #include <algorithm>
 
+
+namespace SV_Aux {
+
 class SpinLock{
 public:
     SpinLock() = default;
@@ -18,10 +21,9 @@ public:
             std::this_thread::yield();
         }     
 
-        isBlock = (m_readCount.load() > 0) && (act == WRITE);
+        isBlock = (act == WRITE) && (m_readCount.load() > 0);
         while (!m_writeLock.compare_exchange_weak(isBlock, act == WRITE ? true : false)){
-            isBlock = (m_readCount.load() > 0) && (act == WRITE);
-            std::this_thread::yield();
+            isBlock = (act == WRITE) && (m_readCount.load() > 0);
         }
 
         if (act == READ){
@@ -44,3 +46,20 @@ private:
     std::atomic<bool> m_readLock = false;
     std::atomic<bool> m_writeLock = false;
 };
+
+class Locker {
+public:
+    Locker(SpinLock& lock, SpinLock::Action act) :
+        m_lock(lock),
+        m_act(act) {
+        m_lock.lock(act);
+    }
+    ~Locker() {
+        m_lock.unlock(m_act);
+    }
+
+private:
+    SpinLock& m_lock;
+    SpinLock::Action m_act;
+};
+}
