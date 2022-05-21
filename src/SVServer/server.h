@@ -24,8 +24,9 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include <map>
+#include <functional>
 
 namespace SV_Srv {
 
@@ -51,7 +52,7 @@ namespace SV_Srv {
 
   /// задать статус callback
   /// \param pfStatusMess
-  typedef void(*statusCBack)(const std::string& mess);
+  using statusCBack = std::function<void(const std::string&)>;
   void setStatusCBack(statusCBack stsCBack);
 
   /// старт сервера
@@ -67,19 +68,19 @@ namespace SV_Srv {
   void receiveData(std::string& inout, std::string& out);
 
   // обновление данных callBack
-  typedef void(*onUpdateSignalsCBack)();
+  using onUpdateSignalsCBack = std::function<void()>;
   void setOnUpdateSignalsCBack(onUpdateSignalsCBack);
 
   // добавление сигнала callBack
-  typedef void(*onAddSignalsCBack)();
+  using onAddSignalsCBack = std::function<void()>;
   void setOnAddSignalsCBack(onAddSignalsCBack);
 
   // модуль подключен
-  typedef void(*onModuleConnectCBack)(const std::string& module);
+  using onModuleConnectCBack = std::function<void(const std::string& module)>;
   void setOnModuleConnectCBack(onModuleConnectCBack);
 
   // модуль отключен
-  typedef void(*onModuleDisconnectCBack)(const std::string& module);
+  using onModuleDisconnectCBack = std::function<void(const std::string& module)>;
   void setOnModuleDisconnectCBack(onModuleDisconnectCBack);
 
   // вернуть все модули
