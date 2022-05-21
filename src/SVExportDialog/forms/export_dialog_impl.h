@@ -25,7 +25,7 @@
 #pragma once
 
 #include "GeneratedFiles/ui_export_dialog.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include "SVExportDialog/export_dialog.h"
 
 class ExportDialog : public QDialog

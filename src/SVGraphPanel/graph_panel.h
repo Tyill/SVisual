@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include <QtCore>
 #include <QColor>
 

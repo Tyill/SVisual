@@ -25,7 +25,7 @@
 #pragma once
 
 #include "SVScriptDialog/script_dialog.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 #include "GeneratedFiles/ui_subscript_dialog.h"
 
 

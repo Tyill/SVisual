@@ -22,10 +22,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#include "SVBase/base.h"
+
 #include <string>
 #include <iomanip>
 #include <sstream>
-#include "SVConfig/config_data.h"
 
 using namespace std;
 

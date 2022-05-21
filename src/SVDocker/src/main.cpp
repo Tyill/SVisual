@@ -26,7 +26,7 @@
 #include "SVAuxFunc/tcp_server.h"
 #include "SVServer/server.h"
 #include "SVWebServer/web_server.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 
 #include <iostream>
 

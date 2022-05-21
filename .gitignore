@@ -15,9 +15,9 @@ src/SVClient/cmake_install.cmake
 src/SVClientExample/CMakeFiles/
 src/SVClientExample/Makefile
 src/SVClientExample/cmake_install.cmake
-src/SVConfig/CMakeFiles/
-src/SVConfig/Makefile
-src/SVConfig/cmake_install.cmake
+src/SVBase/CMakeFiles/
+src/SVBase/Makefile
+src/SVBase/cmake_install.cmake
 src/SVExportPanel/CMakeFiles/
 src/SVExportPanel/Makefile
 src/SVExportPanel/SVExportPanel_autogen/

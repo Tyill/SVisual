@@ -29,7 +29,7 @@
 #include <map>
 
 #include "GeneratedFiles/ui_script_dialog.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "Lua/lua.hpp"
 

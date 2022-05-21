@@ -24,8 +24,8 @@
 //
 
 #include "zbx_server.h"
-#include "SVConfig/config_data.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/base.h"
+#include "SVBase/limits.h"
 #include <QDir>
 #include <QUrl>
 

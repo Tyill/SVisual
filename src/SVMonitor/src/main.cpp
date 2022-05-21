@@ -24,7 +24,7 @@
 //
 
 #include "SVMonitor/forms/main_win.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 
 #include <QApplication>
 

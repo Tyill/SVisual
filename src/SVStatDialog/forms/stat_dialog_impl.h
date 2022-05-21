@@ -25,7 +25,7 @@
 #pragma once
 
 #include "ui_stat_dialog.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include "SVStatDialog/stat_dialog.h"
 
 class StatDialog : public QDialog

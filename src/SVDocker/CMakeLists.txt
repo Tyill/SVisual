@@ -16,6 +16,6 @@ if(MSVC)
    set_target_properties (SVDocker PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT") 
 endif(MSVC)
 
-target_link_libraries(SVDocker SVConfig SVAuxFunc SVServer SVWebServer)
+target_link_libraries(SVDocker SVBase SVAuxFunc SVServer SVWebServer)
 
 qt5_use_modules(SVDocker Core)

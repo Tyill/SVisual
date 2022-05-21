@@ -24,7 +24,7 @@
 //
 
 #include "SVScriptDialog/script_dialog.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 #include "SVMonitor/forms/subscript_dialog.h"
 
 #include <QMessageBox>

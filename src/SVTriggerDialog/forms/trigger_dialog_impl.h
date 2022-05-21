@@ -29,8 +29,8 @@
 
 #include "SVAuxFunc/timer_delay.h"
 #include "SVAuxFunc/front.h"
-#include "SVConfig/config_data.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/base.h"
+#include "SVBase/limits.h"
 #include "SVTriggerDialog/trigger_dialog.h"
 #include "GeneratedFiles/ui_trigger_dialog.h"
 

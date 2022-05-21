@@ -13,6 +13,6 @@ if(USE_QtXlsxWriter)
    target_link_libraries(SVExportDialog QtXlsxWriter)
 endif()
 
-target_link_libraries(SVExportDialog SVConfig)
+target_link_libraries(SVExportDialog SVBase)
 
 qt5_use_modules(SVExportDialog Core Widgets Gui )

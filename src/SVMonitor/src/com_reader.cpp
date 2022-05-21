@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 //
 
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 #include "com_reader.h"
 
 #include <QTimer>

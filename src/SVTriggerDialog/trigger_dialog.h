@@ -25,7 +25,7 @@
 #pragma once
 
 #include <QtCore>
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 
 class QDialog;
 

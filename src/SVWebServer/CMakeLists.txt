@@ -8,6 +8,6 @@ FILE(GLOB_RECURSE SRC_Web "*.cpp" "*.c" "*.h" "*.ui" "*.qrc")
 
 add_library(SVWebServer STATIC ${SRC_Web})
 
-target_link_libraries(SVWebServer SVConfig SVAuxFunc)
+target_link_libraries(SVWebServer SVBase SVAuxFunc)
 
 qt5_use_modules(SVWebServer Core Network)

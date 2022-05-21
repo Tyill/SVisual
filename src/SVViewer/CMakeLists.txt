@@ -18,7 +18,7 @@ if(MSVC)
    target_link_libraries (SVViewer optimized qtmain)
 endif(MSVC)
 
-target_link_libraries(SVViewer SVConfig SVAuxFunc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
+target_link_libraries(SVViewer SVBase SVAuxFunc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
 
 # copy mswin dependent
 if(WIN32)

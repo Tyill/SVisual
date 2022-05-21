@@ -25,7 +25,7 @@
 #pragma once
 
 #include "GeneratedFiles/ui_subscript_dialog.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 
 class SubScriptDialog : public QDialog
 {

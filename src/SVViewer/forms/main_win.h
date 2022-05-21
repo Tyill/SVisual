@@ -26,7 +26,7 @@
 #define MAINWIN_H
 
 #include "GeneratedFiles/ui_main_win.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVViewer/src/structurs.h"
 

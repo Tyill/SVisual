@@ -24,8 +24,8 @@
 //
 
 #include "SVClient/SVClient.h"
-#include "SVConfig/config_limits.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/limits.h"
+#include "SVBase/base.h"
 #include "SVAuxFunc/tcp_client.h"
 #include "SVAuxFunc/aux_func.h"
 #include "SVAuxFunc/spin_lock.h"

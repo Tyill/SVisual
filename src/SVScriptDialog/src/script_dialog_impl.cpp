@@ -26,7 +26,7 @@
 #include <thread>
 
 #include "SVScriptDialog/forms/script_dialog_impl.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 #include "Lua/lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 #include "SVAuxFunc/timer_delay.h"
