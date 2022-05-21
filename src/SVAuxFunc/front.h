@@ -28,46 +28,46 @@
 
 namespace SV_Aux {
 
-    /// Булевый фронт
-	class Front {
+/// Булевый фронт
+class Front {
 
-	private:
-		std::vector<bool> onc;
-		int oncCount = 0;
+private:
+    std::vector<bool> onc;
+    int oncCount = 0;
 
-	public:
+public:
 
-		Front() : oncCount(0) {}
+    Front() : oncCount(0) {}
 
-		bool PosFront(bool en, int id) {
-			if (oncCount <= id) {
-				onc.resize(id + 1, false);
-        oncCount = id + 1;
-			}
+    bool PosFront(bool en, int id) {
+        if (oncCount <= id) {
+            onc.resize(id + 1, false);
+            oncCount = id + 1;
+        }
 
-			if (!onc[id] && en) {
-				onc[id] = true;
-				return true;
-			} else {
-				if (!en) onc[id] = false;
-				return false;
-			}
-		}
-    		
-		bool NegFront(bool en, int id) {
-			if (oncCount <= id) {
-				onc.resize(id + 1, true);
-        oncCount = id + 1;
-			}
+        if (!onc[id] && en) {
+            onc[id] = true;
+            return true;
+        } else {
+            if (!en) onc[id] = false;
+            return false;
+        }
+    }
+        
+    bool NegFront(bool en, int id) {
+        if (oncCount <= id) {
+            onc.resize(id + 1, true);
+            oncCount = id + 1;
+        }
 
-			if (!onc[id] && !en) {
-				onc[id] = true;
-				return true;
-			} else {
-				if (en) onc[id] = false;
-				return false;
-			}
-		}
+        if (!onc[id] && !en) {
+            onc[id] = true;
+            return true;
+        } else {
+            if (en) onc[id] = false;
+            return false;
+        }
+    }
 
-	};
+};
 }

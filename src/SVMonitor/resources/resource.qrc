@@ -32,19 +32,19 @@
         <file>images/ascale.png</file>
         <file>graph_panel_en.qm</file>
     </qresource>
-	<qresource prefix="/SVExp">
+    <qresource prefix="/SVExp">
         <file>images/arrow-left.png</file>
         <file>images/arrow-right.png</file>
         <file>export_dialog_en.qm</file>
     </qresource>
-	 <qresource prefix="/SVScript">
+     <qresource prefix="/SVScript">
         <file>images/arrow-dn.png</file>
         <file>images/arrow-up.png</file>
         <file>images/add.png</file>
         <file>images/open.png</file>
         <file>script_dialog_en.qm</file>
     </qresource>
-	 <qresource prefix="/SVTrigger">
+     <qresource prefix="/SVTrigger">
         <file>images/open.png</file>
         <file>trigger_dialog_en.qm</file>
     </qresource>
