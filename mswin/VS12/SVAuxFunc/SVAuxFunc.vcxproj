@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\SVAuxFunc\aux_func.h" />
     <ClInclude Include="..\..\..\src\SVAuxFunc\front.h" />
+    <ClInclude Include="..\..\..\src\SVAuxFunc\spin_lock.h" />
     <ClInclude Include="..\..\..\src\SVAuxFunc\tcp_client.h" />
     <ClInclude Include="..\..\..\src\SVAuxFunc\logger.h" />
     <ClInclude Include="..\..\..\src\SVAuxFunc\tcp_server.h" />
