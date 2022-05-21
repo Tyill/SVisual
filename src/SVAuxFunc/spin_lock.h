@@ -42,9 +42,9 @@ public:
     }
 
 private:
-    std::atomic<int> m_readCount = 0;
-    std::atomic<bool> m_readLock = false;
-    std::atomic<bool> m_writeLock = false;
+    std::atomic<int> m_readCount{0};
+    std::atomic<bool> m_readLock{false};
+    std::atomic<bool> m_writeLock{false};
 };
 
 class Locker {
