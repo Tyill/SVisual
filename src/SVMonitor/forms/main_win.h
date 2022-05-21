@@ -57,6 +57,12 @@ public:
     QString outArchiveName;    ///< запись архива имя файла
     int outArchiveHourCnt;     ///< запись архива размер файла, час
 
+    bool outDataBaseEna;       ///< запись в БД активна
+    std::string outDataBaseUserName;
+    std::string outDataBaseUserPassw;
+    std::string outDataBaseHost;
+    int outDataBasePort;
+
     int cycleRecMs;            ///< период записи - задает пользователь
     int packetSz;              ///< размер пакета - задает пользователь
 
