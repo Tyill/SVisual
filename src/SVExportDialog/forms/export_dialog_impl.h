@@ -34,12 +34,12 @@ class ExportDialog : public QDialog
 
 public:
 
-  SV_Exp::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Exp::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
-  SV_Exp::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Exp::pf_loadSignalData pfLoadSignalData = nullptr;
-  SV_Exp::pf_setTimeInterval pfSetTimeInterval = nullptr;
-  SV_Exp::pf_getTimeInterval pfGetTimeInterval = nullptr;
+  SV_Exp::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Exp::getCopyModuleRefCBack pfGetCopyModuleRef = nullptr;
+  SV_Exp::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Exp::isLoadSignalDataCBack pfLoadSignalData = nullptr;
+  SV_Exp::setTimeIntervalCBack pfSetTimeInterval = nullptr;
+  SV_Exp::getTimeIntervalCBack pfGetTimeInterval = nullptr;
 
   ExportDialog(QWidget *parent, SV_Exp::Config);
   ~ExportDialog();

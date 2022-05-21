@@ -24,8 +24,11 @@
 //
 #pragma once
 
-#include <QtCore>
 #include "SVBase/base.h"
+
+#include <QString>
+#include <QMap>
+#include <functional>
 
 class QDialog;
 
@@ -43,22 +46,22 @@ namespace SV_Exp {
 
   QDialog* createExportDialog(QWidget* parent, Config);
 
-  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(QDialog* expDialog, pf_getCopySignalRef f);
+  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
+  void setGetCopySignalRef(QDialog* expDialog, getCopySignalRefCBack f);
 
-  typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
-  void setGetCopyModuleRef(QDialog* expDialog, pf_getCopyModuleRef f);
+  using getCopyModuleRefCBack = std::function<QMap<QString, SV_Base::ModuleData*>()>;
+  void setGetCopyModuleRef(QDialog* expDialog, getCopyModuleRefCBack f);
 
-  typedef SV_Base::SignalData*(*pf_getSignalData)(const QString &sign);
-  void setGetSignalData(QDialog* expDialog, pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
+  void setGetSignalData(QDialog* expDialog, getSignalDataCBack f);
 
-  typedef bool(*pf_loadSignalData)(const QString& sign);
-  void setLoadSignalData(QDialog* expDialog, pf_loadSignalData f);
+  using isLoadSignalDataCBack = std::function<bool(const QString &sign)>;
+  void setLoadSignalData(QDialog* expDialog, isLoadSignalDataCBack f);
 
-  typedef QPair<qint64, qint64>(*pf_getTimeInterval)();
-  void setGetTimeInterval(QDialog* expDialog, pf_getTimeInterval f);
+  using getTimeIntervalCBack = std::function< QPair<qint64, qint64>()>;
+  void setGetTimeInterval(QDialog* expDialog, getTimeIntervalCBack f);
 
-  typedef void(*pf_setTimeInterval)(qint64, qint64);
-  void setSetTimeInterval(QDialog* expDialog, pf_setTimeInterval f);
+  using setTimeIntervalCBack = std::function<void(qint64, qint64)>;  
+  void setSetTimeInterval(QDialog* expDialog, setTimeIntervalCBack f);
 
 }

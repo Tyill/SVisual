@@ -50,16 +50,16 @@ class ScriptDialog : public QDialog
 
 public:
 
-  SV_Script::pf_updateSignalsCBack pfUpdateSignalsCBack = nullptr;
-  SV_Script::pf_addSignalsCBack pfAddSignalsCBack = nullptr;
-  SV_Script::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Script::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Script::pf_getModuleData pfGetModuleData = nullptr;
-  SV_Script::pf_addSignal pfAddSignal = nullptr;
-  SV_Script::pf_addModule pfAddModule = nullptr;
-  SV_Script::pf_moduleConnectCBack pfModuleConnectCBack = nullptr;
-  SV_Script::pf_loadSignalData pfLoadSignalData = nullptr;
-  SV_Script::pf_changeSignColor pfChangeSignColor = nullptr;
+  SV_Script::updateSignalsCBack pfUpdateSignalsCBack = nullptr;
+  SV_Script::addSignalsCBack pfAddSignalsCBack = nullptr;
+  SV_Script::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Script::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Script::getModuleDataCBack pfGetModuleData = nullptr;
+  SV_Script::addSignalCBack pfAddSignal = nullptr;
+  SV_Script::addModuleCBack pfAddModule = nullptr;
+  SV_Script::moduleConnectCBack pfModuleConnectCBack = nullptr;
+  SV_Script::isLoadSignalDataCBack pfLoadSignalData = nullptr;
+  SV_Script::changeSignColorCBack pfChangeSignColor = nullptr;
 
   ScriptDialog(QWidget *parent, SV_Script::Config, SV_Script::ModeGr mode);
   ~ScriptDialog();

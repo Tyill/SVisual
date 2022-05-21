@@ -25,7 +25,8 @@
 
 #include "SVServer/server.h"
 
-#include <QtCore>
+#include <QString>
+#include <QMap>
 
 QMap<QString, SV_Base::ModuleData *> getCopyModuleRefSrv(){
 

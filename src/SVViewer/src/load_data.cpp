@@ -27,6 +27,10 @@
 #include "SVViewer/forms/main_win.h"
 #include "Lib/zlib/zlib.h"
 
+#include <QThread>
+#include <QDateTime>
+#include <QFile>
+
 extern MainWin* mainWin;
 
 using namespace SV_Base;

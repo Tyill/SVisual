@@ -24,10 +24,13 @@
 //
 #pragma once
 
-#include <QtCore>
 #include "SVBase/base.h"
 
+#include <QString>
+#include <QMap>
+
 class QDialog;
+class QWidget;
 
 namespace SV_Trigger {
 
@@ -78,20 +81,20 @@ namespace SV_Trigger {
 
   void startUpdateThread(QDialog* panel);
 
-  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(QDialog* panel, pf_getCopySignalRef f);
+  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
+  void setGetCopySignalRef(QDialog* panel, getCopySignalRefCBack f);
 
-  typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
-  void setGetSignalData(QDialog* panel, pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
+  void setGetSignalData(QDialog* panel, getSignalDataCBack f);
 
-  typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
-  void setGetCopyModuleRef(QDialog* panel, pf_getCopyModuleRef f);
+  using getCopyModuleRefCBack = std::function<QMap<QString, SV_Base::ModuleData*>()>;
+  void setGetCopyModuleRef(QDialog* panel, getCopyModuleRefCBack f);
 
-  typedef SV_Base::ModuleData *(*pf_getModuleData)(const QString &module);
-  void setGetModuleData(QDialog* panel, pf_getModuleData f);
+  using getModuleDataCBack = std::function<SV_Base::ModuleData*(const QString &module)>;
+  void setGetModuleData(QDialog* panel, getModuleDataCBack f);
 
-  typedef void(*pf_onTriggerCBack)(const QString& name);
-  void setOnTriggerCBack(QDialog* panel, pf_onTriggerCBack f);
+  using onTriggerCBack = std::function<void(const QString &name)>;
+  void setOnTriggerCBack(QDialog* panel, onTriggerCBack f);
 
   // вернуть все триггеры
   QMap<QString, TriggerData*> getCopyTriggerRef(QDialog* panel);

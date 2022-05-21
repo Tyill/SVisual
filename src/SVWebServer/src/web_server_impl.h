@@ -43,11 +43,11 @@ public:
 
     ~WebServer() = default;
         
-    SV_Web::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
+    SV_Web::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
 
-    SV_Web::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
+    SV_Web::getCopyModuleRefCBack pfGetCopyModuleRef = nullptr;
 
-    SV_Web::pf_getSignalData pfGetSignalData = nullptr;
+    SV_Web::getSignalDataCBack pfGetSignalData = nullptr;
         
     void setConfig(const SV_Web::Config& cng);
 

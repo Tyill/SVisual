@@ -33,6 +33,8 @@
 #include "Lib/rapidjson/document.h"
 
 #include <QFileDialog>
+#include <QTextStream>
+#include <QTimer>
 
 using namespace SV_Base;
 

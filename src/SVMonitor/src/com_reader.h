@@ -51,8 +51,8 @@ public:
   bool start();
   void stop();
 
-  /// задать польз callback - получение данных
-  typedef void(*DataCBack)(std::string &inout, std::string &out);
+  /// задать польз callback - получение данных  
+  using DataCBack = std::function<void(std::string &inout, std::string &out)>;
   void setDataCBack(DataCBack uf);
 
 public slots:

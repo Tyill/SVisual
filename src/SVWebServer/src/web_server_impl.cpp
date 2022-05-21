@@ -27,9 +27,13 @@
 #include "SVBase/base.h"
 #include "SVBase/limits.h"
 #include "http_parser.h"
+
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDir>
 #include <QUrl>
+#include <QCoreApplication>
 
 void WebServer::setConfig(const SV_Web::Config& cng_) {
 

@@ -26,9 +26,10 @@
 #include "db_provider.h"
 #include "Lib/sqlite/sqlite3.h"
 
-#include <sstream>
-#include <QtCore>
+#include <QSet>
 #include <QColor>
+#include <QDateTime>
+#include <sstream>
 
 using namespace std;
 using namespace SV_Base;
@@ -408,7 +409,7 @@ void DbProvider::delAttrSignal(const QString& signal, const QString& module) {
   query(ss.str(), res);
 }
 
-void DbProvider::saveEvent(QString trg, QDateTime dt) {
+void DbProvider::saveEvent(const QString& trg, const QDateTime& dt) {
 
   stringstream ss;
 
@@ -420,7 +421,7 @@ void DbProvider::saveEvent(QString trg, QDateTime dt) {
   query(ss.str(), ret);
 }
 
-QVector<UserEvent> DbProvider::getEvents(QDateTime beginDT, QDateTime endDT) {
+QVector<UserEvent> DbProvider::getEvents(const QDateTime& beginDT, const QDateTime& endDT) {
 
   QString cmd = "SELECT * FROM Events WHERE sendDateTime BETWEEN '" + beginDT.toString("yyyy-MM-dd HH:mm:ss") + "' AND '" + endDT.toString("yyyy-MM-dd HH:mm:ss") + "';";
 

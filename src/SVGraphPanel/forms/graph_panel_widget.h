@@ -58,10 +58,10 @@ public:
   GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
   ~GraphPanelWidget();
 
-  SV_Graph::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Graph::pf_getSignalAttr pfGetSignalAttr = nullptr;
-  SV_Graph::pf_loadSignalData pfLoadSignalData = nullptr;
+  SV_Graph::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Graph::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
+  SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
 
   void addSignalOnGraph(QString name, int section);
   QPair<qint64, qint64> getTimeInterval();

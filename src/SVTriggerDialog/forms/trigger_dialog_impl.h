@@ -40,11 +40,11 @@ class TriggerDialog : public QDialog
 
 public:
 
-  SV_Trigger::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Trigger::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
-  SV_Trigger::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Trigger::pf_getModuleData pfGetModuleData = nullptr;
-  SV_Trigger::pf_onTriggerCBack pfOnTriggerCBack = nullptr;
+  SV_Trigger::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Trigger::getCopyModuleRefCBack pfGetCopyModuleRef = nullptr;
+  SV_Trigger::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Trigger::getModuleDataCBack pfGetModuleData = nullptr;
+  SV_Trigger::onTriggerCBack pfOnTriggerCBack = nullptr;
 
   Ui::TriggerDialog ui;
 

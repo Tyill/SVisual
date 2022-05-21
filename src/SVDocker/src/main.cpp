@@ -28,6 +28,8 @@
 #include "SVWebServer/web_server.h"
 #include "SVBase/limits.h"
 
+#include <QCoreApplication>
+#include <QSettings>
 #include <iostream>
 
 void statusMess(const std::string& mess){
@@ -144,8 +146,8 @@ int main(int argc, char* argv[]){
   SV_Web::setGetSignalData(getSignalDataSrv);
   SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-    if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ)))
-      statusMess("WEB server run port: " + std::to_string(cng.web_port));
+  if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ)))
+    statusMess("WEB server run port: " + std::to_string(cng.web_port));
   else
     statusMess("WEB server not run port: " + std::to_string(cng.web_port));
 

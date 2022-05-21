@@ -24,7 +24,8 @@
 //
 #pragma once
 
-#include <QtCore>
+#include <QString>
+#include <QMap>
 #include "SVBase/base.h"
 
 class QDialog;
@@ -43,19 +44,19 @@ namespace SV_Stat {
 
   QDialog* createStatDialog(QWidget* parent, Config);
 
-  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
+  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
+  void setGetCopySignalRef(QDialog* stPanel, getCopySignalRefCBack f);
 
-  typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
-  void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
+  void setGetSignalData(QDialog* stPanel, getSignalDataCBack f);
 
-  typedef bool(*pf_loadSignalData)(const QString& sign);
-  void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
+  using isLoadSignalDataCBack = std::function<bool(const QString &sign)>;
+  void setLoadSignalData(QDialog* stPanel, isLoadSignalDataCBack f);
 
-  typedef QPair<qint64, qint64>(*pf_getTimeInterval)();
-  void setGetTimeInterval(QDialog* stPanel, pf_getTimeInterval f);
+  using getTimeIntervalCBack = std::function< QPair<qint64, qint64>()>;
+  void setGetTimeInterval(QDialog* stPanel, getTimeIntervalCBack f);
 
-  typedef void(*pf_setTimeInterval)(qint64, qint64);
-  void setSetTimeInterval(QDialog* stPanel, pf_setTimeInterval f);
+  using setTimeIntervalCBack = std::function<void(qint64, qint64)>;
+  void setSetTimeInterval(QDialog* stPanel, setTimeIntervalCBack f);
 
 }

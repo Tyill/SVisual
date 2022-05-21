@@ -30,6 +30,8 @@
 #include "SVGraphPanel/graph_panel.h"
 #include "SVViewer/src/structurs.h"
 
+#include <QMutex>
+
 class GraphSettingDialog;
 class ThrLoadData;
 

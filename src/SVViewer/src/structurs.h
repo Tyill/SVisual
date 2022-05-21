@@ -27,7 +27,8 @@
 #include "SVBase/limits.h"
 #include "SVBase/base.h"
 
-#include <QtCore>
+#include <QString>
+#include <QMap>
 
 struct ValueData{
   char name[SV_NAMESZ];

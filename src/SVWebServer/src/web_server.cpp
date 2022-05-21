@@ -45,17 +45,17 @@ namespace SV_Web {
       WServer.close();
   }
 
-  void setGetCopySignalRef(pf_getCopySignalRef f) {
+  void setGetCopySignalRef(getCopySignalRefCBack f) {
 
     WServer.pfGetCopySignalRef = f;
   }
 
-  void setGetCopyModuleRef(pf_getCopyModuleRef f) {
+  void setGetCopyModuleRef(getCopyModuleRefCBack f) {
 
     WServer.pfGetCopyModuleRef = f;
   }
 
-  void setGetSignalData(pf_getSignalData f) {
+  void setGetSignalData(getSignalDataCBack f) {
 
     WServer.pfGetSignalData = f;
   }
