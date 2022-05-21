@@ -29,20 +29,18 @@
 
 #include "archive.h"
 #include "SVAuxFunc/aux_func.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/limits.h"
 #include "Lib/zlib/zlib.h"
 
 using namespace std;
-using namespace SV_Base;
-using namespace SV_Aux;
 
 extern SV_Srv::statusCBack pfStatusCBack;
 
 void Archive::init(const SV_Srv::Config& cng_) {
 
   cng = cng_;
-  _copyStartTime = currDateTimeEx();
-  _copyDateMem = currDateS();
+  _copyStartTime = SV_Aux::currDateTimeEx();
+  _copyDateMem = SV_Aux::currDateS();
   _copySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
 }
 
@@ -57,22 +55,22 @@ void Archive::addSignal(const string& sign) {
 
   if (_archiveData.find(sign) != _archiveData.end()) return;
 
-  _archiveData[sign] = vector<RecData>(_copySz);
+  _archiveData[sign] = vector<SV_Base::RecData>(_copySz);
 
   _valPos[sign] = 0;
 
-  Value* buff = new Value[SV_PACKETSZ * _copySz];
-  memset(buff, 0, SV_PACKETSZ * _copySz * sizeof(Value));
+  SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * _copySz];
+  memset(buff, 0, SV_PACKETSZ * _copySz * sizeof(SV_Base::Value));
   for (size_t i = 0; i < _copySz; ++i)
     _archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
 }
 
-void Archive::addValue(const string& sign, const RecData& rd) {
+void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
 
   uint32_t vp = _valPos[sign];
 
   _archiveData[sign][vp].beginTime = rd.beginTime;
-  memcpy(_archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(Value));
+  memcpy(_archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(SV_Base::Value));
 
   ++_valPos[sign];
 
@@ -94,7 +92,7 @@ bool Archive::copyToDisk(bool isStop){
 
     size_t intSz = sizeof(int32_t),
       tmSz = sizeof(uint64_t),
-      vlSz = sizeof(Value) * SV_PACKETSZ;
+      vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
 
     //                name        module      group       comment      type    vCnt
     size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
@@ -190,17 +188,17 @@ bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz
 
 string Archive::getOutPath(bool isStop) {
 
-  string cDate = currDateS();
+  string cDate = SV_Aux::currDateS();
   if (cDate != _copyDateMem) {
     cDate = _copyDateMem;
-    _copyDateMem = currDateS();
+    _copyDateMem = SV_Aux::currDateS();
   }
 
   string path = cng.outArchivePath + cDate + "/";
 
-  createSubDirectory(path);
+  SV_Aux::createSubDirectory(path);
 
-  int utcOffs = hourOffsFromUTC();
+  int utcOffs = SV_Aux::hourOffsFromUTC();
 
   string fName = cng.outArchiveName + "_temp" + "UTC" + to_string(utcOffs) + ".dat";
 
@@ -210,7 +208,7 @@ string Archive::getOutPath(bool isStop) {
     fName = cng.outArchiveName + "_" + _copyStartTime + "UTC" + to_string(utcOffs) + ".dat";
     rename(templ.c_str(), (path + fName).c_str());
 
-    _copyStartTime = currDateTimeEx().c_str();
+    _copyStartTime = SV_Aux::currDateTimeEx().c_str();
   }
 
   return path + fName;
