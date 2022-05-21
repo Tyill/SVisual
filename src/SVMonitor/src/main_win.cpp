@@ -101,661 +101,6 @@ void MainWin::statusMess(const QString& mess){
   lg_.writeLine(qPrintable(mess));
 }
 
-void MainWin::load(){
-
-  ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  ui.treeSignals->setIconSize(QSize(40, 20));
-
-  settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
-  graphSettDialog_ = new GraphSettingDialog(cng.graphSett, this); graphSettDialog_->setWindowFlags(Qt::Window);
-
-  SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
-  SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
-  SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
-  SV_Graph::setGetSignalAttr(graphPanels_[this], [this](const QString& sname, SV_Graph::SignalAttributes& out){
-    if (signAttr_.contains(sname)){
-      out.color = signAttr_[sname].color;
-      return true;
-    }
-    return false;
-  });
-  SV_Graph::setGraphSetting(graphPanels_[this], cng.graphSett);
-
-  triggerDialog_ = SV_Trigger::getTriggerDialog(this, SV_Trigger::Config(cng.cycleRecMs, cng.packetSz));
-  triggerDialog_->setWindowFlags(Qt::Window);
-  SV_Trigger::setGetCopySignalRef(triggerDialog_, getCopySignalRefSrv);
-  SV_Trigger::setGetSignalData(triggerDialog_, getSignalDataSrv);
-  SV_Trigger::setGetCopyModuleRef(triggerDialog_, getCopyModuleRefSrv);
-  SV_Trigger::setGetModuleData(triggerDialog_, getModuleDataSrv);
-  SV_Trigger::setOnTriggerCBack(triggerDialog_, [this](const QString& name){
-    onTrigger(name);
-  });
-
-  scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
-  scriptDialog_->setWindowFlags(Qt::Window);
-  SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
-  SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
-  SV_Script::setGetSignalData(scriptDialog_, getSignalDataSrv);
-  SV_Script::setGetModuleData(scriptDialog_, getModuleDataSrv);
-  SV_Script::setAddSignal(scriptDialog_, addSignalSrv);
-  SV_Script::setAddModule(scriptDialog_, addModuleSrv);
-  SV_Script::setAddSignalsCBack(scriptDialog_, [this](){
-    QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
-  });
-  SV_Script::setUpdateSignalsCBack(scriptDialog_, [this](){
-    QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
-  });
-  SV_Script::setModuleConnectCBack(scriptDialog_, [this](const QString& module){
-    QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
-  });
-  SV_Script::setChangeSignColor(scriptDialog_, [this](const QString& module, const QString& name, const QColor& clr){
-    QMetaObject::invokeMethod(this, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
-  });
-
-  exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
-  exportDialog_->setWindowFlags(Qt::Window);
-  SV_Exp::setLoadSignalData(exportDialog_, loadSignalDataSrv);
-  SV_Exp::setGetCopySignalRef(exportDialog_, getCopySignalRefSrv);
-  SV_Exp::setGetCopyModuleRef(exportDialog_, getCopyModuleRefSrv);
-  SV_Exp::setGetSignalData(exportDialog_, getSignalDataSrv);
-
-  SV_Srv::setStatusCBack([this](const std::string& mess){
-    statusMess(mess.c_str());
-  });
-  SV_Srv::setOnUpdateSignalsCBack([this](){
-    QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
-  });
-  SV_Srv::setOnAddSignalsCBack([this](){
-    QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
-  });
-  SV_Srv::setOnModuleConnectCBack([this](const std::string& module){
-    QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
-  });
-  SV_Srv::setOnModuleDisconnectCBack([this](const std::string& module){
-    QMetaObject::invokeMethod(this, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
-  });
-
-  SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
-  SV_Web::setGetSignalData(getSignalDataSrv);
-  SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
-
-  SV_Zbx::setGetSignalData(getSignalDataSrv);
-
-  db_ = new DbProvider(qUtf8Printable(cng.dbPath), this);
-  if (db_->isConnect()){
-    statusMess(tr("Подключение БД успешно"));
-  }
-  else{
-    statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
-    delete db_;
-    db_ = nullptr;
-  }
-  eventTableDialog_ = new EventTableDialog(db_, this); 
-  eventTableDialog_->setWindowFlags(Qt::Window);
-
-  /////////////////////
-  initTrayIcon();
-
-}
-
-void MainWin::connects(){
-
-  connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
-    auto mref = SV_Srv::getCopyModuleRef();
-
-    if (mref.find(item->text(0).toStdString()) != mref.end()){
-
-      ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
-    }
-  });
-  connect(ui.treeSignals, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem* item, int column){
-    auto mref = SV_Srv::getCopyModuleRef();
-
-    if (mref.find(item->text(0).toStdString()) != mref.end())
-      return;
-
-    auto sign = item->text(5);
-    if (column == 0){
-      if (tmWinSetts_->isActive()) tmWinSetts_->stop();
-      SV_Graph::addSignal(graphPanels_[this], sign);
-    }
-    else {
-      if (column == 2){
-
-        auto clr = QColorDialog::getColor();
-
-        item->setBackgroundColor(2, clr);
-
-        auto sd = getSignalDataSrv(sign);
-
-        if (!sd) return;
-
-        signAttr_[sign] = SignalAttr{ QString::fromStdString(sd->name),
-          QString::fromStdString(sd->module),
-          clr };
-        for (auto gp : graphPanels_)
-          SV_Graph::setSignalAttr(gp, sign, SV_Graph::SignalAttributes{ clr });
-      }
-      else
-        ui.treeSignals->editItem(item, column);
-    }
-  });
-  connect(ui.treeSignals, &QTreeWidget::itemChanged, [this](QTreeWidgetItem* item, int column){
-    std::string sign = item->text(5).toStdString();
-    SV_Base::SignalData* sd = SV_Srv::getSignalData(sign);
-
-    if (!sd) return;
-
-    switch (column){
-    case 3: sd->comment = item->text(3).toStdString(); break;
-    case 4: sd->group = item->text(4).toStdString(); break;
-    }
-  });
-
-  connect(ui.actionExit, &QAction::triggered, [this]() {
-    this->close();
-  });
-  connect(ui.actionPrint, &QAction::triggered, [this]() {
-
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
-    printer.setFullPage(false);
-
-    QPrintDialog printDialog(&printer, this);
-    if (printDialog.exec() == QDialog::Accepted) {
-
-      QPainter painter(&printer);
-
-      double xscale = printer.pageRect().width() / double(graphPanels_[this]->width());
-      double yscale = printer.pageRect().height() / double(graphPanels_[this]->height());
-      double scale = qMin(xscale, yscale);
-      painter.translate(printer.paperRect().x(), printer.paperRect().y());
-      painter.scale(scale, scale);
-
-      graphPanels_[this]->render(&painter);
-    }
-  });
-  connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
-    if (triggerDialog_) triggerDialog_->showNormal();
-  });
-  connect(ui.actionEventOrder, &QAction::triggered, [this]() {
-    if (eventTableDialog_) eventTableDialog_->showNormal();
-  });
-  connect(ui.actionExport, &QAction::triggered, [this]() {
-    if (exportDialog_) exportDialog_->showNormal();
-  });
-  connect(ui.actionNewWin, &QAction::triggered, [this]() {
-
-    addNewWindow(QRect());
-  });
-  connect(ui.actionScript, &QAction::triggered, [this]() {
-
-    SV_Script::startUpdateThread(scriptDialog_);
-    scriptDialog_->showNormal();
-  });
-  connect(ui.actionSettings, &QAction::triggered, [this]() {
-    if (settingsDialog_) settingsDialog_->showNormal();
-  });
-  connect(ui.actionGraphSett, &QAction::triggered, [this]() {
-    if (graphSettDialog_) graphSettDialog_->showNormal();
-  });
-  connect(ui.actionUpFont, &QAction::triggered, [this]() {
-
-    QFont ft = QApplication::font();
-
-    ft.setPointSize(ft.pointSize() + 1);
-
-    QApplication::setFont(ft);
-  });
-  connect(ui.actionDnFont, &QAction::triggered, [this]() {
-
-    QFont ft = QApplication::font();
-
-    ft.setPointSize(ft.pointSize() - 1);
-
-    QApplication::setFont(ft);
-  });
-  connect(ui.actionCheckUpdate, &QAction::triggered, [this]() {
-
-    if (!netManager_){
-      netManager_ = new QNetworkAccessManager(this);
-      connect(netManager_, &QNetworkAccessManager::finished, [](QNetworkReply* reply){
-
-        QByteArray response_data = reply->readAll();
-        QJsonDocument jsDoc = QJsonDocument::fromJson(response_data);
-
-        if (jsDoc.isObject()){
-          QJsonObject  jsObj = jsDoc.object();
-
-          QMessageBox msgBox;
-          msgBox.setTextFormat(Qt::RichText);
-          msgBox.setStandardButtons(QMessageBox::Ok);
-
-          QString lastVer = jsObj["tag_name"].toString();
-
-          if (VERSION != lastVer)
-            msgBox.setText(tr("Доступна новая версия: ") + "<a href='" + jsObj["html_url"].toString() + "'>" + lastVer + "</a>");
-          else
-            msgBox.setText(tr("У вас самая новая версия"));
-
-          msgBox.exec();
-        }
-      });
-    }
-
-    QNetworkRequest request(QUrl("https://api.github.com/repos/Tyill/SVisual/releases/latest"));
-
-    netManager_->get(request);
-  });
-  connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
-
-    QString fname = QFileDialog::getSaveFileName(this,
-      tr("Сохранение состояния окон"), cng.selOpenDir,
-      "ini files (*.ini)");
-
-    if (fname.isEmpty()) return;
-    cng.selOpenDir = fname;
-
-    QFile file(fname);
-
-    QTextStream txtStream(&file);
-    txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
-
-    auto wins = graphPanels_.keys();
-
-    int cnt = 0;
-    for (auto w : wins){
-
-      file.open(QIODevice::WriteOnly);
-      txtStream << "[graphWin" << cnt << "]" << Qt::endl;
-
-      if (w == this)
-        txtStream << "locate = 0" << Qt::endl;
-      else{
-        auto geom = ((QDialog*)w)->geometry();
-        txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
-      }
-
-      auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
-      txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
-
-      QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
-      for (int i = 0; i < signs.size(); ++i){
-
-        txtStream << "section" << i << " = ";
-        for (int j = signs[i].size() - 1; j >= 0; --j)
-          txtStream << signs[i][j] << " ";
-
-        txtStream << Qt::endl;
-      }
-
-      QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
-      for (int i = 0; i < axisAttr.size(); ++i){
-
-        txtStream << "axisAttr" << i << " = ";
-        txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
-        txtStream << axisAttr[i].min << " ";
-        txtStream << axisAttr[i].max << " ";
-        txtStream << axisAttr[i].step << " ";
-
-        txtStream << Qt::endl;
-      }
-
-      txtStream << Qt::endl;
-      ++cnt;
-    }
-
-    file.close();
-
-    statusMess(tr("Состояние успешно сохранено"));
-  });
-  connect(ui.actionLoadWinState, &QAction::triggered, [this]() {
-
-    QString fname = QFileDialog::getOpenFileName(this,
-      tr("Загрузка состояния окон"), cng.selOpenDir,
-      "ini files (*.ini)");
-
-    if (fname.isEmpty()) return;
-    cng.selOpenDir = fname;
-
-    QSettings settings(fname, QSettings::IniFormat);
-    settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
-
-    if (tmWinSetts_->isActive()) tmWinSetts_->stop();
-
-    auto grps = settings.childGroups();
-    for (auto& g : grps){
-      settings.beginGroup(g);
-
-      QString locate = settings.value("locate").toString();
-      QObject* win = this;
-      if (locate != "0"){
-
-        auto lt = locate.split(' ');
-
-        win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
-      }
-
-      int sect = 0;
-      while (true){
-
-        QString str = settings.value("section" + QString::number(sect), "").toString();
-        if (str.isEmpty()) break;
-
-        QStringList signs = str.split(' ');
-        for (auto& s : signs)
-          SV_Graph::addSignal(graphPanels_[win], s, sect);
-
-        ++sect;
-      }
-
-
-      QVector< SV_Graph::AxisAttributes> axisAttrs;
-      int axisInx = 0;
-      while (true){
-
-        QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
-        if (str.isEmpty()) break;
-
-        QStringList attr = str.split(' ');
-
-        SV_Graph::AxisAttributes axAttr;
-        axAttr.isAuto = attr[0] == "1";
-        axAttr.min = attr[1].toDouble();
-        axAttr.max = attr[2].toDouble();
-        axAttr.step = attr[3].toDouble();
-
-        axisAttrs.push_back(axAttr);
-
-        ++axisInx;
-      }
-
-      if (!axisAttrs.empty())
-        SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
-
-      QString tmDiap = settings.value("tmDiap", "10000").toString();
-
-      auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
-      ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
-
-      SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
-
-      settings.endGroup();
-    }
-
-    statusMess(tr("Состояние успешно загружено"));
-  });
-  connect(ui.actionManual, &QAction::triggered, [this]() {
-
-#ifdef SV_EN
-    QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualEN.pdf"));
-#else
-    QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualRU.pdf"));
-#endif
-  });
-  connect(ui.actionProgram, &QAction::triggered, [this]() {
-
-    QString mess = "<h2>SVMonitor </h2>"
-      "<p>Программное обеспечение предназначенное"
-      "<p>для анализа сигналов с устройст."
-      "<p>2017";
-
-    QMessageBox::about(this, tr("About SVisual"), mess);
-  });
-  connect(ui.btnSlowPlay, &QPushButton::clicked, [this]() {
-    slowMode();
-  });
-}
-
-bool MainWin::writeSettings(QString pathIni){
-
-  QFile file(pathIni);
-
-  QTextStream txtStream(&file);
-  txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
-
-  // запись новых данных
-  file.open(QIODevice::WriteOnly);
-  txtStream << "[Param]" << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "tcp_addr = " << cng.tcp_addr << Qt::endl;
-  txtStream << "tcp_port = " << cng.tcp_port << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "web_ena = " << (cng.web_ena ? "1" : "0") << Qt::endl;
-  txtStream << "web_addr = " << cng.web_addr << Qt::endl;
-  txtStream << "web_port = " << cng.web_port << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "zabbix_ena = " << (cng.zabbix_ena ? "1" : "0") << Qt::endl;
-  txtStream << "zabbix_addr = " << cng.zabbix_addr << Qt::endl;
-  txtStream << "zabbix_port = " << cng.zabbix_port << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << Qt::endl;
-
-  for (int i = 0; i < cng.com_ports.size(); ++i){
-    txtStream << "com" << i << "_name = " << cng.com_ports[i].first << Qt::endl;
-    txtStream << "com" << i << "_speed = " << cng.com_ports[i].second << Qt::endl;
-  }
-
-  txtStream << Qt::endl;
-  txtStream << "dbPath = " << cng.dbPath << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "cycleRecMs = " << cng.cycleRecMs << Qt::endl;
-  txtStream << "packetSz = " << cng.packetSz << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "; save on disk" << Qt::endl;
-  txtStream << "outArchiveEna = " << (cng.outArchiveEna ? "1" : "0") << Qt::endl;
-  txtStream << "outArchivePath = " << cng.outArchivePath << Qt::endl;
-  txtStream << "outArchiveName = " << cng.outArchiveName << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "selOpenDir = " << cng.selOpenDir << Qt::endl;
-  txtStream << "fontSz = " << this->font().pointSize() << Qt::endl;
-  txtStream << "transparent = " << cng.graphSett.transparent << Qt::endl;
-  txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
-  txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
-  txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
-  txtStream << Qt::endl;
-  txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << Qt::endl;
-  txtStream << Qt::endl;
-
-  // состояние окон
-  auto wins = graphPanels_.keys();
-  int cnt = 0;
-  for (auto w : wins){
-
-    file.open(QIODevice::WriteOnly);
-    txtStream << "[graphWin" << cnt << "]" << Qt::endl;
-
-    if (w == this)
-      txtStream << "locate = 0" << Qt::endl;
-    else{
-      auto geom = ((QDialog*)w)->geometry();
-      txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
-    }
-
-    auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
-    txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
-
-    QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
-    for (int i = 0; i < signs.size(); ++i){
-
-      txtStream << "section" << i << " = ";
-      for (int j = signs[i].size() - 1; j >= 0; --j)
-        txtStream << signs[i][j] << " ";
-
-      txtStream << Qt::endl;
-    }
-
-    QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
-    for (int i = 0; i < axisAttr.size(); ++i){
-
-      txtStream << "axisAttr" << i << " = ";
-      txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
-      txtStream << axisAttr[i].min << " ";
-      txtStream << axisAttr[i].max << " ";
-      txtStream << axisAttr[i].step << " ";
-
-      txtStream << Qt::endl;
-    }
-
-    txtStream << Qt::endl;
-    ++cnt;
-  }
-
-  file.close();
-
-  return true;
-}
-
-bool MainWin::init(QString initPath){
-    
-  QString logPath = cng.dirPath + "/log/svmonitor.log";
-  lg_.setPathFile(qPrintable(logPath));
-
-  QSettings settings(initPath, QSettings::IniFormat);
-  settings.beginGroup("Param");
-
-  cng.cycleRecMs = settings.value("cycleRecMs", 100).toInt();
-  cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
-  cng.packetSz = settings.value("packetSz", 10).toInt();
-  cng.packetSz = qMax(cng.packetSz, 1);
-  cng.selOpenDir = settings.value("selOpenDir", "").toString();
-
-  QFont ft = QApplication::font();
-  int fsz = settings.value("fontSz", ft.pointSize()).toInt();
-  ft.setPointSize(fsz);
-  QApplication::setFont(ft);
-
-  // связь по usb
-  cng.com_ena = settings.value("com_ena", 0).toInt() == 1;
-  QString com_name = settings.value("com0_name", "COM4").toString();
-  QString com_speed = settings.value("com0_speed", "9600").toString();
-
-  cng.com_ports.push_back(qMakePair(com_name, com_speed));
-
-  // доп порты
-  int comCnt = 1;
-  while (true){
-
-    QString com_name = settings.value("com" + QString::number(comCnt) + "_name", "").toString();
-    QString com_speed = settings.value("com" + QString::number(comCnt) + "_speed", "").toString();
-
-    if (com_name.isEmpty() || com_speed.isEmpty())
-      break;
-
-    cng.com_ports.push_back(qMakePair(com_name, com_speed));
-    ++comCnt;
-  }
-
-  cng.dbPath = settings.value("dbPath", "").toString();
-  if (cng.dbPath.isEmpty())cng.dbPath = cng.dirPath + "/svm.db";
-
-  // связь по TCP
-  cng.tcp_addr = settings.value("tcp_addr", "127.0.0.1").toString();
-  cng.tcp_port = settings.value("tcp_port", "2144").toInt();
-
-  // web
-  cng.web_ena = settings.value("web_ena", "0").toInt() == 1;
-  cng.web_addr = settings.value("web_addr", "127.0.0.1").toString();
-  cng.web_port = settings.value("web_port", "2145").toInt();
-
-  // zabbix
-  cng.zabbix_ena = settings.value("zabbix_ena", "0").toInt() == 1;
-  cng.zabbix_addr = settings.value("zabbix_addr", "127.0.0.1").toString();
-  cng.zabbix_port = settings.value("zabbix_port", "2146").toInt();
-
-  // копир на диск
-  cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
-  cng.outArchivePath = settings.value("outArchivePath", "").toString();
-  if (cng.outArchivePath.isEmpty()) cng.outArchivePath = cng.dirPath + "/";
-  cng.outArchivePath.replace("\\", "/");
-  cng.outArchiveName = settings.value("outFileName", "svrec").toString();;
-  cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
-  cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
-
-  cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
-  cng.graphSett.transparent = settings.value("transparent", "100").toInt();
-  cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
-  cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
-
-  cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
-  
-  settings.endGroup();
-
-  tmWinSetts_ = new QTimer(this);
-  connect(tmWinSetts_, &QTimer::timeout, [this, initPath]() {
-
-    QSettings settings(initPath, QSettings::IniFormat);
-    settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
-    auto grps = settings.childGroups();
-    for (auto& g : grps){
-
-      if (!g.startsWith("graphWin"))
-        continue;
-
-      settings.beginGroup(g);
-
-      QString locate = settings.value("locate").toString();
-      QObject* win = this;
-      if (locate != "0"){
-        auto lt = locate.split(' ');
-        win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
-      }
-
-      int sect = 0;
-      while (true){
-
-        QString str = settings.value("section" + QString::number(sect), "").toString();
-        if (str.isEmpty()) break;
-
-        QStringList signs = str.split(' ');
-        for (auto& s : signs){
-          SV_Graph::addSignal(graphPanels_[win], s, sect);
-        }
-        ++sect;
-      }
-
-      QVector< SV_Graph::AxisAttributes> axisAttrs;
-      int axisInx = 0;
-      while (true){
-
-        QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
-        if (str.isEmpty()) break;
-
-        QStringList attr = str.split(' ');
-
-        SV_Graph::AxisAttributes axAttr;
-        axAttr.isAuto = attr[0] == "1";
-        axAttr.min = attr[1].toDouble();
-        axAttr.max = attr[2].toDouble();
-        axAttr.step = attr[3].toDouble();
-
-        axisAttrs.push_back(axAttr);
-
-        ++axisInx;
-      }
-
-      if (!axisAttrs.empty())
-        SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
-
-      QString tmDiap = settings.value("tmDiap", "10000").toString();
-
-      auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
-      ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
-
-      SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
-
-      settings.endGroup();
-    }
-    tmWinSetts_->stop();
-  });
-  tmWinSetts_->start(cng.toutLoadWinStateSec * 1000);
-
-  if (!QFile(initPath).exists())
-    writeSettings(initPath);
-    
-  return true;
-}
-
 MainWin::MainWin(QWidget *parent)
   : QMainWindow(parent){
 
@@ -766,7 +111,8 @@ MainWin::MainWin(QWidget *parent)
   QStringList args = QApplication::arguments();
 
   cng.dirPath = QApplication::applicationDirPath();
-  cng.initPath = cng.dirPath + "/svmonitor.ini"; if (args.size() == 2) cng.initPath = args[1];
+  cng.initPath = cng.dirPath + "/svmonitor.ini"; 
+  if (args.size() == 2) cng.initPath = args[1];
 
   init(cng.initPath);
   statusMess(tr("Инициализация параметров успешно"));
@@ -789,6 +135,11 @@ MainWin::MainWin(QWidget *parent)
     srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
     srvCng.outArchiveName = cng.outArchiveName.toStdString();
     srvCng.outArchivePath = cng.outArchivePath.toStdString();
+    srvCng.outDataBaseEna = cng.outDataBaseEna;
+    srvCng.outDataBaseUserName = cng.outDataBaseUserName.toStdString();
+    srvCng.outDataBaseUserPassw = cng.outDataBaseUserPassw.toStdString();
+    srvCng.outDataBaseHost = cng.outDataBaseHost.toStdString();
+    srvCng.outDataBasePort = cng.outDataBasePort;
   }
 
   if (cng.com_ena){
@@ -865,6 +216,674 @@ MainWin::~MainWin(){
   }
 
   writeSettings(cng.initPath);
+}
+
+bool MainWin::init(QString initPath){
+
+    QString logPath = cng.dirPath + "/log/svmonitor.log";
+    lg_.setPathFile(qPrintable(logPath));
+
+    QSettings settings(initPath, QSettings::IniFormat);
+    settings.beginGroup("Param");
+
+    cng.cycleRecMs = settings.value("cycleRecMs", 100).toInt();
+    cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
+    cng.packetSz = settings.value("packetSz", 10).toInt();
+    cng.packetSz = qMax(cng.packetSz, 1);
+    cng.selOpenDir = settings.value("selOpenDir", "").toString();
+
+    QFont ft = QApplication::font();
+    int fsz = settings.value("fontSz", ft.pointSize()).toInt();
+    ft.setPointSize(fsz);
+    QApplication::setFont(ft);
+
+    // связь по usb
+    cng.com_ena = settings.value("com_ena", 0).toInt() == 1;
+    QString com_name = settings.value("com0_name", "COM4").toString();
+    QString com_speed = settings.value("com0_speed", "9600").toString();
+
+    cng.com_ports.push_back(qMakePair(com_name, com_speed));
+
+    // доп порты
+    int comCnt = 1;
+    while (true){
+
+        QString com_name = settings.value("com" + QString::number(comCnt) + "_name", "").toString();
+        QString com_speed = settings.value("com" + QString::number(comCnt) + "_speed", "").toString();
+
+        if (com_name.isEmpty() || com_speed.isEmpty())
+            break;
+
+        cng.com_ports.push_back(qMakePair(com_name, com_speed));
+        ++comCnt;
+    }
+
+    cng.dbPath = settings.value("dbPath", "").toString();
+    if (cng.dbPath.isEmpty())cng.dbPath = cng.dirPath + "/svm.db";
+
+    // связь по TCP
+    cng.tcp_addr = settings.value("tcp_addr", "127.0.0.1").toString();
+    cng.tcp_port = settings.value("tcp_port", "2144").toInt();
+
+    // web
+    cng.web_ena = settings.value("web_ena", "0").toInt() == 1;
+    cng.web_addr = settings.value("web_addr", "127.0.0.1").toString();
+    cng.web_port = settings.value("web_port", "2145").toInt();
+
+    // zabbix
+    cng.zabbix_ena = settings.value("zabbix_ena", "0").toInt() == 1;
+    cng.zabbix_addr = settings.value("zabbix_addr", "127.0.0.1").toString();
+    cng.zabbix_port = settings.value("zabbix_port", "2146").toInt();
+
+    // копир на диск
+    cng.outArchiveEna = settings.value("outArchiveEna", "1").toInt() == 1;
+    cng.outArchivePath = settings.value("outArchivePath", "").toString();
+    if (cng.outArchivePath.isEmpty()) cng.outArchivePath = cng.dirPath + "/";
+    cng.outArchivePath.replace("\\", "/");
+    cng.outArchiveName = settings.value("outFileName", "svrec").toString();;
+    cng.outArchiveHourCnt = settings.value("outFileHourCnt", 2).toInt();
+    cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
+
+    // запись в БД
+    cng.outDataBaseEna = settings.value("outDataBaseEna", "1").toInt() == 1;
+    cng.outDataBaseUserName = settings.value("outDataBaseUserName", "").toString();
+    cng.outDataBaseUserPassw = settings.value("outDataBaseUserPassw", "").toString();
+    cng.outDataBaseHost = settings.value("outDataBaseHost", "").toString();
+    cng.outDataBasePort = settings.value("outDataBasePort", 9000).toInt();
+
+    cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
+    cng.graphSett.transparent = settings.value("transparent", "100").toInt();
+    cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
+    cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
+
+    cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
+
+    settings.endGroup();
+
+    tmWinSetts_ = new QTimer(this);
+    connect(tmWinSetts_, &QTimer::timeout, [this, initPath]() {
+
+        QSettings settings(initPath, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+        auto grps = settings.childGroups();
+        for (auto& g : grps){
+
+            if (!g.startsWith("graphWin"))
+                continue;
+
+            settings.beginGroup(g);
+
+            QString locate = settings.value("locate").toString();
+            QObject* win = this;
+            if (locate != "0"){
+                auto lt = locate.split(' ');
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+            }
+
+            int sect = 0;
+            while (true){
+
+                QString str = settings.value("section" + QString::number(sect), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList signs = str.split(' ');
+                for (auto& s : signs){
+                    SV_Graph::addSignal(graphPanels_[win], s, sect);
+                }
+                ++sect;
+            }
+
+            QVector< SV_Graph::AxisAttributes> axisAttrs;
+            int axisInx = 0;
+            while (true){
+
+                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList attr = str.split(' ');
+
+                SV_Graph::AxisAttributes axAttr;
+                axAttr.isAuto = attr[0] == "1";
+                axAttr.min = attr[1].toDouble();
+                axAttr.max = attr[2].toDouble();
+                axAttr.step = attr[3].toDouble();
+
+                axisAttrs.push_back(axAttr);
+
+                ++axisInx;
+            }
+
+            if (!axisAttrs.empty())
+                SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
+
+            QString tmDiap = settings.value("tmDiap", "10000").toString();
+
+            auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
+            ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
+
+            SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
+
+            settings.endGroup();
+        }
+        tmWinSetts_->stop();
+    });
+    tmWinSetts_->start(cng.toutLoadWinStateSec * 1000);
+
+    if (!QFile(initPath).exists())
+        writeSettings(initPath);
+
+    return true;
+}
+
+void MainWin::connects(){
+
+    connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
+        auto mref = SV_Srv::getCopyModuleRef();
+
+        if (mref.find(item->text(0).toStdString()) != mref.end()){
+
+            ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
+        }
+    });
+    connect(ui.treeSignals, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem* item, int column){
+        auto mref = SV_Srv::getCopyModuleRef();
+
+        if (mref.find(item->text(0).toStdString()) != mref.end())
+            return;
+
+        auto sign = item->text(5);
+        if (column == 0){
+            if (tmWinSetts_->isActive()) tmWinSetts_->stop();
+            SV_Graph::addSignal(graphPanels_[this], sign);
+        }
+        else {
+            if (column == 2){
+
+                auto clr = QColorDialog::getColor();
+
+                item->setBackgroundColor(2, clr);
+
+                auto sd = getSignalDataSrv(sign);
+
+                if (!sd) return;
+
+                signAttr_[sign] = SignalAttr{ QString::fromStdString(sd->name),
+                    QString::fromStdString(sd->module),
+                    clr };
+                for (auto gp : graphPanels_)
+                    SV_Graph::setSignalAttr(gp, sign, SV_Graph::SignalAttributes{ clr });
+            }
+            else
+                ui.treeSignals->editItem(item, column);
+        }
+    });
+    connect(ui.treeSignals, &QTreeWidget::itemChanged, [this](QTreeWidgetItem* item, int column){
+        std::string sign = item->text(5).toStdString();
+        SV_Base::SignalData* sd = SV_Srv::getSignalData(sign);
+
+        if (!sd) return;
+
+        switch (column){
+        case 3: sd->comment = item->text(3).toStdString(); break;
+        case 4: sd->group = item->text(4).toStdString(); break;
+        }
+    });
+
+    connect(ui.actionExit, &QAction::triggered, [this]() {
+        this->close();
+    });
+    connect(ui.actionPrint, &QAction::triggered, [this]() {
+
+        QPrinter printer(QPrinter::HighResolution);
+        printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
+        printer.setFullPage(false);
+
+        QPrintDialog printDialog(&printer, this);
+        if (printDialog.exec() == QDialog::Accepted) {
+
+            QPainter painter(&printer);
+
+            double xscale = printer.pageRect().width() / double(graphPanels_[this]->width());
+            double yscale = printer.pageRect().height() / double(graphPanels_[this]->height());
+            double scale = qMin(xscale, yscale);
+            painter.translate(printer.paperRect().x(), printer.paperRect().y());
+            painter.scale(scale, scale);
+
+            graphPanels_[this]->render(&painter);
+        }
+    });
+    connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
+        if (triggerDialog_) triggerDialog_->showNormal();
+    });
+    connect(ui.actionEventOrder, &QAction::triggered, [this]() {
+        if (eventTableDialog_) eventTableDialog_->showNormal();
+    });
+    connect(ui.actionExport, &QAction::triggered, [this]() {
+        if (exportDialog_) exportDialog_->showNormal();
+    });
+    connect(ui.actionNewWin, &QAction::triggered, [this]() {
+
+        addNewWindow(QRect());
+    });
+    connect(ui.actionScript, &QAction::triggered, [this]() {
+        SV_Script::startUpdateThread(scriptDialog_);
+        scriptDialog_->showNormal();
+    });
+    connect(ui.actionSettings, &QAction::triggered, [this]() {
+        if (settingsDialog_) settingsDialog_->showNormal();
+    });
+    connect(ui.actionGraphSett, &QAction::triggered, [this]() {
+        if (graphSettDialog_) graphSettDialog_->showNormal();
+    });
+    connect(ui.actionUpFont, &QAction::triggered, [this]() {
+
+        QFont ft = QApplication::font();
+
+        ft.setPointSize(ft.pointSize() + 1);
+
+        QApplication::setFont(ft);
+    });
+    connect(ui.actionDnFont, &QAction::triggered, [this]() {
+
+        QFont ft = QApplication::font();
+
+        ft.setPointSize(ft.pointSize() - 1);
+
+        QApplication::setFont(ft);
+    });
+    connect(ui.actionCheckUpdate, &QAction::triggered, [this]() {
+
+        if (!netManager_){
+            netManager_ = new QNetworkAccessManager(this);
+            connect(netManager_, &QNetworkAccessManager::finished, [](QNetworkReply* reply){
+
+                QByteArray response_data = reply->readAll();
+                QJsonDocument jsDoc = QJsonDocument::fromJson(response_data);
+
+                if (jsDoc.isObject()){
+                    QJsonObject  jsObj = jsDoc.object();
+
+                    QMessageBox msgBox;
+                    msgBox.setTextFormat(Qt::RichText);
+                    msgBox.setStandardButtons(QMessageBox::Ok);
+
+                    QString lastVer = jsObj["tag_name"].toString();
+
+                    if (VERSION != lastVer)
+                        msgBox.setText(tr("Доступна новая версия: ") + "<a href='" + jsObj["html_url"].toString() + "'>" + lastVer + "</a>");
+                    else
+                        msgBox.setText(tr("У вас самая новая версия"));
+
+                    msgBox.exec();
+                }
+            });
+        }
+
+        QNetworkRequest request(QUrl("https://api.github.com/repos/Tyill/SVisual/releases/latest"));
+
+        netManager_->get(request);
+    });
+    connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
+
+        QString fname = QFileDialog::getSaveFileName(this,
+            tr("Сохранение состояния окон"), cng.selOpenDir,
+            "ini files (*.ini)");
+
+        if (fname.isEmpty()) return;
+        cng.selOpenDir = fname;
+
+        QFile file(fname);
+
+        QTextStream txtStream(&file);
+        txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
+
+        auto wins = graphPanels_.keys();
+
+        int cnt = 0;
+        for (auto w : wins){
+
+            file.open(QIODevice::WriteOnly);
+            txtStream << "[graphWin" << cnt << "]" << Qt::endl;
+
+            if (w == this)
+                txtStream << "locate = 0" << Qt::endl;
+            else{
+                auto geom = ((QDialog*)w)->geometry();
+                txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
+            }
+
+            auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
+            txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
+
+            QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
+            for (int i = 0; i < signs.size(); ++i){
+
+                txtStream << "section" << i << " = ";
+                for (int j = signs[i].size() - 1; j >= 0; --j)
+                    txtStream << signs[i][j] << " ";
+
+                txtStream << Qt::endl;
+            }
+
+            QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
+            for (int i = 0; i < axisAttr.size(); ++i){
+
+                txtStream << "axisAttr" << i << " = ";
+                txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
+                txtStream << axisAttr[i].min << " ";
+                txtStream << axisAttr[i].max << " ";
+                txtStream << axisAttr[i].step << " ";
+
+                txtStream << Qt::endl;
+            }
+
+            txtStream << Qt::endl;
+            ++cnt;
+        }
+
+        file.close();
+
+        statusMess(tr("Состояние успешно сохранено"));
+    });
+    connect(ui.actionLoadWinState, &QAction::triggered, [this]() {
+
+        QString fname = QFileDialog::getOpenFileName(this,
+            tr("Загрузка состояния окон"), cng.selOpenDir,
+            "ini files (*.ini)");
+
+        if (fname.isEmpty()) return;
+        cng.selOpenDir = fname;
+
+        QSettings settings(fname, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+
+        if (tmWinSetts_->isActive()) tmWinSetts_->stop();
+
+        auto grps = settings.childGroups();
+        for (auto& g : grps){
+            settings.beginGroup(g);
+
+            QString locate = settings.value("locate").toString();
+            QObject* win = this;
+            if (locate != "0"){
+
+                auto lt = locate.split(' ');
+
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+            }
+
+            int sect = 0;
+            while (true){
+
+                QString str = settings.value("section" + QString::number(sect), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList signs = str.split(' ');
+                for (auto& s : signs)
+                    SV_Graph::addSignal(graphPanels_[win], s, sect);
+
+                ++sect;
+            }
+
+
+            QVector< SV_Graph::AxisAttributes> axisAttrs;
+            int axisInx = 0;
+            while (true){
+
+                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList attr = str.split(' ');
+
+                SV_Graph::AxisAttributes axAttr;
+                axAttr.isAuto = attr[0] == "1";
+                axAttr.min = attr[1].toDouble();
+                axAttr.max = attr[2].toDouble();
+                axAttr.step = attr[3].toDouble();
+
+                axisAttrs.push_back(axAttr);
+
+                ++axisInx;
+            }
+
+            if (!axisAttrs.empty())
+                SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
+
+            QString tmDiap = settings.value("tmDiap", "10000").toString();
+
+            auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
+            ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
+
+            SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
+
+            settings.endGroup();
+        }
+
+        statusMess(tr("Состояние успешно загружено"));
+    });
+    connect(ui.actionManual, &QAction::triggered, [this]() {
+
+#ifdef SV_EN
+        QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualEN.pdf"));
+#else
+        QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualRU.pdf"));
+#endif
+    });
+    connect(ui.actionProgram, &QAction::triggered, [this]() {
+
+        QString mess = "<h2>SVMonitor </h2>"
+            "<p>Программное обеспечение предназначенное"
+            "<p>для анализа сигналов с устройст."
+            "<p>2017";
+
+        QMessageBox::about(this, tr("About SVisual"), mess);
+    });
+    connect(ui.btnSlowPlay, &QPushButton::clicked, [this]() {
+        slowMode();
+    });
+}
+
+void MainWin::load(){
+
+    ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui.treeSignals->setIconSize(QSize(40, 20));
+
+    settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
+    graphSettDialog_ = new GraphSettingDialog(cng.graphSett, this); graphSettDialog_->setWindowFlags(Qt::Window);
+
+    SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
+    SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
+    SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
+    SV_Graph::setGetSignalAttr(graphPanels_[this], [this](const QString& sname, SV_Graph::SignalAttributes& out){
+        if (signAttr_.contains(sname)){
+            out.color = signAttr_[sname].color;
+            return true;
+        }
+        return false;
+    });
+    SV_Graph::setGraphSetting(graphPanels_[this], cng.graphSett);
+
+    triggerDialog_ = SV_Trigger::getTriggerDialog(this, SV_Trigger::Config(cng.cycleRecMs, cng.packetSz));
+    triggerDialog_->setWindowFlags(Qt::Window);
+    SV_Trigger::setGetCopySignalRef(triggerDialog_, getCopySignalRefSrv);
+    SV_Trigger::setGetSignalData(triggerDialog_, getSignalDataSrv);
+    SV_Trigger::setGetCopyModuleRef(triggerDialog_, getCopyModuleRefSrv);
+    SV_Trigger::setGetModuleData(triggerDialog_, getModuleDataSrv);
+    SV_Trigger::setOnTriggerCBack(triggerDialog_, [this](const QString& name){
+        onTrigger(name);
+    });
+
+    scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
+    scriptDialog_->setWindowFlags(Qt::Window);
+    SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
+    SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
+    SV_Script::setGetSignalData(scriptDialog_, getSignalDataSrv);
+    SV_Script::setGetModuleData(scriptDialog_, getModuleDataSrv);
+    SV_Script::setAddSignal(scriptDialog_, addSignalSrv);
+    SV_Script::setAddModule(scriptDialog_, addModuleSrv);
+    SV_Script::setAddSignalsCBack(scriptDialog_, [this](){
+        QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
+    });
+    SV_Script::setUpdateSignalsCBack(scriptDialog_, [this](){
+        QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
+    });
+    SV_Script::setModuleConnectCBack(scriptDialog_, [this](const QString& module){
+        QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
+    });
+    SV_Script::setChangeSignColor(scriptDialog_, [this](const QString& module, const QString& name, const QColor& clr){
+        QMetaObject::invokeMethod(this, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
+    });
+
+    exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
+    exportDialog_->setWindowFlags(Qt::Window);
+    SV_Exp::setLoadSignalData(exportDialog_, loadSignalDataSrv);
+    SV_Exp::setGetCopySignalRef(exportDialog_, getCopySignalRefSrv);
+    SV_Exp::setGetCopyModuleRef(exportDialog_, getCopyModuleRefSrv);
+    SV_Exp::setGetSignalData(exportDialog_, getSignalDataSrv);
+
+    SV_Srv::setStatusCBack([this](const std::string& mess){
+        statusMess(mess.c_str());
+    });
+    SV_Srv::setOnUpdateSignalsCBack([this](){
+        QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
+    });
+    SV_Srv::setOnAddSignalsCBack([this](){
+        QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
+    });
+    SV_Srv::setOnModuleConnectCBack([this](const std::string& module){
+        QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+    });
+    SV_Srv::setOnModuleDisconnectCBack([this](const std::string& module){
+        QMetaObject::invokeMethod(this, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+    });
+
+    SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
+    SV_Web::setGetSignalData(getSignalDataSrv);
+    SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+
+    SV_Zbx::setGetSignalData(getSignalDataSrv);
+
+    db_ = new DbProvider(qUtf8Printable(cng.dbPath), this);
+    if (db_->isConnect()){
+        statusMess(tr("Подключение БД успешно"));
+    }
+    else{
+        statusMess(tr("Подключение БД ошибка: ") + cng.dbPath);
+        delete db_;
+        db_ = nullptr;
+    }
+    eventTableDialog_ = new EventTableDialog(db_, this);
+    eventTableDialog_->setWindowFlags(Qt::Window);
+
+    /////////////////////
+    initTrayIcon();
+
+}
+
+bool MainWin::writeSettings(QString pathIni){
+
+    QFile file(pathIni);
+
+    QTextStream txtStream(&file);
+    txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
+
+    // запись новых данных
+    file.open(QIODevice::WriteOnly);
+    txtStream << "[Param]" << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "tcp_addr = " << cng.tcp_addr << Qt::endl;
+    txtStream << "tcp_port = " << cng.tcp_port << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "web_ena = " << (cng.web_ena ? "1" : "0") << Qt::endl;
+    txtStream << "web_addr = " << cng.web_addr << Qt::endl;
+    txtStream << "web_port = " << cng.web_port << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "zabbix_ena = " << (cng.zabbix_ena ? "1" : "0") << Qt::endl;
+    txtStream << "zabbix_addr = " << cng.zabbix_addr << Qt::endl;
+    txtStream << "zabbix_port = " << cng.zabbix_port << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << Qt::endl;
+
+    for (int i = 0; i < cng.com_ports.size(); ++i){
+        txtStream << "com" << i << "_name = " << cng.com_ports[i].first << Qt::endl;
+        txtStream << "com" << i << "_speed = " << cng.com_ports[i].second << Qt::endl;
+    }
+
+    txtStream << Qt::endl;
+    txtStream << "dbPath = " << cng.dbPath << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "cycleRecMs = " << cng.cycleRecMs << Qt::endl;
+    txtStream << "packetSz = " << cng.packetSz << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "; save on disk" << Qt::endl;
+    txtStream << "outArchiveEna = " << (cng.outArchiveEna ? "1" : "0") << Qt::endl;
+    txtStream << "outArchivePath = " << cng.outArchivePath << Qt::endl;
+    txtStream << "outArchiveName = " << cng.outArchiveName << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "; save into DB" << Qt::endl;
+    txtStream << "outDataBaseEna = " << (cng.outDataBaseEna ? "1" : "0") << Qt::endl;
+    txtStream << "outDataBaseUserName = " << cng.outDataBaseUserName << Qt::endl;
+    txtStream << "outDataBaseUserPassw = " << cng.outDataBaseUserPassw << Qt::endl;
+    txtStream << "outDataBaseHost = " << cng.outDataBaseHost << Qt::endl;
+    txtStream << "outDataBasePort = " << cng.outDataBasePort << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "selOpenDir = " << cng.selOpenDir << Qt::endl;
+    txtStream << "fontSz = " << this->font().pointSize() << Qt::endl;
+    txtStream << "transparent = " << cng.graphSett.transparent << Qt::endl;
+    txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
+    txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
+    txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << Qt::endl;
+    txtStream << Qt::endl;
+
+    // состояние окон
+    auto wins = graphPanels_.keys();
+    int cnt = 0;
+    for (auto w : wins){
+
+        file.open(QIODevice::WriteOnly);
+        txtStream << "[graphWin" << cnt << "]" << Qt::endl;
+
+        if (w == this)
+            txtStream << "locate = 0" << Qt::endl;
+        else{
+            auto geom = ((QDialog*)w)->geometry();
+            txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
+        }
+
+        auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
+        txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
+
+        QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
+        for (int i = 0; i < signs.size(); ++i){
+
+            txtStream << "section" << i << " = ";
+            for (int j = signs[i].size() - 1; j >= 0; --j)
+                txtStream << signs[i][j] << " ";
+
+            txtStream << Qt::endl;
+        }
+
+        QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
+        for (int i = 0; i < axisAttr.size(); ++i){
+
+            txtStream << "axisAttr" << i << " = ";
+            txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
+            txtStream << axisAttr[i].min << " ";
+            txtStream << axisAttr[i].max << " ";
+            txtStream << axisAttr[i].step << " ";
+
+            txtStream << Qt::endl;
+        }
+
+        txtStream << Qt::endl;
+        ++cnt;
+    }
+
+    file.close();
+
+    return true;
 }
 
 void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs){

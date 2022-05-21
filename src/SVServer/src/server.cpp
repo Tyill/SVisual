@@ -107,20 +107,20 @@ namespace SV_Srv {
     };
 
     uint64_t bTm = SV_Aux::currDateTimeSinceEpochMs();
-    auto sz = bePos.size();
-    for (size_t i = 0; i < sz; ++i){
+    auto psz = bePos.size();
+    for (size_t i = 0; i < psz; ++i){
 
       stPos = bePos[i].first;
       endPos = bePos[i].second;
 
       _buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
-        bTm - (sz - i) * SV_CYCLESAVE_MS);
+          bTm - (psz - i) * SV_CYCLESAVE_MS);
     }
        
-    if (sz == 0)  // запрос json?
-      jsonRequestData(inout, out);
-    else
+    if (psz > 0)  
       inout = std::string(inout.data() + endPos + 5);
+    else
+      jsonRequestData(inout, out);
   }
 
   void setOnUpdateSignalsCBack(onUpdateSignalsCBack cback){
@@ -192,6 +192,10 @@ namespace SV_Srv {
     string sign = sd->name + sd->module;
     if (_signalData.find(sign) == _signalData.end()) {
       _signalData[sign] = sd;
+      if (!_moduleData.count(sd->module)){
+          _moduleData[sd->module] = new SV_Base::ModuleData(sd->module);
+          _moduleData[sd->module]->isEnable = true;
+      }
       _moduleData[sd->module]->signls.push_back(sign);
       ok = true;
     }
@@ -199,7 +203,9 @@ namespace SV_Srv {
   }
 
   bool addModule(SV_Base::ModuleData* md){
-       
+
+    if (!md) return false;
+
     std::lock_guard<std::mutex> lck(_mtx);
 
     bool ok = false;
