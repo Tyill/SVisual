@@ -90,16 +90,15 @@ const QString VERSION = "1.2.0";
 // -save win state
 // -small fix's
 
-MainWin* mainWin = nullptr;
 
 using namespace SV_Base;
 
-void statusMess(const QString& mess){
+void MainWin::statusMess(const QString& mess){
 
-  QMetaObject::invokeMethod(mainWin->ui.txtStatusMess, "append", Qt::AutoConnection,
+  QMetaObject::invokeMethod(ui.txtStatusMess, "append", Qt::AutoConnection,
     Q_ARG(QString, QString::fromStdString(SV_Aux::currDateTime()) + " " + mess));
 
-  mainWin->lg.writeLine(qPrintable(mess));
+  lg_.writeLine(qPrintable(mess));
 }
 
 void MainWin::load(){
@@ -113,10 +112,9 @@ void MainWin::load(){
   SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
   SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
   SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
-  SV_Graph::setGetSignalAttr(graphPanels_[this], [](const QString& sname, SV_Graph::SignalAttributes& out){
-
-    if (mainWin->signAttr_.contains(sname)){
-      out.color = mainWin->signAttr_[sname].color;
+  SV_Graph::setGetSignalAttr(graphPanels_[this], [this](const QString& sname, SV_Graph::SignalAttributes& out){
+    if (signAttr_.contains(sname)){
+      out.color = signAttr_[sname].color;
       return true;
     }
     return false;
@@ -129,8 +127,8 @@ void MainWin::load(){
   SV_Trigger::setGetSignalData(triggerDialog_, getSignalDataSrv);
   SV_Trigger::setGetCopyModuleRef(triggerDialog_, getCopyModuleRefSrv);
   SV_Trigger::setGetModuleData(triggerDialog_, getModuleDataSrv);
-  SV_Trigger::setOnTriggerCBack(triggerDialog_, [](const QString& name){
-    mainWin->onTrigger(name);
+  SV_Trigger::setOnTriggerCBack(triggerDialog_, [this](const QString& name){
+    onTrigger(name);
   });
 
   scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
@@ -141,17 +139,17 @@ void MainWin::load(){
   SV_Script::setGetModuleData(scriptDialog_, getModuleDataSrv);
   SV_Script::setAddSignal(scriptDialog_, addSignalSrv);
   SV_Script::setAddModule(scriptDialog_, addModuleSrv);
-  SV_Script::setAddSignalsCBack(scriptDialog_, [](){
-    QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+  SV_Script::setAddSignalsCBack(scriptDialog_, [this](){
+    QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
   });
-  SV_Script::setUpdateSignalsCBack(scriptDialog_, [](){
-    QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+  SV_Script::setUpdateSignalsCBack(scriptDialog_, [this](){
+    QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
   });
-  SV_Script::setModuleConnectCBack(scriptDialog_, [](const QString& module){
-    QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
+  SV_Script::setModuleConnectCBack(scriptDialog_, [this](const QString& module){
+    QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
   });
-  SV_Script::setChangeSignColor(scriptDialog_, [](const QString& module, const QString& name, const QColor& clr){
-    QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
+  SV_Script::setChangeSignColor(scriptDialog_, [this](const QString& module, const QString& name, const QColor& clr){
+    QMetaObject::invokeMethod(this, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
   });
 
   exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
@@ -161,20 +159,20 @@ void MainWin::load(){
   SV_Exp::setGetCopyModuleRef(exportDialog_, getCopyModuleRefSrv);
   SV_Exp::setGetSignalData(exportDialog_, getSignalDataSrv);
 
-  SV_Srv::setStatusCBack([](const std::string& mess){
+  SV_Srv::setStatusCBack([this](const std::string& mess){
     statusMess(mess.c_str());
   });
-  SV_Srv::setOnUpdateSignalsCBack([](){
-    QMetaObject::invokeMethod(mainWin, "updateSignals", Qt::AutoConnection);
+  SV_Srv::setOnUpdateSignalsCBack([this](){
+    QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
   });
-  SV_Srv::setOnAddSignalsCBack([](){
-    QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
+  SV_Srv::setOnAddSignalsCBack([this](){
+    QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
   });
-  SV_Srv::setOnModuleConnectCBack([](const std::string& module){
-    QMetaObject::invokeMethod(mainWin, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+  SV_Srv::setOnModuleConnectCBack([this](const std::string& module){
+    QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
   });
-  SV_Srv::setOnModuleDisconnectCBack([](const std::string& module){
-    QMetaObject::invokeMethod(mainWin, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
+  SV_Srv::setOnModuleDisconnectCBack([this](const std::string& module){
+    QMetaObject::invokeMethod(this, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
   });
 
   SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
@@ -183,7 +181,7 @@ void MainWin::load(){
 
   SV_Zbx::setGetSignalData(getSignalDataSrv);
 
-  db_ = new DbProvider(qUtf8Printable(cng.dbPath));
+  db_ = new DbProvider(qUtf8Printable(cng.dbPath), this);
   if (db_->isConnect()){
     statusMess(tr("Подключение БД успешно"));
   }
@@ -611,7 +609,7 @@ bool MainWin::writeSettings(QString pathIni){
 bool MainWin::init(QString initPath){
     
   QString logPath = cng.dirPath + "/log/svmonitor.log";
-  lg.setPathFile(qPrintable(logPath));
+  lg_.setPathFile(qPrintable(logPath));
 
   QSettings settings(initPath, QSettings::IniFormat);
   settings.beginGroup("Param");
@@ -762,8 +760,6 @@ MainWin::MainWin(QWidget *parent)
   : QMainWindow(parent){
 
   ui.setupUi(this);
-
-  mainWin = this;
 
   this->setWindowTitle(QString("SVMonitor ") + VERSION);
 
@@ -1307,10 +1303,9 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
   });
   SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
   SV_Graph::setGetSignalData(gp, getSignalDataSrv);
-  SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::SignalAttributes& out){
-
-    if (mainWin->signAttr_.contains(sname)){
-      out.color = mainWin->signAttr_[sname].color;
+  SV_Graph::setGetSignalAttr(gp, [this](const QString& sname, SV_Graph::SignalAttributes& out){
+    if (signAttr_.contains(sname)){
+      out.color = signAttr_[sname].color;
       return true;
     }
     return false;
@@ -1331,7 +1326,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
 }
 
 void MainWin::changeSignColor(QString module, QString name, QColor clr){
-  for (auto gp : mainWin->graphPanels_){
+  for (auto gp : graphPanels_){
     SV_Graph::setSignalAttr(gp, name + module, SV_Graph::SignalAttributes{ clr });
   }
 }

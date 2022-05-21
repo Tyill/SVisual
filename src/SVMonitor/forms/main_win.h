@@ -43,9 +43,7 @@ class SerialPortReader;
 class MainWin : public QMainWindow
 {
   Q_OBJECT
-
-    friend void statusMess(const QString& mess);
-
+    
 public:
 
   struct Config{
@@ -85,11 +83,11 @@ public:
 
     SV_Graph::GraphSetting graphSett;
   };
-
-  SV_Aux::Logger lg;
-
+ 
   MainWin(QWidget *parent = 0);
   ~MainWin();
+
+  void statusMess(const QString& mess);
 
   void updateConfig(const Config&);
   Config getConfig();
@@ -104,6 +102,8 @@ private:
   QVector<SerialPortReader*> comReaders_;
 
   Config cng;
+
+  SV_Aux::Logger lg_;
 
   QMap<QObject*, QWidget*> graphPanels_;
   QDialog* exportDialog_ = nullptr;

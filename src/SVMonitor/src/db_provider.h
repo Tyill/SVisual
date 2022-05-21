@@ -30,13 +30,14 @@
 
 class sqlite3;
 class QDateTime;
+class MainWin;
 
 class DbProvider
 {
 
 public:
 
-  DbProvider(const QString& path);
+  DbProvider(const QString& path, MainWin* mainWin);
 
   ~DbProvider();
 
@@ -64,6 +65,8 @@ private:
   bool isConnect_ = false;
 
   QString pathDB_;
+
+  MainWin* mainWin_ = nullptr;
 
   QMutex mtx_;
 
