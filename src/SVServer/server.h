@@ -38,6 +38,12 @@ namespace SV_Srv {
     std::string outArchiveName;  ///< запись архива имя файла
     int outArchiveHourCnt;       ///< запись архива размер файла, час
                                  
+    bool outClickHouseEna;          ///< запись в БД активна
+    std::string outCHouseUserName;  
+    std::string outCHouseUserPassw; 
+    std::string outCHouseHost;
+    int outCHousePort;
+
     int cycleRecMs;              ///< период записи - задает пользователь
     int packetSz;                ///< размер пакета - задает пользователь
 
@@ -46,6 +52,7 @@ namespace SV_Srv {
       outArchivePath(""),
       outArchiveName("svrec"),
       outArchiveHourCnt(2),
+      outClickHouseEna(false),
       cycleRecMs(100),
       packetSz(10) {}
   };
