@@ -32,8 +32,8 @@
 #include "SVStatDialog/stat_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "SVExportDialog/export_dialog.h" 
-#include "SVConfig/config_limits.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/limits.h"
+#include "SVBase/base.h"
 #include "load_data.h"
 
 #include <QColorDialog>
@@ -151,20 +151,20 @@ bool MainWin::writeSettings(QString pathIni) {
   QTextStream txtStream(&file);  QStringList sList;
 
   file.open(QIODevice::WriteOnly);
-  txtStream << "[Param]" << endl;
-  txtStream << endl;
-  txtStream << "selOpenDir = " << cng.selOpenDir << endl;
-  txtStream << endl;
-  txtStream << "cycleRecMs = " << cng.cycleRecMs << endl;
-  txtStream << "packetSz = " << cng.packetSz << endl;
-  txtStream << endl;
-  txtStream << "sortByMod = " << (cng.sortByMod ? 1 : 0) << endl;
-  txtStream << "fontSz = " << this->font().pointSize() << endl;
-  txtStream << "transparent = " << cng.graphSett.transparent << endl;
-  txtStream << "lineWidth = " << cng.graphSett.lineWidth << endl;
-  txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << endl;
-  txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << endl;
-  txtStream << endl;
+  txtStream << "[Param]" << Qt::endl;
+  txtStream << Qt::endl;
+  txtStream << "selOpenDir = " << cng.selOpenDir << Qt::endl;
+  txtStream << Qt::endl;
+  txtStream << "cycleRecMs = " << cng.cycleRecMs << Qt::endl;
+  txtStream << "packetSz = " << cng.packetSz << Qt::endl;
+  txtStream << Qt::endl;
+  txtStream << "sortByMod = " << (cng.sortByMod ? 1 : 0) << Qt::endl;
+  txtStream << "fontSz = " << this->font().pointSize() << Qt::endl;
+  txtStream << "transparent = " << cng.graphSett.transparent << Qt::endl;
+  txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
+  txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
+  txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
+  txtStream << Qt::endl;
   file.close();
 
   return true;
@@ -255,9 +255,9 @@ bool MainWin::writeSignals(QString path) {
 
       QString sign = QString::fromStdString(s->name + s->module);
       if (signAttr_.contains(sign))
-        txtStream << '\t' << signAttr_[sign].color.name(QColor::HexArgb).toUtf8().data() << endl;
+        txtStream << '\t' << signAttr_[sign].color.name(QColor::HexArgb).toUtf8().data() << Qt::endl;
       else
-        txtStream << endl;
+        txtStream << Qt::endl;
     }
 
     file.close();
@@ -514,13 +514,13 @@ void MainWin::Connect() {
     for (auto w : wins) {
 
       file.open(QIODevice::WriteOnly);
-      txtStream << "[graphWin" << cnt << "]" << endl;
+      txtStream << "[graphWin" << cnt << "]" << Qt::endl;
 
       if (w == this)
-        txtStream << "locate = 0" << endl;
+        txtStream << "locate = 0" << Qt::endl;
       else {
         auto geom = ((QDialog*)w)->geometry();
-        txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << endl;
+        txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
       }
 
       QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
@@ -530,7 +530,7 @@ void MainWin::Connect() {
         for (int j = signs[i].size() - 1; j >= 0; --j)
           txtStream << signs[i][j] << " ";
 
-        txtStream << endl;
+        txtStream << Qt::endl;
       }
 
       QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
@@ -542,10 +542,10 @@ void MainWin::Connect() {
         txtStream << axisAttr[i].max << " ";
         txtStream << axisAttr[i].step << " ";
 
-        txtStream << endl;
+        txtStream << Qt::endl;
       }
 
-      txtStream << endl;
+      txtStream << Qt::endl;
       ++cnt;
     }
 
