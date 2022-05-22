@@ -58,9 +58,9 @@ public:
     int outArchiveHourCnt;     ///< запись архива размер файла, час
 
     bool outDataBaseEna;       ///< запись в БД активна
-    std::string outDataBaseUserName;
-    std::string outDataBaseUserPassw;
-    std::string outDataBaseHost;
+    QString outDataBaseUserName;
+    QString outDataBaseUserPassw;
+    QString outDataBaseHost;
     int outDataBasePort;
 
     int cycleRecMs;            ///< период записи - задает пользователь
