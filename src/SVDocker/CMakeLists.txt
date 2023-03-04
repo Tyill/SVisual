@@ -10,12 +10,14 @@ if (UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif(UNIX)
 
+find_package(Qt5 COMPONENTS Network REQUIRED)
+
 add_executable(SVDocker ${SRC_SVDock})
 
 if(MSVC) 
    set_target_properties (SVDocker PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT") 
 endif(MSVC)
 
-target_link_libraries(SVDocker SVBase SVAuxFunc SVServer SVWebServer)
+target_link_libraries(SVDocker SVBase SVMisc SVServer SVWebServer)
 
-qt5_use_modules(SVDocker Core)
+target_link_libraries(SVDocker Qt5::Core)

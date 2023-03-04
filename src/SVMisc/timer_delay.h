@@ -26,9 +26,9 @@
 
 #include <vector>
 #include <ctime>
-#include "aux_func.h"
+#include "misc.h"
 
-namespace SV_Aux {
+namespace SV_Misc {
 
   /// Таймер задержки однопоточный
   class TimerDelay {

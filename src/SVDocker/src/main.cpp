@@ -22,8 +22,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "SVAuxFunc/aux_func.h"
-#include "SVAuxFunc/tcp_server.h"
+#include "SVMisc/misc.h"
+#include "SVMisc/tcp_server.h"
 #include "SVServer/server.h"
 #include "SVWebServer/web_server.h"
 #include "SVBase/limits.h"
@@ -115,8 +115,8 @@ int main(int argc, char* argv[]){
 
     QCoreApplication a(argc, argv);
 
-    SV_Aux::TCPServer::setErrorCBack(statusMess);
-    SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
+    SV_Misc::TCPServer::setErrorCBack(statusMess);
+    SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
 
   SV_Srv::setStatusCBack(statusMess);
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]){
   scng.outArchiveName = cng.outArchiveName;
   scng.outArchivePath = cng.outArchivePath;
     
-    if (SV_Srv::startServer(scng) && SV_Aux::TCPServer::start("0.0.0.0", cng.tcp_port)){
+    if (SV_Srv::startServer(scng) && SV_Misc::TCPServer::start("0.0.0.0", cng.tcp_port)){
     statusMess("TCP server run port: " + std::to_string(cng.tcp_port));
   }
   else{

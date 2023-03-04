@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 
 include(../cmake/qt.cmake)
 
+find_package(Qt5 COMPONENTS Core Widgets Gui Network SerialPort PrintSupport REQUIRED)
+
 project(SVMonitor)
 
 FILE(GLOB_RECURSE SRC_Mon "*.cpp" "*.h" "*.ui" "*.qrc" ".rc")
@@ -18,7 +20,7 @@ if(MSVC)
   target_link_libraries (SVMonitor optimized qtmain)
 endif(MSVC)
 
-target_link_libraries(SVMonitor sqlite3 SVBase SVAuxFunc SVGraphPanel SVTriggerDialog
+target_link_libraries(SVMonitor sqlite3 SVBase SVMisc SVGraphPanel SVTriggerDialog
                       SVExportDialog SVScriptDialog SVServer SVWebServer SVZabbix)
 
-qt5_use_modules(SVMonitor Core Widgets Network Gui SerialPort PrintSupport)
+target_link_libraries(SVMonitor Qt5::Core Qt5::Widgets Qt5::Network Qt5::Gui Qt5::SerialPort Qt5::PrintSupport)

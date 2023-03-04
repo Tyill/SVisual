@@ -23,36 +23,30 @@
 // THE SOFTWARE.
 //
 #pragma once
-        
+
 #include <string>
-#include <vector>
-#include <cstdint>
 
-namespace SV_Aux {
+namespace SV_Misc{
+namespace TCPClient{
 
-    // тек дата %Y%m%d
-    std::string currDateS();
+/// клиент TCP подключение
+/// \param addr IP адресс
+/// \param port порт
+/// \param noBlock Не ждать ответа
+/// \return true - ok
+bool connect(const std::string& addr, int port, bool noBlock = false);
 
-    // тек дата-время %Y%m%d_%H%M
-    std::string currDateTimeEx();
+/// клиент TCP отключение
+/// \return true - ok
+bool disconnect();
 
-    // тек дата-время %Y-%m-%d %H:%M:%S
-    std::string currDateTime();
-
-    // тек дата-время %Y-%m-%d %H:%M:%S:%MS
-    std::string currDateTimeMs();
-
-    // тек дата-время %Y-%m-%d %H:%M:%S
-    std::string currDateTimeSQL();
-
-    uint64_t currDateTimeSinceEpochMs();
-
-    int hourOffsFromUTC();
-
-    std::vector<std::string> split(std::string str, const char *sep);
-
-    // автосоздание субдиректорий
-    bool createSubDirectory(std::string strDirs);
-
-    void sleepMs(uint64_t ms);      
+/// клиент Отправить данные
+/// \param in данные
+/// \param out ответ
+/// \param disconn отключать после отправки
+/// \param onlySend только отправка
+/// \return true - ok
+bool sendData(const std::string& in, std::string &out, bool disconn = false, bool onlySend = false);
 }
+}
+

@@ -29,7 +29,7 @@
 #include "SVMonitor/forms/subscript_dialog.h"
 #include "SVMonitor/forms/graph_setting_dialog.h"
 #include "SVMonitor/src/db_provider.h"
-#include "SVAuxFunc/tcp_server.h"
+#include "SVMisc/tcp_server.h"
 #include "SVExportDialog/export_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
 #include "SVServer/server.h"
@@ -96,7 +96,7 @@ using namespace SV_Base;
 void MainWin::statusMess(const QString& mess){
 
   QMetaObject::invokeMethod(ui.txtStatusMess, "append", Qt::AutoConnection,
-    Q_ARG(QString, QString::fromStdString(SV_Aux::currDateTime()) + " " + mess));
+    Q_ARG(QString, QString::fromStdString(SV_Misc::currDateTime()) + " " + mess));
 
   lg_.writeLine(qPrintable(mess));
 }
@@ -159,10 +159,10 @@ MainWin::MainWin(QWidget *parent)
       comReaders_.push_back(comReader);
     }
   }else{
-    if (SV_Aux::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
+    if (SV_Misc::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
       statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
       SV_Srv::startServer(srvCng);
-      SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
+      SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
     }
     else
       statusMess(QString(tr("Не удалось запустить TCP сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
@@ -195,7 +195,7 @@ MainWin::~MainWin(){
       if (comReader) comReader->stop();
     }
   }else{    
-    SV_Aux::TCPServer::stop();
+    SV_Misc::TCPServer::stop();
   }
 
   if (cng.web_ena)

@@ -23,12 +23,12 @@
 // THE SOFTWARE.
 //
 
-#include "SVAuxFunc/aux_func.h"
-#include "SVAuxFunc/tcp_client.h"
+#include "SVMisc/misc.h"
+#include "SVMisc/tcp_client.h"
 
 #include <cstring>
 
-namespace SV_Aux{
+namespace SV_Misc{
   namespace TCPClient {
 
 #ifdef WIN32
@@ -131,7 +131,7 @@ bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySe
         if (recvbuf[rlen - 1] == '\0') break;
       }
       else if (WSAGetLastError() == WSAEWOULDBLOCK) {
-        SV_Aux::sleepMs(0);
+        SV_Misc::sleepMs(0);
       }
       else break;
     }
@@ -222,7 +222,7 @@ bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySe
         if (recvbuf[rlen - 1] == '\0') break;
       } 
       else if (rlen == -1) {
-        SV_Aux::sleepMs(0);
+        SV_Misc::sleepMs(0);
       } 
       else break;
     }

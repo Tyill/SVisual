@@ -29,9 +29,9 @@
 #include "SVBase/limits.h"
 #include "Lua/lua.hpp"
 #include "LuaBridge/LuaBridge.h"
-#include "SVAuxFunc/timer_delay.h"
-#include "SVAuxFunc/front.h"
-#include "SVAuxFunc/aux_func.h"
+#include "SVMisc/timer_delay.h"
+#include "SVMisc/front.h"
+#include "SVMisc/misc.h"
 
 #include <QtGui>
 #include <QMessageBox>
@@ -45,14 +45,14 @@ extern ScriptDialog* scrDialogRef;
 void printMess(const std::string& mess) {
 
   if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0)) {
-    QString qmess = QString::fromStdString(SV_Aux::currDateTime()) + " " + mess.c_str();
+    QString qmess = QString::fromStdString(SV_Misc::currDateTime()) + " " + mess.c_str();
     QMetaObject::invokeMethod(scrDialogRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
   }
 }
 
 uint64_t getCTimeMS() {
 
-  return SV_Aux::currDateTimeSinceEpochMs();
+  return SV_Misc::currDateTimeSinceEpochMs();
 }
 
 void changeSignColor(const std::string& module, const std::string& signal, const std::string& color) {
@@ -304,7 +304,7 @@ bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, 
     sd->type = stype;
 
     sd->lastData.vals = new SV_Base::Value[SV_PACKETSZ];
-    sd->lastData.beginTime = SV_Aux::currDateTimeSinceEpochMs();
+    sd->lastData.beginTime = SV_Misc::currDateTimeSinceEpochMs();
     memset(sd->lastData.vals, 0, sizeof(SV_Base::Value) * SV_PACKETSZ);
 
     sd->buffMinTime = sd->lastData.beginTime - 5000;
@@ -804,7 +804,7 @@ void ScriptDialog::nameScriptChange(int row, int col) {
 
     }) != scrState_.end())
     {
-      ui.txtStatusMess->append(QString::fromStdString(SV_Aux::currDateTime()) + " " + tr("Скрипт с таким именем уже существует"));
+      ui.txtStatusMess->append(QString::fromStdString(SV_Misc::currDateTime()) + " " + tr("Скрипт с таким именем уже существует"));
 
       ui.tblScripts->item(row, 0)->setText(scrState_[row].name);
       return;
@@ -890,8 +890,8 @@ void ScriptDialog::workCycle() {
 
   QString path = QApplication::applicationDirPath() + "/scripts/";
 
-  SV_Aux::Front fp;
-  SV_Aux::TimerDelay tmDelay;
+  SV_Misc::Front fp;
+  SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
   while (!isStopWork_) {
@@ -996,12 +996,12 @@ void ScriptDialog::workCycle() {
       pfUpdateSignalsCBack();
 
     if (!serr.isEmpty()) {
-      QString qmess = QString::fromStdString(SV_Aux::currDateTime()) + " " + serr;
+      QString qmess = QString::fromStdString(SV_Misc::currDateTime()) + " " + serr;
       QMetaObject::invokeMethod(scrDialogRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
     }
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
     if (ms > 0)
-      SV_Aux::sleepMs(ms);
+      SV_Misc::sleepMs(ms);
   }
 }

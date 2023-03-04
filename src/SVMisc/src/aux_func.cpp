@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "SVAuxFunc/aux_func.h"
+#include "SVMisc/misc.h"
 #include <fstream>
 #include <ctime>
 #include <thread>
@@ -38,7 +38,7 @@
 
 using namespace std;
 
-namespace SV_Aux {
+namespace SV_Misc {
 
   // тек дата %Y%m%d
   string currDateS() {

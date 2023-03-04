@@ -26,9 +26,9 @@
 #include "SVClient/SVClient.h"
 #include "SVBase/limits.h"
 #include "SVBase/base.h"
-#include "SVAuxFunc/tcp_client.h"
-#include "SVAuxFunc/aux_func.h"
-#include "SVAuxFunc/spin_lock.h"
+#include "SVMisc/tcp_client.h"
+#include "SVMisc/misc.h"
+#include "SVMisc/spin_lock.h"
 
 #include <string>
 #include <mutex>
@@ -57,7 +57,7 @@ volatile bool _isConnect = false,
               _thrStop = false;
 
 std::thread _thr;
-SV_Aux::SpinLock _spinLock;
+SV_Misc::SpinLock _spinLock;
 
 std::map<std::string, ValueRec> _values;
 
@@ -84,7 +84,7 @@ namespace SV {
       _addrServ = ipAddr;
       _portServ = port;
 
-      _isConnect = SV_Aux::TCPClient::connect(ipAddr, port);
+      _isConnect = SV_Misc::TCPClient::connect(ipAddr, port);
 
       if (_isConnect) {
         _thr = std::thread(sendCycle);
@@ -96,7 +96,7 @@ namespace SV {
     void svDisconnect() {
           
       if (_isConnect)
-        SV_Aux::TCPClient::disconnect();
+        SV_Misc::TCPClient::disconnect();
 
       _thrStop = true;
       if (_thr.joinable()) _thr.join();
@@ -127,7 +127,7 @@ namespace SV {
 
     bool svSetParam(int cycleRecMs, int packetSz) {
             
-        SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::WRITE);
+        SV_Misc::Locker lock(_spinLock, SV_Misc::SpinLock::WRITE);
 
         cng = Config(cycleRecMs, packetSz);
 
@@ -151,11 +151,11 @@ namespace SV {
         vr.type = type;
         vr.isOnlyFront = onlyPosFront;
         vr.isActive = false;
-        { SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::WRITE);
+        { SV_Misc::Locker lock(_spinLock, SV_Misc::SpinLock::WRITE);
             _values.insert({ name, vr });
         }
       }
-      { SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::READ);
+      { SV_Misc::Locker lock(_spinLock, SV_Misc::SpinLock::READ);
           ValueRec& vr = _values[name];
           vr.vals[_curCycle] = val;
           vr.isActive = true;
@@ -194,12 +194,12 @@ namespace SV {
       memcpy(dptr + offs, "=end=", endSz);
 
       std::string out;
-      return SV_Aux::TCPClient::sendData(data, out, false, true);
+      return SV_Misc::TCPClient::sendData(data, out, false, true);
     }
 
     void sendCycle() {
 
-      uint64_t cTm = SV_Aux::currDateTimeSinceEpochMs(),
+      uint64_t cTm = SV_Misc::currDateTimeSinceEpochMs(),
                prevTm = cTm;
 
       int tmDiff = SV_CYCLEREC_MS,
@@ -208,13 +208,13 @@ namespace SV {
       while (!_thrStop) {
 
         if (!_isConnect)
-          _isConnect = SV_Aux::TCPClient::connect(_addrServ, _portServ);
+          _isConnect = SV_Misc::TCPClient::connect(_addrServ, _portServ);
 
-        cTm = SV_Aux::currDateTimeSinceEpochMs();
+        cTm = SV_Misc::currDateTimeSinceEpochMs();
         tmDiff = int(cTm - prevTm) - cDelay;
         prevTm = cTm;
                
-        { SV_Aux::Locker lock(_spinLock, SV_Aux::SpinLock::WRITE);
+        { SV_Misc::Locker lock(_spinLock, SV_Misc::SpinLock::WRITE);
            
             int prevCyc = _curCycle - 1;
             if (prevCyc < 0)
@@ -241,7 +241,7 @@ namespace SV {
           
         cDelay = (SV_CYCLEREC_MS - tmDiff) > 0 ? (SV_CYCLEREC_MS - tmDiff) : 0;
         if (cDelay > 0) {            
-            SV_Aux::sleepMs(cDelay);
+            SV_Misc::sleepMs(cDelay);
         }
       }
     }

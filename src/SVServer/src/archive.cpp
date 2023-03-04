@@ -28,7 +28,7 @@
 #include <cstring>
 
 #include "archive.h"
-#include "SVAuxFunc/aux_func.h"
+#include "SVMisc/misc.h"
 #include "SVBase/limits.h"
 #include "Lib/zlib/zlib.h"
 
@@ -39,8 +39,8 @@ extern SV_Srv::statusCBack pfStatusCBack;
 void Archive::init(const SV_Srv::Config& cng_) {
 
   cng = cng_;
-  _copyStartTime = SV_Aux::currDateTimeEx();
-  _copyDateMem = SV_Aux::currDateS();
+  _copyStartTime = SV_Misc::currDateTimeEx();
+  _copyDateMem = SV_Misc::currDateS();
   _copySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
 }
 
@@ -188,17 +188,17 @@ bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz
 
 string Archive::getOutPath(bool isStop) {
 
-  string cDate = SV_Aux::currDateS();
+  string cDate = SV_Misc::currDateS();
   if (cDate != _copyDateMem) {
     cDate = _copyDateMem;
-    _copyDateMem = SV_Aux::currDateS();
+    _copyDateMem = SV_Misc::currDateS();
   }
 
   string path = cng.outArchivePath + cDate + "/";
 
-  SV_Aux::createSubDirectory(path);
+  SV_Misc::createSubDirectory(path);
 
-  int utcOffs = SV_Aux::hourOffsFromUTC();
+  int utcOffs = SV_Misc::hourOffsFromUTC();
 
   string fName = cng.outArchiveName + "_temp" + "UTC" + to_string(utcOffs) + ".dat";
 
@@ -208,7 +208,7 @@ string Archive::getOutPath(bool isStop) {
     fName = cng.outArchiveName + "_" + _copyStartTime + "UTC" + to_string(utcOffs) + ".dat";
     rename(templ.c_str(), (path + fName).c_str());
 
-    _copyStartTime = SV_Aux::currDateTimeEx().c_str();
+    _copyStartTime = SV_Misc::currDateTimeEx().c_str();
   }
 
   return path + fName;

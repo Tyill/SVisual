@@ -25,7 +25,7 @@
 
 #include "buffer_data.h"
 #include "thread_update.h"
-#include "SVAuxFunc/aux_func.h"
+#include "SVMisc/misc.h"
 
 #include "Lib/rapidjson/document.h"
 #include "Lib/rapidjson/stringbuffer.h"
@@ -106,7 +106,7 @@ namespace SV_Srv {
       }
     };
 
-    uint64_t bTm = SV_Aux::currDateTimeSinceEpochMs();
+    uint64_t bTm = SV_Misc::currDateTimeSinceEpochMs();
     auto psz = bePos.size();
     for (size_t i = 0; i < psz; ++i){
 

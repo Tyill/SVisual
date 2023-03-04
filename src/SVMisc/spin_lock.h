@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-namespace SV_Aux {
+namespace SV_Misc {
 
 class SpinLock{
 public:

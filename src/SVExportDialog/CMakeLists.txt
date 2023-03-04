@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 
 include(../cmake/qt.cmake)
 
+find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
+
 project(SVExportDialog)
 
 FILE(GLOB_RECURSE SRC_ExPn "*.cpp" "*.h" "*.ui" "*.qrc")
@@ -15,4 +17,4 @@ endif()
 
 target_link_libraries(SVExportDialog SVBase)
 
-qt5_use_modules(SVExportDialog Core Widgets Gui )
+target_link_libraries(SVExportDialog Qt5::Core Qt5::Widgets Qt5::Gui )

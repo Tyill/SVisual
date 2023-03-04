@@ -611,8 +611,8 @@ void TriggerDialog::workCycle(){
   QMap<QString, int> trgId; int cid = 0;
   QMap<QString, SignalData*> sdata;
 
-  SV_Aux::TimerDelay tmDelay;
-  SV_Aux::Front front;
+  SV_Misc::TimerDelay tmDelay;
+  SV_Misc::Front front;
 
   while (!thrStop_){
 
@@ -641,7 +641,7 @@ void TriggerDialog::workCycle(){
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
     if (ms > 0)
-      SV_Aux::sleepMs(ms);
+      SV_Misc::sleepMs(ms);
   }
 }
 

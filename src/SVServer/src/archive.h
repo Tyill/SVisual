@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "SVAuxFunc/front.h"
+#include "SVMisc/front.h"
 #include "SVServer/server.h"
 
 #include <map>
@@ -57,7 +57,7 @@ private:
   size_t _copySz = 0;
   std::map<std::string, uint32_t> _valPos;
 
-  SV_Aux::Front _front;
+  SV_Misc::Front _front;
 
   std::map<std::string, std::vector<SV_Base::RecData>> _archiveData;
 

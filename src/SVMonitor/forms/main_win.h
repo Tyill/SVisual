@@ -25,7 +25,7 @@
 #pragma once
 
 #include "GeneratedFiles/ui_main_win.h"
-#include "SVAuxFunc/logger.h"
+#include "SVMisc/logger.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVMonitor/src/structurs.h"
 
@@ -109,7 +109,7 @@ private:
 
   Config cng;
 
-  SV_Aux::Logger lg_;
+  SV_Misc::Logger lg_;
 
   QMap<QObject*, QWidget*> graphPanels_;
   QDialog* exportDialog_ = nullptr;

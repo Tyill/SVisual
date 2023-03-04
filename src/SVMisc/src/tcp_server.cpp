@@ -29,13 +29,13 @@
 #include <cstring>
 
 #include "Lib/libuv/uv.h"
-#include "SVAuxFunc/tcp_server.h"
+#include "SVMisc/tcp_server.h"
 
 #ifdef __linux__
   #define ULONG size_t 
 #endif
 
-namespace SV_Aux {
+namespace SV_Misc {
   namespace TCPServer {
      
     struct Server_m {

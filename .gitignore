@@ -6,9 +6,9 @@ src/Builds/
 src/CMakeCache.txt
 src/CMakeFiles/
 src/Makefile
-src/SVAuxFunc/CMakeFiles/
-src/SVAuxFunc/Makefile
-src/SVAuxFunc/cmake_install.cmake
+src/SVMisc/CMakeFiles/
+src/SVMisc/Makefile
+src/SVMisc/cmake_install.cmake
 src/SVClient/CMakeFiles/
 src/SVClient/Makefile
 src/SVClient/cmake_install.cmake

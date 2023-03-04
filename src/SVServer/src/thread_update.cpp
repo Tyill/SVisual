@@ -24,8 +24,8 @@
 //
 
 #include "SVServer/server.h"
-#include "SVAuxFunc/timer_delay.h"
-#include "SVAuxFunc/aux_func.h"
+#include "SVMisc/timer_delay.h"
+#include "SVMisc/misc.h"
 #include "thread_update.h"
 #include "buffer_data.h"
 #include "archive.h"
@@ -34,7 +34,7 @@
 #include <cstring>
 
 using namespace SV_Base;
-using namespace SV_Aux;
+using namespace SV_Misc;
 using namespace std;
 
 extern SV_Srv::onModuleConnectCBack pfModuleConnectCBack;
@@ -76,7 +76,7 @@ void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp
   sd->type = bp.type;
 
   sd->lastData.vals = new SV_Base::Value[cng.packetSz];
-  sd->lastData.beginTime = SV_Aux::currDateTimeSinceEpochMs();
+  sd->lastData.beginTime = SV_Misc::currDateTimeSinceEpochMs();
   memset(sd->lastData.vals, 0, sizeof(SV_Base::Value) * cng.packetSz);
 
   sd->buffMinTime = sd->lastData.beginTime - 5000;
@@ -156,7 +156,7 @@ void ThreadUpdate::updateCycle(){
     moduleActive[m.first] = true;
   }
 
-  SV_Aux::TimerDelay tmDelay;
+  SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
   size_t buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко

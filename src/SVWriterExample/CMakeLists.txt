@@ -14,4 +14,4 @@ if(MSVC)
    set_target_properties (SVWriterExample PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT") 
 endif(MSVC)
 
-target_link_libraries(SVWriterExample SVAuxFunc SVServer)
+target_link_libraries(SVWriterExample SVMisc SVServer)

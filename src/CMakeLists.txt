@@ -20,7 +20,7 @@ endif(MSVC)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Lib/)
 
-add_subdirectory(SVAuxFunc)
+add_subdirectory(SVMisc)
 add_subdirectory(SVBase)
 add_subdirectory(SVClient)
 add_subdirectory(SVServer)

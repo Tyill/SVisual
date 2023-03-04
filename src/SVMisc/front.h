@@ -24,24 +24,50 @@
 //
 #pragma once
 
-#include <string>
-#include <functional>
+#include <vector>
 
-namespace SV_Aux {
-  namespace TCPServer {
-    
-    using DataCBack = std::function<void(std::string& inout, std::string& out)>;
+namespace SV_Misc {
 
-    using ErrorCBack = std::function<void(const std::string& err)>;
+/// Булевый фронт
+class Front {
 
-    bool start(const std::string& addr, uint16_t port);
+private:
+    std::vector<bool> onc;
+    int oncCount = 0;
 
-    void stop();
+public:
 
-    bool setDataCBack(DataCBack);
+    Front() : oncCount(0) {}
 
-    bool setErrorCBack(ErrorCBack);
+    bool PosFront(bool en, int id) {
+        if (oncCount <= id) {
+            onc.resize(id + 1, false);
+            oncCount = id + 1;
+        }
 
-    std::string errorStr();
-  }
+        if (!onc[id] && en) {
+            onc[id] = true;
+            return true;
+        } else {
+            if (!en) onc[id] = false;
+            return false;
+        }
+    }
+        
+    bool NegFront(bool en, int id) {
+        if (oncCount <= id) {
+            onc.resize(id + 1, true);
+            oncCount = id + 1;
+        }
+
+        if (!onc[id] && !en) {
+            onc[id] = true;
+            return true;
+        } else {
+            if (en) onc[id] = false;
+            return false;
+        }
+    }
+
+};
 }

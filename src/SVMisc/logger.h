@@ -24,15 +24,17 @@
 //
 #pragma once
 
+#include "misc.h"
+
 #include <fstream>
 #include <string>
 #include <vector>
 #include <thread>
 #include <condition_variable>
 #include <mutex>
-#include "aux_func.h"
+#include <atomic>
 
-namespace SV_Aux {
+namespace SV_Misc {
   class Logger {  
   public:
      
@@ -47,8 +49,11 @@ namespace SV_Aux {
     }
     
     ~Logger() {
-      _fStop = true;
-      _cval.notify_one();
+      {
+        std::lock_guard<std::mutex> lck (_mtxRd);
+        _fStop = true;
+        _cval.notify_one();
+      }      
       if (_thrWriteMess.joinable()) _thrWriteMess.join();
     }
 
@@ -91,7 +96,7 @@ namespace SV_Aux {
     std::mutex _mtxWr, _mtxRd;
     std::thread _thrWriteMess;
     std::condition_variable _cval;
-    bool _fStop = false;
+    std::atomic_bool _fStop = false;
     
     void writeCycle() {
 

@@ -27,8 +27,8 @@
 #include <thread>
 #include <mutex>
 
-#include "SVAuxFunc/timer_delay.h"
-#include "SVAuxFunc/front.h"
+#include "SVMisc/timer_delay.h"
+#include "SVMisc/front.h"
 #include "SVBase/base.h"
 #include "SVBase/limits.h"
 #include "SVTriggerDialog/trigger_dialog.h"
