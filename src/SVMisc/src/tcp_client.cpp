@@ -178,6 +178,7 @@ bool connect(const std::string& addr, int port, bool noBlock) {
 bool disconnect() {
 
   if (_socket > 0) close(_socket);
+  _socket = -1;
   return true;
 }
 
@@ -197,6 +198,10 @@ int sendAll(const std::string& mess, int flags){
 }
 
 bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySend) {
+
+  if (_socket < 0){
+    return false;
+  }
 
   // Send an initial buffer
   int ret = sendAll(in, 0);
