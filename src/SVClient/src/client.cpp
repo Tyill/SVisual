@@ -178,7 +178,7 @@ namespace SV {
              /*       mod name            vals           */
              dataSz = SV_NAMESZ + valSz * _values.size(),
              
-             startSz = sizeof(messBegin), endSz = sizeof(messEnd), offs = 0, 
+             startSz = strlen(messBegin), endSz = strlen(messEnd), offs = 0, 
              /*                dataSz                    */
              messSz = startSz + SINT + dataSz + endSz;
 
