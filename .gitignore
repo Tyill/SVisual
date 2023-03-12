@@ -2,6 +2,7 @@ mswin/VS12/*
 mswin/VS19/*
 .vscode
 build
+build*
 src/Builds/
 src/CMakeCache.txt
 src/CMakeFiles/

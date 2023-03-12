@@ -18,7 +18,7 @@ if(MSVC)
 endif(MSVC)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Lib/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/)
 
 add_subdirectory(SVMisc)
 add_subdirectory(SVBase)
