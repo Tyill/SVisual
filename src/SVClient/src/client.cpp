@@ -211,8 +211,7 @@ namespace SV {
       uint64_t cTm = SV_Misc::currDateTimeSinceEpochMs(),
                prevTm = cTm;
 
-      int tmDiff = SV_CYCLEREC_MS,
-          cDelay = 0;
+      int cDelay = 0;
 
       while (!_thrStop) {
 
@@ -221,7 +220,7 @@ namespace SV {
         }
 
         cTm = SV_Misc::currDateTimeSinceEpochMs();
-        tmDiff = int(cTm - prevTm) - cDelay;
+        int tmDiff = int(cTm - prevTm) - cDelay;
         prevTm = cTm;
                
         std::string data;
