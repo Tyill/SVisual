@@ -6,7 +6,7 @@ FILE(GLOB_RECURSE SRC_Serv "*.cpp" "*.h")
 
 add_library(SVServer STATIC ${SRC_Serv})
 
-target_link_libraries(SVServer SVBase SVMisc)
+target_link_libraries(SVServer SVBase SVMisc clickhouse-cpp-lib)
 
 if(WIN32)
    target_link_libraries(SVServer zlib)

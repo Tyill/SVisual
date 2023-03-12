@@ -24,15 +24,46 @@
 //
 #pragma once
 
+#include <memory>
+#include <map>
+#include <mutex>
+#include <vector>
+
 namespace clickhouse{
     class Client;
+    class Block;
+    class Column;
 }
 
 class ClickHouseDB{
 
 public:
-    ClickHouseDB();
+    ClickHouseDB(const std::string& name, const std::string& addr);
+
+    bool isConnect()const;
+
+    void addSignal(const std::string& sname, const std::string& module);
+
+    struct SData{
+        uint64_t time;
+        float value;
+    };
+    void addSData(const std::string& sname, const std::string& module, const std::vector<SData>& sdata);
 
 private:
-    clickhouse::Client* m_client = nullptr;
+    std::unique_ptr<clickhouse::Client> newClient()const;
+    std::unique_ptr<clickhouse::Block> newSignalBlock()const;
+    std::unique_ptr<clickhouse::Block> newSDataBlock()const;
+
+    std::shared_ptr<clickhouse::Column> column(const std::unique_ptr<clickhouse::Block>&, const std::string& colName)const;
+
+private:
+    std::string m_chName;
+    std::string m_chAddr;
+
+    std::map<std::string, int> m_signals;  // key - sname, value - id
+    std::unique_ptr<clickhouse::Block> m_signalBlock;
+    std::unique_ptr<clickhouse::Block> m_sdataBlock;
+
+    std::mutex m_mtx;
 };

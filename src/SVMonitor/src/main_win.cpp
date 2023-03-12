@@ -136,10 +136,8 @@ MainWin::MainWin(QWidget *parent)
     srvCng.outArchiveName = cng.outArchiveName.toStdString();
     srvCng.outArchivePath = cng.outArchivePath.toStdString();
     srvCng.outDataBaseEna = cng.outDataBaseEna;
-    srvCng.outDataBaseUserName = cng.outDataBaseUserName.toStdString();
-    srvCng.outDataBaseUserPassw = cng.outDataBaseUserPassw.toStdString();
-    srvCng.outDataBaseHost = cng.outDataBaseHost.toStdString();
-    srvCng.outDataBasePort = cng.outDataBasePort;
+    srvCng.outDataBaseAddr = cng.outDataBaseAddr.toStdString();
+    srvCng.outDataBaseName = cng.outDataBaseName.toStdString();
   }
 
   if (cng.com_ena){
@@ -191,7 +189,7 @@ MainWin::MainWin(QWidget *parent)
 MainWin::~MainWin(){
 
   if (cng.com_ena){
-    for (auto comReader : comReaders_){
+    for (auto comReader : qAsConst(comReaders_)){
       if (comReader) comReader->stop();
     }
   }else{    
@@ -286,10 +284,8 @@ bool MainWin::init(QString initPath){
 
     // запись в БД
     cng.outDataBaseEna = settings.value("outDataBaseEna", "1").toInt() == 1;
-    cng.outDataBaseUserName = settings.value("outDataBaseUserName", "").toString();
-    cng.outDataBaseUserPassw = settings.value("outDataBaseUserPassw", "").toString();
-    cng.outDataBaseHost = settings.value("outDataBaseHost", "").toString();
-    cng.outDataBasePort = settings.value("outDataBasePort", 9000).toInt();
+    cng.outDataBaseName = settings.value("outDataBaseName", "svdb").toString();
+    cng.outDataBaseAddr = settings.value("outDataBaseAddr", "localhost:9000").toString();
 
     cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
     cng.graphSett.transparent = settings.value("transparent", "100").toInt();
@@ -301,7 +297,7 @@ bool MainWin::init(QString initPath){
     settings.endGroup();
 
     tmWinSetts_ = new QTimer(this);
-    connect(tmWinSetts_, &QTimer::timeout, [this, initPath]() {
+    connect(tmWinSetts_, &QTimer::timeout, this, [this, initPath]() {
 
         QSettings settings(initPath, QSettings::IniFormat);
         settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
@@ -377,7 +373,7 @@ bool MainWin::init(QString initPath){
 
 void MainWin::connects(){
 
-    connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int){
+    connect(ui.treeSignals, &QTreeWidget::itemClicked, this, [this](QTreeWidgetItem* item, int){
         auto mref = SV_Srv::getCopyModuleRef();
 
         if (mref.find(item->text(0).toStdString()) != mref.end()){
@@ -385,7 +381,7 @@ void MainWin::connects(){
             ui.lbSignCnt->setText(QString::number(mref[item->text(0).toStdString()]->signls.size()));
         }
     });
-    connect(ui.treeSignals, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem* item, int column){
+    connect(ui.treeSignals, &QTreeWidget::itemDoubleClicked, this, [this](QTreeWidgetItem* item, int column){
         auto mref = SV_Srv::getCopyModuleRef();
 
         if (mref.find(item->text(0).toStdString()) != mref.end())
@@ -410,7 +406,7 @@ void MainWin::connects(){
                 signAttr_[sign] = SignalAttr{ QString::fromStdString(sd->name),
                     QString::fromStdString(sd->module),
                     clr };
-                for (auto gp : graphPanels_)
+                for (auto gp : qAsConst(graphPanels_))
                     SV_Graph::setSignalAttr(gp, sign, SV_Graph::SignalAttributes{ clr });
             }
             else
@@ -429,10 +425,10 @@ void MainWin::connects(){
         }
     });
 
-    connect(ui.actionExit, &QAction::triggered, [this]() {
+    connect(ui.actionExit, &QAction::triggered, this, [this]() {
         this->close();
     });
-    connect(ui.actionPrint, &QAction::triggered, [this]() {
+    connect(ui.actionPrint, &QAction::triggered, this, [this]() {
 
         QPrinter printer(QPrinter::HighResolution);
         printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
@@ -452,30 +448,30 @@ void MainWin::connects(){
             graphPanels_[this]->render(&painter);
         }
     });
-    connect(ui.actionTrgPanel, &QAction::triggered, [this]() {
+    connect(ui.actionTrgPanel, &QAction::triggered, this, [this]() {
         if (triggerDialog_) triggerDialog_->showNormal();
     });
-    connect(ui.actionEventOrder, &QAction::triggered, [this]() {
+    connect(ui.actionEventOrder, &QAction::triggered, this, [this]() {
         if (eventTableDialog_) eventTableDialog_->showNormal();
     });
-    connect(ui.actionExport, &QAction::triggered, [this]() {
+    connect(ui.actionExport, &QAction::triggered, this, [this]() {
         if (exportDialog_) exportDialog_->showNormal();
     });
-    connect(ui.actionNewWin, &QAction::triggered, [this]() {
+    connect(ui.actionNewWin, &QAction::triggered, this, [this]() {
 
         addNewWindow(QRect());
     });
-    connect(ui.actionScript, &QAction::triggered, [this]() {
+    connect(ui.actionScript, &QAction::triggered, this, [this]() {
         SV_Script::startUpdateThread(scriptDialog_);
         scriptDialog_->showNormal();
     });
-    connect(ui.actionSettings, &QAction::triggered, [this]() {
+    connect(ui.actionSettings, &QAction::triggered, this, [this]() {
         if (settingsDialog_) settingsDialog_->showNormal();
     });
-    connect(ui.actionGraphSett, &QAction::triggered, [this]() {
+    connect(ui.actionGraphSett, &QAction::triggered, this, [this]() {
         if (graphSettDialog_) graphSettDialog_->showNormal();
     });
-    connect(ui.actionUpFont, &QAction::triggered, [this]() {
+    connect(ui.actionUpFont, &QAction::triggered, this, [this]() {
 
         QFont ft = QApplication::font();
 
@@ -483,7 +479,7 @@ void MainWin::connects(){
 
         QApplication::setFont(ft);
     });
-    connect(ui.actionDnFont, &QAction::triggered, [this]() {
+    connect(ui.actionDnFont, &QAction::triggered, this, [this]() {
 
         QFont ft = QApplication::font();
 
@@ -491,11 +487,11 @@ void MainWin::connects(){
 
         QApplication::setFont(ft);
     });
-    connect(ui.actionCheckUpdate, &QAction::triggered, [this]() {
+    connect(ui.actionCheckUpdate, &QAction::triggered, this, [this]() {
 
         if (!netManager_){
             netManager_ = new QNetworkAccessManager(this);
-            connect(netManager_, &QNetworkAccessManager::finished, [](QNetworkReply* reply){
+            connect(netManager_, &QNetworkAccessManager::finished, this, [](QNetworkReply* reply){
 
                 QByteArray response_data = reply->readAll();
                 QJsonDocument jsDoc = QJsonDocument::fromJson(response_data);
@@ -523,7 +519,7 @@ void MainWin::connects(){
 
         netManager_->get(request);
     });
-    connect(ui.actionSaveWinState, &QAction::triggered, [this]() {
+    connect(ui.actionSaveWinState, &QAction::triggered, this, [this]() {
 
         QString fname = QFileDialog::getSaveFileName(this,
             tr("Сохранение состояния окон"), cng.selOpenDir,
@@ -585,7 +581,7 @@ void MainWin::connects(){
 
         statusMess(tr("Состояние успешно сохранено"));
     });
-    connect(ui.actionLoadWinState, &QAction::triggered, [this]() {
+    connect(ui.actionLoadWinState, &QAction::triggered, this, [this]() {
 
         QString fname = QFileDialog::getOpenFileName(this,
             tr("Загрузка состояния окон"), cng.selOpenDir,
@@ -661,7 +657,7 @@ void MainWin::connects(){
 
         statusMess(tr("Состояние успешно загружено"));
     });
-    connect(ui.actionManual, &QAction::triggered, [this]() {
+    connect(ui.actionManual, &QAction::triggered, this, [this]() {
 
 #ifdef SV_EN
         QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualEN.pdf"));
@@ -669,7 +665,7 @@ void MainWin::connects(){
         QDesktopServices::openUrl(QUrl::fromLocalFile(cng.dirPath + "/SVManualRU.pdf"));
 #endif
     });
-    connect(ui.actionProgram, &QAction::triggered, [this]() {
+    connect(ui.actionProgram, &QAction::triggered, this, [this]() {
 
         QString mess = "<h2>SVMonitor </h2>"
             "<p>Программное обеспечение предназначенное"
@@ -678,7 +674,7 @@ void MainWin::connects(){
 
         QMessageBox::about(this, tr("About SVisual"), mess);
     });
-    connect(ui.btnSlowPlay, &QPushButton::clicked, [this]() {
+    connect(ui.btnSlowPlay, &QPushButton::clicked, this, [this]() {
         slowMode();
     });
 }
@@ -822,10 +818,8 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << Qt::endl;
     txtStream << "; save into DB" << Qt::endl;
     txtStream << "outDataBaseEna = " << (cng.outDataBaseEna ? "1" : "0") << Qt::endl;
-    txtStream << "outDataBaseUserName = " << cng.outDataBaseUserName << Qt::endl;
-    txtStream << "outDataBaseUserPassw = " << cng.outDataBaseUserPassw << Qt::endl;
-    txtStream << "outDataBaseHost = " << cng.outDataBaseHost << Qt::endl;
-    txtStream << "outDataBasePort = " << cng.outDataBasePort << Qt::endl;
+    txtStream << "outDataBaseName = " << cng.outDataBaseName << Qt::endl;
+    txtStream << "outDataBaseAddr = " << cng.outDataBaseAddr << Qt::endl;
     txtStream << Qt::endl;
     txtStream << "selOpenDir = " << cng.selOpenDir << Qt::endl;
     txtStream << "fontSz = " << this->font().pointSize() << Qt::endl;
@@ -890,7 +884,7 @@ void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs){
 
   cng.graphSett = gs;
 
-  for (auto o : graphPanels_)
+  for (auto o : qAsConst(graphPanels_))
     SV_Graph::setGraphSetting(o, gs);
 }
 
@@ -1034,7 +1028,7 @@ void MainWin::contextMenuClick(QAction* act){
 
       if (signAttr_.contains(sign)){
         signAttr_.remove(sign);
-        for (auto gp : graphPanels_){
+        for (auto gp : qAsConst(graphPanels_)){
           SV_Graph::update(gp);
         }
         db_->delAttrSignal(root, module);
@@ -1088,7 +1082,7 @@ void MainWin::contextMenuClick(QAction* act){
 
         mref[root]->isDelete = true;
 
-        for (auto s : sref){
+        for (auto s : qAsConst(sref)){
           if (QString::fromStdString(s->module) == root){
             s->isDelete = true;
           }
@@ -1148,7 +1142,7 @@ void MainWin::updateTblSignal(){
 
 void MainWin::updateSignals(){
 
-  for (auto gp : graphPanels_)
+  for (auto gp : qAsConst(graphPanels_))
     SV_Graph::update(gp);
 }
 
@@ -1264,7 +1258,7 @@ void MainWin::initTrayIcon(){
 
   trayIcon_->setContextMenu(trayIconMenu);
 
-  connect(trayIcon_, &QSystemTrayIcon::activated, [this](){
+  connect(trayIcon_, &QSystemTrayIcon::activated, this, [this](){
     trayIcon_->hide();
     this->showMaximized();
     isSlowMode_ = false;

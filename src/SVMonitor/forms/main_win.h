@@ -58,10 +58,8 @@ public:
     int outArchiveHourCnt;     ///< запись архива размер файла, час
 
     bool outDataBaseEna;       ///< запись в БД активна
-    QString outDataBaseUserName;
-    QString outDataBaseUserPassw;
-    QString outDataBaseHost;
-    int outDataBasePort;
+    QString outDataBaseName;
+    QString outDataBaseAddr;
 
     int cycleRecMs;            ///< период записи - задает пользователь
     int packetSz;              ///< размер пакета - задает пользователь

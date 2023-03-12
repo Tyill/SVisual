@@ -25,7 +25,7 @@
 
 #include "load_data.h"
 #include "SVViewer/forms/main_win.h"
-#include "Lib/zlib/zlib.h"
+#include "zlib/zlib.h"
 
 #include <QThread>
 #include <QDateTime>

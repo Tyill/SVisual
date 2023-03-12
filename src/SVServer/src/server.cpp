@@ -27,10 +27,7 @@
 #include "thread_update.h"
 #include "SVMisc/misc.h"
 
-#include "Lib/rapidjson/document.h"
-#include "Lib/rapidjson/stringbuffer.h"
-#include "Lib/rapidjson/writer.h"
-
+#include <cstring>
 
 using namespace std;
 
@@ -42,10 +39,15 @@ SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack = nullptr;
 
 const int BUFF_SIGN_HOUR_CNT = 2;  // жестко размер буфера, час
 
+namespace{
+    const char* beginMess = "=begin=";
+    const char* endMess = "=end=";
+}
+
 namespace SV_Srv {
-      
+
   Config cng;
-  
+
   BufferData _buffData;
   ThreadUpdate* _pThrUpdSignal = nullptr;
 
@@ -71,7 +73,7 @@ namespace SV_Srv {
     _buffData.init(cng);
 
     _pThrUpdSignal = new ThreadUpdate(cng, _buffData);
-    
+
     return true;
   }
 
@@ -84,25 +86,23 @@ namespace SV_Srv {
   void setConfig(const Config& cng){
         
     if (_pThrUpdSignal)
-      _pThrUpdSignal->setArchiveConfig(cng);
+      _pThrUpdSignal->setArchiveConfig(cng);    
   }
-
-  void jsonRequestData(std::string &inout, std::string &out);
 
   void receiveData(std::string& inout, std::string& out){
     
     vector<pair<size_t, size_t>> bePos;
-    size_t stPos = inout.find("=begin="), endPos = inout.find("=end=");
+    size_t stPos = inout.find(beginMess), endPos = inout.find(endMess);
     while ((stPos != std::string::npos) && (endPos != std::string::npos)){
 
-      int allSz = *(int*)(inout.c_str() + stPos + 7); // 7 - sizeof("=begin=")
+      int allSz = *(int*)(inout.c_str() + stPos + strlen(beginMess));
 
-      if (allSz == (endPos - stPos - 11)) // 11 - sizeof("=begin=") + sizeof(int32)
+      if (allSz == (endPos - stPos - 11)) // 11 - strlen(beginMess) + sizeof(int32)
         bePos.push_back(pair<size_t, size_t>(stPos + 11, endPos));
 
-      stPos = inout.find("=begin=", endPos + 5); // 5 - sizeof("=end=")
+      stPos = inout.find(beginMess, endPos + strlen(endMess));
       if (stPos != std::string::npos){
-        endPos = inout.find("=end=", stPos + 11);
+        endPos = inout.find(endMess, stPos + 11);
       }
     };
 
@@ -114,13 +114,12 @@ namespace SV_Srv {
       endPos = bePos[i].second;
 
       _buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
-          bTm - (psz - i) * SV_CYCLESAVE_MS);
+                                  bTm - (psz - i) * SV_CYCLESAVE_MS);
     }
        
-    if (psz > 0)  
-      inout = std::string(inout.data() + endPos + 5);
-    else
-      jsonRequestData(inout, out);
+    if (psz > 0){
+      inout = std::string(inout.data() + endPos + strlen(endMess));
+    }
   }
 
   void setOnUpdateSignalsCBack(onUpdateSignalsCBack cback){
@@ -235,174 +234,5 @@ namespace SV_Srv {
       _signalData[sign]->isBuffEnable = true;
     }
     return true;
-  }
-  
-
-  //////////////////////////////////////////////////////////
-
-  std::string jsonGetError(){
-
-    using namespace rapidjson;
-
-    StringBuffer sb;
-    Writer<StringBuffer> writer(sb);
-    writer.StartObject();
-    writer.Key("Command");
-    writer.String("Error");
-
-    writer.EndObject();
-
-    return sb.GetString();
-  }
-
-  bool jsonCheckRequest(rapidjson::Document& doc){
-
-    if (!doc.IsObject()) return false;
-
-    if (!doc.HasMember("Command") || !doc["Command"].IsString()) return false;
-
-    string cmd = doc["Command"].GetString();
-
-    if (cmd == "getAllSignals"){
-      return true;
-    }
-    else if (cmd == "getSignalData"){
-      if (!doc.HasMember("Signal") || !doc["Signal"].IsString()) return false;
-      if (!doc.HasMember("Module") || !doc["Module"].IsString()) return false;
-    }
-    else return false;
-
-    return true;
-  }
-
-  std::string jsonGetAllSignals(){
-
-    using namespace rapidjson;
-
-    StringBuffer sb;
-    Writer<StringBuffer> writer(sb);
-    writer.StartObject();
-
-    writer.Key("Signals");
-    writer.StartArray();
-
-    auto sref = getCopySignalRef();
-    for (auto& sign : sref){
-
-      writer.StartObject();
-
-      writer.Key("Name");
-      writer.String(sign.second->name.c_str());
-      writer.Key("Module");
-      writer.String(sign.second->module.c_str());
-      writer.Key("Group");
-      writer.String(sign.second->group.c_str());
-      writer.Key("Comment");
-      writer.String(sign.second->comment.c_str());
-      writer.Key("Type");
-      writer.String(SV_Base::getSVTypeStr(sign.second->type).c_str());
-
-      string state = "isActive";
-      if (!sign.second->isActive) state = "noActive";
-      writer.Key("State");
-      writer.String(state.c_str());
-
-      writer.EndObject();
-    }
-    writer.EndArray();
-
-    writer.EndObject();
-
-    return sb.GetString();
-  }
-
-  std::string jsonGetSignalData(std::string sign, std::string mod){
-
-    using namespace rapidjson;
-
-    StringBuffer sb;
-    Writer<StringBuffer> writer(sb);
-    writer.StartObject();
-    writer.Key("Command");
-    writer.String("SignalData");
-
-    auto sref = getCopySignalRef();
-
-    string out;
-
-    sign += mod;
-    if (sref.find(sign) != sref.end()){
-
-      auto sd = getSignalData(sign);
-
-      writer.Key("Signal");
-      writer.String(sd->name.c_str());
-      writer.Key("Module");
-      writer.String(sd->module.c_str());
-      writer.Key("ValueTime");
-      writer.String(to_string(sd->lastData.beginTime).c_str());
-      writer.Key("Value");
-
-      switch (sd->type) {
-      case SV_Base::ValueType::BOOL:
-        writer.String(to_string(sd->lastData.vals[0].vBool).c_str());
-        break;
-      case SV_Base::ValueType::INT:
-        writer.String(to_string(sd->lastData.vals[0].vInt).c_str());
-        break;
-      case SV_Base::ValueType::FLOAT:
-        writer.String(to_string(sd->lastData.vals[0].vFloat).c_str());
-        break;
-      }
-
-      writer.EndObject();
-
-      out = sb.GetString();
-    }
-    else{
-
-      writer.Key("Signal");
-      writer.String("");
-      writer.Key("Module");
-      writer.String("");
-      writer.Key("ValueTime");
-      writer.String("");
-      writer.Key("Value");
-      writer.String("");
-
-      writer.EndObject();
-
-      out = sb.GetString();
-    }
-
-    return out;
-  }
-
-  void jsonRequestData(std::string &inout, std::string &out){
-
-    using namespace rapidjson;
-
-    if (inout.empty()) return;
-
-    Document document;
-    document.Parse(inout.c_str());
-
-    if (!jsonCheckRequest(document)){
-
-      if (document.IsObject()) {
-        out = jsonGetError();
-        inout.clear();
-      }
-      return;
-    }
-
-    string cmd = document["Command"].GetString();
-
-    if (cmd == "getAllSignals")
-      out = jsonGetAllSignals();
-    else if (cmd == "getSignalData")
-      out = jsonGetSignalData(document["Signal"].GetString(), document["Module"].GetString());
-
-    inout.clear();
   }
 }

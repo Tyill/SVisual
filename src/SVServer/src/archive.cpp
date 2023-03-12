@@ -30,7 +30,7 @@
 #include "archive.h"
 #include "SVMisc/misc.h"
 #include "SVBase/limits.h"
-#include "Lib/zlib/zlib.h"
+#include "zlib/zlib.h"
 
 using namespace std;
 

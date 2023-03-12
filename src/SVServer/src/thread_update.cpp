@@ -48,6 +48,10 @@ ThreadUpdate::ThreadUpdate(const SV_Srv::Config& _cng, BufferData& buff):
     
   _archive.init(cng);
   _thr = std::thread(&ThreadUpdate::updateCycle, this);
+
+  if(cng.outDataBaseEna){
+      _chdb = new ClickHouseDB(cng.outDataBaseName, cng.outDataBaseAddr);
+  }
 }
 
 ThreadUpdate::~ThreadUpdate(){
@@ -61,6 +65,10 @@ void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
   cng.outArchiveEna = cng_.outArchiveEna;
 
   _archive.setConfig(cng_);
+
+  if (cng.outArchiveEna && !_chdb){
+      _chdb = new ClickHouseDB(cng.outDataBaseName, cng.outDataBaseAddr);
+  }
 }
 
 void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp){
@@ -96,6 +104,10 @@ void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp
   SV_Srv::addSignal(sd);
 
   _archive.addSignal(sign);
+
+  if (_chdb){
+      _chdb->addSignal(sd->name, sd->module);
+  }
 }
 
 void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valuePos){

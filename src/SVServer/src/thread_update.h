@@ -26,8 +26,10 @@
 
 #include "buffer_data.h"
 #include "archive.h"
+#include "clickhouse_db.h"
 
 #include <thread>
+
 
 class ThreadUpdate{
 
@@ -48,6 +50,7 @@ private:
   std::thread _thr;
   BufferData& _buffData;
   Archive _archive;
+  ClickHouseDB* _chdb{};
 
   std::mutex _mtx;
 
