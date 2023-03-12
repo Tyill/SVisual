@@ -33,25 +33,6 @@ class GraphPanelWidget : public QWidget
 {
   Q_OBJECT
 
-private:
-
-  SV_Graph::Config cng;
-
-  const int MIN_HEIGHT_GRAPH = 300;
-  int graphCnt_ = 0;
-  QVector<GraphWidget*> graphObj_;
-
-  QSplitter* splitterGraph_ = nullptr;
-  GraphWidget* selGraph_ = nullptr;
-
-  SV_Graph::GraphSetting graphSett_;
-
-  bool isPlay_ = true;
-
-  void load();
-  void tableUpdate(GraphWidget* graph);
-  void tableUpdateAlter(GraphWidget* graph);
-
 public:
   Ui::GraphPanelWidget ui;
 
@@ -94,6 +75,25 @@ public:
   void resizeByTime();
   void undoCmd();
   void colorUpdate();
+
+private:
+  SV_Graph::Config cng;
+
+  const int MIN_HEIGHT_GRAPH = 300;
+  int graphCnt_ = 0;
+  QVector<GraphWidget*> graphObj_;
+
+  QSplitter* splitterGraph_ = nullptr;
+  GraphWidget* selGraph_ = nullptr;
+
+  SV_Graph::GraphSetting graphSett_;
+
+  bool isPlay_ = true;
+
+private:
+  void load();
+  void tableUpdate(GraphWidget* graph);
+  void tableUpdateAlter(GraphWidget* graph);
 
 };
 

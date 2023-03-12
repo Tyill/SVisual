@@ -26,11 +26,11 @@
 #include "SVExportDialog/forms/export_dialog_impl.h"
 #include "SVBase/limits.h"
 #ifdef USE_QtXlsxWriter
-#include "Lib/xlsx/xlsxdocument.h"
+#include "xlsx/xlsxdocument.h"
 #endif
-#include "Lib/rapidjson/writer.h"
-#include "Lib/rapidjson/stringbuffer.h"
-#include "Lib/rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/document.h"
 
 #include <QFileDialog>
 #include <QTextStream>

@@ -49,7 +49,7 @@ void PlotWidget::mousePressEvent(QMouseEvent *event) {
 
     if (!tmrMarkerPos_) {
       tmrMarkerPos_ = new QTimer(this);
-      connect(tmrMarkerPos_, &QTimer::timeout, [=]() {
+      connect(tmrMarkerPos_, &QTimer::timeout, this, [this]() {
 
         if (lpm_) {
           keyCntr_ = true;

@@ -375,7 +375,7 @@ void GraphWidget::paintSignals() {
 
 void GraphWidget::paintSignalsAlter() {
 
-  int h = ui.plot->height(), w = ui.plot->width();
+  int h = ui.plot->height();
 
   QPainter painter;
   painter.begin(&imSign_);
@@ -462,7 +462,7 @@ void GraphWidget::paintSignalsAlter() {
 
 void GraphWidget::paintObjects() {
 
-  int h = ui.plot->height(), w = ui.plot->width();
+  int h = ui.plot->height();
 
   QPainter painter(ui.plot);
 
@@ -490,7 +490,7 @@ void GraphWidget::paintObjects() {
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);       
   }
   auto sValuePnt = getSignalValueByMarkerPos(mLeftPosX);
-  for (auto s : sValuePnt) {
+  for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
       signals_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signals_[s.sign].lbLeftMarkVal->setText(getSValue(s.type, s.val).c_str());
@@ -505,7 +505,7 @@ void GraphWidget::paintObjects() {
   }
 
   sValuePnt = getSignalValueByMarkerPos(mRightPosX);
-  for (auto s : sValuePnt) {
+  for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
       signals_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signals_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());
@@ -531,7 +531,7 @@ void GraphWidget::paintObjectsAlter() {
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
   }
   auto sValuePnt = getSignalAlterValueByMarkerPos(mLeftPosX);
-  for (auto s : sValuePnt) {
+  for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
       signalsAlter_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signalsAlter_[s.sign].lbLeftMarkVal->setText(getSValue(s.type, s.val).c_str());
@@ -546,7 +546,7 @@ void GraphWidget::paintObjectsAlter() {
   }
 
   sValuePnt = getSignalAlterValueByMarkerPos(mRightPosX);
-  for (auto s : sValuePnt) {
+  for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
       signalsAlter_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
       signalsAlter_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());

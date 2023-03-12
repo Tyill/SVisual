@@ -28,7 +28,7 @@
 #include <condition_variable>
 #include <cstring>
 
-#include "Lib/libuv/uv.h"
+#include "libuv/uv.h"
 #include "SVMisc/tcp_server.h"
 
 #ifdef __linux__

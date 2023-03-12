@@ -25,7 +25,7 @@
 
 #include "db_provider.h"
 #include "SVMonitor/forms/main_win.h"
-#include "Lib/sqlite/sqlite3.h"
+#include "sqlite/sqlite3.h"
 
 #include <QSet>
 #include <QColor>

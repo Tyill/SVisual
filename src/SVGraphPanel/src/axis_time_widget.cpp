@@ -125,7 +125,7 @@ void AxisTimeWidget::resizeEvent(QResizeEvent * event) {
 
 void AxisTimeWidget::drawDashLines(QPainter& painter) {
 
-  int w = width(), h = height();
+  int w = width();
 
   painter.setPen(Qt::gray);
   painter.drawLine(QPoint(0, 0), QPoint(w, 0));
