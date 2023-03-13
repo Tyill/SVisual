@@ -80,7 +80,15 @@ void loop() {
 </div>
 
 ## Use in Linux
-Should be installed: qt 
+Should be installed:
+- qt
+- sqlite: `sudo apt install libsqlite3-dev`
+- libuv: `sudo apt install libuv1-dev`
+- [clickhouse-cpp](https://github.com/ClickHouse/clickhouse-cpp)
+
+Aux dependences [here](src/linux_deps/): 
+- lua53
+- qtXlsxWriter
 
 ## [Manual](docs) 
 
