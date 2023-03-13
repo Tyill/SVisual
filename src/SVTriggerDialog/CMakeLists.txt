@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
+project(SVTriggerDialog)
 
 find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
-
-project(SVTriggerDialog)
 
 FILE(GLOB_RECURSE SRC_TrgPn "*.cpp" "*.h" "*.ui" "*.qrc")
 

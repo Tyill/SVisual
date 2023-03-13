@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
+project(SVStatDialog)
 
 find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
-
-project(SVStatDialog)
 
 FILE(GLOB_RECURSE SRC_StPn "*.cpp" "*.h" "*.ui" "*.qrc")
 

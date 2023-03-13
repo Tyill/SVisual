@@ -10,6 +10,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_
 
 option(USE_QtXlsxWriter "QtXlsxWriter library support" OFF)
 
+include(cmake/qt.cmake)
+
+if (UNIX)
+  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+endif(UNIX)
+
 if(MSVC)   
   add_definitions(-DWIN32_LEAN_AND_MEAN)
   add_definitions(-D_SCL_SECURE_NO_WARNINGS)

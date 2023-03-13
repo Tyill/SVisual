@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
+project(SVGraphPanel)
 
 find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
-
-project(SVGraphPanel)
 
 FILE(GLOB_RECURSE SRC_GrWdg "*.cpp" "*.h" "*.ui" "*.qrc")
 

@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
+project(SVMonitor)
 
 find_package(Qt5 COMPONENTS Core Widgets Gui Network SerialPort PrintSupport REQUIRED)
-
-project(SVMonitor)
 
 FILE(GLOB_RECURSE SRC_Mon "*.cpp" "*.h" "*.ui" "*.qrc" ".rc")
 

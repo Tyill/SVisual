@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
+project(SVViewer)
 
 find_package(Qt5 COMPONENTS Core Widgets Gui PrintSupport REQUIRED)
-
-project(SVViewer)
 
 FILE(GLOB_RECURSE SRC_View "*.cpp" "*.h" "*.ui" "*.qrc" ".rc")
 
