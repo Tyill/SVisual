@@ -2,6 +2,7 @@
 #include "clickhouse/client.h"
 #include "SVMisc/misc.h"
 #include "SVServer/server.h"
+#include "SVBase/limits.h"
 
 #include <thread>
 
@@ -9,9 +10,8 @@ namespace ch = clickhouse;
 
 extern SV_Srv::statusCBack pfStatusCBack;
 
-ClickHouseDB::ClickHouseDB(const std::string& name, const std::string& addr):
-    m_chName(name),
-    m_chAddr(addr)
+ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
+    cng(_cng)
 {
     try{
         if (auto clt = newClient(); clt){
@@ -40,7 +40,10 @@ bool ClickHouseDB::isConnect()const
             clt->Ping();
             return true;
         }
-    }catch(...){
+    }catch(std::exception& e){
+        if (pfStatusCBack){
+            pfStatusCBack("ClickHouseDB isConnect error: " + std::string(e.what()));
+        }
     }
     return false;
 }
@@ -85,45 +88,44 @@ void ClickHouseDB::addSignal(const std::string& sname, const std::string& module
     }
 }
 
-void ClickHouseDB::addSData(const std::string& sname, const std::string& module, const std::vector<SData>& sdata)
+void ClickHouseDB::addSData(const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>& sdata)
 {
-    if (m_signals.count(sname + module)){
+    std::lock_guard lk(m_mtx);
 
-        std::lock_guard lk(m_mtx);
+    auto dataBlock = newSDataBlock();
 
-        bool isNew = false;
-        if (!m_sdataBlock){
-            m_sdataBlock = newSDataBlock();
-            isNew = true;
-        }
-        auto cId = column(m_sdataBlock, "id")->As<ch::ColumnInt32>();
-        auto cTs = column(m_sdataBlock, "ts")->As<ch::ColumnUInt64>();
-        auto cValue = column(m_sdataBlock, "value")->As<ch::ColumnFloat32>();
+    auto cId = column(dataBlock, "id")->As<ch::ColumnInt32>();
+    auto cTs = column(dataBlock, "ts")->As<ch::ColumnUInt64>();
+    auto cValue = column(dataBlock, "value")->As<ch::ColumnFloat32>();
 
-        int sid = m_signals[sname + module];
-        for(const auto& sd : sdata){
-            cId->Append(sid);
-            cTs->Append(sd.time);
-            cValue->Append(sd.value);
-        }
+    for (const auto& sd : sdata){
 
-        if (isNew){
-            std::thread([this](){
-                SV_Misc::sleepMs(1000);
-                try{
-                    std::lock_guard lk(m_mtx);
-                    if (auto clt = newClient(); clt){
-                        m_sdataBlock->RefreshRowCount();
-                        clt->Insert("tblSData", *m_sdataBlock);
-                    }
-                    m_sdataBlock.reset();
-                }catch(std::exception& e){
-                    if (pfStatusCBack){
-                        pfStatusCBack("ClickHouseDB::addSData save into db error: " +  std::string(e.what()));
-                    }
+        if (!m_signals.count(sd.first) || valPos.at(sd.first) == 0) continue;
+
+        int sid = m_signals[sd.first];
+        int vcnt = valPos.at(sd.first);
+        for(int i = 0; i < vcnt; ++i){
+            const auto& rd = sd.second[i];
+            for (int j = 0; j < SV_PACKETSZ; ++j){
+                cId->Append(sid);
+                cTs->Append(rd.beginTime);
+                cValue->Append(rd.vals[j].vFloat);
+            }
+        }        
+    }
+    if (cId->Size() > 0){
+        std::thread([this, dblock = std::move(dataBlock)](){
+            try{
+                if (auto clt = newClient(); clt){
+                    dblock->RefreshRowCount();
+                    clt->Insert("tblSData", *dblock);
                 }
-            }).detach();
-        }
+            }catch(std::exception& e){
+                if (pfStatusCBack){
+                    pfStatusCBack("ClickHouseDB::addSData save into db error: " +  std::string(e.what()));
+                }
+            }
+        }).detach();
     }
 }
 
@@ -140,11 +142,11 @@ clickhouse::ColumnRef ClickHouseDB::column(const std::unique_ptr<clickhouse::Blo
 std::unique_ptr<clickhouse::Client> ClickHouseDB::newClient()const
 {
     ch::ClientOptions opts;{
-        opts.SetDefaultDatabase(m_chName);
-        auto sp = m_chAddr.find(':');
-        opts.SetHost(sp > 0 ? m_chAddr.substr(0, sp) : m_chAddr);
+        opts.SetDefaultDatabase(cng.outDataBaseName);
+        auto sp = cng.outDataBaseAddr.find(':');
+        opts.SetHost(sp > 0 ? cng.outDataBaseAddr.substr(0, sp) : cng.outDataBaseAddr);
         if (sp > 0){
-            opts.SetPort(stoi(m_chAddr.substr(sp + 1)));
+            opts.SetPort(stoi(cng.outDataBaseAddr.substr(sp + 1)));
         }
     }
     return std::make_unique<ch::Client>(opts);

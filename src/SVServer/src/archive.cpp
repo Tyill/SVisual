@@ -22,15 +22,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#include "archive.h"
+#include "clickhouse_db.h"
+#include "SVMisc/misc.h"
+#include "SVBase/limits.h"
+#include "zlib/zlib.h"
+
 #include <chrono>
 #include <cstdio>
 #include <fstream>
 #include <cstring>
-
-#include "archive.h"
-#include "SVMisc/misc.h"
-#include "SVBase/limits.h"
-#include "zlib/zlib.h"
 
 using namespace std;
 
@@ -42,6 +43,10 @@ void Archive::init(const SV_Srv::Config& cng_) {
   _copyStartTime = SV_Misc::currDateTimeEx();
   _copyDateMem = SV_Misc::currDateS();
   _copySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
+
+  if(cng.outDataBaseEna){
+      _chdb = new ClickHouseDB(cng);
+  }
 }
 
 void Archive::setConfig(const SV_Srv::Config& cng_){
@@ -49,10 +54,15 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
   cng.outArchivePath = cng_.outArchivePath;
   cng.outArchiveName = cng_.outArchiveName;
   cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
+
+  if (cng.outArchiveEna && !_chdb){
+      _chdb = new ClickHouseDB(cng);
+  }
 }
 
-void Archive::addSignal(const string& sign) {
+void Archive::addSignal(const std::string& sname, const std::string& module) {
 
+  std::string sign = sname + module;
   if (_archiveData.find(sign) != _archiveData.end()) return;
 
   _archiveData[sign] = vector<SV_Base::RecData>(_copySz);
@@ -61,8 +71,12 @@ void Archive::addSignal(const string& sign) {
 
   SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * _copySz];
   memset(buff, 0, SV_PACKETSZ * _copySz * sizeof(SV_Base::Value));
-  for (size_t i = 0; i < _copySz; ++i)
+  for (size_t i = 0; i < _copySz; ++i){
     _archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
+  }
+  if (_chdb){
+      _chdb->addSignal(sname, module);
+  }
 }
 
 void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
@@ -156,6 +170,11 @@ bool Archive::copyToDisk(bool isStop){
       }
     }
     file.close();
+
+    if (_chdb){
+      _chdb->addSData(_valPos, _archiveData);
+    }
+
     return true;
 
   } catch (exception e){

@@ -29,6 +29,8 @@
 
 #include <map>
 
+class ClickHouseDB;
+
 // копирование архива на диск
 class Archive
 {
@@ -40,10 +42,15 @@ public:
 
   bool copyToDisk(bool isStop);
 
-  void addSignal(const std::string& sign);
+  void addSignal(const std::string& sname, const std::string& module);
   void addValue(const std::string& sign, const SV_Base::RecData& rd);
 
   void setConfig(const SV_Srv::Config&);
+
+private:
+  bool isCopyTimeHour();
+  std::string getOutPath(bool isStop);
+  bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
 
 private:
 
@@ -61,10 +68,6 @@ private:
 
   std::map<std::string, std::vector<SV_Base::RecData>> _archiveData;
 
-  bool isCopyTimeHour();
-
-  std::string getOutPath(bool isStop);
-
-  bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
+  ClickHouseDB* _chdb{};
 
 };

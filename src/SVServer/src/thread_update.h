@@ -26,7 +26,6 @@
 
 #include "buffer_data.h"
 #include "archive.h"
-#include "clickhouse_db.h"
 
 #include <thread>
 
@@ -50,13 +49,12 @@ private:
   std::thread _thr;
   BufferData& _buffData;
   Archive _archive;
-  ClickHouseDB* _chdb{};
 
   std::mutex _mtx;
 
   void updateCycle();
   void updateSignal(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
-  void addSignal(const std::string& sign, const BufferData::InputData& bp);
+  void addSignal(const BufferData::InputData& bp);
   void moduleConnect(const std::string& module);
   void moduleDisconnect(const std::string& module);
 };

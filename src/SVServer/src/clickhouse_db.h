@@ -24,6 +24,8 @@
 //
 #pragma once
 
+#include "SVServer/server.h"
+
 #include <memory>
 #include <map>
 #include <mutex>
@@ -34,21 +36,20 @@ namespace clickhouse{
     class Block;
     class Column;
 }
+namespace SV_Base{
+    struct RecData;
+}
 
 class ClickHouseDB{
 
 public:
-    ClickHouseDB(const std::string& name, const std::string& addr);
+    ClickHouseDB(const SV_Srv::Config&);
 
     bool isConnect()const;
 
     void addSignal(const std::string& sname, const std::string& module);
 
-    struct SData{
-        uint64_t time;
-        float value;
-    };
-    void addSData(const std::string& sname, const std::string& module, const std::vector<SData>& sdata);
+    void addSData(const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>&);
 
 private:
     std::unique_ptr<clickhouse::Client> newClient()const;
@@ -58,12 +59,10 @@ private:
     std::shared_ptr<clickhouse::Column> column(const std::unique_ptr<clickhouse::Block>&, const std::string& colName)const;
 
 private:
-    std::string m_chName;
-    std::string m_chAddr;
+    SV_Srv::Config cng;
 
     std::map<std::string, int> m_signals;  // key - sname, value - id
     std::unique_ptr<clickhouse::Block> m_signalBlock;
-    std::unique_ptr<clickhouse::Block> m_sdataBlock;
 
     std::mutex m_mtx;
 };
