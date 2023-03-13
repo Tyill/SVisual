@@ -63,6 +63,30 @@ public:
 
   bool delTrigger(const QString& trg);
 
+private slots:
+  void selModule(QListWidgetItem * item);
+  void selSignal(QTableWidgetItem * item);
+  void selTrigger(QTableWidgetItem * item);
+  void addTrigger();
+  void delTrigger();
+  void changeTrigger();
+  void paramChange();
+  void selCondition(SV_Trigger::EventType);
+  void selDirProc();
+
+private:
+  void load();
+
+  void showEvent(QShowEvent * event);
+
+  void enaBtnCondition(bool ena);
+
+  void updateTableTrigger();
+  void updateTableSignal();
+  void updateStateSignal();
+
+  bool checkCondition(SV_Trigger::TriggerData* tr, SV_Base::SignalData* sd);
+  void workCycle();
 
 private:
 
@@ -79,32 +103,7 @@ private:
 
   std::thread workThr_;
   std::mutex mtx_;
-  volatile bool thrStop_ = false;
-
-
-  void load();
-
-  void showEvent(QShowEvent * event);
-
-  void enaBtnCondition(bool ena);
-
-  void updateTableTrigger();
-  void updateTableSignal();
-  void updateStateSignal();
-
-  bool checkCondition(SV_Trigger::TriggerData* tr, SV_Base::SignalData* sd);
-  void workCycle();
-
-  private slots:
-  void selModule(QListWidgetItem * item);
-  void selSignal(QTableWidgetItem * item);
-  void selTrigger(QTableWidgetItem * item);
-  void addTrigger();
-  void delTrigger();
-  void changeTrigger();
-  void paramChange();
-  void selCondition(SV_Trigger::EventType);
-  void selDirProc();
+  std::atomic_bool thrStop_ = false;
 };
 
 

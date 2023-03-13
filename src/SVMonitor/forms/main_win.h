@@ -57,7 +57,6 @@ public:
     QString outArchiveName;    ///< запись архива имя файла
     int outArchiveHourCnt;     ///< запись архива размер файла, час
 
-    bool outDataBaseEna;       ///< запись в БД активна
     QString outDataBaseName;
     QString outDataBaseAddr;
 

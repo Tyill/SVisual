@@ -52,44 +52,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-const QString VERSION = "1.2.0";
-// refact
-// qt5.5 -> qt5.15.2 
-
-//const QString VERSION = "1.1.9";
-// refact
-// signal boolean on top
-//const QString VERSION = "1.1.8";
-// proposal https://github.com/Tyill/SVisual/issues/31
-//const QString VERSION = "1.1.7";
-// added zabbix agent
-//const QString VERSION = "1.1.6";
-// added menu - script for signal
-//const QString VERSION = "1.1.5";
-// added select color signal
-// const QString VERSION = "1.1.4";
-// added web browse
-//const QString VERSION = "1.1.3";
-// reading from additional COM ports
-// const QString VERSION = "1.1.2";
-// patch for prev release: repair view graph
-//const QString VERSION = "1.1.1";
-// SVExportPanel
-// -fix select module
-// const QString VERSION = "1.1.0";
-// -add dark theme
-// const QString VERSION = "1.0.10";
-// -fix graph view
-//const QString VERSION = "1.0.9";
-// -add setting graph view 
-// const QString VERSION = "1.0.8";
-// -add script panel
-// const QString VERSION = "1.0.7";
-// -font change
-// const QString VERSION = "1.0.6";
-// -save win state
-// -small fix's
-
+const QString VERSION = QStringLiteral("1.2.0");
 
 using namespace SV_Base;
 
@@ -135,7 +98,6 @@ MainWin::MainWin(QWidget *parent)
     srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
     srvCng.outArchiveName = cng.outArchiveName.toStdString();
     srvCng.outArchivePath = cng.outArchivePath.toStdString();
-    srvCng.outDataBaseEna = cng.outDataBaseEna;
     srvCng.outDataBaseAddr = cng.outDataBaseAddr.toStdString();
     srvCng.outDataBaseName = cng.outDataBaseName.toStdString();
   }
@@ -283,7 +245,6 @@ bool MainWin::init(QString initPath){
     cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
 
     // запись в БД
-    cng.outDataBaseEna = settings.value("outDataBaseEna", "1").toInt() == 1;
     cng.outDataBaseName = settings.value("outDataBaseName", "svdb").toString();
     cng.outDataBaseAddr = settings.value("outDataBaseAddr", "localhost:9000").toString();
 
@@ -817,7 +778,6 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "outArchiveName = " << cng.outArchiveName << Qt::endl;
     txtStream << Qt::endl;
     txtStream << "; save into DB" << Qt::endl;
-    txtStream << "outDataBaseEna = " << (cng.outDataBaseEna ? "1" : "0") << Qt::endl;
     txtStream << "outDataBaseName = " << cng.outDataBaseName << Qt::endl;
     txtStream << "outDataBaseAddr = " << cng.outDataBaseAddr << Qt::endl;
     txtStream << Qt::endl;

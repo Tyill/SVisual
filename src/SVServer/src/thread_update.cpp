@@ -209,18 +209,20 @@ void ThreadUpdate::updateCycle(){
         }
       }
 
-      if (cng.outArchiveEna)
+      if (cng.outArchiveEna){
         _archive.addValue(sign, bufPos.data);
-
+      }
       _buffData.incReadPos();
       bufPos = _buffData.getDataByReadPos();
     }
 
-    if (isBuffActive && pfUpdateSignalsCBack)
+    if (isBuffActive && pfUpdateSignalsCBack){
       pfUpdateSignalsCBack();
+    }
 
-    if (isNewSign && pfAddSignalsCBack)
+    if (isNewSign && pfAddSignalsCBack){
       pfAddSignalsCBack();
+    }
 
     // архив
     if (cng.outArchiveEna && tmDelay.hourOnc())
@@ -239,23 +241,25 @@ void ThreadUpdate::updateCycle(){
 
         if (m.first == "Virtual") continue;
 
-        if (!mref[m.first]->isActive && m.second)
+        if (!mref[m.first]->isActive && m.second){
           moduleConnect(m.first);
-
-        else if (mref[m.first]->isActive && !m.second)
+        }
+        else if (mref[m.first]->isActive && !m.second){
           moduleDisconnect(m.first);
-
+        }
         mref[m.first]->isActive = m.second;
         m.second = false;
       }
     }
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
-    if (ms > 0)
+    if (ms > 0){
       sleepMs(std::min(ms, 10000));
+    }
   }
 
-  if (cng.outArchiveEna)
+  if (cng.outArchiveEna){
     _archive.copyToDisk(true);
+  }
 }
 

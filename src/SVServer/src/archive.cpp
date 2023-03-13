@@ -44,7 +44,7 @@ void Archive::init(const SV_Srv::Config& cng_) {
   _copyDateMem = SV_Misc::currDateS();
   _copySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
 
-  if(cng.outDataBaseEna){
+  if(!cng.outDataBaseName.empty()){
       _chdb = new ClickHouseDB(cng);
   }
 }
@@ -55,7 +55,7 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
   cng.outArchiveName = cng_.outArchiveName;
   cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
 
-  if (cng.outArchiveEna && !_chdb){
+  if (cng.outArchiveEna && !cng.outDataBaseName.empty() && !_chdb){
       _chdb = new ClickHouseDB(cng);
   }
 }
@@ -162,7 +162,7 @@ bool Archive::copyToDisk(bool isStop){
           return false;
         };
 
-        file.write((char *)&compSz, sizeof(int)); // sizeof(int), потому что compSz int сначала был, сейчас уже не изменить:(
+        file.write((char *)&compSz, sizeof(int));
         file.write((char *)&csize, sizeof(int));
         file.write((char *)compArr.data(), compSz);
 

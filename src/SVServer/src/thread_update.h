@@ -28,7 +28,7 @@
 #include "archive.h"
 
 #include <thread>
-
+#include <atomic>
 
 class ThreadUpdate{
 
@@ -44,7 +44,7 @@ private:
 
   SV_Srv::Config cng;
 
-  volatile bool _thrStop = false;
+  std::atomic_bool _thrStop = false;
 
   std::thread _thr;
   BufferData& _buffData;
