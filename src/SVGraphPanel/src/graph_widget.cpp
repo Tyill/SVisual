@@ -1005,6 +1005,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   case ValueType::BOOL:  return getPoints<bool>(sign, iBuf, cng, axisTime_, valInterval, vScale);
   default: Q_UNREACHABLE(); break;
   }  
+  return {};
 }
 
 QPair<double, double> GraphWidget::getSignPntsMaxMinValue(const graphSignData& sign) {
