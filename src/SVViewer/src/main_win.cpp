@@ -28,6 +28,7 @@
 #include "SVViewer/forms/main_win.h"
 #include "SVViewer/forms/graph_setting_dialog.h"
 #include "SVViewer/forms/subscript_dialog.h"
+#include "SVViewer/forms/settings_dialog.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVStatDialog/stat_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
@@ -43,43 +44,9 @@
 #include <QMessageBox>
 #include <QMenu>
 
-const QString VERSION = "1.2.0";
-// refact
-// qt5.5 -> qt5.15.2 
-
-//const QString VERSION = "1.1.9";
-// refact
-// signal boolean on top
-//const QString VERSION = "1.1.8";
-// proposal https://github.com/Tyill/SVisual/issues/31
-//const QString VERSION = "1.1.7";
-// added zabbix agent
-//const QString VERSION = "1.1.6";
-// added menu - script for signal
-//const QString VERSION = "1.1.5";
-// added select color signal
-// const QString VERSION = "1.1.4";
-// added web browse
-//const QString VERSION = "1.1.3";
-// reading from additional COM ports
-//const QString VERSION = "1.1.2";
-// patch for prev release: repair view graph
-//const QString VERSION = "1.1.1";
-// SVExportPanel
-// -fix select module
-//const QString VERSION = "1.1.0";
-// -add dark theme
-//const QString VERSION = "1.0.10";
-// -fix graph view
-//const QString VERSION = "1.0.9";
-// -add setting graph view 
-// const QString VERSION = "1.0.8";
-// -add script panel
-// const QString VERSION = "1.0.7";
-// -font change
-// const QString VERSION = "1.0.6";
-// -save win state
-// -small fix's
+namespace{
+const QString VERSION = QStringLiteral("1.2.0");
+}
 
 MainWin* mainWin = nullptr;
 
@@ -143,6 +110,29 @@ QVector<QString> getModuleSignals(const QString& md) {
   return res;
 }
 
+MainWin::MainWin(QWidget *parent)
+  : QMainWindow(parent)
+{
+  ui.setupUi(this);
+
+  mainWin = this;
+
+  this->setWindowTitle(QString("SVViewer ") + VERSION);
+
+  QStringList args = QApplication::arguments();
+  cng.initPath = QApplication::applicationDirPath(); if (args.size() == 2) cng.initPath = args[1];
+  init(cng.initPath + "/sviewer.ini");
+
+  connects();
+
+  load();
+}
+
+MainWin::~MainWin()
+{
+  writeSettings(cng.initPath + "/sviewer.ini");
+  writeSignals(cng.initPath + "/svsignals.txt");
+}
 
 bool MainWin::writeSettings(QString pathIni) {
 
@@ -164,6 +154,10 @@ bool MainWin::writeSettings(QString pathIni) {
   txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
   txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
   txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
+  txtStream << Qt::endl;
+  txtStream << "inputDataBaseEna = " << (cng.inputDataBaseEna ? 1 : 0) << Qt::endl;
+  txtStream << "inputDataBaseName = " << cng.inputDataBaseName << Qt::endl;
+  txtStream << "inputDataBaseAddr = " << cng.inputDataBaseAddr << Qt::endl;
   txtStream << Qt::endl;
   file.close();
 
@@ -242,7 +236,7 @@ bool MainWin::writeSignals(QString path) {
 
   if (file.isOpen()) {
 
-    for (auto s : signalRef_) {
+    for (auto s : qAsConst(signalRef_)) {
 
       if (s->module == "Virtual")
         continue;
@@ -287,6 +281,8 @@ void MainWin::updateGroup(QString group, QString sign) {
 }
 
 void MainWin::load() {
+
+  settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
 
   ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
   ui.treeSignals->setIconSize(QSize(40, 20));
@@ -360,12 +356,12 @@ void MainWin::load() {
   readSignals(QApplication::applicationDirPath() + "/svsignals.txt");
 }
 
-void MainWin::Connect() {
+void MainWin::connects() {
 
   connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(actionOpenData()));
   connect(ui.actionStat, SIGNAL(triggered()), this, SLOT(actionOpenStat()));
 
-  connect(ui.treeSignals, &QTreeWidget::itemClicked, [this](QTreeWidgetItem* item, int) {
+  connect(ui.treeSignals, &QTreeWidget::itemClicked, this, [this](QTreeWidgetItem* item, int) {
     if (moduleRef_.contains(item->text(0))) {
 
       auto sref = getCopySignalRef();
@@ -425,37 +421,30 @@ void MainWin::Connect() {
   connect(ui.actionExit, &QAction::triggered, [this]() {
     this->close();
   });
+  connect(ui.actionSettings, &QAction::triggered, this, [this]() {
+      if (settingsDialog_) settingsDialog_->showNormal();
+  });
   connect(ui.actionExport, &QAction::triggered, [this]() {
     if (exportPanel_) exportPanel_->showNormal();
   });
   connect(ui.actionNewWin, &QAction::triggered, [this]() {
-
     addNewWindow(QRect());
   });
   connect(ui.actionUpFont, &QAction::triggered, [this]() {
-
     QFont ft = QApplication::font();
-
     ft.setPointSize(ft.pointSize() + 1);
-
     QApplication::setFont(ft);
   });
   connect(ui.actionDnFont, &QAction::triggered, [this]() {
-
     QFont ft = QApplication::font();
-
     ft.setPointSize(ft.pointSize() - 1);
-
     QApplication::setFont(ft);
   });
   connect(ui.actionScript, &QAction::triggered, [this]() {
-
     SV_Script::startUpdateThread(scriptPanel_);
-
     scriptPanel_->showNormal();
   });
   connect(ui.actionGraphSett, &QAction::triggered, [this]() {
-
     if (graphSettPanel_) graphSettPanel_->showNormal();
   });
 
@@ -653,6 +642,10 @@ bool MainWin::init(QString initPath) {
   cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
   cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
 
+  cng.inputDataBaseEna = settings.value("inputDataBaseEna", "0").toInt() == 1;
+  cng.inputDataBaseName = settings.value("inputDataBaseName", "svdb").toString();
+  cng.inputDataBaseAddr = settings.value("inputDataBaseAddr", "localhost:9000").toString();
+
   QFont ft = QApplication::font();
   int fsz = settings.value("fontSz", ft.pointSize()).toInt();
   ft.setPointSize(fsz);
@@ -665,29 +658,13 @@ bool MainWin::init(QString initPath) {
 
 }
 
-MainWin::MainWin(QWidget *parent)
-  : QMainWindow(parent)
-{
-  ui.setupUi(this);
-
-  mainWin = this;
-
-  this->setWindowTitle(QString("SVViewer ") + VERSION);
-
-  QStringList args = QApplication::arguments();
-  cng.initPath = QApplication::applicationDirPath(); if (args.size() == 2) cng.initPath = args[1];
-  init(cng.initPath + "/sviewer.ini");
-
-  Connect();
-
-  load();
-
+MainWin::Config MainWin::getConfig()const{
+  return cng;
 }
 
-MainWin::~MainWin()
-{
-  writeSettings(cng.initPath + "/sviewer.ini");
-  writeSignals(cng.initPath + "/svsignals.txt");
+void MainWin::updateConfig(const MainWin::Config& newCng){
+
+  cng = newCng;
 }
 
 void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs) {
@@ -951,7 +928,7 @@ void MainWin::contextMenuClick(QAction* act) {
 
 QDialog* MainWin::addNewWindow(const QRect& pos) {
 
-  QDialog* graphWin = new QDialog(this, Qt::Window);
+  QDialog* graphWin = new QDialog(this, Qt::Window | Qt::WindowStaysOnTopHint);
   graphWin->setObjectName("graphWin");
   graphWin->installEventFilter(this);
 
@@ -990,7 +967,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos) {
 }
 
 void MainWin::changeSignColor(QString module, QString name, QColor clr) {
-  for (auto gp : mainWin->graphPanels_) {
+  for (const auto gp : qAsConst(mainWin->graphPanels_)) {
     SV_Graph::setSignalAttr(gp, name + module, SV_Graph::SignalAttributes{ clr });
   }
 }

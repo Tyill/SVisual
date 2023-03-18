@@ -233,13 +233,14 @@
      <x>0</x>
      <y>0</y>
      <width>362</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Файл</string>
     </property>
+    <addaction name="actionSettings"/>
     <addaction name="actionSaveWinState"/>
     <addaction name="actionLoadWinState"/>
     <addaction name="actionExit"/>
@@ -381,6 +382,11 @@
   <action name="actionManual">
    <property name="text">
     <string>Руководство пользователя</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Настройки</string>
    </property>
   </action>
  </widget>

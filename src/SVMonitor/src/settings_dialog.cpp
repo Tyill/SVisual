@@ -84,6 +84,8 @@ SettingsDialog::SettingsDialog(QWidget *parent){
   connect(ui.txtZabbixIPAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
   connect(ui.txtZabbixPort, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
   connect(ui.txtArchPath, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtChName, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
+  connect(ui.txtChAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
   connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
   connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 
@@ -115,6 +117,8 @@ void SettingsDialog::showEvent(QShowEvent * event){
 
   ui.rbtnArchEna->setChecked(cng.outArchiveEna);
   ui.txtArchPath->setText(cng.outArchivePath);
+  ui.txtChName->setText(cng.outDataBaseName);
+  ui.txtChAddr->setText(cng.outDataBaseAddr);
 
   ui.spinCycleRecMs->setValue(cng.cycleRecMs);
   ui.spinPacketSz->setValue(cng.packetSz);
@@ -224,8 +228,10 @@ void SettingsDialog::saveChange(){
 
   cng.outArchiveEna = ui.rbtnArchEna->isChecked();
   cng.outArchivePath = ui.txtArchPath->text();
-
   cng.outArchivePath.replace("\\", "/");
+
+  cng.outDataBaseName = ui.txtChName->text();
+  cng.outDataBaseAddr = ui.txtChAddr->text();
 
   cng.com_ena = ui.rbtnConnectByCom->isChecked();
 

@@ -34,6 +34,7 @@
 
 class GraphSettingDialog;
 class ThrLoadData;
+class SettingsDialog;
 
 class MainWin : public QMainWindow
 {
@@ -56,23 +57,56 @@ public:
 
   struct Config {
 
-    bool sortByMod;
+    bool sortByMod{};
 
-    int cycleRecMs;
-    int packetSz;
+    int cycleRecMs{};
+    int packetSz{};
 
     QString initPath;
     QString selOpenDir;
 
+    bool inputDataBaseEna{};
+    QString inputDataBaseName;
+    QString inputDataBaseAddr;
+
     SV_Graph::GraphSetting graphSett;
   };
+
+  void updateConfig(const Config&);
+  Config getConfig()const;
 
   bool loadModuleVals(QString path);
 
   void updateGraphSetting(const SV_Graph::GraphSetting&);
 
-private:
+public slots:
+  void updateTblSignal();
+  void updateSignals();
+  void actionOpenData();
+  void actionOpenStat();
+  bool loadData(QStringList files);
+  void loadDataFinished(bool ok);
+  void contextMenuClick(QAction*);
+  void changeSignColor(QString module, QString signal, QColor color);
 
+private:
+  bool init(QString initPath);
+  bool writeSettings(QString pathIni);
+  bool readSignals(QString path);
+  bool writeSignals(QString path);
+  QDialog* addNewWindow(const QRect& pos);
+
+  bool eventFilter(QObject *target, QEvent *event);
+
+  void updateGroup(QString group, QString sign);
+
+  void connects();
+  void load();
+
+  void sortSignalByGroupOrModule(bool byModule);
+  void contextMenuEvent(QContextMenuEvent * event);
+
+private:
   Config cng;
 
   QDialog* exportPanel_ = nullptr;
@@ -80,6 +114,8 @@ private:
   QDialog* statPanel_ = nullptr;
   GraphSettingDialog* graphSettPanel_ = nullptr;
   QDialog* scriptPanel_ = nullptr;
+
+  SettingsDialog* settingsDialog_ = nullptr;
 
   ThrLoadData* thrLoadData_ = nullptr;
 
@@ -91,32 +127,6 @@ private:
   QMap<QString, SV_Base::GroupData*> groupRef_;     // ключ - имя группы
   QMap<QString, SV_Base::SignalData*> signalRef_;   // ключ - название сигнала
   QMap<QString, FileData*> fileRef_;
-
-  bool init(QString initPath);
-  bool writeSettings(QString pathIni);
-  bool readSignals(QString path);
-  bool writeSignals(QString path);
-  QDialog* addNewWindow(const QRect& pos);
-
-  bool eventFilter(QObject *target, QEvent *event);
-
-  void updateGroup(QString group, QString sign);
-
-  void Connect();
-  void load();
-
-  void sortSignalByGroupOrModule(bool byModule);
-  void contextMenuEvent(QContextMenuEvent * event);
-
-  public slots:
-  void updateTblSignal();
-  void updateSignals();
-  void actionOpenData();
-  void actionOpenStat();
-  bool loadData(QStringList files);
-  void loadDataFinished(bool ok);
-  void contextMenuClick(QAction*);
-  void changeSignColor(QString module, QString signal, QColor color);
 };
 
 

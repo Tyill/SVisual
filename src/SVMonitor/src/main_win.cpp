@@ -1251,6 +1251,8 @@ void MainWin::updateConfig(const MainWin::Config& newCng){
     srvCng.outArchiveHourCnt = newCng.outArchiveHourCnt;
     srvCng.outArchiveName = newCng.outArchiveName.toStdString();
     srvCng.outArchivePath = newCng.outArchivePath.toStdString();
+    srvCng.outDataBaseName = newCng.outDataBaseName.toStdString();
+    srvCng.outDataBaseAddr = newCng.outDataBaseAddr.toStdString();
   }
   SV_Srv::setConfig(srvCng);
 
@@ -1259,7 +1261,7 @@ void MainWin::updateConfig(const MainWin::Config& newCng){
 
 QDialog* MainWin::addNewWindow(const QRect& pos){
 
-  QDialog* graphWin = new QDialog(this, Qt::Window);
+  QDialog* graphWin = new QDialog(this, Qt::Window | Qt::WindowStaysOnTopHint);
   graphWin->setObjectName("graphWin");
   graphWin->installEventFilter(this);
 
