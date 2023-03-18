@@ -96,20 +96,18 @@ void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
 
 bool Archive::copyToDisk(bool isStop){
 
-  try{
-
-    size_t dataSz = _archiveData.size();
+    const size_t dataSz = _archiveData.size();
     if (dataSz == 0)
       return true;
 
-    size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
+    const size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
 
-    size_t intSz = sizeof(int32_t),
+    const size_t intSz = sizeof(int32_t),
       tmSz = sizeof(uint64_t),
       vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
 
     //                name        module      group       comment      type    vCnt
-    size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
+    const size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
 
     vector<char> inArr((tmSz + vlSz) * _copySz * SMAXCNT + headSz * SMAXCNT),
       compArr;
@@ -176,11 +174,6 @@ bool Archive::copyToDisk(bool isStop){
     }
 
     return true;
-
-  } catch (exception e){
-    if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk exception " + string(e.what()));
-    return false;
-  }
 }
 
 bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
