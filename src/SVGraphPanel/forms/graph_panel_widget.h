@@ -54,13 +54,13 @@ public:
   void setAxisAttr(const QVector<SV_Graph::AxisAttributes>&);
   QVector<SV_Graph::AxisAttributes> getAxisAttr();
 
-  public slots:
+public slots:
   void updateSignals();
   void resizeByValue();
   void delSignal(QString sign);
   void scaleGraph();
 
-  private slots:
+private slots:
   void addGraph(QString sign);
   void axisTimeChange(QString obj);
   void diapTimeUpdate();
@@ -77,6 +77,11 @@ public:
   void colorUpdate();
 
 private:
+  void load();
+  void tableUpdate(GraphWidget* graph);
+  void tableUpdateAlter(GraphWidget* graph);
+
+private:
   SV_Graph::Config cng;
 
   const int MIN_HEIGHT_GRAPH = 300;
@@ -90,10 +95,6 @@ private:
 
   bool isPlay_ = true;
 
-private:
-  void load();
-  void tableUpdate(GraphWidget* graph);
-  void tableUpdateAlter(GraphWidget* graph);
 
 };
 

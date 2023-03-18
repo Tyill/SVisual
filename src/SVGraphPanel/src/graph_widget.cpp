@@ -67,17 +67,14 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_) {
 
   connect(ui.axisValue, SIGNAL(req_axisChange()), this, SLOT(axisValueChange()));
   connect(ui.btnClose, &QPushButton::clicked, this, [this] {
-
     emit req_close();
     close();
   });
 
   connect(ui.btnUp, &QPushButton::clicked, this, [this] {
-
     emit req_graphUp(this->objectName());
   });
   connect(ui.btnDn, &QPushButton::clicked, this, [this] {
-
     emit req_graphDn(this->objectName());
   });
 
@@ -105,6 +102,11 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_) {
 
   connect(ui.plot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
   connect(ui.plot, &PlotWidget::req_updMarker, this, &GraphWidget::showMarkPos);
+  connect(ui.plot, &PlotWidget::req_fullSize, this, [this](){
+    resizeByTime();
+    resizeByValue();
+  });
+
   connect(leftMarker_, SIGNAL(req_markerChange()), this, SLOT(updateByMarker()));
   connect(rightMarker_, SIGNAL(req_markerChange()), this, SLOT(updateByMarker()));
 
@@ -204,7 +206,7 @@ void GraphWidget::addPosToHistory() {
 
   QPair<qint64, qint64> tmIntl = axisTime_->getTimeInterval();
 
-  historyPos_.push_back(histPos{ valIntl, tmIntl });
+  historyPos_.push_back(HistPos{ valIntl, tmIntl });
 }
 
 void GraphWidget::paintSignals() {
@@ -248,7 +250,7 @@ void GraphWidget::paintSignals() {
 
   double valScale = ui.axisValue->getValScale();
 
-  bool paintPnt = (tmInterv.second - tmInterv.first) < SV_CYCLESAVE_MS * 3;
+  bool paintPnt = (tmInterv.second - tmInterv.first) < SV_CYCLEREC_MS * 30;
 
   for (int s = signalList_.size() - 1; s >= 0; --s) {
 
@@ -600,7 +602,7 @@ void GraphWidget::addSignal(QString sign) {
   if (grPanel_->pfGetSignalAttr(sign, sAttr))
     clr = sAttr.color;
     
-  signals_.insert(sign, graphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
+  signals_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
   signalList_.push_front(sign);
 
   QPalette palette = lb->palette();
@@ -659,7 +661,7 @@ void GraphWidget::addAlterSignal(QString sign) {
   if (grPanel_->pfGetSignalAttr(sign, sAttr))
     clr = sAttr.color;    
 
-  signalsAlter_.insert(sign, graphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
+  signalsAlter_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
   signalListAlter_.push_front(sign);
 
   QPalette palette = lb->palette();
@@ -1008,7 +1010,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   return {};
 }
 
-QPair<double, double> GraphWidget::getSignPntsMaxMinValue(const graphSignData& sign) {
+QPair<double, double> GraphWidget::getSignPntsMaxMinValue(const GraphSignData& sign) {
 
   const QVector<QVector<QPair<int, int>>>& grPnts = sign.pnts;
 
@@ -1292,9 +1294,9 @@ void GraphWidget::updateByMarker() {
   }
 }
 
-QVector<GraphWidget::graphSignPoint> GraphWidget::getSignalValueByMarkerPos(int pos) {
+QVector<GraphWidget::GraphSignPoint> GraphWidget::getSignalValueByMarkerPos(int pos) {
 
-  QVector<graphSignPoint> res;
+  QVector<GraphSignPoint> res;
 
   QPair<double, double> valIntr = ui.axisValue->getValInterval();
   double valScale = ui.axisValue->getValScale();
@@ -1303,7 +1305,7 @@ QVector<GraphWidget::graphSignPoint> GraphWidget::getSignalValueByMarkerPos(int 
 
     auto& s = signals_[nm];
 
-    graphSignPoint sp;
+    GraphSignPoint sp;
 
     sp.sign = s.sign;
     sp.name = s.name;
@@ -1340,9 +1342,9 @@ QVector<GraphWidget::graphSignPoint> GraphWidget::getSignalValueByMarkerPos(int 
   return res;
 }
 
-QVector<GraphWidget::graphSignPoint> GraphWidget::getSignalAlterValueByMarkerPos(int pos) {
+QVector<GraphWidget::GraphSignPoint> GraphWidget::getSignalAlterValueByMarkerPos(int pos) {
 
-  QVector<graphSignPoint> res;
+  QVector<GraphSignPoint> res;
 
   QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
 
@@ -1355,7 +1357,7 @@ QVector<GraphWidget::graphSignPoint> GraphWidget::getSignalAlterValueByMarkerPos
       valMaxInterval = valInterval.second,
       valScale = (valMaxInterval - valMinInterval) / ui.plot->height();
 
-    graphSignPoint sp;
+    GraphSignPoint sp;
 
     sp.sign = s.sign;
     sp.name = s.name;
@@ -1392,9 +1394,9 @@ QVector<GraphWidget::graphSignPoint> GraphWidget::getSignalAlterValueByMarkerPos
   return res;
 }
 
-QVector<GraphWidget::graphSignStat> GraphWidget::getStatParams(int markPosBegin, int markPosEnd) {
+QVector<GraphWidget::GraphSignStat> GraphWidget::getStatParams(int markPosBegin, int markPosEnd) {
 
-  QVector<graphSignStat> res;
+  QVector<GraphSignStat> res;
 
   if (markPosBegin > markPosEnd)
     qSwap(markPosBegin, markPosEnd);
@@ -1406,7 +1408,7 @@ QVector<GraphWidget::graphSignStat> GraphWidget::getStatParams(int markPosBegin,
 
     auto& s = signals_[nm];
 
-    graphSignStat stat;
+    GraphSignStat stat;
 
     bool isRet = false;
     int sZn = s.pnts.size(), vcnt = 0;
@@ -1443,9 +1445,9 @@ QVector<GraphWidget::graphSignStat> GraphWidget::getStatParams(int markPosBegin,
   return res;
 }
 
-QVector<GraphWidget::graphSignStat> GraphWidget::getStatAlterParams(int markPosBegin, int markPosEnd) {
+QVector<GraphWidget::GraphSignStat> GraphWidget::getStatAlterParams(int markPosBegin, int markPosEnd) {
 
-  QVector<graphSignStat> res;
+  QVector<GraphSignStat> res;
 
   if (markPosBegin > markPosEnd)
     qSwap(markPosBegin, markPosEnd);
@@ -1461,7 +1463,7 @@ QVector<GraphWidget::graphSignStat> GraphWidget::getStatAlterParams(int markPosB
       valMaxInterval = valInterval.second,
       valScale = (valMaxInterval - valMinInterval) / ui.plot->height();
 
-    graphSignStat stat;
+    GraphSignStat stat;
 
     bool isRet = false;
     int sZn = s.pnts.size(), vcnt = 0;
@@ -1503,7 +1505,7 @@ void GraphWidget::undoCmd() {
 
   if (historyPos_.isEmpty()) return;
 
-  histPos histP = historyPos_.back();
+  HistPos histP = historyPos_.back();
 
   axisTime_->setTimeInterval(histP.tmIntl.first, histP.tmIntl.second);
 
@@ -1594,12 +1596,16 @@ void GraphWidget::lbSignBoolMove(bool isTop){
   for (auto& s : signals_){
     if (s.type == SV_Base::ValueType::BOOL) ++bcnt;
   }
+  QFont ft = font();
+  ft.setPointSize(8);
+  QFontInfo fi(ft);
+  int ftHeightPixel = fi.pixelSize();
   if (!isTop){
     ui.verticalSpacerTop->changeSize(0, 0);
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, height() - 48 - (bcnt - 1) * 15));        
+        s.lb->move(QPoint(13, height() - ftHeightPixel - 43 - (bcnt - 1) * 15));
         --bcnt;
       }
     }

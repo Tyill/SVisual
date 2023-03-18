@@ -33,16 +33,6 @@ class PlotWidget : public QWidget
 {
   Q_OBJECT
 
-private:
-  
-  QPoint presPnt_;
-    
-  bool lpm_ = false, rpm_ = false, keyCntr_ = false;
-  QTimer* tmrMarkerPos_ = NULL;
-
-  AxisTimeWidget* axisTime_ = NULL;
-  AxisValueWidget* axisValue_ = NULL;
-
 public:
   PlotWidget(QWidget *parent = 0);
 
@@ -51,16 +41,27 @@ public:
   void setAxisTime(AxisTimeWidget* ax);
   void setAxisValue(AxisValueWidget* ax);
   void scale(int delta);
-  
-protected:  
-  void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-  void wheelEvent(QWheelEvent * event);
 
 signals:
   void req_rctChange();
   void req_moveChange();
   void req_updMarker();
+  void req_fullSize();
+  
+protected:  
+  void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+  void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+  void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+  void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+  void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+  void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
+
+private:
+  QPoint presPnt_;
+
+  bool lpm_ = false, rpm_ = false, keyCntr_ = false;
+  QTimer* tmrMarkerPos_ = NULL;
+
+  AxisTimeWidget* axisTime_ = NULL;
+  AxisValueWidget* axisValue_ = NULL;
 };

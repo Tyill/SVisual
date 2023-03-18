@@ -327,10 +327,10 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
   QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
   double tmScale = ui.axisTime->getTimeScale();
 
-  QVector<GraphWidget::graphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
-  QVector<GraphWidget::graphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
+  QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
+  QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
 
-  QVector<GraphWidget::graphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
+  QVector<GraphWidget::GraphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
 
   QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
   QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
@@ -387,10 +387,10 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
   QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
   double tmScale = ui.axisTime->getTimeScale();
 
-  QVector<GraphWidget::graphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
-  QVector<GraphWidget::graphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
+  QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
+  QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
 
-  QVector<GraphWidget::graphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
+  QVector<GraphWidget::GraphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
 
   QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
   QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");

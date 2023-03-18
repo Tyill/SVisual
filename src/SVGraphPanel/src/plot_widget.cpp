@@ -142,6 +142,12 @@ void PlotWidget::mouseMoveEvent(QMouseEvent *event) {
   QWidget::mouseMoveEvent(event);
 }
 
+void PlotWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+
+    emit req_fullSize();
+    QWidget::mouseDoubleClickEvent(event);
+}
+
 void PlotWidget::wheelEvent(QWheelEvent * event) {
   auto keys = event->modifiers();
 
