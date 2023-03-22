@@ -29,6 +29,7 @@
 
 #include <QString>
 #include <QMap>
+#include <QColor>
 
 struct ValueData{
   char name[SV_NAMESZ];

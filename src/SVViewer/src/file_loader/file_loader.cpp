@@ -23,37 +23,41 @@
 // THE SOFTWARE.
 //
 
-#include "load_data.h"
+#include "file_loader.h"
 #include "SVViewer/forms/main_win.h"
 #include "zlib/zlib.h"
 
-#include <QThread>
 #include <QDateTime>
 #include <QFile>
 
-extern MainWin* mainWin;
-
 using namespace SV_Base;
 
-ThrLoadData::ThrLoadData(QStringList files) {
+FileLoader::FileLoader(QMainWindow* mainWin, QObject* parent):
+    QObject(parent),
+    m_mainWin(qobject_cast<MainWin*>(mainWin)){
 
-  QThread* thr = new QThread(this);
-
-  this->moveToThread(thr);
-  connect(thr, &QThread::started, [this, files]() {
-    bool ok = mainWin->loadData(files);
-    emit finished(ok);
-  });
-  connect(this, &ThrLoadData::finished, [this, thr]() {
-    thr->quit();
-  });
-
-  thr->start();
 }
 
-bool MainWin::loadModuleVals(QString path) {
+bool FileLoader::preloadFiles(const QStringList& files) {
 
-  if (mainWin->fileRef_.contains(path)) return true;
+  m_mainWin->cng.selOpenDir = files[0].left(files[0].lastIndexOf('/'));
+
+  bool ok = true;
+  for (const auto& path : files){
+    ok &= loadFile(path);
+  }
+  return ok;
+}
+
+bool FileLoader::loadFile(const QString& path) {
+
+  if (m_mainWin->fileRef_.contains(path)) return true;
+
+  auto cng = m_mainWin->cng;
+  auto& moduleRef = m_mainWin->moduleRef_;
+  auto& groupRef = m_mainWin->groupRef_;
+  auto& signalRef = m_mainWin->signalRef_;
+  auto& fileRef = m_mainWin->fileRef_;
 
   int utcOffs = path.lastIndexOf("UTC");
 
@@ -62,17 +66,16 @@ bool MainWin::loadModuleVals(QString path) {
     QString ss = path.left(ssz - 4);
 
     bool isNum = false;
-    utcOffs = ss.mid(utcOffs + 3).toInt(&isNum) * 3600000 - QDateTime::currentDateTime().offsetFromUtc() * 1000;
+    utcOffs = ss.midRef(utcOffs + 3).toInt(&isNum) * 3600000 - QDateTime::currentDateTime().offsetFromUtc() * 1000;
 
     if (!isNum) utcOffs = QDateTime::currentDateTime().offsetFromUtc() * 1000;
   }
 
   QFile file(path);
-
-  if (!file.exists() || !file.open(QIODevice::ReadOnly)) return false;
-
-
-  mainWin->fileRef_.insert(path, new FileData(path, utcOffs));
+  if (!file.exists() || !file.open(QIODevice::ReadOnly)){
+      return false;
+  }
+  fileRef.insert(path, new FileData(path, utcOffs));
 
   QDataStream dataStream(&file);
 
@@ -100,8 +103,6 @@ bool MainWin::loadModuleVals(QString path) {
       return false;
     }
 
-    ////
-
     int cPos = 0, itData = 0;
     while (itData < (int)dataSz) {
 
@@ -109,46 +110,42 @@ bool MainWin::loadModuleVals(QString path) {
 
       QString sign = QString(vr->name) + vr->module;
 
-      if (!fileRef_[path]->signls.contains(sign))
-        fileRef_[path]->signls.insert(sign, FileData::fsd{ false, 0 });
+      if (!fileRef[path]->signls.contains(sign)){
+        fileRef[path]->signls.insert(sign, FileData::fsd{ false, 0 });
+      }
+      fileRef[path]->signls[sign].patchApos.append(QPair<int, int>(patchNum, cPos));
+      fileRef[path]->signls[sign].vlsCnt += vr->vlCnt;
 
-      fileRef_[path]->signls[sign].patchApos.append(QPair<int, int>(patchNum, cPos));
-      fileRef_[path]->signls[sign].vlsCnt += vr->vlCnt;
-
-      if (signalRef_.contains(sign)) {
-
-        if (!signalRef_[sign]->isActive) {
-          signalRef_[sign]->isActive = true;
-          moduleRef_[vr->module]->isActive = true;
-          groupRef_[signalRef_[sign]->group.c_str()]->isActive = true;
-
-          signalRef_[sign]->type = vr->type;
+      if (signalRef.contains(sign)) {
+        if (!signalRef[sign]->isActive) {
+          signalRef[sign]->isActive = true;
+          moduleRef[vr->module]->isActive = true;
+          groupRef[signalRef[sign]->group.c_str()]->isActive = true;
+          signalRef[sign]->type = vr->type;
         }
-
-        if (signalRef_[sign]->group.empty())
-          signalRef_[sign]->group = vr->group;
-
-        if (signalRef_[sign]->comment.empty())
-          signalRef_[sign]->comment = vr->comment;
-
+        if (signalRef[sign]->group.empty()){
+          signalRef[sign]->group = vr->group;
+        }
+        if (signalRef[sign]->comment.empty()){
+          signalRef[sign]->comment = vr->comment;
+        }
         int szVl = vheadSz + vr->vlCnt * valSz;
         itData += szVl;
         cPos += szVl;
         continue;
       }
 
-      if (!moduleRef_.contains(vr->module)) {
-        moduleRef_.insert(vr->module, new ModuleData(vr->module));
-        moduleRef_[vr->module]->isActive = true;
+      if (!moduleRef.contains(vr->module)) {
+        moduleRef.insert(vr->module, new ModuleData(vr->module));
+        moduleRef[vr->module]->isActive = true;
       }
+      moduleRef[vr->module]->signls.push_back(sign.toStdString());
 
-      moduleRef_[vr->module]->signls.push_back(sign.toStdString());
-
-      if (!groupRef_.contains(vr->group)) {
-        groupRef_.insert(vr->group, new GroupData(vr->group));
-        groupRef_[vr->group]->isActive = true;
+      if (!groupRef.contains(vr->group)) {
+        groupRef.insert(vr->group, new GroupData(vr->group));
+        groupRef[vr->group]->isActive = true;
       }
-      groupRef_[vr->group]->signls.push_back(sign.toStdString());
+      groupRef[vr->group]->signls.push_back(sign.toStdString());
 
       auto sd = new SignalData();
       sd->name = vr->name;
@@ -158,33 +155,29 @@ bool MainWin::loadModuleVals(QString path) {
       sd->type = vr->type;
       sd->isActive = true;
 
-      signalRef_[sign] = sd;
+      signalRef[sign] = sd;
 
       int szVl = vheadSz + vr->vlCnt * valSz;
       itData += szVl;
       cPos += szVl;
     }
-
     ++patchNum;
   }
-
   file.close();
-
   return true;
 }
 
-bool loadSignalData(const QString& sign) {
+bool FileLoader::loadSignalData(const QString& sign) {
 
-  QMap<QString, SignalData*> sref = mainWin->signalRef_;
-  if (!sref.contains(sign))
+  QMap<QString, SignalData*> sref = m_mainWin->signalRef_;
+  if (!sref.contains(sign)){
     return false;
-
-  MainWin::Config& cng = mainWin->cng;
-
+  }
+  auto cng = m_mainWin->cng;
   auto sdata = sref[sign];
 
   bool  ok = true, isNewFile = false;
-  for (auto path : mainWin->fileRef_) {
+  for (auto path : qAsConst(m_mainWin->fileRef_)) {
 
     if (!path->signls.contains(sign) || path->signls[sign].isLoad) continue;
 
@@ -207,9 +200,9 @@ bool loadSignalData(const QString& sign) {
     Value* buff = new Value[buffSz];
     memset(buff, 0, buffSz);
 
-    for (size_t i = csz, j = 0; i < newsz; ++i, ++j)
+    for (size_t i = csz, j = 0; i < newsz; ++i, ++j){
       sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
-
+    }
     int psz = path->signls[sign].patchApos.size(),
       posMem = 0,
       patchNum = 0,
@@ -272,9 +265,9 @@ bool loadSignalData(const QString& sign) {
 
   }
 
-  if (!isNewFile)
+  if (!isNewFile){
     return ok && !sdata->buffData.empty();
-
+  }
   std::sort(sdata->buffData.begin(), sdata->buffData.end(), [](RecData& left, RecData& right) {
     return left.beginTime < right.beginTime;
   });
@@ -314,13 +307,3 @@ bool loadSignalData(const QString& sign) {
   return ok && !sdata->buffData.empty();
 }
 
-bool MainWin::loadData(QStringList files) {
-
-  cng.selOpenDir = files[0].left(files[0].lastIndexOf('/'));
-
-  bool ok = false;
-  for (QString& path : files)
-    ok = loadModuleVals(path);
-
-  return ok;
-}

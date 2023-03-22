@@ -54,7 +54,7 @@ namespace SV_Base {
 
   /// сигнал
   struct SignalData {
-
+    int id;
     bool isActive;          ///< активен
     bool isDelete;          ///< удален
     bool isBuffEnable;      ///< буфер разрешен
@@ -77,6 +77,7 @@ namespace SV_Base {
     ///////
 
     SignalData() {
+      id = 0;
       isActive = false;
       isDelete = false;
       isBuffEnable = false;

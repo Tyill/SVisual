@@ -48,6 +48,8 @@ class MainWin : public QMainWindow
   friend bool addSignal(SV_Base::SignalData* sd);
   friend bool addModule(SV_Base::ModuleData* md);
   friend QVector<QString> getModuleSignals(const QString& md);
+  friend class FileLoader;
+  friend class DbClickHouseLoader;
 
 public:
   MainWin(QWidget *parent = 0);
@@ -75,8 +77,6 @@ public:
   void updateConfig(const Config&);
   Config getConfig()const;
 
-  bool loadModuleVals(QString path);
-
   void updateGraphSetting(const SV_Graph::GraphSetting&);
 
 public slots:
@@ -84,27 +84,27 @@ public slots:
   void updateSignals();
   void actionOpenData();
   void actionOpenStat();
-  bool loadData(QStringList files);
-  void loadDataFinished(bool ok);
   void contextMenuClick(QAction*);
-  void changeSignColor(QString module, QString signal, QColor color);
+  void changeSignColor(const QString& module, const QString& signal, const QColor& color);
+
+protected:
+  bool eventFilter(QObject *target, QEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent * event) override;
 
 private:
-  bool init(QString initPath);
-  bool writeSettings(QString pathIni);
-  bool readSignals(QString path);
-  bool writeSignals(QString path);
-  QDialog* addNewWindow(const QRect& pos);
-
-  bool eventFilter(QObject *target, QEvent *event);
-
-  void updateGroup(QString group, QString sign);
-
   void connects();
   void load();
+  bool init(const QString& initPath);
 
+  bool writeSettings(const QString& pathIni);
+  bool readSignals(const QString& path);
+  bool writeSignals(const QString& path);
+  QDialog* addNewWindow(const QRect& pos);
+
+  bool loadSDataRequest(const QString& sname);
+
+  void updateGroup(const QString& group, const QString& sign);
   void sortSignalByGroupOrModule(bool byModule);
-  void contextMenuEvent(QContextMenuEvent * event);
 
 private:
   Config cng;
@@ -116,8 +116,6 @@ private:
   QDialog* scriptPanel_ = nullptr;
 
   SettingsDialog* settingsDialog_ = nullptr;
-
-  ThrLoadData* thrLoadData_ = nullptr;
 
   QMutex mtx_;
 
