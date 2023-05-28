@@ -28,6 +28,7 @@
 #include "clickhouse/client.h"
 
 #include <QDateTime>
+#include <QDebug>
 
 using namespace SV_Base;
 namespace ch = clickhouse;
@@ -38,51 +39,105 @@ DbClickHouseLoader::DbClickHouseLoader(QMainWindow* mainWin, QObject* parent):
 
 }
 
-bool DbClickHouseLoader::loadSignalData(const QDateTime& from, const QDateTime& to){
+bool DbClickHouseLoader::loadSignalNames(){
 
-    QMap<QString, SignalData*> sref = m_mainWin->signalRef_;
-
-    auto timeBegin = from.toMSecsSinceEpoch();
-    auto timeEnd = to.toMSecsSinceEpoch();
-    auto cng = m_mainWin->cng;
-    try{
-        QString strIds;
-        for (auto s : sref){
-         strIds += QString("%1,").arg(s->id);
-        }
-        strIds.chop(1);
-        QString q = QString("SELECT id, ts, value FROM tblSData "
-                         "WHERE id IN (%1) AND ts BETWEEN %2 AND %3 ORDER BY id, ts;")
-                         .arg(strIds).arg(timeBegin).arg(timeEnd);
-        if (timeEnd <= 0){
-         q = QString("SELECT id, ts, value FROM tblSData "
-                     "WHERE id IN (%1) AND ts >= %2 ORDER BY id, ts;")
-                     .arg(strIds).arg(timeBegin);
-        }
-
+    try{        
+        auto& sref = m_mainWin->signalRef_;
+        sref.clear();
+        QString q = "SELECT id, sname, module FROM tblSignal;";
         auto chClient = newClient();
-        chClient->Select(q.toStdString(), [&sref](const ch::Block& block){
-            int csId = -1;
-            SignalData* sd = nullptr;
+        chClient->Select(q.toStdString(), [&sref](const ch::Block& block)mutable{
+            int packetPos = 0;
             for (size_t i = 0; i < block.GetRowCount(); ++i){
                 int sId = block[0]->As<ch::ColumnInt32>()->At(i);
-                if (csId != sId){
-                    csId = sId;
-                    if (auto it = std::find_if(sref.begin(), sref.end(),[sId](const auto& v){
-                        return v->id == sId;
-                    }); it != sref.end()){
-                        sd = *it;
-                    }
-                }
-                sd->buffData.push_back(push_back(block[1]->As<ch::ColumnInt64>()->At(i));
-                sd->values.push_back(block[2]->As<ch::ColumnFloat64>()->At(i));
-                sd->quality.push_back(block[3]->As<ch::ColumnInt8>()->At(i));
+                auto sname = block[1]->As<ch::ColumnString>()->At(i);
+                auto module = block[2]->As<ch::ColumnString>()->At(i);
+                SV_Base::SignalData* sdata = new SV_Base::SignalData();
+                sdata->id = sId;
+                sdata->name = sname;
+                sdata->module = module;
+                sref.insert(QString::fromStdString(sdata->name + sdata->module), sdata);
             }
         });
-     }catch(std::exception& e){
-//         logWarning({Q_FUNC_INFO, e.what()});
-//         m_chClient->ResetConnection();
-     }
+    }catch(std::exception& e){
+        qWarning() << Q_FUNC_INFO << e.what();
+        return false;
+    }
+    return true;
+}
+
+bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& from, const QDateTime& to){
+
+    const auto& sref = m_mainWin->signalRef_;
+
+    if (sref.contains(sname)) return false;
+
+    const auto& sdata = sref[sname];
+    auto cng = m_mainWin->cng;
+    auto timeBegin = from.toMSecsSinceEpoch();
+    auto timeEnd = to.toMSecsSinceEpoch();
+
+    try{        
+        QString q = QString("SELECT count() FROM tblSData "
+                            "WHERE id = %1 AND ts BETWEEN %2 AND %3 ORDER BY id, ts;")
+                            .arg(sdata->id).arg(timeBegin).arg(timeEnd);
+        if (timeEnd <= 0){
+            q = QString("SELECT count() FROM tblSData "
+                        "WHERE id = %1 AND ts >= %2 ORDER BY id, ts;")
+                        .arg(sdata->id).arg(timeBegin);
+        }
+        int sValueCount = 0; 
+        auto chClient = newClient();
+        chClient->Select(q.toStdString(), [&sValueCount](const ch::Block& block){
+            if (block.GetRowCount() > 0){
+                sValueCount = block[0]->As<ch::ColumnInt32>()->At(0);
+            }
+        });
+        
+        sdata->buffData.resize(sValueCount / SV_PACKETSZ);
+
+        if (m_signalValueBuff.contains(sdata->id)){
+            delete[] m_signalValueBuff[sdata->id];
+            m_signalValueBuff.remove(sdata->id);
+        }
+        if (sValueCount == 0) return true;
+
+        size_t buffSz = sizeof(Value) * sValueCount;
+        Value* buff = new Value[buffSz];
+        memset(buff, 0, buffSz);
+
+        m_signalValueBuff[sdata->id] = buff;
+
+        for (size_t i = 0, j = 0; i < sValueCount / SV_PACKETSZ; ++i, ++j){
+            sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
+        }
+
+        q = QString("SELECT ts, value  FROM tblSData "
+                    "WHERE id = %1 AND ts BETWEEN %2 AND %3 ORDER BY id, ts;")
+                            .arg(sref.value(sname)->id).arg(timeBegin).arg(timeEnd);
+        if (timeEnd <= 0){
+            q = QString("SELECT ts, value FROM tblSData "
+                        "WHERE id = %1 AND ts >= %2 ORDER BY id, ts;")
+                        .arg(sref.value(sname)->id).arg(timeBegin);
+        }
+        int buffPos = 0;
+        chClient->Select(q.toStdString(), [&sdata, cng, &buffPos, sValueCount](const ch::Block& block)mutable{
+            int packetPos = 0;
+            for (size_t i = 0; i < block.GetRowCount() && buffPos < sValueCount / SV_PACKETSZ; ++i){                
+                if (packetPos == SV_PACKETSZ){
+                    ++buffPos;
+                    packetPos = 0;
+                }
+                sdata->buffData[buffPos].beginTime = block[0]->As<ch::ColumnUInt64>()->At(i);
+                sdata->buffData[buffPos].vals[packetPos].vFloat = block[1]->As<ch::ColumnFloat32>()->At(i);
+                ++packetPos;
+            }
+        });
+    }catch(std::exception& e){
+        qWarning() << Q_FUNC_INFO << e.what();
+        return false;
+    }
+    return true;
 }
 
 std::unique_ptr<clickhouse::Client> DbClickHouseLoader::newClient()const

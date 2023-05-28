@@ -35,6 +35,7 @@
 class GraphSettingDialog;
 class ThrLoadData;
 class SettingsDialog;
+class DbClickHouseLoader;
 
 class MainWin : public QMainWindow
 {
@@ -125,6 +126,8 @@ private:
   QMap<QString, SV_Base::GroupData*> groupRef_;     // ключ - имя группы
   QMap<QString, SV_Base::SignalData*> signalRef_;   // ключ - название сигнала
   QMap<QString, FileData*> fileRef_;
+
+  DbClickHouseLoader* m_chLoader = nullptr;
 };
 
 

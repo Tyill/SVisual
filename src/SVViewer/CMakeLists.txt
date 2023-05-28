@@ -18,7 +18,7 @@ if(MSVC)
    target_link_libraries (SVViewer optimized qtmain)
 endif(MSVC)
 
-target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
+target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog clickhouse-cpp-lib)
 
 # copy mswin dependent
 if(WIN32)

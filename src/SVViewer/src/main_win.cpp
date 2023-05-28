@@ -23,8 +23,6 @@
 // THE SOFTWARE.
 //
 
-#include <QPrinter>
-#include <QPrintDialog>
 #include "SVViewer/forms/main_win.h"
 #include "SVViewer/forms/graph_setting_dialog.h"
 #include "SVViewer/forms/subscript_dialog.h"
@@ -34,9 +32,12 @@
 #include "SVScriptDialog/script_dialog.h"
 #include "SVExportDialog/export_dialog.h" 
 #include "SVViewer/src/file_loader/file_loader.h"
+#include "SVViewer/src/db_loader/clickhouse_loader.h"
 #include "SVBase/limits.h"
 #include "SVBase/base.h"
 
+#include <QPrinter>
+#include <QPrintDialog>
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QtGui> 
@@ -357,8 +358,21 @@ void MainWin::load() {
 
   ui.btnSortByModule->setChecked(cng.sortByMod);
   ui.btnSortByGroup->setChecked(!cng.sortByMod);
-
+  
   readSignals(QApplication::applicationDirPath() + "/svsignals.txt");
+
+  if (cng.inputDataBaseEna){
+    ui.actionOpen->setVisible(false);
+
+    m_chLoader = new DbClickHouseLoader(this, this);
+    if (!m_chLoader->loadSignalNames()){
+      QMessageBox msgBox;
+      msgBox.setTextFormat(Qt::RichText);
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setText(tr("Ошибка импорта сигналов из БД"));
+      msgBox.exec();
+    }
+  }
 }
 
 void MainWin::connects() {
@@ -810,9 +824,7 @@ void MainWin::actionOpenData() {
   QThread* thr = new QThread(this);
 
   FileLoader* fileLoader = new FileLoader(this);
-
-  fileLoader->moveToThread(thr);
-
+  
   connect(thr, &QThread::started, this, [this, files, fileLoader, thr]() {
     bool ok = fileLoader->preloadFiles(files);
     emit fileLoader->finished(ok);
@@ -832,6 +844,7 @@ void MainWin::actionOpenData() {
       thr->quit();
       thr->deleteLater();
   });
+  fileLoader->moveToThread(thr);
   thr->start();
 }
 

@@ -1,6 +1,9 @@
 #pragma once
 
+#include "SVBase/base.h"
+
 #include <QObject>
+#include <QMap>
 #include <memory>
 
 namespace clickhouse{
@@ -16,11 +19,15 @@ class DbClickHouseLoader : public QObject
 public:
     DbClickHouseLoader(QMainWindow* mainWin, QObject* parent = nullptr);
 
-    bool loadSignalData(const QDateTime& from, const QDateTime& to);
+    bool loadSignalNames();
+
+    bool loadSignalData(const QString& sname, const QDateTime& from, const QDateTime& to);
 
 private:
     std::unique_ptr<clickhouse::Client> newClient()const;
 
     MainWin* m_mainWin{};
+
+    QMap<int, SV_Base::Value*> m_signalValueBuff;
 };
 
