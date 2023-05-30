@@ -43,20 +43,34 @@ bool DbClickHouseLoader::loadSignalNames(){
 
     try{        
         auto& sref = m_mainWin->signalRef_;
+        auto& mref = m_mainWin->moduleRef_;
         sref.clear();
-        QString q = "SELECT id, sname, module FROM tblSignal;";
+        mref.clear();
+        QString q = "SELECT id, sname, module, stype FROM tblSignal;";
         auto chClient = newClient();
-        chClient->Select(q.toStdString(), [&sref](const ch::Block& block)mutable{
+        chClient->Select(q.toStdString(), [&sref, &mref](const ch::Block& block)mutable{
             int packetPos = 0;
             for (size_t i = 0; i < block.GetRowCount(); ++i){
                 int sId = block[0]->As<ch::ColumnInt32>()->At(i);
                 auto sname = block[1]->As<ch::ColumnString>()->At(i);
                 auto module = block[2]->As<ch::ColumnString>()->At(i);
+                auto stype = block[3]->As<ch::ColumnInt32>()->At(i);
                 SV_Base::SignalData* sdata = new SV_Base::SignalData();
                 sdata->id = sId;
-                sdata->name = sname;
-                sdata->module = module;
+                sdata->type = SV_Base::ValueType(stype);
+                sdata->isActive = true;
+                sdata->name = std::string(sname);
+                sdata->module = std::string(module);
                 sref.insert(QString::fromStdString(sdata->name + sdata->module), sdata);
+
+                const auto mname = QString::fromStdString(sdata->module);
+                if (!mref.contains(mname)){
+                    SV_Base::ModuleData* mdata = new SV_Base::ModuleData(sdata->module);
+                    mdata->isActive = true;
+                    mdata->isEnable = true; 
+                    mref.insert(mname, mdata);
+                }
+                mref[mname]->signls.push_back(sdata->name + sdata->module);
             }
         });
     }catch(std::exception& e){
@@ -70,7 +84,7 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
 
     const auto& sref = m_mainWin->signalRef_;
 
-    if (sref.contains(sname)) return false;
+    if (!sref.contains(sname)) return false;
 
     const auto& sdata = sref[sname];
     auto cng = m_mainWin->cng;
@@ -79,18 +93,18 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
 
     try{        
         QString q = QString("SELECT count() FROM tblSData "
-                            "WHERE id = %1 AND ts BETWEEN %2 AND %3 ORDER BY id, ts;")
+                            "WHERE id = %1 AND ts BETWEEN %2 AND %3;")
                             .arg(sdata->id).arg(timeBegin).arg(timeEnd);
         if (timeEnd <= 0){
             q = QString("SELECT count() FROM tblSData "
-                        "WHERE id = %1 AND ts >= %2 ORDER BY id, ts;")
+                        "WHERE id = %1 AND ts >= %2;")
                         .arg(sdata->id).arg(timeBegin);
         }
         int sValueCount = 0; 
         auto chClient = newClient();
         chClient->Select(q.toStdString(), [&sValueCount](const ch::Block& block){
-            if (block.GetRowCount() > 0){
-                sValueCount = block[0]->As<ch::ColumnInt32>()->At(0);
+            if (block.GetRowCount() > 0 && block.GetColumnCount() > 0){
+                sValueCount = block[0]->As<ch::ColumnUInt64>()->At(0);
             }
         });
         

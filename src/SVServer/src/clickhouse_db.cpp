@@ -48,7 +48,7 @@ bool ClickHouseDB::isConnect()const
     return false;
 }
 
-void ClickHouseDB::addSignal(const std::string& sname, const std::string& module)
+void ClickHouseDB::addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype)
 {
     if (!m_signals.count(sname + module)){
         m_signals.insert({sname + module, m_signals.size()});
@@ -63,10 +63,12 @@ void ClickHouseDB::addSignal(const std::string& sname, const std::string& module
         auto cId = column(m_signalBlock, "id")->As<ch::ColumnInt32>();
         auto cSName = column(m_signalBlock, "sname")->As<ch::ColumnString>();
         auto cModule = column(m_signalBlock, "module")->As<ch::ColumnString>();
+        auto cType = column(m_signalBlock, "stype")->As<ch::ColumnInt32>();
 
         cId->Append(m_signals[sname + module]);
         cSName->Append(sname);
         cModule->Append(module);
+        cType->Append(int(stype));
 
         if (isNew){
             std::thread([this](){
@@ -102,14 +104,27 @@ void ClickHouseDB::addSData(const std::map<std::string, uint32_t>& valPos, const
 
         if (!m_signals.count(sd.first) || valPos.at(sd.first) == 0) continue;
 
+        auto sign = SV_Srv::getSignalData(sd.first);
+        
         int sid = m_signals[sd.first];
         int vcnt = valPos.at(sd.first);
-        for(int i = 0; i < vcnt; ++i){
-            const auto& rd = sd.second[i];
-            for (int j = 0; j < SV_PACKETSZ; ++j){
-                cId->Append(sid);
-                cTs->Append(rd.beginTime);
-                cValue->Append(rd.vals[j].vFloat);
+        if (sign->type == SV_Base::ValueType::FLOAT){
+            for(int i = 0; i < vcnt; ++i){
+                const auto& rd = sd.second[i];
+                for (int j = 0; j < SV_PACKETSZ; ++j){
+                    cId->Append(sid);
+                    cTs->Append(rd.beginTime);
+                    cValue->Append(rd.vals[j].vFloat);
+                }
+            }
+        }else{
+            for(int i = 0; i < vcnt; ++i){
+                const auto& rd = sd.second[i];
+                for (int j = 0; j < SV_PACKETSZ; ++j){
+                    cId->Append(sid);
+                    cTs->Append(rd.beginTime);
+                    cValue->Append(rd.vals[j].vInt);
+                }
             }
         }        
     }
@@ -158,6 +173,7 @@ std::unique_ptr<clickhouse::Block> ClickHouseDB::newSignalBlock()const
     chBlock.AppendColumn("id", std::make_shared<ch::ColumnInt32>());
     chBlock.AppendColumn("sname", std::make_shared<ch::ColumnString>());
     chBlock.AppendColumn("module", std::make_shared<ch::ColumnString>());
+    chBlock.AppendColumn("stype", std::make_shared<ch::ColumnInt32>());
 
     return std::make_unique<ch::Block>(chBlock);
 }

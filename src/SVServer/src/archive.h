@@ -42,7 +42,7 @@ public:
 
   bool copyToDisk(bool isStop);
 
-  void addSignal(const std::string& sname, const std::string& module);
+  void addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype);
   void addValue(const std::string& sign, const SV_Base::RecData& rd);
 
   void setConfig(const SV_Srv::Config&);

@@ -60,7 +60,7 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
   }
 }
 
-void Archive::addSignal(const std::string& sname, const std::string& module) {
+void Archive::addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype) {
 
   std::string sign = sname + module;
   if (_archiveData.find(sign) != _archiveData.end()) return;
@@ -75,7 +75,7 @@ void Archive::addSignal(const std::string& sname, const std::string& module) {
     _archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
   }
   if (_chdb){
-      _chdb->addSignal(sname, module);
+      _chdb->addSignal(sname, module, stype);
   }
 }
 
@@ -143,9 +143,7 @@ bool Archive::copyToDisk(bool isStop){
           memcpy(pIn + csize, &_archiveData[sn][j].beginTime, tmSz); csize += tmSz;
           memcpy(pIn + csize, _archiveData[sn][j].vals, vlSz);       csize += vlSz;
         }
-
-        _valPos[sn] = 0;
-
+        
         ++sCnt;
       }
 
@@ -171,6 +169,10 @@ bool Archive::copyToDisk(bool isStop){
 
     if (_chdb){
       _chdb->addSData(_valPos, _archiveData);
+    }
+
+    for(auto v : _valPos){
+      v.second = 0;
     }
 
     return true;

@@ -365,11 +365,13 @@ void MainWin::load() {
     ui.actionOpen->setVisible(false);
 
     m_chLoader = new DbClickHouseLoader(this, this);
-    if (!m_chLoader->loadSignalNames()){
+    if (m_chLoader->loadSignalNames()){
+      sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
+    }else{
       QMessageBox msgBox;
       msgBox.setTextFormat(Qt::RichText);
       msgBox.setStandardButtons(QMessageBox::Ok);
-      msgBox.setText(tr("Ошибка импорта сигналов из БД"));
+      msgBox.setText(tr("Ошибка импорта сигналов из ClickHouseDb"));
       msgBox.exec();
     }
   }
@@ -400,25 +402,23 @@ void MainWin::connects() {
     if (column == 0) {
       SV_Graph::addSignal(graphPanels_[this], sign);
     }
-    else {
-      if (column == 2) {
+    else if (column == 2) {
+      auto clr = QColorDialog::getColor();
 
-        auto clr = QColorDialog::getColor();
+      item->setBackgroundColor(2, clr);
 
-        item->setBackgroundColor(2, clr);
+      auto sd = getSignalData(sign);
 
-        auto sd = getSignalData(sign);
+      if (!sd) return;
 
-        if (!sd) return;
-
-        signAttr_[sign] = SignalAttr{ QString::fromStdString(sd->name),
-            QString::fromStdString(sd->module),
-            clr };
-        for (auto gp : qAsConst(graphPanels_))
-          SV_Graph::setSignalAttr(gp, sign, SV_Graph::SignalAttributes{ signAttr_[sign].color });
+      signAttr_[sign] = SignalAttr{ QString::fromStdString(sd->name),
+          QString::fromStdString(sd->module),
+          clr };
+      for (auto gp : qAsConst(graphPanels_)){
+        SV_Graph::setSignalAttr(gp, sign, SV_Graph::SignalAttributes{ signAttr_[sign].color });
       }
-      else
-        ui.treeSignals->editItem(item, column);
+    }else{
+      ui.treeSignals->editItem(item, column);
     }
   });
   connect(ui.treeSignals, &QTreeWidget::itemChanged, this, [this](QTreeWidgetItem* item, int column) {
@@ -427,14 +427,13 @@ void MainWin::connects() {
 
     if (!sd) return;
 
-    switch (column) {
-    case 3:
+    if (column == 3) {
       if (cng.sortByMod) {
         sd->group = item->text(3).toUtf8().data();
         updateGroup(item->text(3), sign);
       }
-      break;
-    case 4: sd->comment = item->text(4).toUtf8().data(); break;
+    }else if (column == 4){
+      sd->comment = item->text(4).toUtf8().data();
     }
   });
   connect(ui.actionExit, &QAction::triggered, this, [this]() {
@@ -850,8 +849,12 @@ void MainWin::actionOpenData() {
 
 bool MainWin::loadSDataRequest(const QString& sname)
 {
+  if (cng.inputDataBaseEna){
+    return m_chLoader->loadSignalData(sname, QDateTime::fromString("2023-05-30 00:00:00", "yyyy-MM-dd HH:mm:ss"), QDateTime::currentDateTime());
+  }else{
     FileLoader fileLoader(this);
     return fileLoader.loadSignalData(sname);
+  }
 }
 
 void MainWin::actionOpenStat() {

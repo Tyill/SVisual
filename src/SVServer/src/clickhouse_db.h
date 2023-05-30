@@ -47,7 +47,7 @@ public:
 
     bool isConnect()const;
 
-    void addSignal(const std::string& sname, const std::string& module);
+    void addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType);
 
     void addSData(const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>&);
 

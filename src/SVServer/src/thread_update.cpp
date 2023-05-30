@@ -95,7 +95,7 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
 
   SV_Srv::addSignal(sd);
 
-  _archive.addSignal(bp.name, bp.module);
+  _archive.addSignal(bp.name, bp.module, bp.type);
 }
 
 void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valuePos){
