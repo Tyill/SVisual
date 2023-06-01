@@ -39,6 +39,14 @@ DbClickHouseLoader::DbClickHouseLoader(QMainWindow* mainWin, QObject* parent):
 
 }
 
+QPair<QDateTime, QDateTime> DbClickHouseLoader::getSignalInterval(const QString& sname)const
+{
+    if (m_timeDiapMem.contains(sname)){
+        return m_timeDiapMem[sname];
+    }
+    return {};
+}
+
 bool DbClickHouseLoader::loadSignalNames(){
 
     try{        
@@ -80,7 +88,7 @@ bool DbClickHouseLoader::loadSignalNames(){
     return true;
 }
 
-bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& from, const QDateTime& to){
+bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& fromDTime, const QDateTime& toDTime){
 
     const auto& sref = m_mainWin->signalRef_;
 
@@ -89,12 +97,12 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
     const auto& sdata = sref[sname];
     
     auto cng = m_mainWin->cng;
-    auto timeBegin = from.isValid() ? from.toMSecsSinceEpoch() : 0;
-    auto timeEnd = to.isValid() ? to.toMSecsSinceEpoch() : 0;
+    auto timeBegin = fromDTime.isValid() ? fromDTime.toMSecsSinceEpoch() : 0;
+    auto timeEnd = toDTime.isValid() ? toDTime.toMSecsSinceEpoch() : 0;
 
-    if (m_timeDiapMem.contains(sdata->id) && 
-        m_timeDiapMem[sdata->id].first == timeBegin && 
-        m_timeDiapMem[sdata->id].second == timeEnd){
+    if (m_timeDiapMem.contains(sname) &&
+        m_timeDiapMem[sname].first == fromDTime &&
+        m_timeDiapMem[sname].second == toDTime){
         return true;
     }
     try{        
@@ -142,69 +150,71 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
             delete[] m_signalValueBuff[sdata->id];
             m_signalValueBuff.remove(sdata->id);
         }
-        if (sValueCount == 0) return true;
+        if (sValueCount > 0){
+            size_t buffSz = sizeof(Value) * sValueCount;
+            Value* buff = new Value[buffSz];
+            memset(buff, 0, buffSz);
 
-        size_t buffSz = sizeof(Value) * sValueCount;
-        Value* buff = new Value[buffSz];
-        memset(buff, 0, buffSz);
+            m_signalValueBuff[sdata->id] = buff;
 
-        m_signalValueBuff[sdata->id] = buff;
-
-        for (size_t i = 0, j = 0; i < sValueCount / SV_PACKETSZ; ++i, ++j){
-            sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
-        }
-                
-        int buffPos = 0;
-        chClient->Select(queryData.toStdString(), [&sdata, cng, &buffPos, sValueCount](const ch::Block& block)mutable{
-            int packetPos = 0;
-            for (size_t i = 0; i < block.GetRowCount() && buffPos < sValueCount / SV_PACKETSZ; ++i){                
-                if (packetPos == SV_PACKETSZ){
-                    ++buffPos;
-                    packetPos = 0;
-                }
-                sdata->buffData[buffPos].beginTime = block[0]->AsStrict<ch::ColumnUInt64>()->At(i);
-                if (sdata->type == SV_Base::ValueType::FLOAT)
-                    sdata->buffData[buffPos].vals[packetPos].vFloat = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
-                else{
-                    sdata->buffData[buffPos].vals[packetPos].vInt = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
-                }
-                ++packetPos;
+            for (size_t i = 0, j = 0; i < sValueCount / SV_PACKETSZ; ++i, ++j){
+                sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
             }
-        });
+
+            int buffPos = 0;
+            chClient->Select(queryData.toStdString(), [&sdata, cng, &buffPos, sValueCount](const ch::Block& block)mutable{
+                int packetPos = 0;
+                for (size_t i = 0; i < block.GetRowCount() && buffPos < sValueCount / SV_PACKETSZ; ++i){
+                    if (packetPos == SV_PACKETSZ){
+                        ++buffPos;
+                        packetPos = 0;
+                    }
+                    sdata->buffData[buffPos].beginTime = block[0]->AsStrict<ch::ColumnUInt64>()->At(i);
+                    if (sdata->type == SV_Base::ValueType::FLOAT)
+                        sdata->buffData[buffPos].vals[packetPos].vFloat = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
+                    else{
+                        sdata->buffData[buffPos].vals[packetPos].vInt = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
+                    }
+                    ++packetPos;
+                }
+            });
+        }
     }catch(std::exception& e){
         qWarning() << Q_FUNC_INFO << e.what();
         return false;
     }
    
-    size_t bsz = sdata->buffData.size();
-    sdata->buffMinTime = sdata->buffData[0].beginTime;
-    sdata->buffMaxTime = sdata->buffData[bsz - 1].beginTime + SV_CYCLESAVE_MS;
+    const size_t bsz = sdata->buffData.size();
+    if (bsz > 0){
+        sdata->buffMinTime = sdata->buffData[0].beginTime;
+        sdata->buffMaxTime = sdata->buffData[bsz - 1].beginTime + SV_CYCLESAVE_MS;
 
-    double minValue = INT32_MAX, maxValue = -INT32_MAX;
+        double minValue = INT32_MAX, maxValue = -INT32_MAX;
 
-    if (sdata->type == ValueType::INT) {
-        for (auto& val : sdata->buffData) {
-            for (int i = 0; i < SV_PACKETSZ; ++i) {
-                if (val.vals[i].vInt > maxValue) maxValue = val.vals[i].vInt;
-                if (val.vals[i].vInt < minValue) minValue = val.vals[i].vInt;
+        if (sdata->type == ValueType::INT) {
+            for (auto& val : sdata->buffData) {
+                for (int i = 0; i < SV_PACKETSZ; ++i) {
+                    if (val.vals[i].vInt > maxValue) maxValue = val.vals[i].vInt;
+                    if (val.vals[i].vInt < minValue) minValue = val.vals[i].vInt;
+                }
             }
         }
-    }
-    else if (sdata->type == ValueType::FLOAT) {
-        for (auto& val : sdata->buffData) {
-            for (int i = 0; i < SV_PACKETSZ; ++i) {
-                if (val.vals[i].vFloat > maxValue) maxValue = val.vals[i].vFloat;
-                if (val.vals[i].vFloat < minValue) minValue = val.vals[i].vFloat;
+        else if (sdata->type == ValueType::FLOAT) {
+            for (auto& val : sdata->buffData) {
+                for (int i = 0; i < SV_PACKETSZ; ++i) {
+                    if (val.vals[i].vFloat > maxValue) maxValue = val.vals[i].vFloat;
+                    if (val.vals[i].vFloat < minValue) minValue = val.vals[i].vFloat;
+                }
             }
         }
+
+        sdata->buffMinValue = minValue;
+        sdata->buffMaxValue = maxValue;
+
+        sdata->buffValuePos = bsz - 1;
     }
 
-    sdata->buffMinValue = minValue;
-    sdata->buffMaxValue = maxValue;
-
-    sdata->buffValuePos = bsz - 1;
-
-    m_timeDiapMem[sdata->id] = {timeBegin, timeEnd};
+    m_timeDiapMem[sname] = {fromDTime, toDTime};
 
     return true;
 }

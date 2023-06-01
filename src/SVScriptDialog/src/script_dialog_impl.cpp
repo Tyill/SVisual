@@ -359,9 +359,9 @@ bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, 
 
 /////////////////////////////////
 
-ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::ModeGr mode) {
-
-  setParent(parent);
+ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::ModeGr mode):
+    QDialog(parent)
+{
 
 #ifdef SV_EN
   QTranslator translator;

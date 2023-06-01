@@ -31,9 +31,9 @@
 
 using namespace SV_Base;
 
-StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_) {
-
-  setParent(parent);
+StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_):
+    QDialog(parent)
+{
 
 #ifdef SV_EN
   QTranslator translator;

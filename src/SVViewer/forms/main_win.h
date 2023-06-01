@@ -80,6 +80,8 @@ public:
 
   void updateGraphSetting(const SV_Graph::GraphSetting&);
 
+  bool loadSDataRequest(QWidget* from, const QString& sname);
+
 public slots:
   void updateTblSignal();
   void updateSignals();
@@ -101,8 +103,6 @@ private:
   bool readSignals(const QString& path);
   bool writeSignals(const QString& path);
   QDialog* addNewWindow(const QRect& pos);
-
-  bool loadSDataRequest(const QString& sname);
 
   void updateGroup(const QString& group, const QString& sign);
   void sortSignalByGroupOrModule(bool byModule);
@@ -127,7 +127,7 @@ private:
   QMap<QString, SV_Base::SignalData*> signalRef_;   // ключ - название сигнала
   QMap<QString, FileData*> fileRef_;
 
-  DbClickHouseLoader* m_chLoader = nullptr;
+  QMap<QObject*, DbClickHouseLoader*> m_chLoaders;
 };
 
 

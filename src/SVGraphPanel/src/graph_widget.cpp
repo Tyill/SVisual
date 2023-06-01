@@ -37,15 +37,14 @@
 
 using namespace SV_Base;
 
-GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_) {
-
+GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
+    QWidget(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVGp/svgraphpanel_en.qm");
   QCoreApplication::installTranslator(&translator);
 #endif
-
-  setParent(parent);
 
   setAttribute(Qt::WA_NoSystemBackground);
 

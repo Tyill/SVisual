@@ -27,6 +27,7 @@
 #include "SVViewer/forms/graph_setting_dialog.h"
 #include "SVViewer/forms/subscript_dialog.h"
 #include "SVViewer/forms/settings_dialog.h"
+#include "SVViewer/forms/ts_database_dialog.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVStatDialog/stat_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
@@ -48,7 +49,7 @@
 MainWin* mainWin = {};
 
 namespace{
-const QString VERSION = QStringLiteral("1.2.0");
+const QString VERSION = QStringLiteral("1.2.1");
 }
 
 using namespace SV_Base;
@@ -73,8 +74,12 @@ ModuleData* getModuleData(const QString& sign) {
   return mainWin->moduleRef_.contains(sign) ? mainWin->moduleRef_[sign] : nullptr;
 }
 
-bool loadSignalData(const QString& sign) {
-    return mainWin->loadSDataRequest(sign);
+bool loadSignalDataMain(const QString& sign) {
+    return mainWin->loadSDataRequest(mainWin, sign);
+}
+
+bool loadSignalData(QWidget* from, const QString& sign) {
+    return mainWin->loadSDataRequest(from, sign);
 }
 
 bool addSignal(SV_Base::SignalData* sd) {
@@ -296,7 +301,7 @@ void MainWin::load() {
   auto gp = SV_Graph::createGraphPanel(this, SV_Graph::Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::viewer));
   SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
   SV_Graph::setGetSignalData(gp, getSignalData);
-  SV_Graph::setLoadSignalData(gp, loadSignalData);
+  SV_Graph::setLoadSignalData(gp, loadSignalDataMain);
   SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
 
     if (mainWin->signAttr_.contains(sname)) {
@@ -307,12 +312,13 @@ void MainWin::load() {
   });
   SV_Graph::setGraphSetting(gp, cng.graphSett);
   graphPanels_[this] = gp;
+  m_chLoaders[this] = new DbClickHouseLoader(this, this);
 
   graphSettPanel_ = new GraphSettingDialog(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
 
   exportPanel_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
   exportPanel_->setWindowFlags(Qt::Window);
-  SV_Exp::setLoadSignalData(exportPanel_, loadSignalData);
+  SV_Exp::setLoadSignalData(exportPanel_, loadSignalDataMain);
   SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRef);
   SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRef);
   SV_Exp::setGetSignalData(exportPanel_, getSignalData);
@@ -321,7 +327,7 @@ void MainWin::load() {
   statPanel_->setWindowFlags(Qt::Window);
   SV_Stat::setGetCopySignalRef(statPanel_, getCopySignalRef);
   SV_Stat::setGetSignalData(statPanel_, getSignalData);
-  SV_Stat::setLoadSignalData(statPanel_, loadSignalData);
+  SV_Stat::setLoadSignalData(statPanel_, loadSignalDataMain);
   SV_Stat::setSetTimeInterval(statPanel_, [](qint64 st, qint64 en) {
     SV_Graph::setTimeInterval(mainWin->graphPanels_[mainWin], st, en);
   });
@@ -331,7 +337,7 @@ void MainWin::load() {
 
   scriptPanel_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::viewer);
   scriptPanel_->setWindowFlags(Qt::Window);
-  SV_Script::setLoadSignalData(scriptPanel_, loadSignalData);
+  SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataMain);
   SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
   SV_Script::setGetSignalData(scriptPanel_, getSignalData);
   SV_Script::setGetModuleData(scriptPanel_, getModuleData);
@@ -364,8 +370,7 @@ void MainWin::load() {
   if (cng.inputDataBaseEna){
     ui.actionOpen->setVisible(false);
 
-    m_chLoader = new DbClickHouseLoader(this, this);
-    if (m_chLoader->loadSignalNames()){
+    if (m_chLoaders[this]->loadSignalNames()){
       sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
     }else{
       QMessageBox msgBox;
@@ -400,7 +405,14 @@ void MainWin::connects() {
     auto sign = item->text(5);
 
     if (column == 0) {
-      SV_Graph::addSignal(graphPanels_[this], sign);
+        TsDataBaseDialog dialog(this);
+        dialog.setInterval(m_chLoaders[this]->getSignalInterval(sign));
+        if (dialog.exec() == QDialog::Accepted){
+            const auto intl = dialog.getInterval();
+            if (m_chLoaders[this]->loadSignalData(sign, intl.first, intl.second)){
+                SV_Graph::addSignal(graphPanels_[this], sign);
+            }
+        }
     }
     else if (column == 2) {
       auto clr = QColorDialog::getColor();
@@ -618,9 +630,9 @@ void MainWin::connects() {
         ++axisInx;
       }
 
-      if (!axisAttrs.empty())
+      if (!axisAttrs.empty()){
         SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
-
+      }
       settings.endGroup();
     }
 
@@ -689,8 +701,9 @@ void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs) {
 
   cng.graphSett = gs;
 
-  for (auto o : qAsConst(graphPanels_))
+  for (auto o : qAsConst(graphPanels_)){
     SV_Graph::setGraphSetting(o, gs);
+  }
 }
 
 bool MainWin::eventFilter(QObject *target, QEvent *event) {
@@ -698,6 +711,7 @@ bool MainWin::eventFilter(QObject *target, QEvent *event) {
   if ((event->type() == QEvent::Close) && (target->objectName() == "graphWin")) {
 
     graphPanels_.remove(target);
+    m_chLoaders.remove(target);
     target->deleteLater();
   }
 
@@ -711,8 +725,9 @@ void MainWin::updateTblSignal() {
 
 void MainWin::updateSignals() {
 
-  for (auto gp : qAsConst(graphPanels_))
+  for (auto gp : qAsConst(graphPanels_)){
     SV_Graph::update(gp);
+  }
 }
 
 void MainWin::sortSignalByGroupOrModule(bool byModule) {
@@ -847,14 +862,28 @@ void MainWin::actionOpenData() {
   thr->start();
 }
 
-bool MainWin::loadSDataRequest(const QString& sname)
+bool MainWin::loadSDataRequest(QWidget* from, const QString& sname)
 {
-  if (cng.inputDataBaseEna){
-    return m_chLoader->loadSignalData(sname, QDateTime::fromString("2023-05-30 00:00:00", "yyyy-MM-dd HH:mm:ss"), QDateTime::fromString("2023-06-01 18:00:00", "yyyy-MM-dd HH:mm:ss"));
-  }else{
-    FileLoader fileLoader(this);
-    return fileLoader.loadSignalData(sname);
-  }
+    if (cng.inputDataBaseEna){
+        if (!m_chLoaders.contains(from)){
+            qWarning() << Q_FUNC_INFO << "!m_chLoaders.contains(from) sname" << sname;
+            return false;
+        }
+        const auto chLoader = m_chLoaders[from];
+        if (const auto intl = chLoader->getSignalInterval(sname); intl.first.isValid() && intl.second.isValid()){
+            return chLoader->loadSignalData(sname, intl.first, intl.second);
+        }else{
+            TsDataBaseDialog dialog(from);
+            if (dialog.exec() == QDialog::Accepted){
+                const auto intl = dialog.getInterval();
+                return chLoader->loadSignalData(sname, intl.first, intl.second);
+            }
+        }
+    }else{
+        FileLoader fileLoader(this);
+        return fileLoader.loadSignalData(sname);
+    }
+    return false;
 }
 
 void MainWin::actionOpenStat() {
@@ -967,7 +996,9 @@ QDialog* MainWin::addNewWindow(const QRect& pos) {
   auto gp = SV_Graph::createGraphPanel(graphWin, Config);
   SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
   SV_Graph::setGetSignalData(gp, getSignalData);
-  SV_Graph::setLoadSignalData(gp, loadSignalData);
+  SV_Graph::setLoadSignalData(gp, [this, graphWin](const QString& sname)->bool{
+      return loadSignalData(graphWin, sname);
+  });
   SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
 
     if (mainWin->signAttr_.contains(sname)) {
@@ -979,6 +1010,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos) {
   SV_Graph::setGraphSetting(gp, cng.graphSett);
 
   graphPanels_[graphWin] = gp;
+  m_chLoaders[graphWin] = new DbClickHouseLoader(this, gp);
   vertLayout->addWidget(gp);
 
   graphWin->show();

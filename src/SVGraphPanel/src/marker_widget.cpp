@@ -27,9 +27,9 @@
 
 #include <QtGui>
 
-MarkerWidget::MarkerWidget(QWidget *parent) {
-
-  this->setParent(parent);
+MarkerWidget::MarkerWidget(QWidget *parent):
+    QWidget(parent)
+{
 
   QPalette p(palette());
   p.setColor(QPalette::Background, Qt::red);

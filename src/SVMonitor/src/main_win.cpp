@@ -52,7 +52,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-const QString VERSION = QStringLiteral("1.2.0");
+const QString VERSION = QStringLiteral("1.2.1");
 
 using namespace SV_Base;
 

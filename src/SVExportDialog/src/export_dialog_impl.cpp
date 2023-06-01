@@ -38,9 +38,9 @@
 
 using namespace SV_Base;
 
-ExportDialog::ExportDialog(QWidget *parent, SV_Exp::Config cng_) {
-
-  setParent(parent);
+ExportDialog::ExportDialog(QWidget *parent, SV_Exp::Config cng_):
+    QDialog(parent)
+{
 
 #ifdef SV_EN
   QTranslator translator;

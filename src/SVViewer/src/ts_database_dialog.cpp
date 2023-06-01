@@ -23,52 +23,35 @@
 // THE SOFTWARE.
 //
 
-#include "drag_label.h"
+#include "SVViewer/forms/ts_database_dialog.h"
 
-#include <QtGui>
-#include <QApplication>
-
-DragLabel::DragLabel(QWidget *parent):
-    QLabel(parent)
+TsDataBaseDialog::TsDataBaseDialog(QWidget *parent):
+    QDialog(parent)
 {
+    ui.setupUi(this);
 
+    connect(ui.btnSelect, &QPushButton::clicked, this, [this](){
+        const auto dtBegin = ui.beginDTime->dateTime();
+        const auto dtEnd = ui.endDTime->dateTime();
+        if (dtBegin.isValid() && dtEnd.isValid() && dtBegin < dtEnd){
+            accept();
+        }else{
+            reject();
+        }
+    });
 }
 
-void DragLabel::setSignal(QString sign) {
-
-  sign_ = sign;
+TsDataBaseDialog::~TsDataBaseDialog()
+{
 }
 
-void DragLabel::mousePressEvent(QMouseEvent *event) {
-
-  if (event->button() == Qt::LeftButton)
-    startMovePos_ = event->pos();
-
-  if (event->button() == Qt::RightButton)
-    emit req_delSignal(sign_);
-
-
-  //QLabel::mousePressEvent(event);
-
+void TsDataBaseDialog::setInterval(const QPair<QDateTime, QDateTime>& dt)
+{
+    ui.beginDTime->setDateTime(dt.first);
+    ui.endDTime->setDateTime(dt.second);
 }
 
-void DragLabel::mouseMoveEvent(QMouseEvent *event) {
-
-  if (event->buttons() & Qt::LeftButton) {
-
-    int dist = (event->pos() - startMovePos_).manhattanLength();
-    if (dist >= QApplication::startDragDistance()) {
-
-      QMimeData *mimeData = new QMimeData;
-
-      mimeData->setText(sign_);
-      QDrag *drag = new QDrag(this);
-      drag->setMimeData(mimeData);
-
-      drag->exec();
-    }
-  }
-
-  QLabel::mouseMoveEvent(event);
+QPair<QDateTime, QDateTime> TsDataBaseDialog::getInterval()const
+{
+    return {ui.beginDTime->dateTime(), ui.endDTime->dateTime()};
 }
-

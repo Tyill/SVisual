@@ -36,8 +36,9 @@
 using namespace SV_Base;
 
 
-GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_) {
-
+GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
+    QWidget(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVGp/graph_panel_en.qm");
@@ -45,8 +46,6 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
 #endif
 
   cng = cng_;
-
-  setParent(parent);
 
   ui.setupUi(this);
 

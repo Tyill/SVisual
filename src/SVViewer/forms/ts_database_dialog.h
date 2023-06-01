@@ -22,53 +22,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#pragma once
 
-#include "drag_label.h"
+#include "GeneratedFiles/ui_ts_database_dialog.h"
 
-#include <QtGui>
-#include <QApplication>
+class MainWin;
+class QLineEdit;
+class QComboBox;
 
-DragLabel::DragLabel(QWidget *parent):
-    QLabel(parent)
+class TsDataBaseDialog : public QDialog
 {
+  Q_OBJECT
 
-}
+public:
+    TsDataBaseDialog(QWidget *parent = 0);
+    ~TsDataBaseDialog();
 
-void DragLabel::setSignal(QString sign) {
+    void setInterval(const QPair<QDateTime, QDateTime>&);
 
-  sign_ = sign;
-}
-
-void DragLabel::mousePressEvent(QMouseEvent *event) {
-
-  if (event->button() == Qt::LeftButton)
-    startMovePos_ = event->pos();
-
-  if (event->button() == Qt::RightButton)
-    emit req_delSignal(sign_);
+    QPair<QDateTime, QDateTime> getInterval()const;
 
 
-  //QLabel::mousePressEvent(event);
+private:
+    Ui::TsDataBaseDialog ui;
 
-}
-
-void DragLabel::mouseMoveEvent(QMouseEvent *event) {
-
-  if (event->buttons() & Qt::LeftButton) {
-
-    int dist = (event->pos() - startMovePos_).manhattanLength();
-    if (dist >= QApplication::startDragDistance()) {
-
-      QMimeData *mimeData = new QMimeData;
-
-      mimeData->setText(sign_);
-      QDrag *drag = new QDrag(this);
-      drag->setMimeData(mimeData);
-
-      drag->exec();
-    }
-  }
-
-  QLabel::mouseMoveEvent(event);
-}
-
+};

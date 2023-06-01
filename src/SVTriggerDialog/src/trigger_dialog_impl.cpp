@@ -30,15 +30,14 @@ using namespace SV_Trigger;
 
 #include <QFileDialog>
 
-TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_){
-
+TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_):
+    QDialog(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVTrigger/trigger_dialog_en.qm");
   QCoreApplication::installTranslator(&translator);
 #endif
-
-  setParent(parent);
 
   ui.setupUi(this);
 

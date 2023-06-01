@@ -27,9 +27,9 @@
 
 #include <QtGui>
 
-AxisTimeWidget::AxisTimeWidget(QWidget *parent) {
-
-  setParent(parent);
+AxisTimeWidget::AxisTimeWidget(QWidget *parent):
+    QWidget(parent)
+{
 
   tmInterval_.first = QDateTime::currentDateTime().toMSecsSinceEpoch();
   tmInterval_.second = tmInterval_.first + 3600000;

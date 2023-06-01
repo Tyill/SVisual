@@ -31,8 +31,9 @@
 #include <QFile>
 #include <QTextStream>
 
-SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent) {
-
+SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent):
+    QDialog(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVViewer/svviewer_en.qm");
@@ -40,8 +41,6 @@ SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent) {
 #endif
 
   mainScrPanel_ = mainScrPanel;
-
-  setParent(parent);
 
   ui.setupUi(this);
 

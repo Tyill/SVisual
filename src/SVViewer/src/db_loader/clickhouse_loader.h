@@ -12,12 +12,15 @@ class Client;
 
 class MainWin;
 class QMainWindow;
+class QDateTime;
 
 class DbClickHouseLoader : public QObject
 {
     Q_OBJECT
 public:
     DbClickHouseLoader(QMainWindow* mainWin, QObject* parent = nullptr);
+
+    QPair<QDateTime, QDateTime> getSignalInterval(const QString& sname)const;
 
     bool loadSignalNames();
 
@@ -30,6 +33,6 @@ private:
 
     QMap<int, SV_Base::Value*> m_signalValueBuff;
 
-    QMap<int, QPair<qint64, qint64>> m_timeDiapMem;
+    QMap<QString, QPair<QDateTime, QDateTime>> m_timeDiapMem;
 };
 

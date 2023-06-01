@@ -30,9 +30,9 @@
 #include <QtGui>
 #include <QApplication>
 
-PlotWidget::PlotWidget(QWidget *parent) {
-
-  setParent(parent);
+PlotWidget::PlotWidget(QWidget *parent):
+    QWidget(parent)
+{
 
   setAttribute(Qt::WA_NoSystemBackground);
 

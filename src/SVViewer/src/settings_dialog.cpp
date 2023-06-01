@@ -29,9 +29,9 @@
 #include <QComboBox>
 #include <QFileDialog>
 
-SettingsDialog::SettingsDialog(QWidget *parent){
-
-  setParent(parent);
+SettingsDialog::SettingsDialog(QWidget *parent):
+    QDialog(parent)
+{
 
   mainWin_ = (MainWin*)parent;
 
