@@ -89,7 +89,7 @@ void ClickHouseDB::addSignal(const std::string& sname, const std::string& module
     }
 }
 
-void ClickHouseDB::saveSData(bool onClose, const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>& sdata)
+void ClickHouseDB::saveSData(bool onClose, const std::map<std::string, int>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>& sdata)
 {    
     auto dataBlock = newSDataBlock();
 

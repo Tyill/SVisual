@@ -81,7 +81,7 @@ void Archive::addSignal(const std::string& sname, const std::string& module, SV_
 
 void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
 
-  uint32_t vp = _valPos[sign];
+  int vp = _valPos[sign];
 
   _archiveData[sign][vp].beginTime = rd.beginTime;
   memcpy(_archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(SV_Base::Value));
@@ -130,7 +130,7 @@ bool Archive::copyToDisk(bool isStop){
 
       char* pIn = inArr.data();
 
-      uint32_t vCnt = _valPos[sn];
+      int vCnt = _valPos[sn];
       if (vCnt > 0) {
         memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
         memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
@@ -139,7 +139,7 @@ bool Archive::copyToDisk(bool isStop){
         memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
         memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
 
-        for (uint32_t j = 0; j < vCnt; ++j) {
+        for (int j = 0; j < vCnt; ++j) {
           memcpy(pIn + csize, &_archiveData[sn][j].beginTime, tmSz); csize += tmSz;
           memcpy(pIn + csize, _archiveData[sn][j].vals, vlSz);       csize += vlSz;
         }

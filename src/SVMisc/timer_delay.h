@@ -49,10 +49,8 @@ namespace SV_Misc {
       _prevCycTm = ct;
             
       for (int i = 0; i < _tmrCount; ++i) {
-
-        if (!tmrs[i].active) tmrs[i].count = 0;
-
-        tmrs[i].active = false;
+        if (!_tmrs[i].active) _tmrs[i].count = 0;
+        _tmrs[i].active = false;
       }
 
       // импульсы времени
@@ -69,90 +67,90 @@ namespace SV_Misc {
       return currDateTimeSinceEpochMs() - _prevCycTm;
     }
         
-    bool onDelaySec(bool start, uint32_t delay, int id) {
+    bool onDelaySec(bool start, int delay, int id) {
 
       if (id >= _tmrCount){
-        tmrs.resize(id + 1, TmBase{ 0, false });
+        _tmrs.resize(id + 1, TmBase{ 0, false });
         _tmrCount = id + 1;
       }
 
       bool res = false;
       if (start) {
-        tmrs[id].count += _cycleTm;
-        if (tmrs[id].count >= delay * 1000) res = true;
+        _tmrs[id].count += _cycleTm;
+        if (_tmrs[id].count >= delay * 1000) res = true;
       }
-      else tmrs[id].count = 0;
+      else _tmrs[id].count = 0;
 
-      tmrs[id].active = true;
+      _tmrs[id].active = true;
 
       return res;
     }
         
-    bool offDelaySec(bool start, uint32_t delay, int id) {
+    bool offDelaySec(bool start, int delay, int id) {
            
       if (id >= _tmrCount){
-        tmrs.resize(id + 1, TmBase{ 0, false });
+        _tmrs.resize(id + 1, TmBase{ 0, false });
         _tmrCount = id + 1;
       }
 
       bool res = false;
       if (start){
-        tmrs[id].count = delay * 1000;
+        _tmrs[id].count = delay * 1000;
       } else {
-        if (tmrs[id].count > 0) {
+        if (_tmrs[id].count > 0) {
           res = true;
-          if (tmrs[id].count > _cycleTm) 
-            tmrs[id].count -= _cycleTm;
+          if (_tmrs[id].count > _cycleTm) 
+            _tmrs[id].count -= _cycleTm;
           else
-            tmrs[id].count = 0;
+            _tmrs[id].count = 0;
         }
       }
 
-      tmrs[id].active = true;
+      _tmrs[id].active = true;
 
       return (start || res);
     }
         
-    bool onDelayMS(bool start, uint32_t delay, int id) {
+    bool onDelayMS(bool start, int delay, int id) {
             
       if (id >= _tmrCount){
-        tmrs.resize(id + 1, TmBase{ 0, false });
+        _tmrs.resize(id + 1, TmBase{ 0, false });
         _tmrCount = id + 1;
       }
 
       bool res = false;
       if (start) {
-        tmrs[id].count += _cycleTm;
-        if (tmrs[id].count >= delay) res = true;
+        _tmrs[id].count += _cycleTm;
+        if (_tmrs[id].count >= delay) res = true;
       }
-      else tmrs[id].count = 0;
+      else _tmrs[id].count = 0;
 
-      tmrs[id].active = true;
+      _tmrs[id].active = true;
 
       return res;
     }
         
-    bool offDelayMS(bool start, uint32_t delay, int id) {
+    bool offDelayMS(bool start, int delay, int id) {
            
       if (id >= _tmrCount){
-        tmrs.resize(id + 1, TmBase{ 0, false });
+        _tmrs.resize(id + 1, TmBase{ 0, false });
         _tmrCount = id + 1;
       }
 
       bool res = false;
       if (start){
-        tmrs[id].count = delay;
+        _tmrs[id].count = delay;
       } else {
-        if (tmrs[id].count > 0) {
+        if (_tmrs[id].count > 0) {
           res = true;
-          if (tmrs[id].count > _cycleTm) 
-            tmrs[id].count -= _cycleTm;
+          if (_tmrs[id].count > _cycleTm) 
+            _tmrs[id].count -= _cycleTm;
           else
-            tmrs[id].count = 0;
+            _tmrs[id].count = 0;
         }
       }
 
-      tmrs[id].active = true;
+      _tmrs[id].active = true;
 
       return (start || res);
     }
@@ -176,7 +174,7 @@ namespace SV_Misc {
       bool active;           
     };
 
-    std::vector<TmBase> tmrs;
+    std::vector<TmBase> _tmrs;
     int _tmrCount = 0;
 
     uint64_t _prevCycTm;            
