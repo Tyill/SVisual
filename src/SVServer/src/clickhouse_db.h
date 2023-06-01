@@ -49,7 +49,7 @@ public:
 
     void addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType);
 
-    void addSData(const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>&);
+    void saveSData(bool onClose, const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>&);
 
 private:
     std::unique_ptr<clickhouse::Client> newClient()const;

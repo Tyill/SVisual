@@ -30,7 +30,6 @@ ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
             pfStatusCBack("ClickHouseDB read signals from db error: " + std::string(e.what()));
         }
     }
-
 }
 
 bool ClickHouseDB::isConnect()const
@@ -60,10 +59,10 @@ void ClickHouseDB::addSignal(const std::string& sname, const std::string& module
             m_signalBlock = newSignalBlock();
             isNew = true;
         }
-        auto cId = column(m_signalBlock, "id")->As<ch::ColumnInt32>();
-        auto cSName = column(m_signalBlock, "sname")->As<ch::ColumnString>();
-        auto cModule = column(m_signalBlock, "module")->As<ch::ColumnString>();
-        auto cType = column(m_signalBlock, "stype")->As<ch::ColumnInt32>();
+        auto cId = column(m_signalBlock, "id")->AsStrict<ch::ColumnInt32>();
+        auto cSName = column(m_signalBlock, "sname")->AsStrict<ch::ColumnString>();
+        auto cModule = column(m_signalBlock, "module")->AsStrict<ch::ColumnString>();
+        auto cType = column(m_signalBlock, "stype")->AsStrict<ch::ColumnInt32>();
 
         cId->Append(m_signals[sname + module]);
         cSName->Append(sname);
@@ -90,15 +89,13 @@ void ClickHouseDB::addSignal(const std::string& sname, const std::string& module
     }
 }
 
-void ClickHouseDB::addSData(const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>& sdata)
-{
-    std::lock_guard lk(m_mtx);
-
+void ClickHouseDB::saveSData(bool onClose, const std::map<std::string, uint32_t>& valPos, const std::map<std::string, std::vector<SV_Base::RecData>>& sdata)
+{    
     auto dataBlock = newSDataBlock();
 
-    auto cId = column(dataBlock, "id")->As<ch::ColumnInt32>();
-    auto cTs = column(dataBlock, "ts")->As<ch::ColumnUInt64>();
-    auto cValue = column(dataBlock, "value")->As<ch::ColumnFloat32>();
+    auto cId = column(dataBlock, "id")->AsStrict<ch::ColumnInt32>();
+    auto cTs = column(dataBlock, "ts")->AsStrict<ch::ColumnUInt64>();
+    auto cValue = column(dataBlock, "value")->AsStrict<ch::ColumnFloat32>();
 
     for (const auto& sd : sdata){
 
@@ -129,7 +126,7 @@ void ClickHouseDB::addSData(const std::map<std::string, uint32_t>& valPos, const
         }        
     }
     if (cId->Size() > 0){
-        std::thread([this, dblock = std::move(dataBlock)](){
+        auto sendToDb =[this](const auto& dblock){
             try{
                 if (auto clt = newClient(); clt){
                     dblock->RefreshRowCount();
@@ -140,7 +137,14 @@ void ClickHouseDB::addSData(const std::map<std::string, uint32_t>& valPos, const
                     pfStatusCBack("ClickHouseDB::addSData save into db error: " +  std::string(e.what()));
                 }
             }
-        }).detach();
+        };
+        if (!onClose){
+            std::thread([this, sendToDb, dblock = std::move(dataBlock)](){
+               sendToDb(dblock);
+            }).detach();
+        }else{
+            sendToDb(dataBlock);
+        }
     }
 }
 
@@ -169,21 +173,21 @@ std::unique_ptr<clickhouse::Client> ClickHouseDB::newClient()const
 
 std::unique_ptr<clickhouse::Block> ClickHouseDB::newSignalBlock()const
 {
-    auto chBlock = ch::Block();
-    chBlock.AppendColumn("id", std::make_shared<ch::ColumnInt32>());
-    chBlock.AppendColumn("sname", std::make_shared<ch::ColumnString>());
-    chBlock.AppendColumn("module", std::make_shared<ch::ColumnString>());
-    chBlock.AppendColumn("stype", std::make_shared<ch::ColumnInt32>());
+    auto chBlock = std::make_unique<ch::Block>();
+    chBlock->AppendColumn("id", std::make_shared<ch::ColumnInt32>());
+    chBlock->AppendColumn("sname", std::make_shared<ch::ColumnString>());
+    chBlock->AppendColumn("module", std::make_shared<ch::ColumnString>());
+    chBlock->AppendColumn("stype", std::make_shared<ch::ColumnInt32>());
 
-    return std::make_unique<ch::Block>(chBlock);
+    return chBlock;
 }
 
 std::unique_ptr<clickhouse::Block> ClickHouseDB::newSDataBlock()const
 {
-    auto chBlock = ch::Block();
-    chBlock.AppendColumn("id", std::make_shared<ch::ColumnInt32>());
-    chBlock.AppendColumn("ts", std::make_shared<ch::ColumnUInt64>());
-    chBlock.AppendColumn("value", std::make_shared<ch::ColumnFloat32>());
+    auto chBlock = std::make_unique<ch::Block>();
+    chBlock->AppendColumn("id", std::make_shared<ch::ColumnInt32>());
+    chBlock->AppendColumn("ts", std::make_shared<ch::ColumnUInt64>());
+    chBlock->AppendColumn("value", std::make_shared<ch::ColumnFloat32>());
 
-    return std::make_unique<ch::Block>(chBlock);
+    return chBlock;
 }

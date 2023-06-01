@@ -850,7 +850,7 @@ void MainWin::actionOpenData() {
 bool MainWin::loadSDataRequest(const QString& sname)
 {
   if (cng.inputDataBaseEna){
-    return m_chLoader->loadSignalData(sname, QDateTime::fromString("2023-05-30 00:00:00", "yyyy-MM-dd HH:mm:ss"), QDateTime::currentDateTime());
+    return m_chLoader->loadSignalData(sname, QDateTime::fromString("2023-05-30 00:00:00", "yyyy-MM-dd HH:mm:ss"), QDateTime::fromString("2023-06-01 18:00:00", "yyyy-MM-dd HH:mm:ss"));
   }else{
     FileLoader fileLoader(this);
     return fileLoader.loadSignalData(sname);

@@ -29,5 +29,7 @@ private:
     MainWin* m_mainWin{};
 
     QMap<int, SV_Base::Value*> m_signalValueBuff;
+
+    QMap<int, QPair<qint64, qint64>> m_timeDiapMem;
 };
 

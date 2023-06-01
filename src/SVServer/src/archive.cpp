@@ -168,7 +168,7 @@ bool Archive::copyToDisk(bool isStop){
     file.close();
 
     if (_chdb){
-      _chdb->addSData(_valPos, _archiveData);
+      _chdb->saveSData(isStop, _valPos, _archiveData);
     }
 
     for(auto v : _valPos){
