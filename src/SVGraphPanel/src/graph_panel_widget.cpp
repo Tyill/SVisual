@@ -118,6 +118,8 @@ void GraphPanelWidget::load() {
 
   ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
   ui.tblValues->setSortingEnabled(true);
+
+  ui.tblValues->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 }
 
 void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
@@ -311,6 +313,29 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
 
     event->accept();
   }
+}
+
+void GraphPanelWidget::keyPressEvent(QKeyEvent* event) {
+
+    if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier)){
+        auto cells = ui.tblValues->selectedItems();
+
+        QString text;
+        int currentRow = 0;
+        foreach (const QTableWidgetItem* cell, cells) {
+            if (text.length() != 0) {
+                if (cell->row() != currentRow) {
+                    text += '\n';
+                } else {
+                    text += '\t';
+                }
+            }
+            currentRow = cell->row();
+            text += cell->text();
+        }
+
+        QApplication::clipboard()->setText(text);
+    }
 }
 
 void GraphPanelWidget::tableUpdate(GraphWidget* graph) {

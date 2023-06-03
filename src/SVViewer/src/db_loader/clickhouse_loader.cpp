@@ -27,7 +27,6 @@
 #include "SVViewer/forms/main_win.h"
 #include "clickhouse/client.h"
 
-#include <QDateTime>
 #include <QDebug>
 
 using namespace SV_Base;
@@ -39,12 +38,12 @@ DbClickHouseLoader::DbClickHouseLoader(QMainWindow* mainWin, QObject* parent):
 
 }
 
-QPair<QDateTime, QDateTime> DbClickHouseLoader::getSignalInterval(const QString& sname)const
+QPair<QDateTime, QDateTime> DbClickHouseLoader::getSignalInterval(const QString& sname)
 {
     if (m_timeDiapMem.contains(sname)){
-        return m_timeDiapMem[sname];
+        m_lastValidTimeDiap = m_timeDiapMem[sname];
     }
-    return {};
+    return m_lastValidTimeDiap;
 }
 
 bool DbClickHouseLoader::loadSignalNames(){
@@ -52,8 +51,8 @@ bool DbClickHouseLoader::loadSignalNames(){
     try{        
         auto& sref = m_mainWin->signalRef_;
         auto& mref = m_mainWin->moduleRef_;
-        sref.clear();
         mref.clear();
+
         QString q = "SELECT id, sname, module, stype FROM tblSignal;";
         auto chClient = newClient();
         chClient->Select(q.toStdString(), [&sref, &mref](const ch::Block& block)mutable{
@@ -69,8 +68,13 @@ bool DbClickHouseLoader::loadSignalNames(){
                 sdata->isActive = true;
                 sdata->name = std::string(sname);
                 sdata->module = std::string(module);
-                sref.insert(QString::fromStdString(sdata->name + sdata->module), sdata);
-
+                auto stdname = QString::fromStdString(sdata->name + sdata->module);
+                if (sref.contains(stdname)){
+                    sref[stdname]->isActive = true;
+                    sref[stdname]->id = sId;
+                }else{
+                    sref.insert(stdname, sdata);
+                }
                 const auto mname = QString::fromStdString(sdata->module);
                 if (!mref.contains(mname)){
                     SV_Base::ModuleData* mdata = new SV_Base::ModuleData(sdata->module);
@@ -165,10 +169,6 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
             chClient->Select(queryData.toStdString(), [&sdata, cng, &buffPos, sValueCount](const ch::Block& block)mutable{
                 int packetPos = 0;
                 for (size_t i = 0; i < block.GetRowCount() && buffPos < sValueCount / SV_PACKETSZ; ++i){
-                    if (packetPos == SV_PACKETSZ){
-                        ++buffPos;
-                        packetPos = 0;
-                    }
                     sdata->buffData[buffPos].beginTime = block[0]->AsStrict<ch::ColumnUInt64>()->At(i);
                     if (sdata->type == SV_Base::ValueType::FLOAT)
                         sdata->buffData[buffPos].vals[packetPos].vFloat = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
@@ -176,6 +176,10 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
                         sdata->buffData[buffPos].vals[packetPos].vInt = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
                     }
                     ++packetPos;
+                    if (packetPos == SV_PACKETSZ){
+                        ++buffPos;
+                        packetPos = 0;
+                    }
                 }
             });
         }

@@ -76,6 +76,9 @@ private slots:
   void undoCmd();
   void colorUpdate();
 
+protected:
+  void keyPressEvent(QKeyEvent* event) override;
+
 private:
   void load();
   void tableUpdate(GraphWidget* graph);
