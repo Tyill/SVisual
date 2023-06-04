@@ -25,7 +25,7 @@
 
 #include "forms/graph_panel_widget.h"
 #include "SVBase/base.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "drag_label.h"
 #include "forms/graph_widget.h"
 

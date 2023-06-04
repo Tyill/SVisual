@@ -26,7 +26,7 @@
 #include "SVMisc/tcp_server.h"
 #include "SVServer/server.h"
 #include "SVWebServer/web_server.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 
 #include <QCoreApplication>
 #include <QSettings>

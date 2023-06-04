@@ -28,7 +28,7 @@
 #include "forms/axis_setting_dialog.h"
 #include "marker_widget.h"
 #include "drag_label.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVBase/base.h"
 
 #include <QtGui>

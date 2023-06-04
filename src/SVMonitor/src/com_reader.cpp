@@ -24,7 +24,7 @@
 //
 
 #include "com_reader.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVMonitor/forms/main_win.h"
 
 #include <QTimer>
