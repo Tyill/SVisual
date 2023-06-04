@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_time_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_value_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\drag_label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\graph_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\graph_panel_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\graph_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\marker_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\plot_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\forms\axis_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\forms\graph_panel_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\forms\graph_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\graph_panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_time_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_value_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\drag_label.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\marker_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\plot_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_Debug\forms\ui_axis_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_Debug\forms\ui_graph_panel_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_Debug\forms\ui_graph_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_Release\forms\ui_axis_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_Release\forms\ui_graph_panel_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_Release\forms\ui_graph_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_MinSizeRel\forms\ui_axis_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_MinSizeRel\forms\ui_graph_panel_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_MinSizeRel\forms\ui_graph_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_RelWithDebInfo\forms\ui_axis_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_RelWithDebInfo\forms\ui_graph_panel_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\include_RelWithDebInfo\forms\ui_graph_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\cpp\SVisual\mswin\VS19\CMakeFiles\7d147fe501a3d2ae9f946b436b5edfd6\autouic_(CONFIG).stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\cpp\SVisual\src\SVGraphPanel\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\cpp\SVisual\src\SVGraphPanel\forms\axis_setting_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVGraphPanel\forms\graph_panel_widget.ui" />
+    <None Include="C:\cpp\SVisual\src\SVGraphPanel\forms\graph_widget.ui" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\autouic_Debug.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\autouic_Release.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\autouic_MinSizeRel.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVGraphPanel\SVGraphPanel_autogen\autouic_RelWithDebInfo.stamp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{354B905C-9921-3E0F-9DD8-1015719FB680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2A6AFA54-21B0-3349-9C97-AF529A64B5D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6DACD3CD-924D-3350-BC6F-0BC07E6DD228}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
