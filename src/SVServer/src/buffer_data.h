@@ -25,7 +25,7 @@
 #pragma once
 
 #include "SVServer/server.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 
 #include <mutex>
 

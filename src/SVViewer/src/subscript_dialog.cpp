@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 //
 #include "SVScriptDialog/script_dialog.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVViewer/forms/subscript_dialog.h"
 
 #include <QApplication>

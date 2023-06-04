@@ -34,7 +34,7 @@
 #include "SVExportDialog/export_dialog.h" 
 #include "SVViewer/src/file_loader/file_loader.h"
 #include "SVViewer/src/db_loader/clickhouse_loader.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVBase/base.h"
 
 #include <QPrinter>

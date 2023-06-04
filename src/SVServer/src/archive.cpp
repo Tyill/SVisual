@@ -25,7 +25,7 @@
 #include "archive.h"
 #include "clickhouse_db.h"
 #include "SVMisc/misc.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "zlib/zlib.h"
 
 #include <chrono>

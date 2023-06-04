@@ -24,7 +24,7 @@
 //
 
 #include "SVStatDialog/forms/stat_dialog_impl.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 
 #include <QtGui>
 #include <QTreeWidget>

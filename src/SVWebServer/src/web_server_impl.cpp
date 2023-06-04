@@ -25,7 +25,7 @@
 
 #include "web_server_impl.h"
 #include "SVBase/base.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "http_parser.h"
 
 #include <QJsonDocument>
