@@ -105,37 +105,24 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
         m_timeDiapMem[sname].second == toDTime){
         return true;
     }
-    try{        
-        QString queryCount = QString("SELECT count() FROM tblSData "
-                                     "WHERE id = %1;")
-                                     .arg(sdata->id);
-        QString queryData = QString("SELECT ts, value  FROM tblSData "
-                                    "WHERE id = %1 ORDER BY ts;")
-                                    .arg(sref.value(sname)->id);
+    try{
+        QString qCountCondition, qDataCondition;
         if (timeBegin > 0 && timeEnd > 0){
-            queryCount = QString("SELECT count() FROM tblSData "
-                                 "WHERE id = %1 AND ts BETWEEN %2 AND %3;")
-                                 .arg(sdata->id).arg(timeBegin).arg(timeEnd);
-            queryData = QString("SELECT ts, value  FROM tblSData "
-                                "WHERE id = %1 AND ts BETWEEN %2 AND %3 ORDER BY ts;")
-                                .arg(sref.value(sname)->id).arg(timeBegin).arg(timeEnd);
+            qCountCondition = QString(" AND ts BETWEEN %1 AND %2").arg(timeBegin).arg(timeEnd);
+            qDataCondition = QString(" AND ts BETWEEN %1 AND %2 ORDER BY ts").arg(timeBegin).arg(timeEnd);
         }
         else if (timeBegin > 0){
-            queryCount = QString("SELECT count() FROM tblSData "
-                                 "WHERE id = %1 AND ts >= %2;")
-                                 .arg(sdata->id).arg(timeBegin);
-            queryData = QString("SELECT ts, value FROM tblSData "
-                                "WHERE id = %1 AND ts >= %2 ORDER BY ts;")
-                                .arg(sref.value(sname)->id).arg(timeBegin);
+            qCountCondition = QString(" AND ts >= %1").arg(timeBegin);
+            qDataCondition = QString(" AND ts >= %1 ORDER BY ts").arg(timeBegin);
         }
         else if (timeEnd > 0){
-            queryCount = QString("SELECT count() FROM tblSData "
-                                 "WHERE id = %1 AND ts < %2;")
-                                 .arg(sdata->id).arg(timeEnd);
-            queryData = QString("SELECT ts, value FROM tblSData "
-                                "WHERE id = %1 AND ts < %2 ORDER BY ts;")
-                                .arg(sref.value(sname)->id).arg(timeEnd);
+            qCountCondition = QString(" AND ts < %1").arg(timeEnd);
+            qDataCondition = QString(" AND ts < %1 ORDER BY ts").arg(timeEnd);
         }
+        QString queryCount = QString("SELECT count() FROM tblSData "
+                                     "WHERE id = %1 %2;").arg(sdata->id).arg(qCountCondition);
+        QString queryData = QString("SELECT ts, value  FROM tblSData "
+                                    "WHERE id = %1 %2;").arg(sdata->id).arg(qDataCondition);
         int sValueCount = 0; 
         auto chClient = newClient();
         chClient->Select(queryCount.toStdString(), [&sValueCount](const ch::Block& block){
@@ -143,32 +130,30 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
                 sValueCount = block[0]->AsStrict<ch::ColumnUInt64>()->At(0);
             }
         });
+
+        sValueCount = std::ceil(sValueCount / SV_PACKETSZ);
         
-        sdata->buffData.resize(sValueCount / SV_PACKETSZ);
+        sdata->buffData.resize(sValueCount);
 
         if (m_signalValueBuff.contains(sdata->id)){
             delete[] m_signalValueBuff[sdata->id];
             m_signalValueBuff.remove(sdata->id);
         }
         if (sValueCount > 0){
-            size_t buffSz = sizeof(Value) * sValueCount;
+            size_t buffSz = sizeof(Value) * sValueCount * SV_PACKETSZ;
             Value* buff = new Value[buffSz];
             memset(buff, 0, buffSz);
 
             m_signalValueBuff[sdata->id] = buff;
 
-            for (size_t i = 0, j = 0; i < sValueCount / SV_PACKETSZ; ++i, ++j){
-                sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
+            for (size_t i = 0; i < sValueCount; ++i){
+                sdata->buffData[i].vals = &buff[i * SV_PACKETSZ];
             }
 
             int buffPos = 0;
             chClient->Select(queryData.toStdString(), [&sdata, cng, &buffPos, sValueCount](const ch::Block& block)mutable{
                 int packetPos = 0;
-                for (size_t i = 0; i < block.GetRowCount() && buffPos < sValueCount / SV_PACKETSZ; ++i){
-                    if (packetPos == SV_PACKETSZ){
-                        ++buffPos;
-                        packetPos = 0;
-                    }
+                for (size_t i = 0; i < block.GetRowCount() && buffPos < sValueCount; ++i){
                     sdata->buffData[buffPos].beginTime = block[0]->AsStrict<ch::ColumnUInt64>()->At(i);
                     if (sdata->type == SV_Base::ValueType::FLOAT)
                         sdata->buffData[buffPos].vals[packetPos].vFloat = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
@@ -176,6 +161,10 @@ bool DbClickHouseLoader::loadSignalData(const QString& sname, const QDateTime& f
                         sdata->buffData[buffPos].vals[packetPos].vInt = block[1]->AsStrict<ch::ColumnFloat32>()->At(i);
                     }
                     ++packetPos;
+                    if (packetPos == SV_PACKETSZ){
+                        packetPos = 0;
+                        ++buffPos;
+                    }
                 }
             });
         }
