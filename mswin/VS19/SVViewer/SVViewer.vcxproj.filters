@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\db_loader\clickhouse_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\file_loader\file_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\graph_setting_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\main_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\settings_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\subscript_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\tree_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVViewer\src\ts_database_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\3YJK5W5UP7\qrc_resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\forms\graph_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\forms\main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\forms\settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\forms\subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\forms\ts_database_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\resources\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\src\db_loader\clickhouse_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\src\file_loader\file_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\src\structurs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVViewer\src\tree_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Debug\forms\ui_graph_setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Debug\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Debug\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Debug\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Debug\forms\ui_ts_database_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Release\forms\ui_graph_setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Release\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Release\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Release\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_Release\forms\ui_ts_database_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_MinSizeRel\forms\ui_graph_setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_MinSizeRel\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_MinSizeRel\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_MinSizeRel\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_MinSizeRel\forms\ui_ts_database_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_RelWithDebInfo\forms\ui_graph_setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_RelWithDebInfo\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_RelWithDebInfo\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_RelWithDebInfo\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\include_RelWithDebInfo\forms\ui_ts_database_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\cpp\SVisual\mswin\VS19\CMakeFiles\3c9ccd12ae0d235ed9e17e72d83842f0\autouic_(CONFIG).stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\cpp\SVisual\mswin\VS19\CMakeFiles\2ce358bcc56358eea61116d406775590\qrc_resource.cpp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\cpp\SVisual\src\SVViewer\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\cpp\SVisual\src\SVViewer\forms\graph_setting.ui" />
+    <None Include="C:\cpp\SVisual\src\SVViewer\forms\main_win.ui" />
+    <None Include="C:\cpp\SVisual\src\SVViewer\forms\settings_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVViewer\forms\subscript_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVViewer\forms\ts_database_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVViewer\resources\resource.qrc" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\autouic_Debug.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\autouic_Release.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\autouic_MinSizeRel.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVViewer\SVViewer_autogen\autouic_RelWithDebInfo.stamp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{354B905C-9921-3E0F-9DD8-1015719FB680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2A6AFA54-21B0-3349-9C97-AF529A64B5D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6DACD3CD-924D-3350-BC6F-0BC07E6DD228}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

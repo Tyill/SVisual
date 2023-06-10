@@ -35,7 +35,7 @@
 #include "SVServer/server.h"
 #include "SVWebServer/web_server.h"
 #include "SVZabbix/zabbix.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "server_api.h"
 #include "com_reader.h"
 
@@ -219,8 +219,9 @@ bool MainWin::init(QString initPath){
     }
 
     cng.dbPath = settings.value("dbPath", "").toString();
-    if (cng.dbPath.isEmpty())cng.dbPath = cng.dirPath + "/svm.db";
-
+    if (cng.dbPath.isEmpty()) {
+        cng.dbPath = cng.dirPath + "/svm.db";
+    }
     // связь по TCP
     cng.tcp_addr = settings.value("tcp_addr", "127.0.0.1").toString();
     cng.tcp_port = settings.value("tcp_port", "2144").toInt();

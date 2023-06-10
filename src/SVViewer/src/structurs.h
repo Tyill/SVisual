@@ -24,7 +24,7 @@
 //
 #pragma once
 
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVBase/base.h"
 
 #include <QString>

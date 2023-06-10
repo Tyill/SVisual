@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 //
 
+#include "server.h"
 #include "buffer_data.h"
 #include "thread_update.h"
 #include "SVMisc/misc.h"

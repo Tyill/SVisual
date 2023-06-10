@@ -24,6 +24,16 @@
 //
 #pragma once
 
+#ifdef _WIN32
+#ifdef SVSERVERDLL_EXPORTS
+#define SV_API __declspec(dllexport)
+#else
+#define SV_API __declspec(dllimport)
+#endif
+#else
+#define SV_API
+#endif
+
 #include "SVBase/base.h"
 #include <map>
 #include <functional>
@@ -57,64 +67,64 @@ namespace SV_Srv {
   /// задать статус callback
   /// \param pfStatusMess
   using statusCBack = std::function<void(const std::string&)>;
-  void setStatusCBack(statusCBack stsCBack);
+  SV_API void setStatusCBack(statusCBack stsCBack);
 
   /// старт сервера
-  bool startServer(const Config&);
+  SV_API bool startServer(const Config&);
 
   /// стоп сервера
-  void stopServer();
+  SV_API void stopServer();
 
   /// задать конфиг
-  void setConfig(const Config&);
+  SV_API void setConfig(const Config&);
 
   // получение данных сервером
-  void receiveData(std::string& inout, std::string& out);
+  SV_API void receiveData(std::string& inout, std::string& out);
 
   // обновление данных callBack
   using onUpdateSignalsCBack = std::function<void()>;
-  void setOnUpdateSignalsCBack(onUpdateSignalsCBack);
+  SV_API void setOnUpdateSignalsCBack(onUpdateSignalsCBack);
 
   // добавление сигнала callBack
   using onAddSignalsCBack = std::function<void()>;
-  void setOnAddSignalsCBack(onAddSignalsCBack);
+  SV_API void setOnAddSignalsCBack(onAddSignalsCBack);
 
   // модуль подключен
   using onModuleConnectCBack = std::function<void(const std::string& module)>;
-  void setOnModuleConnectCBack(onModuleConnectCBack);
+  SV_API void setOnModuleConnectCBack(onModuleConnectCBack);
 
   // модуль отключен
   using onModuleDisconnectCBack = std::function<void(const std::string& module)>;
-  void setOnModuleDisconnectCBack(onModuleDisconnectCBack);
+  SV_API void setOnModuleDisconnectCBack(onModuleDisconnectCBack);
 
   // вернуть все модули
-  std::map<std::string, SV_Base::ModuleData*> getCopyModuleRef();
+  SV_API std::map<std::string, SV_Base::ModuleData*> getCopyModuleRef();
 
   // вернуть данные модуля
-  SV_Base::ModuleData* getModuleData(const std::string& module);
+  SV_API SV_Base::ModuleData* getModuleData(const std::string& module);
 
   // вернуть сигналы модуля
-  std::vector<std::string> getModuleSignals(const std::string& module);
+  SV_API std::vector<std::string> getModuleSignals(const std::string& module);
 
   // вернуть все сигналы
   // key = name + module
-  std::map<std::string, SV_Base::SignalData*> getCopySignalRef();
+  SV_API std::map<std::string, SV_Base::SignalData*> getCopySignalRef();
 
   /// вернуть данные сигнала
   /// \param sign = name + module
   /// \return
-  SV_Base::SignalData* getSignalData(const std::string& sign);
+  SV_API SV_Base::SignalData* getSignalData(const std::string& sign);
 
   /// добавить сигнал
-  bool addSignal(SV_Base::SignalData*);
+  SV_API bool addSignal(SV_Base::SignalData*);
 
   /// добавить модуль
-  bool addModule(SV_Base::ModuleData*);
+  SV_API bool addModule(SV_Base::ModuleData*);
 
   /// разрешить буферизацию сигнала
   /// \param sign = name + module
   /// \return true - ok
-  bool signalBufferEna(const std::string& sign);
+  SV_API bool signalBufferEna(const std::string& sign);
 
 }
 

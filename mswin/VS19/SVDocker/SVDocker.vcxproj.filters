@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVDocker\SVDocker_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVDocker\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVDocker\SVDocker_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVDocker\SVDocker_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVDocker\SVDocker_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\cpp\SVisual\src\SVDocker\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6DACD3CD-924D-3350-BC6F-0BC07E6DD228}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

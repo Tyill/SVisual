@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QDateTime>
 #include <memory>
 
 namespace clickhouse{
@@ -12,7 +13,6 @@ class Client;
 
 class MainWin;
 class QMainWindow;
-class QDateTime;
 
 class DbClickHouseLoader : public QObject
 {
@@ -20,7 +20,7 @@ class DbClickHouseLoader : public QObject
 public:
     DbClickHouseLoader(QMainWindow* mainWin, QObject* parent = nullptr);
 
-    QPair<QDateTime, QDateTime> getSignalInterval(const QString& sname)const;
+    QPair<QDateTime, QDateTime> getSignalInterval(const QString& sname);
 
     bool loadSignalNames();
 
@@ -34,5 +34,6 @@ private:
     QMap<int, SV_Base::Value*> m_signalValueBuff;
 
     QMap<QString, QPair<QDateTime, QDateTime>> m_timeDiapMem;
+    QPair<QDateTime, QDateTime> m_lastValidTimeDiap;
 };
 

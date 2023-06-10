@@ -25,7 +25,7 @@
 #include "archive.h"
 #include "clickhouse_db.h"
 #include "SVMisc/misc.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "zlib/zlib.h"
 
 #include <chrono>
@@ -171,7 +171,7 @@ bool Archive::copyToDisk(bool isStop){
       _chdb->saveSData(isStop, _valPos, _archiveData);
     }
 
-    for(auto v : _valPos){
+    for(auto& v : _valPos){
       v.second = 0;
     }
 

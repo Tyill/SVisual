@@ -18,13 +18,13 @@ if(MSVC)
    target_link_libraries (SVViewer optimized qtmain)
 endif(MSVC)
 
-target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog clickhouse-cpp-lib)
+target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
 
 # copy mswin dependent
 if(WIN32)
-   target_link_libraries(SVViewer zlib)
+   target_link_libraries(SVViewer zlib clickhouse-cpp-lib lz4 cityhash absl_int128)
 else()
-   target_link_libraries(SVViewer z)
+   target_link_libraries(SVViewer z clickhouse-cpp-lib)
 endif(WIN32)
 
 target_link_libraries(SVViewer Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport)

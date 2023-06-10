@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FE4A1724-789F-3C72-A2B8-741140DA2EF4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>SVServer</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\cpp\SVisual\mswin\VS19\Builds\Debug\x64\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SVServer.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SVServer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\cpp\SVisual\mswin\VS19\Builds\Release\x64\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SVServer.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SVServer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\cpp\SVisual\mswin\VS19\Builds\MinSizeRel\x64\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">SVServer.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">SVServer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\cpp\SVisual\mswin\VS19\Builds\RelWithDebInfo\x64\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">SVServer.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">SVServer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="Debug";SVServer_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"Debug\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\Builds\Debug\x64\SVBase.lib;..\Builds\Debug\x64\SVMisc.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/Debug/x64;C:/cpp/SVisual/mswin/VS19/Builds/Debug/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/cpp/SVisual/mswin/VS19/Builds/Debug/x64/SVServer.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/cpp/SVisual/mswin/VS19/Builds/Debug/x64/SVServer.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="Release";SVServer_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"Release\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\Builds\Release\x64\SVBase.lib;..\Builds\Release\x64\SVMisc.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/Release/x64;C:/cpp/SVisual/mswin/VS19/Builds/Release/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/cpp/SVisual/mswin/VS19/Builds/Release/x64/SVServer.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/cpp/SVisual/mswin/VS19/Builds/Release/x64/SVServer.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="MinSizeRel";SVServer_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"MinSizeRel\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\Builds\MinSizeRel\x64\SVBase.lib;..\Builds\MinSizeRel\x64\SVMisc.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/MinSizeRel/x64;C:/cpp/SVisual/mswin/VS19/Builds/MinSizeRel/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/cpp/SVisual/mswin/VS19/Builds/MinSizeRel/x64/SVServer.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/cpp/SVisual/mswin/VS19/Builds/MinSizeRel/x64/SVServer.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="RelWithDebInfo";SVServer_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"RelWithDebInfo\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\Builds\RelWithDebInfo\x64\SVBase.lib;..\Builds\RelWithDebInfo\x64\SVMisc.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/RelWithDebInfo/x64;C:/cpp/SVisual/mswin/VS19/Builds/RelWithDebInfo/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/cpp/SVisual/mswin/VS19/Builds/RelWithDebInfo/x64/SVServer.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/cpp/SVisual/mswin/VS19/Builds/RelWithDebInfo/x64/SVServer.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\cpp\SVisual\src\SVServer\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/cpp/SVisual/src/SVServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/cpp/SVisual/src -BC:/cpp/SVisual/mswin/VS19 --check-stamp-file C:/cpp/SVisual/mswin/VS19/SVServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\cpp\SVisual\mswin\VS19\SVServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/cpp/SVisual/src/SVServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/cpp/SVisual/src -BC:/cpp/SVisual/mswin/VS19 --check-stamp-file C:/cpp/SVisual/mswin/VS19/SVServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\cpp\SVisual\mswin\VS19\SVServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/cpp/SVisual/src/SVServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/cpp/SVisual/src -BC:/cpp/SVisual/mswin/VS19 --check-stamp-file C:/cpp/SVisual/mswin/VS19/SVServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\cpp\SVisual\mswin\VS19\SVServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/cpp/SVisual/src/SVServer/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/cpp/SVisual/src -BC:/cpp/SVisual/mswin/VS19 --check-stamp-file C:/cpp/SVisual/mswin/VS19/SVServer/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\cpp\SVisual\mswin\VS19\SVServer\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\cpp\SVisual\src\SVServer\server.h" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVServer\src\archive.cpp" />
+    <ClInclude Include="C:\cpp\SVisual\src\SVServer\src\archive.h" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVServer\src\buffer_data.cpp" />
+    <ClInclude Include="C:\cpp\SVisual\src\SVServer\src\buffer_data.h" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVServer\src\clickhouse_db.cpp" />
+    <ClInclude Include="C:\cpp\SVisual\src\SVServer\src\clickhouse_db.h" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVServer\src\dllmain.cpp" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVServer\src\server.cpp" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVServer\src\thread_update.cpp" />
+    <ClInclude Include="C:\cpp\SVisual\src\SVServer\src\thread_update.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\cpp\SVisual\mswin\VS19\ZERO_CHECK.vcxproj">
+      <Project>{42E4245C-7980-3924-8EC8-B83E24E9CBE1}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\cpp\SVisual\mswin\VS19\SVBase\SVBase.vcxproj">
+      <Project>{03156281-A46C-3E73-B1F7-E09E7D01899B}</Project>
+      <Name>SVBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\cpp\SVisual\mswin\VS19\SVMisc\SVMisc.vcxproj">
+      <Project>{7A16E54E-CF56-3EAE-9877-48084F586C59}</Project>
+      <Name>SVMisc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

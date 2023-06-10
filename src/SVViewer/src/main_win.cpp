@@ -34,7 +34,7 @@
 #include "SVExportDialog/export_dialog.h" 
 #include "SVViewer/src/file_loader/file_loader.h"
 #include "SVViewer/src/db_loader/clickhouse_loader.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVBase/base.h"
 
 #include <QPrinter>
@@ -195,9 +195,9 @@ bool MainWin::readSignals(const QString& path) {
 
         if (signalRef_.contains(sign.c_str())) continue;
 
-        if (!moduleRef_.contains(module.c_str()))
+        if (!moduleRef_.contains(module.c_str())){
           moduleRef_[module.c_str()] = new ModuleData(module);
-
+        }
         moduleRef_[module.c_str()]->signls.push_back(sign);
         moduleRef_[module.c_str()]->isActive = false;
 
@@ -213,9 +213,9 @@ bool MainWin::readSignals(const QString& path) {
           signAttr_[sign.c_str()].color = clr;
         }
 
-        if (!groupRef_.contains(group.c_str()))
+        if (!groupRef_.contains(group.c_str())){
           groupRef_[group.c_str()] = new GroupData(group.c_str());
-
+        }
         groupRef_[group.c_str()]->signls.push_back(sign);
         groupRef_[group.c_str()]->isActive = false;
 
@@ -373,11 +373,7 @@ void MainWin::load() {
     if (m_chLoaders[this]->loadSignalNames()){
       sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
     }else{
-      QMessageBox msgBox;
-      msgBox.setTextFormat(Qt::RichText);
-      msgBox.setStandardButtons(QMessageBox::Ok);
-      msgBox.setText(tr("Ошибка импорта сигналов из ClickHouseDb"));
-      msgBox.exec();
+      showMessageDialog(tr("Ошибка импорта сигналов из ClickHouseDb"));
     }
   }
 }
@@ -405,13 +401,19 @@ void MainWin::connects() {
     auto sign = item->text(5);
 
     if (column == 0) {
-        TsDataBaseDialog dialog(this);
-        dialog.setInterval(m_chLoaders[this]->getSignalInterval(sign));
-        if (dialog.exec() == QDialog::Accepted){
-            const auto intl = dialog.getInterval();
-            if (m_chLoaders[this]->loadSignalData(sign, intl.first, intl.second)){
-                SV_Graph::addSignal(graphPanels_[this], sign);
+        if (cng.inputDataBaseEna){
+            TsDataBaseDialog dialog(this);
+            dialog.setInterval(m_chLoaders[this]->getSignalInterval(sign));
+            if (dialog.exec() == QDialog::Accepted){
+                const auto intl = dialog.getInterval();
+                if (m_chLoaders[this]->loadSignalData(sign, intl.first, intl.second)){
+                    SV_Graph::addSignal(graphPanels_[this], sign);
+                }else{
+                    showMessageDialog(tr("Ошибка импорта данных из ClickHouseDb"));
+                }
             }
+        }else{
+            SV_Graph::addSignal(graphPanels_[this], sign);
         }
     }
     else if (column == 2) {
@@ -1027,4 +1029,12 @@ void MainWin::changeSignColor(const QString& module, const QString& name, const 
   for (const auto gp : qAsConst(mainWin->graphPanels_)) {
     SV_Graph::setSignalAttr(gp, name + module, SV_Graph::SignalAttributes{ clr });
   }
+}
+
+void MainWin::showMessageDialog(const QString& mess){
+    QMessageBox msgBox;
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setText(mess);
+    msgBox.exec();
 }

@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\com_reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\db_provider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\event_table_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\graph_setting_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\main_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\server_api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\settings_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\subscript_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVMonitor\src\tree_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\3YJK5W5UP7\qrc_resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\forms\event_table_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\forms\graph_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\forms\main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\forms\settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\forms\subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\resources\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\src\com_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\src\db_provider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\src\server_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\src\structurs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVMonitor\src\tree_widget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Debug\forms\ui_event_table_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Debug\forms\ui_graph_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Debug\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Debug\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Debug\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Release\forms\ui_event_table_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Release\forms\ui_graph_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Release\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Release\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_Release\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_MinSizeRel\forms\ui_event_table_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_MinSizeRel\forms\ui_graph_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_MinSizeRel\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_MinSizeRel\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_MinSizeRel\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_RelWithDebInfo\forms\ui_event_table_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_RelWithDebInfo\forms\ui_graph_setting_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_RelWithDebInfo\forms\ui_main_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_RelWithDebInfo\forms\ui_settings_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\include_RelWithDebInfo\forms\ui_subscript_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\cpp\SVisual\mswin\VS19\CMakeFiles\e1df6c1e2164f03fdfff9fe995a939e6\autouic_(CONFIG).stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\cpp\SVisual\mswin\VS19\CMakeFiles\3a0dcba42af9dd4a7e77876b48bde570\qrc_resource.cpp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\cpp\SVisual\src\SVMonitor\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\cpp\SVisual\src\SVMonitor\forms\event_table_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVMonitor\forms\graph_setting_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVMonitor\forms\main_win.ui" />
+    <None Include="C:\cpp\SVisual\src\SVMonitor\forms\settings_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVMonitor\forms\subscript_dialog.ui" />
+    <None Include="C:\cpp\SVisual\src\SVMonitor\resources\resource.qrc" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\autouic_Debug.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\autouic_Release.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\autouic_MinSizeRel.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVMonitor\SVMonitor_autogen\autouic_RelWithDebInfo.stamp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{354B905C-9921-3E0F-9DD8-1015719FB680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2A6AFA54-21B0-3349-9C97-AF529A64B5D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6DACD3CD-924D-3350-BC6F-0BC07E6DD228}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

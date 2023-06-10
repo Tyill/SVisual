@@ -25,9 +25,12 @@
 
 #include "clickhouse_loader.h"
 #include "SVViewer/forms/main_win.h"
-#include "clickhouse/client.h"
+#ifdef WIN32
+#include "3rdparty/clickhouse/client.h"
+#else
+#include <clickhouse/client.h>
+#endif
 
-#include <QDateTime>
 #include <QDebug>
 
 using namespace SV_Base;
@@ -39,12 +42,12 @@ DbClickHouseLoader::DbClickHouseLoader(QMainWindow* mainWin, QObject* parent):
 
 }
 
-QPair<QDateTime, QDateTime> DbClickHouseLoader::getSignalInterval(const QString& sname)const
+QPair<QDateTime, QDateTime> DbClickHouseLoader::getSignalInterval(const QString& sname)
 {
     if (m_timeDiapMem.contains(sname)){
-        return m_timeDiapMem[sname];
+        m_lastValidTimeDiap = m_timeDiapMem[sname];
     }
-    return {};
+    return m_lastValidTimeDiap;
 }
 
 bool DbClickHouseLoader::loadSignalNames(){
@@ -52,8 +55,8 @@ bool DbClickHouseLoader::loadSignalNames(){
     try{        
         auto& sref = m_mainWin->signalRef_;
         auto& mref = m_mainWin->moduleRef_;
-        sref.clear();
         mref.clear();
+
         QString q = "SELECT id, sname, module, stype FROM tblSignal;";
         auto chClient = newClient();
         chClient->Select(q.toStdString(), [&sref, &mref](const ch::Block& block)mutable{
@@ -69,8 +72,13 @@ bool DbClickHouseLoader::loadSignalNames(){
                 sdata->isActive = true;
                 sdata->name = std::string(sname);
                 sdata->module = std::string(module);
-                sref.insert(QString::fromStdString(sdata->name + sdata->module), sdata);
-
+                auto stdname = QString::fromStdString(sdata->name + sdata->module);
+                if (sref.contains(stdname)){
+                    sref[stdname]->isActive = true;
+                    sref[stdname]->id = sId;
+                }else{
+                    sref.insert(stdname, sdata);
+                }
                 const auto mname = QString::fromStdString(sdata->module);
                 if (!mref.contains(mname)){
                     SV_Base::ModuleData* mdata = new SV_Base::ModuleData(sdata->module);

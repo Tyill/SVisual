@@ -25,7 +25,7 @@
 
 #include "SVGraphPanel/graph_panel.h"
 #include "SVGraphPanel/forms/graph_panel_widget.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include <QTranslator>
 
 namespace SV_Graph {

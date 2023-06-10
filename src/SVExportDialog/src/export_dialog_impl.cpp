@@ -24,7 +24,7 @@
 //
 
 #include "SVExportDialog/forms/export_dialog_impl.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #ifdef USE_QtXlsxWriter
 #include "xlsx/xlsxdocument.h"
 #endif

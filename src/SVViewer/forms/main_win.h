@@ -107,6 +107,8 @@ private:
   void updateGroup(const QString& group, const QString& sign);
   void sortSignalByGroupOrModule(bool byModule);
 
+  void showMessageDialog(const QString& mess);
+
 private:
   Config cng;
 

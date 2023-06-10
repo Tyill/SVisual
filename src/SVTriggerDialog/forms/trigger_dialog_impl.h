@@ -30,7 +30,7 @@
 #include "SVMisc/timer_delay.h"
 #include "SVMisc/front.h"
 #include "SVBase/base.h"
-#include "SVBase/limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVTriggerDialog/trigger_dialog.h"
 #include "GeneratedFiles/ui_trigger_dialog.h"
 
