@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 //
 
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 
 #include <QString>
 #include <QMap>

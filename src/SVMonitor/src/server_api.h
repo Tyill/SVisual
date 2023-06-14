@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 //
 
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 
 QMap<QString, SV_Base::ModuleData*> getCopyModuleRefSrv();
 

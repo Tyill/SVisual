@@ -52,11 +52,12 @@ public:
     QString initPath;
     QString selOpenDir;
 
-    bool outArchiveEna;        ///< запись архива активна
+    bool outArchiveEna;        ///< запись архива в файл активна
     QString outArchivePath;    ///< запись архива путь
     QString outArchiveName;    ///< запись архива имя файла
     int outArchiveHourCnt;     ///< запись архива размер файла, час
 
+    bool outDataBaseEna;       ///< запись архива в БД активна
     QString outDataBaseName;
     QString outDataBaseAddr;
 
@@ -128,8 +129,8 @@ private:
 
   bool eventFilter(QObject *target, QEvent *event);
 
+  bool readSettings(QString initPath);
   bool writeSettings(QString pathIni);
-  bool init(QString initPath);
   void connects();
   void load();
 

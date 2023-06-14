@@ -32,7 +32,7 @@
 #include "SVMisc/tcp_server.h"
 #include "SVExportDialog/export_dialog.h"
 #include "SVScriptDialog/script_dialog.h"
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 #include "SVWebServer/web_server.h"
 #include "SVZabbix/zabbix.h"
 #include "SVBase/sv_limits.h"
@@ -77,7 +77,7 @@ MainWin::MainWin(QWidget *parent)
   cng.initPath = cng.dirPath + "/svmonitor.ini"; 
   if (args.size() == 2) cng.initPath = args[1];
 
-  init(cng.initPath);
+  readSettings(cng.initPath);
   statusMess(tr("Инициализация параметров успешно"));
 
   auto gp = SV_Graph::createGraphPanel(this, SV_Graph::Config(cng.cycleRecMs, cng.packetSz));
@@ -98,6 +98,7 @@ MainWin::MainWin(QWidget *parent)
     srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
     srvCng.outArchiveName = cng.outArchiveName.toStdString();
     srvCng.outArchivePath = cng.outArchivePath.toStdString();
+    srvCng.outDataBaseEna = cng.outDataBaseEna;
     srvCng.outDataBaseAddr = cng.outDataBaseAddr.toStdString();
     srvCng.outDataBaseName = cng.outDataBaseName.toStdString();
   }
@@ -178,7 +179,7 @@ MainWin::~MainWin(){
   writeSettings(cng.initPath);
 }
 
-bool MainWin::init(QString initPath){
+bool MainWin::readSettings(QString initPath){
 
     QString logPath = cng.dirPath + "/log/svmonitor.log";
     lg_.setPathFile(qPrintable(logPath));
@@ -246,6 +247,7 @@ bool MainWin::init(QString initPath){
     cng.outArchiveHourCnt = qBound(1, cng.outArchiveHourCnt, 12);
 
     // запись в БД
+    cng.outDataBaseEna = settings.value("outDataBaseEna", "1").toInt() == 1;
     cng.outDataBaseName = settings.value("outDataBaseName", "svdb").toString();
     cng.outDataBaseAddr = settings.value("outDataBaseAddr", "localhost:9000").toString();
 
@@ -333,6 +335,110 @@ bool MainWin::init(QString initPath){
     return true;
 }
 
+bool MainWin::writeSettings(QString pathIni){
+
+    QFile file(pathIni);
+
+    QTextStream txtStream(&file);
+    txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
+
+    // запись новых данных
+    file.open(QIODevice::WriteOnly);
+    txtStream << "[Param]" << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "tcp_addr = " << cng.tcp_addr << Qt::endl;
+    txtStream << "tcp_port = " << cng.tcp_port << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "web_ena = " << (cng.web_ena ? "1" : "0") << Qt::endl;
+    txtStream << "web_addr = " << cng.web_addr << Qt::endl;
+    txtStream << "web_port = " << cng.web_port << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "zabbix_ena = " << (cng.zabbix_ena ? "1" : "0") << Qt::endl;
+    txtStream << "zabbix_addr = " << cng.zabbix_addr << Qt::endl;
+    txtStream << "zabbix_port = " << cng.zabbix_port << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << Qt::endl;
+
+    for (int i = 0; i < cng.com_ports.size(); ++i){
+        txtStream << "com" << i << "_name = " << cng.com_ports[i].first << Qt::endl;
+        txtStream << "com" << i << "_speed = " << cng.com_ports[i].second << Qt::endl;
+    }
+
+    txtStream << Qt::endl;
+    txtStream << "dbPath = " << cng.dbPath << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "cycleRecMs = " << cng.cycleRecMs << Qt::endl;
+    txtStream << "packetSz = " << cng.packetSz << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "; save on disk" << Qt::endl;
+    txtStream << "outArchiveEna = " << (cng.outArchiveEna ? "1" : "0") << Qt::endl;
+    txtStream << "outArchivePath = " << cng.outArchivePath << Qt::endl;
+    txtStream << "outArchiveName = " << cng.outArchiveName << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "; save into DB" << Qt::endl;
+    txtStream << "outDataBaseEna = " << (cng.outDataBaseEna ? "1" : "0") << Qt::endl;
+    txtStream << "outDataBaseName = " << cng.outDataBaseName << Qt::endl;
+    txtStream << "outDataBaseAddr = " << cng.outDataBaseAddr << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "selOpenDir = " << cng.selOpenDir << Qt::endl;
+    txtStream << "fontSz = " << this->font().pointSize() << Qt::endl;
+    txtStream << "transparent = " << cng.graphSett.transparent << Qt::endl;
+    txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
+    txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
+    txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
+    txtStream << Qt::endl;
+    txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << Qt::endl;
+    txtStream << Qt::endl;
+
+    // состояние окон
+    auto wins = graphPanels_.keys();
+    int cnt = 0;
+    for (auto w : wins){
+
+        file.open(QIODevice::WriteOnly);
+        txtStream << "[graphWin" << cnt << "]" << Qt::endl;
+
+        if (w == this)
+            txtStream << "locate = 0" << Qt::endl;
+        else{
+            auto geom = ((QDialog*)w)->geometry();
+            txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
+        }
+
+        auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
+        txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
+
+        QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
+        for (int i = 0; i < signs.size(); ++i){
+
+            txtStream << "section" << i << " = ";
+            for (int j = signs[i].size() - 1; j >= 0; --j)
+                txtStream << signs[i][j] << " ";
+
+            txtStream << Qt::endl;
+        }
+
+        QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
+        for (int i = 0; i < axisAttr.size(); ++i){
+
+            txtStream << "axisAttr" << i << " = ";
+            txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
+            txtStream << axisAttr[i].min << " ";
+            txtStream << axisAttr[i].max << " ";
+            txtStream << axisAttr[i].step << " ";
+
+            txtStream << Qt::endl;
+        }
+
+        txtStream << Qt::endl;
+        ++cnt;
+    }
+
+    file.close();
+
+    return true;
+}
+
 void MainWin::connects(){
 
     connect(ui.treeSignals, &QTreeWidget::itemClicked, this, [this](QTreeWidgetItem* item, int){
@@ -391,7 +497,6 @@ void MainWin::connects(){
         this->close();
     });
     connect(ui.actionPrint, &QAction::triggered, this, [this]() {
-
         QPrinter printer(QPrinter::HighResolution);
         printer.setPageMargins(12, 16, 12, 20, QPrinter::Millimeter);
         printer.setFullPage(false);
@@ -420,7 +525,6 @@ void MainWin::connects(){
         if (exportDialog_) exportDialog_->showNormal();
     });
     connect(ui.actionNewWin, &QAction::triggered, this, [this]() {
-
         addNewWindow(QRect());
     });
     connect(ui.actionScript, &QAction::triggered, this, [this]() {
@@ -736,109 +840,6 @@ void MainWin::load(){
     /////////////////////
     initTrayIcon();
 
-}
-
-bool MainWin::writeSettings(QString pathIni){
-
-    QFile file(pathIni);
-
-    QTextStream txtStream(&file);
-    txtStream.setCodec(QTextCodec::codecForName("UTF-8"));
-
-    // запись новых данных
-    file.open(QIODevice::WriteOnly);
-    txtStream << "[Param]" << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "tcp_addr = " << cng.tcp_addr << Qt::endl;
-    txtStream << "tcp_port = " << cng.tcp_port << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "web_ena = " << (cng.web_ena ? "1" : "0") << Qt::endl;
-    txtStream << "web_addr = " << cng.web_addr << Qt::endl;
-    txtStream << "web_port = " << cng.web_port << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "zabbix_ena = " << (cng.zabbix_ena ? "1" : "0") << Qt::endl;
-    txtStream << "zabbix_addr = " << cng.zabbix_addr << Qt::endl;
-    txtStream << "zabbix_port = " << cng.zabbix_port << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "com_ena = " << (cng.com_ena ? "1" : "0") << Qt::endl;
-
-    for (int i = 0; i < cng.com_ports.size(); ++i){
-        txtStream << "com" << i << "_name = " << cng.com_ports[i].first << Qt::endl;
-        txtStream << "com" << i << "_speed = " << cng.com_ports[i].second << Qt::endl;
-    }
-
-    txtStream << Qt::endl;
-    txtStream << "dbPath = " << cng.dbPath << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "cycleRecMs = " << cng.cycleRecMs << Qt::endl;
-    txtStream << "packetSz = " << cng.packetSz << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "; save on disk" << Qt::endl;
-    txtStream << "outArchiveEna = " << (cng.outArchiveEna ? "1" : "0") << Qt::endl;
-    txtStream << "outArchivePath = " << cng.outArchivePath << Qt::endl;
-    txtStream << "outArchiveName = " << cng.outArchiveName << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "; save into DB" << Qt::endl;
-    txtStream << "outDataBaseName = " << cng.outDataBaseName << Qt::endl;
-    txtStream << "outDataBaseAddr = " << cng.outDataBaseAddr << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "selOpenDir = " << cng.selOpenDir << Qt::endl;
-    txtStream << "fontSz = " << this->font().pointSize() << Qt::endl;
-    txtStream << "transparent = " << cng.graphSett.transparent << Qt::endl;
-    txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
-    txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
-    txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
-    txtStream << Qt::endl;
-    txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << Qt::endl;
-    txtStream << Qt::endl;
-
-    // состояние окон
-    auto wins = graphPanels_.keys();
-    int cnt = 0;
-    for (auto w : wins){
-
-        file.open(QIODevice::WriteOnly);
-        txtStream << "[graphWin" << cnt << "]" << Qt::endl;
-
-        if (w == this)
-            txtStream << "locate = 0" << Qt::endl;
-        else{
-            auto geom = ((QDialog*)w)->geometry();
-            txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
-        }
-
-        auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
-        txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
-
-        QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
-        for (int i = 0; i < signs.size(); ++i){
-
-            txtStream << "section" << i << " = ";
-            for (int j = signs[i].size() - 1; j >= 0; --j)
-                txtStream << signs[i][j] << " ";
-
-            txtStream << Qt::endl;
-        }
-
-        QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
-        for (int i = 0; i < axisAttr.size(); ++i){
-
-            txtStream << "axisAttr" << i << " = ";
-            txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
-            txtStream << axisAttr[i].min << " ";
-            txtStream << axisAttr[i].max << " ";
-            txtStream << axisAttr[i].step << " ";
-
-            txtStream << Qt::endl;
-        }
-
-        txtStream << Qt::endl;
-        ++cnt;
-    }
-
-    file.close();
-
-    return true;
 }
 
 void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs){
@@ -1252,6 +1253,7 @@ void MainWin::updateConfig(const MainWin::Config& newCng){
     srvCng.outArchiveHourCnt = newCng.outArchiveHourCnt;
     srvCng.outArchiveName = newCng.outArchiveName.toStdString();
     srvCng.outArchivePath = newCng.outArchivePath.toStdString();
+    srvCng.outDataBaseEna = newCng.outDataBaseEna;
     srvCng.outDataBaseName = newCng.outDataBaseName.toStdString();
     srvCng.outDataBaseAddr = newCng.outDataBaseAddr.toStdString();
   }

@@ -63,12 +63,20 @@ SettingsDialog::SettingsDialog(QWidget *parent):
     selParamLoad_ = true;
     paramChange();
   });
-  connect(ui.rbtnArchEna, &QCheckBox::toggled, this, [this](){
+  connect(ui.chbArchEna, &QCheckBox::toggled, this, [this](){
 
-    bool isSel = ui.rbtnArchEna->isChecked();
+    bool isSel = ui.chbArchEna->isChecked();
 
     ui.txtArchPath->setEnabled(isSel);
     ui.btnArchPath->setEnabled(isSel);
+    paramChange();
+  });
+  connect(ui.chbSaveToChEna, &QCheckBox::toggled, this, [this](){
+
+    bool isSel = ui.chbSaveToChEna->isChecked();
+
+    ui.txtChName->setEnabled(isSel);
+    ui.txtChAddr->setEnabled(isSel);
     paramChange();
   });
   connect(ui.chbWebActive, SIGNAL(stateChanged(int)), this, SLOT(paramChange()));
@@ -114,8 +122,10 @@ void SettingsDialog::showEvent(QShowEvent * event){
 
   ui.rbtnConnectByEthernet->setChecked(!cng.com_ena);
 
-  ui.rbtnArchEna->setChecked(cng.outArchiveEna);
+  ui.chbArchEna->setChecked(cng.outArchiveEna);
   ui.txtArchPath->setText(cng.outArchivePath);
+
+  ui.chbSaveToChEna->setChecked(cng.outDataBaseEna);
   ui.txtChName->setText(cng.outDataBaseName);
   ui.txtChAddr->setText(cng.outDataBaseAddr);
 
@@ -225,10 +235,11 @@ void SettingsDialog::saveChange(){
   cng.zabbix_addr = ui.txtZabbixIPAddr->text();
   cng.zabbix_port = ui.txtZabbixPort->text().toInt();
 
-  cng.outArchiveEna = ui.rbtnArchEna->isChecked();
+  cng.outArchiveEna = ui.chbArchEna->isChecked();
   cng.outArchivePath = ui.txtArchPath->text();
   cng.outArchivePath.replace("\\", "/");
 
+  cng.outDataBaseEna = ui.chbSaveToChEna->isChecked();
   cng.outDataBaseName = ui.txtChName->text();
   cng.outDataBaseAddr = ui.txtChAddr->text();
 

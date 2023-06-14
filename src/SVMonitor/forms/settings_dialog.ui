@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>695</width>
-    <height>656</height>
+    <width>696</width>
+    <height>675</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -410,7 +410,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QCheckBox" name="rbtnArchEna">
+       <widget class="QCheckBox" name="chbArchEna">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -421,7 +421,7 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string>Активно</string>
+         <string>Сохранение в файл</string>
         </property>
        </widget>
       </item>
@@ -472,9 +472,9 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_9">
+       <widget class="QCheckBox" name="chbSaveToChEna">
         <property name="text">
-         <string>ClickHouseDB</string>
+         <string>Сохранение в ClickHouse</string>
         </property>
        </widget>
       </item>
