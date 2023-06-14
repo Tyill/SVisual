@@ -42,9 +42,9 @@ void Archive::init(const SV_Srv::Config& cng_) {
   cng = cng_;
   _copyStartTime = SV_Misc::currDateTimeEx();
   _copyDateMem = SV_Misc::currDateS();
-  _copySz = ARCH_CYCLE_MS / SV_CYCLESAVE_MS; // 10мин
+  _copySz = 600000 / SV_CYCLESAVE_MS; // 10мин
 
-  if(!cng.outDataBaseName.empty()){
+  if(cng.outDataBaseEna && !cng.outDataBaseName.empty() && !cng.outDataBaseAddr.empty()){
       _chdb = new ClickHouseDB(cng);
   }
 }
@@ -55,7 +55,7 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
   cng.outArchiveName = cng_.outArchiveName;
   cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
 
-  if (cng.outArchiveEna && !cng.outDataBaseName.empty() && !_chdb){
+  if (!_chdb && cng_.outDataBaseEna && !cng_.outDataBaseName.empty() && !cng_.outDataBaseAddr.empty()){
       _chdb = new ClickHouseDB(cng);
   }
 }
@@ -97,77 +97,82 @@ void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
 bool Archive::copyToDisk(bool isStop){
 
     const size_t dataSz = _archiveData.size();
-    if (dataSz == 0)
+    if (dataSz == 0){
       return true;
-
-    const size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
-
-    const size_t intSz = sizeof(int32_t),
-      tmSz = sizeof(uint64_t),
-      vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
-
-    //                name        module      group       comment      type    vCnt
-    const size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
-
-    vector<char> inArr((tmSz + vlSz) * _copySz * SMAXCNT + headSz * SMAXCNT),
-      compArr;
-
-    vector<string> keys;
-    keys.reserve(dataSz);
-    for (auto &it : _archiveData) keys.push_back(it.first);
-
-    fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
-
-    if (!file.good())
-      return false;
-
-    size_t sCnt = 0, csize = 0;
-    for (size_t i = 0; i < dataSz; ++i) {
-
-      auto sign = SV_Srv::getSignalData(keys[i]);
-
-      string sn = sign->name + sign->module;
-
-      char* pIn = inArr.data();
-
-      int vCnt = _valPos[sn];
-      if (vCnt > 0) {
-        memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
-        memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
-        memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
-        memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-        memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
-        memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
-
-        for (int j = 0; j < vCnt; ++j) {
-          memcpy(pIn + csize, &_archiveData[sn][j].beginTime, tmSz); csize += tmSz;
-          memcpy(pIn + csize, _archiveData[sn][j].vals, vlSz);       csize += vlSz;
-        }
-        
-        ++sCnt;
-      }
-
-      if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dataSz - 1)))) {
-        sCnt = 0;
-
-        size_t compSz = 0;
-
-        if (!compressData(csize, inArr, compSz, compArr)) {
-          if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk compressData error");
-          file.close();
-          return false;
-        };
-
-        file.write((char *)&compSz, sizeof(int));
-        file.write((char *)&csize, sizeof(int));
-        file.write((char *)compArr.data(), compSz);
-
-        csize = 0;
-      }
     }
-    file.close();
 
-    if (_chdb){
+    if (cng.outArchiveEna){
+        const size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
+
+        const size_t intSz = sizeof(int32_t),
+          tmSz = sizeof(uint64_t),
+          vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
+
+        //                     name        module      group       comment      type    vCnt
+        const size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
+
+        vector<char> inArr((tmSz + vlSz) * _copySz * SMAXCNT + headSz * SMAXCNT);
+        vector<char> compArr;
+
+        vector<string> keys;
+        keys.reserve(dataSz);
+        for (auto &it : _archiveData){
+            keys.push_back(it.first);
+        }
+
+        fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
+        if (!file.good()){
+            return false;
+        }
+
+        size_t sCnt = 0, csize = 0;
+        for (size_t i = 0; i < dataSz; ++i) {
+
+          auto sign = SV_Srv::getSignalData(keys[i]);
+
+          string sn = sign->name + sign->module;
+
+          char* pIn = inArr.data();
+
+          int vCnt = _valPos[sn];
+          if (vCnt > 0) {
+            memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
+            memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
+            memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
+            memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
+            memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
+            memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
+
+            for (int j = 0; j < vCnt; ++j) {
+              memcpy(pIn + csize, &_archiveData[sn][j].beginTime, tmSz); csize += tmSz;
+              memcpy(pIn + csize, _archiveData[sn][j].vals, vlSz);       csize += vlSz;
+            }
+
+            ++sCnt;
+          }
+
+          if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dataSz - 1)))) {
+            sCnt = 0;
+
+            size_t compSz = 0;
+
+            if (!compressData(csize, inArr, compSz, compArr)) {
+              if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk compressData error");
+              file.close();
+              return false;
+            };
+
+            file.write((char *)&compSz, sizeof(int));
+            file.write((char *)&csize, sizeof(int));
+            file.write((char *)compArr.data(), compSz);
+
+            csize = 0;
+          }
+        }
+        file.close();
+    }
+
+    if (_chdb && cng.outDataBaseEna){
       _chdb->saveSData(isStop, _valPos, _archiveData);
     }
 

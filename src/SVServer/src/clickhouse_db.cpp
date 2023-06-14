@@ -1,13 +1,9 @@
 #include "clickhouse_db.h"
-#ifdef WIN32
-#include "3rdparty/clickhouse/client.h"
-#else
-#include <clickhouse/client.h>
-#endif
 #include "SVMisc/misc.h"
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 #include "SVBase/sv_limits.h"
 
+#include <clickhouse/client.h>
 #include <thread>
 
 namespace ch = clickhouse;

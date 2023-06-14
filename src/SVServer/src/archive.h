@@ -25,7 +25,7 @@
 #pragma once
 
 #include "SVMisc/front.h"
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 
 #include <map>
 
@@ -60,7 +60,6 @@ private:
   std::string _copyDateMem = "";
 
   int _crtFileHour = 0;
-  const int ARCH_CYCLE_MS = 600000;     // 10мин
   size_t _copySz = 0;
   std::map<std::string, int> _valPos;
 

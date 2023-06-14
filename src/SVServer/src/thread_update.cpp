@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 //
 
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 #include "SVMisc/timer_delay.h"
 #include "SVMisc/misc.h"
 #include "thread_update.h"
@@ -59,6 +59,7 @@ ThreadUpdate::~ThreadUpdate(){
 void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
 
   cng.outArchiveEna = cng_.outArchiveEna;
+  cng.outDataBaseEna = cng_.outDataBaseEna;
 
   _archive.setConfig(cng_);
 }
@@ -209,7 +210,7 @@ void ThreadUpdate::updateCycle(){
         }
       }
 
-      if (cng.outArchiveEna){
+      if (cng.outArchiveEna || cng.outDataBaseEna){
         _archive.addValue(sign, bufPos.data);
       }
       _buffData.incReadPos();
@@ -225,8 +226,9 @@ void ThreadUpdate::updateCycle(){
     }
 
     // архив
-    if (cng.outArchiveEna && tmDelay.hourOnc())
+    if (tmDelay.hourOnc() && (cng.outArchiveEna || cng.outDataBaseEna)){
       _archive.copyToDisk(false);
+    }
 
     // проверка связи
     if (tmDelay.onDelaySec(true, checkConnectTout, 0)){
@@ -258,7 +260,7 @@ void ThreadUpdate::updateCycle(){
     }
   }
 
-  if (cng.outArchiveEna){
+  if (cng.outArchiveEna || cng.outDataBaseEna){
     _archive.copyToDisk(true);
   }
 }

@@ -43,11 +43,12 @@ namespace SV_Srv {
   /// конфиг
   struct Config {
 
-    bool outArchiveEna;          ///< запись архива активна
+    bool outArchiveEna{};          ///< запись архива активна
     std::string outArchivePath;  ///< запись архива путь
     std::string outArchiveName;  ///< запись архива имя файла
     int outArchiveHourCnt;       ///< запись архива размер файла, час
-                                 
+
+    bool outDataBaseEna{};         ///< запись архива в БД активна
     std::string outDataBaseName;
     std::string outDataBaseAddr;
 
@@ -58,6 +59,7 @@ namespace SV_Srv {
       outArchiveEna(false),
       outArchiveName("svrec"),
       outArchiveHourCnt(2),
+      outDataBaseEna(false),
       outDataBaseName("svdb"),
       outDataBaseAddr("localhost:9000"),
       cycleRecMs(100),
