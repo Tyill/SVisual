@@ -6,7 +6,6 @@
 #include <string_view>
 #include <utility>
 #include <vector>
-#include <deque>
 
 namespace clickhouse {
 
@@ -78,24 +77,12 @@ public:
     ColumnString();
     ~ColumnString();
 
-    explicit ColumnString(size_t element_count);
     explicit ColumnString(const std::vector<std::string> & data);
-    explicit ColumnString(std::vector<std::string>&& data);
     ColumnString& operator=(const ColumnString&) = delete;
     ColumnString(const ColumnString&) = delete;
 
     /// Appends one element to the column.
     void Append(std::string_view str);
-
-    /// Appends one element to the column.
-    void Append(const char* str);
-
-    /// Appends one element to the column.
-    void Append(std::string&& steal_value);
-
-    /// Appends one element to the column.
-    /// If str lifetime is managed elsewhere and guaranteed to outlive the Block sent to the server
-    void AppendNoManagedLifetime(std::string_view str);
 
     /// Returns element at given row number.
     std::string_view At(size_t n) const;
@@ -133,7 +120,6 @@ private:
 
     std::vector<std::string_view> items_;
     std::vector<Block> blocks_;
-    std::deque<std::string> append_data_;
 };
 
 }

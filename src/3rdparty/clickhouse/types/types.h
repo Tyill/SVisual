@@ -50,11 +50,6 @@ public:
         LowCardinality,
         DateTime64,
         Date32,
-        Map,
-        Point,
-        Ring,
-        Polygon,
-        MultiPolygon
     };
 
     using EnumItem = std::pair<std::string /* name */, int16_t /* value */>;
@@ -97,7 +92,7 @@ public:
 
     static TypeRef CreateDate();
 
-    static TypeRef CreateDate32();
+    static TypeRef CreateDate32();    
 
     static TypeRef CreateDateTime(std::string timezone = std::string());
 
@@ -129,16 +124,6 @@ public:
     static TypeRef CreateUUID();
 
     static TypeRef CreateLowCardinality(TypeRef item_type);
-
-    static TypeRef CreateMap(TypeRef key_type, TypeRef value_type);
-
-    static TypeRef CreatePoint();
-
-    static TypeRef CreateRing();
-
-    static TypeRef CreatePolygon();
-
-    static TypeRef CreateMultiPolygon();
 
 private:
     uint64_t GetTypeUniqueId() const;
@@ -293,23 +278,6 @@ public:
 
 private:
     TypeRef nested_type_;
-};
-
-class MapType : public Type {
-public:
-    explicit MapType(TypeRef key_type, TypeRef value_type);
-
-    std::string GetName() const;
-
-    /// Type of keys.
-    TypeRef GetKeyType() const { return key_type_; }
-
-    /// Type of values.
-    TypeRef GetValueType() const { return value_type_; }
-
-private:
-    TypeRef key_type_;
-    TypeRef value_type_;
 };
 
 template <>

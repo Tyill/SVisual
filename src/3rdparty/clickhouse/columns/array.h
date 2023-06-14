@@ -2,7 +2,6 @@
 
 #include "column.h"
 #include "numeric.h"
-#include "utils.h"
 
 #include <memory>
 
@@ -20,7 +19,7 @@ public:
 
     /** Create an array of given type.
      *
-     *  `data` is used internally (and modified) by ColumnArray.
+     *  `data` is used internaly (and modified) by ColumnArray.
      *  Users are strongly advised against supplying non-empty columns and/or modifying
      *  contents of `data` afterwards.
      */
@@ -36,7 +35,7 @@ public:
     /// Converts input column to array and appends as one row to the current column.
     void AppendAsColumn(ColumnRef array);
 
-    /// Converts array at pos n to column.
+    /// Convets array at pos n to column.
     /// Type of element of result column same as type of array element.
     ColumnRef GetAsColumn(size_t n) const;
 
@@ -122,8 +121,13 @@ public:
      *  This is a static method to make such conversion verbose.
      */
     static auto Wrap(ColumnArray&& col) {
-        auto nested_data = WrapColumn<NestedColumnType>(col.GetData());
-        return std::make_shared<ColumnArrayT<NestedColumnType>>(nested_data, col.offsets_);
+        if constexpr (std::is_base_of_v<ColumnArray, NestedColumnType> && !std::is_same_v<ColumnArray, NestedColumnType>) {
+            // assuming NestedColumnType is ArrayT specialization
+            return std::make_shared<ColumnArrayT<NestedColumnType>>(NestedColumnType::Wrap(col.GetData()), col.offsets_);
+        } else {
+            auto nested_data = col.GetData()->template AsStrict<NestedColumnType>();
+            return std::make_shared<ColumnArrayT<NestedColumnType>>(nested_data, col.offsets_);
+        }
     }
 
     static auto Wrap(Column&& col) {
@@ -142,7 +146,7 @@ public:
         const size_t size_;
 
     public:
-        using ValueType = std::decay_t<decltype(std::declval<NestedColumnType>().At(0))>;
+        using ValueType = typename NestedColumnType::ValueType;
 
         ArrayValueView(std::shared_ptr<NestedColumnType> data, size_t offset = 0, size_t size = std::numeric_limits<size_t>::max())
             : typed_nested_data_(data)
@@ -167,8 +171,6 @@ public:
             const size_t size_;
             size_t index_;
         public:
-            Iterator() = default;
-
             Iterator(std::shared_ptr<NestedColumnType> typed_nested_data, size_t offset, size_t size, size_t index)
                 : typed_nested_data_(typed_nested_data)
                 , offset_(offset)
@@ -176,7 +178,7 @@ public:
                 , index_(index)
             {}
 
-            using ValueType = typename ArrayValueView::ValueType;
+            using ValueType = typename NestedColumnType::ValueType;
 
             inline auto operator*() const {
                 return typed_nested_data_->At(offset_ + index_);
@@ -224,22 +226,6 @@ public:
         inline size_t Size() const {
             return size_;
         }
-
-        inline bool operator==(const ArrayValueView& other) const {
-            if (size() != other.size()) {
-                return false;
-            }
-            for (size_t i = 0; i < size_; ++i) {
-                if ((*this)[i] != other[i]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        inline bool operator!=(const ArrayValueView& other) const {
-            return !(*this == other);
-        }
     };
 
     inline auto At(size_t index) const {
@@ -272,27 +258,13 @@ public:
         size_t counter = 0;
 
         while (begin != end) {
-            nested_data.Append(std::move(*begin));
+            nested_data.Append(*begin);
             ++begin;
             ++counter;
         }
 
         // Even if there are 0 items, increase counter, creating empty array item.
         AddOffset(counter);
-    }
-
-    ColumnRef Slice(size_t begin, size_t size) const override {
-        return Wrap(ColumnArray::Slice(begin, size));
-    }
-
-    ColumnRef CloneEmpty() const override {
-        return Wrap(ColumnArray::CloneEmpty());
-    }
-
-    void Swap(Column& other) override {
-        auto & col = dynamic_cast<ColumnArrayT<NestedColumnType> &>(other);
-        typed_nested_data_.swap(col.typed_nested_data_);
-        ColumnArray::Swap(other);
     }
 
 private:

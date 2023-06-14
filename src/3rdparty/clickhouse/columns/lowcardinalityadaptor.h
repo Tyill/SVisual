@@ -22,9 +22,7 @@ class CodedInputStream;
  * @see ClientOptions, CreateColumnByType
  */
 template <typename AdaptedColumnType>
-class
-[[deprecated("Makes implementation of LC(X) harder and code uglier. Will be removed in next major release (3.0) ")]]
-LowCardinalitySerializationAdaptor : public AdaptedColumnType
+class LowCardinalitySerializationAdaptor : public AdaptedColumnType
 {
 public:
     using AdaptedColumnType::AdaptedColumnType;

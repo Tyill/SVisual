@@ -7,7 +7,7 @@ namespace clickhouse {
         enum {
             Hello                = 0,    /// Name, version, revision.
             Data                 = 1,    /// `Block` of data, may be compressed.
-            Exception            = 2,    /// Exception that occurred on server side during query execution.
+            Exception            = 2,    /// Exception that occured on server side during query execution.
             Progress             = 3,    /// Query execcution progress: rows and bytes read.
             Pong                 = 4,    /// response to Ping sent by client.
             EndOfStream          = 5,    /// All packets were sent.
@@ -16,12 +16,6 @@ namespace clickhouse {
             Extremes             = 8,    /// Block of mins and maxs, may be compressed.
             TablesStatusResponse = 9,    /// Response to TableStatus.
             Log                  = 10,   /// Query execution log.
-            TableColumns         = 11,   /// Columns' description for default values calculation
-            PartUUIDs            = 12,   /// List of unique parts ids.
-            ReadTaskRequest      = 13,   /// String (UUID) describes a request for which next task is needed
-                                         /// This is such an inverted logic, where server sends requests
-                                         /// And client returns back response
-            ProfileEvents        = 14,   /// Packet with profile events from server.
         };
     }
 
@@ -29,7 +23,7 @@ namespace clickhouse {
     namespace ClientCodes {
         enum {
             Hello       = 0,    /// Name, version, default database name.
-            Query       = 1,    /** Query id, query settings, query processing stage,
+            Query       = 1,    /** Query id, query settings, query processing stage, 
                                   * compression status, and query text (no INSERT data).
                                   */
             Data        = 2,    /// Data `Block` (e.g. INSERT data), may be compressed.
@@ -38,7 +32,7 @@ namespace clickhouse {
         };
     }
 
-    /// Should we compress `Block`s of data
+    /// Should we compress `Block`s of data 
     namespace CompressionState {
         enum {
             Disable     = 0,

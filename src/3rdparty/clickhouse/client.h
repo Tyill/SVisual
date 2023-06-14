@@ -7,13 +7,11 @@
 #include "columns/date.h"
 #include "columns/decimal.h"
 #include "columns/enum.h"
-#include "columns/geo.h"
 #include "columns/ip4.h"
 #include "columns/ip6.h"
 #include "columns/lowcardinality.h"
 #include "columns/nullable.h"
 #include "columns/numeric.h"
-#include "columns/map.h"
 #include "columns/string.h"
 #include "columns/tuple.h"
 #include "columns/uuid.h"
@@ -45,13 +43,12 @@ enum class CompressionMethod {
 };
 
 struct ClientOptions {
-    // Setter goes first, so it is possible to apply 'deprecated' annotation safely.
 #define DECLARE_FIELD(name, type, setter, default_value) \
+    type name = default_value; \
     inline auto & setter(const type& value) { \
         name = value; \
         return *this; \
-    } \
-    type name = default_value
+    }
 
     /// Hostname of the server.
     DECLARE_FIELD(host, std::string, SetHost, std::string());
@@ -89,27 +86,22 @@ struct ClientOptions {
     // TCP options
     DECLARE_FIELD(tcp_nodelay, bool, TcpNoDelay, true);
 
-    /// Connection socket connect timeout. If the timeout is negative then the connect operation will never timeout.
-    DECLARE_FIELD(connection_connect_timeout, std::chrono::milliseconds, SetConnectionConnectTimeout, std::chrono::seconds(5));
-
-    /// Connection socket timeout. If the timeout is set to zero then the operation will never timeout.
-    DECLARE_FIELD(connection_recv_timeout, std::chrono::milliseconds, SetConnectionRecvTimeout, std::chrono::milliseconds(0));
-    DECLARE_FIELD(connection_send_timeout, std::chrono::milliseconds, SetConnectionSendTimeout, std::chrono::milliseconds(0));
-
+    // TODO deprecate setting
     /** It helps to ease migration of the old codebases, which can't afford to switch
     * to using ColumnLowCardinalityT or ColumnLowCardinality directly,
     * but still want to benefit from smaller on-wire LowCardinality bandwidth footprint.
     *
     * @see LowCardinalitySerializationAdaptor, CreateColumnByType
     */
-    [[deprecated("Makes implementation of LC(X) harder and code uglier. Will be removed in next major release (3.0) ")]]
     DECLARE_FIELD(backward_compatibility_lowcardinality_as_wrapped_column, bool, SetBakcwardCompatibilityFeatureLowCardinalityAsWrappedColumn, true);
 
     /** Set max size data to compress if compression enabled.
      *
-     *  Allows choosing tradeoff between RAM\CPU:
+     *  Allows choosing tradeoff betwen RAM\CPU:
      *  - Lower value reduces RAM usage, but slightly increases CPU usage.
      *  - Higher value increases RAM usage but slightly decreases CPU usage.
+     *
+     *  Default is 0, use natural implementation-defined chunk size.
      */
     DECLARE_FIELD(max_compression_chunk_size, unsigned int, SetMaxCompressionChunkSize, 65535);
 
@@ -137,7 +129,7 @@ struct ClientOptions {
          *  If no CAs are configured, the server's identity can't be validated, and the Client would err.
          *  See https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_default_verify_paths.html
         */
-        /// Load default CA certificates from default locations.
+        /// Load deafult CA certificates from deafult locations.
         DECLARE_FIELD(use_default_ca_locations, bool, SetUseDefaultCALocations, true);
         /// Path to the CA files to verify server certificate, may be empty.
         DECLARE_FIELD(path_to_ca_files, std::vector<std::string>, SetPathToCAFiles, {});
