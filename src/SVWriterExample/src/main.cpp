@@ -24,7 +24,7 @@
 //
 #include "SVMisc/misc.h"
 #include "SVMisc/tcp_server.h"
-#include "SVServer/server.h"
+#include "SVServer/sv_server.h"
 #include <iostream>
 
 using  namespace std;

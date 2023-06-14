@@ -25,11 +25,7 @@
 
 #include "clickhouse_loader.h"
 #include "SVViewer/forms/main_win.h"
-#ifdef WIN32
-#include "3rdparty/clickhouse/client.h"
-#else
 #include <clickhouse/client.h>
-#endif
 
 #include <QDebug>
 
