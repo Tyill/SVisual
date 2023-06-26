@@ -42,6 +42,8 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * Zabbix agent support
 
+* Save into ClickHouseDb support
+
 ## Demo
 
 https://www.youtube.com/watch?v=LR0Rb964DLA&feature=youtu.be
