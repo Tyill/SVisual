@@ -230,8 +230,8 @@
     </message>
     <message>
         <location filename="../forms/main_win.ui" line="380"/>
-        <location filename="../src/main_win.cpp" line="969"/>
-        <location filename="../src/main_win.cpp" line="996"/>
+        <location filename="../src/main_win.cpp" line="946"/>
+        <location filename="../src/main_win.cpp" line="973"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
@@ -258,7 +258,7 @@
         <translation type="vanished">Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="499"/>
+        <location filename="../src/main_win.cpp" line="741"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
@@ -280,63 +280,63 @@
         <translation type="vanished">Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="182"/>
+        <location filename="../src/main_win.cpp" line="830"/>
         <source>Подключение БД успешно</source>
         <translation>Database Connection successful</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="185"/>
+        <location filename="../src/main_win.cpp" line="833"/>
         <source>Подключение БД ошибка: </source>
         <translation>Database Connection error</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="333"/>
+        <location filename="../src/main_win.cpp" line="575"/>
         <source>Доступна новая версия: </source>
         <translation>New version available: </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="335"/>
+        <location filename="../src/main_win.cpp" line="577"/>
         <source>У вас самая новая версия</source>
         <translation>You have the newest version</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="349"/>
+        <location filename="../src/main_win.cpp" line="591"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="406"/>
+        <location filename="../src/main_win.cpp" line="648"/>
         <source>Состояние успешно сохранено</source>
         <translation>Save state succes</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="411"/>
+        <location filename="../src/main_win.cpp" line="653"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="482"/>
+        <location filename="../src/main_win.cpp" line="724"/>
         <source>Состояние успешно загружено</source>
         <translation>Load state succes</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="770"/>
+        <location filename="../src/main_win.cpp" line="81"/>
         <source>Инициализация параметров успешно</source>
         <translation>Initialization successfully settings</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="829"/>
+        <location filename="../src/main_win.cpp" line="143"/>
         <source>Zabbix агент запущен: адрес %1 порт %2</source>
         <translation>Zabbix agent running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="832"/>
+        <location filename="../src/main_win.cpp" line="146"/>
         <source>Не удалось запустить Zabbix агент: адрес %1 порт %2</source>
         <translation>Unable to start the agent Zabbix: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="958"/>
-        <location filename="../src/main_win.cpp" line="1038"/>
+        <location filename="../src/main_win.cpp" line="935"/>
+        <location filename="../src/main_win.cpp" line="1015"/>
         <source>Показать все</source>
         <translation>Show all</translation>
     </message>
@@ -345,32 +345,32 @@
         <translation type="vanished">Not found ini file %1</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="800"/>
+        <location filename="../src/main_win.cpp" line="114"/>
         <source>Прослушивание %1 порта запущено</source>
         <translation>Listening port %1 running</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="804"/>
+        <location filename="../src/main_win.cpp" line="118"/>
         <source>%1 порт недоступен</source>
         <translation>%1 port is not available</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="810"/>
+        <location filename="../src/main_win.cpp" line="124"/>
         <source>TCP cервер запущен: адрес %1 порт %2</source>
         <translation>TCP server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="815"/>
+        <location filename="../src/main_win.cpp" line="129"/>
         <source>Не удалось запустить TCP сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server TCP: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="821"/>
+        <location filename="../src/main_win.cpp" line="135"/>
         <source>WEB cервер запущен: адрес %1 порт %2</source>
         <translation>WEB server running: the address %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="823"/>
+        <location filename="../src/main_win.cpp" line="137"/>
         <source>Не удалось запустить WEB сервер: адрес %1 порт %2</source>
         <translation>Unable to start the server WEB: address of %1 port %2</translation>
     </message>
@@ -383,17 +383,17 @@
         <translation type="vanished">Unable to start the server tcp: address of %1 port %2</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="858"/>
+        <location filename="../src/main_win.cpp" line="172"/>
         <source>Ошибка сохранения сигналов в БД</source>
         <translation>Error save signals in DB</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="860"/>
+        <location filename="../src/main_win.cpp" line="174"/>
         <source>Ошибка сохранения атрибутов в БД</source>
         <translation>Error save attributs in DB</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="862"/>
+        <location filename="../src/main_win.cpp" line="176"/>
         <source>Ошибка сохранения триггеров в БД</source>
         <translation>Error save triggers in DB</translation>
     </message>
@@ -402,12 +402,12 @@
         <translation type="vanished">Error save events in DB</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1092"/>
+        <location filename="../src/main_win.cpp" line="1069"/>
         <source>Превышен лимит количества сигналов: %1. Стабильная работа не гарантирована.</source>
         <translation>Signal limit exceeded:% 1. Stable work is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1136"/>
+        <location filename="../src/main_win.cpp" line="1113"/>
         <source>Подключен модуль: </source>
         <translation>Module is connected: </translation>
     </message>
@@ -416,7 +416,7 @@
         <translation type="vanished">Exceeded module number limit:% 1. Stable performance is not guaranteed.</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1185"/>
+        <location filename="../src/main_win.cpp" line="1162"/>
         <source>Отключен модуль: </source>
         <translation>Module is disconnected: </translation>
     </message>
@@ -429,43 +429,43 @@
         <translation type="vanished">Close an application. Saving options error</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="959"/>
-        <location filename="../src/main_win.cpp" line="1051"/>
+        <location filename="../src/main_win.cpp" line="936"/>
+        <location filename="../src/main_win.cpp" line="1028"/>
         <source>Отключить</source>
         <translation>Shut off</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="962"/>
-        <location filename="../src/main_win.cpp" line="1046"/>
+        <location filename="../src/main_win.cpp" line="939"/>
+        <location filename="../src/main_win.cpp" line="1023"/>
         <source>Включить</source>
         <translation>Enable</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="963"/>
-        <location filename="../src/main_win.cpp" line="972"/>
-        <location filename="../src/main_win.cpp" line="1023"/>
-        <location filename="../src/main_win.cpp" line="1056"/>
+        <location filename="../src/main_win.cpp" line="940"/>
+        <location filename="../src/main_win.cpp" line="949"/>
+        <location filename="../src/main_win.cpp" line="1000"/>
+        <location filename="../src/main_win.cpp" line="1033"/>
         <source>Удалить</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="971"/>
-        <location filename="../src/main_win.cpp" line="1009"/>
+        <location filename="../src/main_win.cpp" line="948"/>
+        <location filename="../src/main_win.cpp" line="986"/>
         <source>Сбросить цвет</source>
         <translation>Reset color</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1030"/>
+        <location filename="../src/main_win.cpp" line="1007"/>
         <source>Сигнал удален </source>
         <translation>The signal is deleted </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1059"/>
+        <location filename="../src/main_win.cpp" line="1036"/>
         <source>Удалить модуль со всеми сигналами?</source>
         <translation>Remove the module with all the signals?</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1066"/>
+        <location filename="../src/main_win.cpp" line="1043"/>
         <source>Модуль удален </source>
         <translation>Module removed </translation>
     </message>
@@ -509,17 +509,17 @@
         <translation type="vanished">Disconnect module &apos;</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1204"/>
+        <location filename="../src/main_win.cpp" line="1181"/>
         <source>Событие: </source>
         <translation>Event: </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1219"/>
+        <location filename="../src/main_win.cpp" line="1196"/>
         <source> Процесс запущен: </source>
         <translation>Process is run: </translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="1222"/>
+        <location filename="../src/main_win.cpp" line="1199"/>
         <source> Путь не найден: </source>
         <translation>Path is not found: </translation>
     </message>
@@ -535,7 +535,7 @@
         <translation type="vanished">Error receiving data</translation>
     </message>
     <message>
-        <location filename="../src/com_reader.cpp" line="58"/>
+        <location filename="../src/com_reader.cpp" line="57"/>
         <source>%1 Ошибка получения данных</source>
         <translation>%1 Error receiving data</translation>
     </message>
@@ -561,7 +561,7 @@
         <location filename="../forms/settings_dialog.ui" line="101"/>
         <location filename="../forms/settings_dialog.ui" line="258"/>
         <location filename="../forms/settings_dialog.ui" line="368"/>
-        <location filename="../src/settings_dialog.cpp" line="135"/>
+        <location filename="../src/settings_dialog.cpp" line="148"/>
         <source>порт</source>
         <translation>port</translation>
     </message>
@@ -596,7 +596,6 @@
         <location filename="../forms/settings_dialog.ui" line="201"/>
         <location filename="../forms/settings_dialog.ui" line="311"/>
         <location filename="../forms/settings_dialog.ui" line="418"/>
-        <location filename="../forms/settings_dialog.ui" line="424"/>
         <source>Активно</source>
         <translation>Active</translation>
     </message>
@@ -611,57 +610,77 @@
         <translation>Save data archive</translation>
     </message>
     <message>
+        <location filename="../forms/settings_dialog.ui" line="424"/>
+        <source>Сохранение в файл</source>
+        <translation>Save in file</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="477"/>
+        <source>Сохранение в ClickHouse</source>
+        <translation>Save in ClickHouse</translation>
+    </message>
+    <message>
         <location filename="../forms/settings_dialog.ui" line="489"/>
+        <source>Имя</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="506"/>
+        <source>Адрес</source>
+        <translation>IP address</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_dialog.ui" line="559"/>
         <source>Настройка измерений</source>
         <translation>Measurement Setup</translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="497"/>
+        <location filename="../forms/settings_dialog.ui" line="567"/>
         <source>Период записи</source>
         <translation>Recording period</translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="504"/>
+        <location filename="../forms/settings_dialog.ui" line="574"/>
         <source> мс</source>
         <translation>ms</translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="520"/>
+        <location filename="../forms/settings_dialog.ui" line="590"/>
         <source>Размер пакета</source>
         <translation>Size of packet</translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="576"/>
+        <location filename="../forms/settings_dialog.ui" line="646"/>
         <source>*</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="583"/>
+        <location filename="../forms/settings_dialog.ui" line="653"/>
         <source>CTRL+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="586"/>
+        <location filename="../forms/settings_dialog.ui" line="656"/>
         <source>Сохранить</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../forms/settings_dialog.ui" line="589"/>
+        <location filename="../forms/settings_dialog.ui" line="659"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/settings_dialog.cpp" line="150"/>
+        <location filename="../src/settings_dialog.cpp" line="163"/>
         <source>скорость</source>
         <translation>speed</translation>
     </message>
     <message>
-        <location filename="../src/settings_dialog.cpp" line="201"/>
+        <location filename="../src/settings_dialog.cpp" line="214"/>
         <source>Выбор пути сохранения файлов записи</source>
         <translation>Choosing ways to preserve the recording files</translation>
     </message>
     <message>
-        <location filename="../src/settings_dialog.cpp" line="243"/>
+        <location filename="../src/settings_dialog.cpp" line="259"/>
         <source>Изменения вступят в силу после перезагрузки</source>
         <translation>Changes will take effect after a reboot</translation>
     </message>
