@@ -27,10 +27,10 @@
 #include <thread>
 #include <mutex>
 
-#include "SVAuxFunc/timer_delay.h"
-#include "SVAuxFunc/front.h"
-#include "SVConfig/config_data.h"
-#include "SVConfig/config_limits.h"
+#include "SVMisc/timer_delay.h"
+#include "SVMisc/front.h"
+#include "SVBase/base.h"
+#include "SVBase/sv_limits.h"
 #include "SVTriggerDialog/trigger_dialog.h"
 #include "GeneratedFiles/ui_trigger_dialog.h"
 
@@ -40,11 +40,11 @@ class TriggerDialog : public QDialog
 
 public:
 
-  SV_Trigger::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Trigger::pf_getCopyModuleRef pfGetCopyModuleRef = nullptr;
-  SV_Trigger::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Trigger::pf_getModuleData pfGetModuleData = nullptr;
-  SV_Trigger::pf_onTriggerCBack pfOnTriggerCBack = nullptr;
+  SV_Trigger::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Trigger::getCopyModuleRefCBack pfGetCopyModuleRef = nullptr;
+  SV_Trigger::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Trigger::getModuleDataCBack pfGetModuleData = nullptr;
+  SV_Trigger::onTriggerCBack pfOnTriggerCBack = nullptr;
 
   Ui::TriggerDialog ui;
 
@@ -63,6 +63,30 @@ public:
 
   bool delTrigger(const QString& trg);
 
+private slots:
+  void selModule(QListWidgetItem * item);
+  void selSignal(QTableWidgetItem * item);
+  void selTrigger(QTableWidgetItem * item);
+  void addTrigger();
+  void delTrigger();
+  void changeTrigger();
+  void paramChange();
+  void selCondition(SV_Trigger::EventType);
+  void selDirProc();
+
+private:
+  void load();
+
+  void showEvent(QShowEvent * event);
+
+  void enaBtnCondition(bool ena);
+
+  void updateTableTrigger();
+  void updateTableSignal();
+  void updateStateSignal();
+
+  bool checkCondition(SV_Trigger::TriggerData* tr, SV_Base::SignalData* sd);
+  void workCycle();
 
 private:
 
@@ -79,32 +103,7 @@ private:
 
   std::thread workThr_;
   std::mutex mtx_;
-  volatile bool thrStop_ = false;
-
-
-  void load();
-
-  void showEvent(QShowEvent * event);
-
-  void enaBtnCondition(bool ena);
-
-  void updateTableTrigger();
-  void updateTableSignal();
-  void updateStateSignal();
-
-  bool checkCondition(SV_Trigger::TriggerData* tr, SV_Base::SignalData* sd);
-  void workCycle();
-
-  private slots:
-  void selModule(QListWidgetItem * item);
-  void selSignal(QTableWidgetItem * item);
-  void selTrigger(QTableWidgetItem * item);
-  void addTrigger();
-  void delTrigger();
-  void changeTrigger();
-  void paramChange();
-  void selCondition(SV_Trigger::EventType);
-  void selDirProc();
+  std::atomic_bool thrStop_ = false;
 };
 
 

@@ -24,12 +24,16 @@
 //
 
 #include "web_server_impl.h"
-#include "SVConfig/config_data.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/base.h"
+#include "SVBase/sv_limits.h"
 #include "http_parser.h"
+
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDir>
 #include <QUrl>
+#include <QCoreApplication>
 
 void WebServer::setConfig(const SV_Web::Config& cng_) {
 
@@ -111,11 +115,10 @@ void clientSocket::readData() {
 
   if (parsed < nread) {
 
-    QByteArray resp;
-    resp += QString("HTTP/1.1 400 Bad Request\r\n")
-      + "\r\n";
+    QString resp;
+    resp += QString("HTTP/1.1 400 Bad Request\r\n\r\n");
 
-    this->writeData(resp.data(), resp.size());
+    this->writeData(resp.toLocal8Bit(), resp.size());
   }
 }
 
@@ -127,7 +130,7 @@ int response(http_parser* parser) {
 
   if (page.startsWith("/api")) {
 
-    QByteArray json;
+    QString json;
 
     if (page == "/api/allSignals")
       json = socket->server_->jsonGetAllSignals();
@@ -138,7 +141,7 @@ int response(http_parser* parser) {
     else if (page == "/api/allModules")
       json = socket->server_->jsonGetAllModules();
 
-    QByteArray resp;
+    QString resp;
     resp += QString("HTTP/1.1 200 OK\r\n")
       + "Content-Type: application/json; charset=utf-8\r\n"
       + "Content-Length: " + QString::number(json.size()) + "\r\n"
@@ -147,7 +150,7 @@ int response(http_parser* parser) {
 
     resp += json;
 
-    socket->writeData(resp.data(), resp.size());
+    socket->writeData(resp.toLocal8Bit(), resp.size());
   }
   else {
 
@@ -173,7 +176,7 @@ int response(http_parser* parser) {
       file.close();
     }
 
-    QByteArray resp;
+    QString resp;
     resp += QString("HTTP/1.1 200 OK\r\n")
       + "Content-Type: " + fields["Accept"] + "\r\n"
       + "Connection: keep-alive\r\n"
@@ -182,7 +185,7 @@ int response(http_parser* parser) {
 
     resp += html;
 
-    socket->writeData(resp.data(), resp.size());
+    socket->writeData(resp.toLocal8Bit(), resp.size());
   }
 
   return 0;

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
-
 project(SVViewer)
+
+find_package(Qt5 COMPONENTS Core Widgets Gui PrintSupport REQUIRED)
 
 FILE(GLOB_RECURSE SRC_View "*.cpp" "*.h" "*.ui" "*.qrc" ".rc")
 
@@ -18,13 +18,13 @@ if(MSVC)
    target_link_libraries (SVViewer optimized qtmain)
 endif(MSVC)
 
-target_link_libraries(SVViewer SVConfig SVAuxFunc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
+target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportDialog SVScriptDialog)
 
 # copy mswin dependent
 if(WIN32)
-   target_link_libraries(SVViewer zlib)
+   target_link_libraries(SVViewer zlib clickhouse-cpp-lib-static lz4-lib cityhash-lib absl-lib)
 else()
-   target_link_libraries(SVViewer z)
+   target_link_libraries(SVViewer z clickhouse-cpp-lib)
 endif(WIN32)
 
-qt5_use_modules(SVViewer Core Widgets Gui PrintSupport)
+target_link_libraries(SVViewer Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport)

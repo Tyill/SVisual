@@ -24,10 +24,12 @@
 //
 #pragma once
 
-#include "SVAuxFunc/front.h"
-#include "SVServer/server.h"
+#include "SVMisc/front.h"
+#include "SVServer/sv_server.h"
 
 #include <map>
+
+class ClickHouseDB;
 
 // копирование архива на диск
 class Archive
@@ -40,10 +42,15 @@ public:
 
   bool copyToDisk(bool isStop);
 
-  void addSignal(const std::string& sign);
+  void addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype);
   void addValue(const std::string& sign, const SV_Base::RecData& rd);
 
   void setConfig(const SV_Srv::Config&);
+
+private:
+  bool isCopyTimeHour();
+  std::string getOutPath(bool isStop);
+  bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
 
 private:
 
@@ -52,19 +59,14 @@ private:
   std::string _copyStartTime = "";
   std::string _copyDateMem = "";
 
-  uint32_t _crtFileHour = 0;
-  const uint32_t ARCH_CYCLE_MS = 600000;     // 10мин
+  int _crtFileHour = 0;
   size_t _copySz = 0;
-  std::map<std::string, uint32_t> _valPos;
+  std::map<std::string, int> _valPos;
 
-  SV_Aux::Front _front;
+  SV_Misc::Front _front;
 
   std::map<std::string, std::vector<SV_Base::RecData>> _archiveData;
 
-  bool isCopyTimeHour();
-
-  std::string getOutPath(bool isStop);
-
-  bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
+  ClickHouseDB* _chdb{};
 
 };

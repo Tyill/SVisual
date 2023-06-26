@@ -38,67 +38,10 @@ class GraphWidget : public QWidget
 {
   Q_OBJECT
 
-private:
-
-  struct graphSignData {
-    QString sign;
-    QString name;
-    SV_Base::ValueType type;
-    int num;
-    QColor color;
-    QLabel* lb;
-    QLabel* lbLeftMarkVal;
-    QLabel* lbRightMarkVal;
-    SV_Base::SignalData* sdata;
-    QVector<QVector<QPair<int, int>>> pnts;
-  };
-
-  struct histPos {
-    QPair<double, double> valIntl;
-    QPair<qint64, qint64> tmIntl;
-  };
-
-  QImage imSign_;
-
-  bool repaintEna_ = false,
-    selLeftMark_ = false, selRigthMark_ = false;
-
-  int colorCnt_ = 30;
-
-  SV_Graph::GraphSetting graphSetting_;
-
-  QMap <QString, graphSignData> signals_, signalsAlter_;
-  QStringList signalList_, signalListAlter_;
-
-  QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Base::SignalData* sign, bool isAlter = false);
-
-  QPair<double, double > getSignPntsMaxMinValue(const graphSignData& sign);
-  QPair<double, double> getSignMaxMinValue(SV_Base::SignalData* sign, QPair<qint64, qint64>& tmInterval);
-  void addPosToHistory();
-
-  AxisTimeWidget* axisTime_ = nullptr;
-
-  MarkerWidget* leftMarker_ = nullptr;
-  MarkerWidget* rightMarker_ = nullptr;
-
-  bool eventFilter(QObject *target, QEvent *event);
-
-  QVector<histPos> historyPos_;
-  GraphPanelWidget* grPanel_ = nullptr;
-  SV_Graph::Config cng;
-
-  AxisSettingDialog* axisSettPanel_ = nullptr;
-
-  void paintSignals();
-  void paintSignalsAlter();
-  void paintObjects();
-  void paintObjectsAlter();
-  void lbSignBoolMove(bool isTop);
-
 public:
   Ui::GraphWidget ui;
 
-  struct graphSignPoint {
+  struct GraphSignPoint {
     int xPix, yPix;
     double val;
     QString sign;
@@ -107,7 +50,7 @@ public:
     QColor color;
   };
 
-  struct graphSignStat {
+  struct GraphSignStat {
 
     double vmin = INT32_MAX,
       vmax = INT32_MIN,
@@ -128,12 +71,12 @@ public:
   void setMarkersPos(QPoint left, QPoint right);
   void getMarkersPos(QPoint& left, QPoint& right);
 
-  QVector<graphSignPoint> getSignalValueByMarkerPos(int pos);
-  QVector<GraphWidget::graphSignPoint> getSignalAlterValueByMarkerPos(int pos);
+  QVector<GraphSignPoint> getSignalValueByMarkerPos(int pos);
+  QVector<GraphWidget::GraphSignPoint> getSignalAlterValueByMarkerPos(int pos);
 
-  QVector<graphSignStat> getStatParams(int markPosBegin, int markPosEnd);
+  QVector<GraphSignStat> getStatParams(int markPosBegin, int markPosEnd);
 
-  QVector<graphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
+  QVector<GraphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
 
   void addSignal(QString sign);
   void addAlterSignal(QString sign);
@@ -144,13 +87,6 @@ public:
   QSize sizeHint();
   void scale(bool posNeg);
   void plotUpdate();
-
-protected:
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dropEvent(QDropEvent *event);
-  void resizeEvent(QResizeEvent * event);
-  void keyPressEvent(QKeyEvent * event);
 
 public slots:
   void axisValueChange();
@@ -172,4 +108,67 @@ signals:
   void req_graphUp(QString name);
   void req_graphDn(QString name);
   void req_close();
+
+protected:
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dragMoveEvent(QDragMoveEvent *event);
+  void dropEvent(QDropEvent *event);
+  void resizeEvent(QResizeEvent * event);
+  void keyPressEvent(QKeyEvent * event);
+
+private:
+  struct GraphSignData {
+    QString sign;
+    QString name;
+    SV_Base::ValueType type;
+    int num;
+    QColor color;
+    QLabel* lb;
+    QLabel* lbLeftMarkVal;
+    QLabel* lbRightMarkVal;
+    SV_Base::SignalData* sdata;
+    QVector<QVector<QPair<int, int>>> pnts;
+  };
+
+  struct HistPos {
+    QPair<double, double> valIntl;
+    QPair<qint64, qint64> tmIntl;
+  };
+
+  QImage imSign_;
+
+  bool repaintEna_ = false,
+    selLeftMark_ = false, selRigthMark_ = false;
+
+  int colorCnt_ = 30;
+
+  SV_Graph::GraphSetting graphSetting_;
+
+  QMap <QString, GraphSignData> signals_, signalsAlter_;
+  QStringList signalList_, signalListAlter_;
+
+  QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Base::SignalData* sign, bool isAlter = false);
+
+  QPair<double, double > getSignPntsMaxMinValue(const GraphSignData& sign);
+  QPair<double, double> getSignMaxMinValue(SV_Base::SignalData* sign, QPair<qint64, qint64>& tmInterval);
+  void addPosToHistory();
+
+  AxisTimeWidget* axisTime_ = nullptr;
+
+  MarkerWidget* leftMarker_ = nullptr;
+  MarkerWidget* rightMarker_ = nullptr;
+
+  bool eventFilter(QObject *target, QEvent *event);
+
+  QVector<HistPos> historyPos_;
+  GraphPanelWidget* grPanel_ = nullptr;
+  SV_Graph::Config cng;
+
+  AxisSettingDialog* axisSettPanel_ = nullptr;
+
+  void paintSignals();
+  void paintSignalsAlter();
+  void paintObjects();
+  void paintObjectsAlter();
+  void lbSignBoolMove(bool isTop);
 };

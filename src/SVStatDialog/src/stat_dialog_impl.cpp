@@ -24,16 +24,17 @@
 //
 
 #include "SVStatDialog/forms/stat_dialog_impl.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/sv_limits.h"
 
 #include <QtGui>
 #include <QTreeWidget>
+#include <QTranslator>
 
 using namespace SV_Base;
 
-StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_) {
-
-  setParent(parent);
+StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_):
+    QDialog(parent)
+{
 
 #ifdef SV_EN
   QTranslator translator;

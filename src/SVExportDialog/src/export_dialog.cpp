@@ -32,37 +32,37 @@ namespace SV_Exp {
     return new ExportDialog(parent, cng);
   }
 
-  void setGetCopySignalRef(QDialog *exp, pf_getCopySignalRef f) {
+  void setGetCopySignalRef(QDialog *exp, getCopySignalRefCBack f) {
 
     if (exp)
       ((ExportDialog *)exp)->pfGetCopySignalRef = f;
   }
 
-  void setGetCopyModuleRef(QDialog *exp, pf_getCopyModuleRef f) {
+  void setGetCopyModuleRef(QDialog *exp, getCopyModuleRefCBack f) {
 
     if (exp)
       ((ExportDialog *)exp)->pfGetCopyModuleRef = f;
   }
 
-  void setGetSignalData(QDialog *exp, pf_getSignalData f) {
+  void setGetSignalData(QDialog *exp, getSignalDataCBack f) {
 
     if (exp)
       ((ExportDialog *)exp)->pfGetSignalData = f;
   }
 
-  void setLoadSignalData(QDialog *exp, pf_loadSignalData f) {
+  void setLoadSignalData(QDialog *exp, isLoadSignalDataCBack f) {
 
     if (exp)
       ((ExportDialog *)exp)->pfLoadSignalData = f;
   }
 
-  void setGetTimeInterval(QDialog* exp, pf_getTimeInterval f) {
+  void setGetTimeInterval(QDialog* exp, getTimeIntervalCBack f) {
 
     if (exp)
       ((ExportDialog *)exp)->pfGetTimeInterval = f;
   }
 
-  void setSetTimeInterval(QDialog* exp, pf_setTimeInterval f) {
+  void setSetTimeInterval(QDialog* exp, setTimeIntervalCBack f) {
 
     if (exp)
       ((ExportDialog *)exp)->pfSetTimeInterval = f;

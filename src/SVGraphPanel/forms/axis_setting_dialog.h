@@ -26,20 +26,23 @@
 
 #include "GeneratedFiles/ui_axis_setting_dialog.h"
 #include "SVGraphPanel/graph_panel.h"
+#include "SVBase/sv_limits.h"
+
+#include <QTranslator>
 
 class AxisSettingDialog : public QDialog
 {
   Q_OBJECT
 
 public:
-  AxisSettingDialog(QWidget* parent, const SV_Graph::AxisAttributes& attr) {
-
+  AxisSettingDialog(QWidget* parent, const SV_Graph::AxisAttributes& attr):
+      QDialog(parent)
+  {
 #ifdef SV_EN
     QTranslator translator;
     translator.load(":/SVGp/svgraphpanel_en.qm");
     QCoreApplication::installTranslator(&translator);
 #endif
-    setParent(parent);
 
     ui.setupUi(this);
 

@@ -1,72 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;cxx;c;def</Extensions>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVExportDialog\src\export_dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVExportDialog\src\export_dialog_impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\cpp\SVisual\src\SVExportDialog\export_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\src\SVExportDialog\forms\export_dialog_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\include_Debug\forms\ui_export_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\include_Release\forms\ui_export_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\include_MinSizeRel\forms\ui_export_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\include_RelWithDebInfo\forms\ui_export_dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\cpp\SVisual\mswin\VS19\CMakeFiles\09da45ddc7c19d1b5e5a2c72d5985adc\autouic_(CONFIG).stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\cpp\SVisual\src\SVExportDialog\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\cpp\SVisual\src\SVExportDialog\forms\export_dialog.ui" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\autouic_Debug.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\autouic_Release.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\autouic_MinSizeRel.stamp" />
+    <None Include="C:\cpp\SVisual\mswin\VS19\SVExportDialog\SVExportDialog_autogen\autouic_RelWithDebInfo.stamp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{354B905C-9921-3E0F-9DD8-1015719FB680}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h</Extensions>
+      <UniqueIdentifier>{2A6AFA54-21B0-3349-9C97-AF529A64B5D4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Form Files">
-      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
-      <Extensions>ui</Extensions>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6DACD3CD-924D-3350-BC6F-0BC07E6DD228}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
-      <Extensions>qrc;*</Extensions>
-      <ParseFiles>false</ParseFiles>
-    </Filter>
-    <Filter Include="Generated Files">
-      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
-      <Extensions>moc;h;cpp</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="Generated Files\Debug">
-      <UniqueIdentifier>{093d21a4-2a34-46cb-b5e8-b67a93a86f57}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-    <Filter Include="Generated Files\Release">
-      <UniqueIdentifier>{d8c18af3-aafc-4d4c-979e-9d7a3531e941}</UniqueIdentifier>
-      <Extensions>cpp;moc</Extensions>
-      <SourceControlFiles>False</SourceControlFiles>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\src\SVExportDialog\export_dialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_export_dialog.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\SVExportDialog\src\export_dialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\SVExportDialog\src\export_dialog_impl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_export_dialog_impl.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_export_dialog_impl.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="..\..\..\src\SVExportDialog\forms\export_dialog.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\src\SVExportDialog\forms\export_dialog_impl.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\src\SVExportDialog\resources\export_dialog_en.ts">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

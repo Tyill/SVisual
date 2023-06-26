@@ -24,57 +24,22 @@
 //
 
 #include "forms/graph_panel_widget.h"
-#include "SVConfig/config_data.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/base.h"
+#include "SVBase/sv_limits.h"
 #include "drag_label.h"
 #include "forms/graph_widget.h"
 
 #include <QtGui>
 #include <QScrollBar>
 #include <QTreeWidget>
+#include <QTranslator>
 
 using namespace SV_Base;
 
-void GraphPanelWidget::load() {
 
-  setAcceptDrops(true);
-
-  QList<int> ss; ss.append(90); ss.append(cng.isShowTable ? 1 : 0);
-  ui.splitter_2->setSizes(ss);
-
-  connect(ui.btnResizeByAuto, &QPushButton::clicked, [this]() {
-    resizeByTime();
-    resizeByValue();
-  });
-  connect(ui.btnResizeByTime, SIGNAL(clicked()), this, SLOT(resizeByTime()));
-  connect(ui.btnResizeByValue, SIGNAL(clicked()), this, SLOT(resizeByValue()));
-  connect(ui.btnScalePos, SIGNAL(clicked()), this, SLOT(scaleGraph()));
-  connect(ui.btnScaleNeg, SIGNAL(clicked()), this, SLOT(scaleGraph()));
-  connect(ui.btnUndo, SIGNAL(clicked()), this, SLOT(undoCmd()));
-  connect(ui.btnColorUpdate, SIGNAL(clicked()), this, SLOT(colorUpdate()));
-
-  splitterGraph_ = new QSplitter(this);
-  splitterGraph_->setOrientation(Qt::Vertical);
-
-  ui.scrollAreaWidgetContents->layout()->addWidget(splitterGraph_);
-  connect(ui.btnPlay, &QPushButton::clicked, this, [this] {
-
-    isPlay_ = !isPlay_;
-
-    if (isPlay_)
-      ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_stop.png"));
-    else
-      ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
-  });
-
-  ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
-  ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
-  ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
-  ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
-}
-
-GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_) {
-
+GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
+    QWidget(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVGp/graph_panel_en.qm");
@@ -82,8 +47,6 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
 #endif
 
   cng = cng_;
-
-  setParent(parent);
 
   ui.setupUi(this);
 
@@ -95,7 +58,7 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
   ui.lbDTime->setVisible(false);
 
   QTimer* tm = new QTimer(this);
-  connect(tm, &QTimer::timeout, [=]() {
+  connect(tm, &QTimer::timeout, this, [this, tm]() {
 
     if (cng.mode == SV_Graph::ModeGr::viewer) {
       ui.btnPlay->setVisible(false);
@@ -119,11 +82,52 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
 
 GraphPanelWidget::~GraphPanelWidget() {}
 
+void GraphPanelWidget::load() {
+
+  setAcceptDrops(true);
+
+  QList<int> ss; ss.append(90); ss.append(cng.isShowTable ? 1 : 0);
+  ui.splitter_2->setSizes(ss);
+
+  connect(ui.btnResizeByAuto, &QPushButton::clicked, this, [this]() {
+    resizeByTime();
+    resizeByValue();
+  });
+  connect(ui.btnResizeByTime, SIGNAL(clicked()), this, SLOT(resizeByTime()));
+  connect(ui.btnResizeByValue, SIGNAL(clicked()), this, SLOT(resizeByValue()));
+  connect(ui.btnScalePos, SIGNAL(clicked()), this, SLOT(scaleGraph()));
+  connect(ui.btnScaleNeg, SIGNAL(clicked()), this, SLOT(scaleGraph()));
+  connect(ui.btnUndo, SIGNAL(clicked()), this, SLOT(undoCmd()));
+  connect(ui.btnColorUpdate, SIGNAL(clicked()), this, SLOT(colorUpdate()));
+
+  splitterGraph_ = new QSplitter(this);
+  splitterGraph_->setOrientation(Qt::Vertical);
+
+  ui.scrollAreaWidgetContents->layout()->addWidget(splitterGraph_);
+  connect(ui.btnPlay, &QPushButton::clicked, this, [this] {
+    isPlay_ = !isPlay_;
+    if (isPlay_)
+      ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_stop.png"));
+    else
+      ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
+  });
+
+  ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
+  ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
+  ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
+  ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
+
+  ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
+  ui.tblValues->setSortingEnabled(true);
+
+  ui.tblValues->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+}
+
 void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
 
   graphSett_ = gs;
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     ob->setGraphSetting(gs);
     ob->plotUpdate();
@@ -132,7 +136,7 @@ void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
 
 void GraphPanelWidget::setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att) {
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     ob->setSignalAttr(sign, att);
   }
@@ -140,7 +144,7 @@ void GraphPanelWidget::setSignalAttr(const QString& sign, const SV_Graph::Signal
 
 void GraphPanelWidget::setAxisAttr(const QVector<SV_Graph::AxisAttributes>& attr) {
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     int ind = splitterGraph_->indexOf(ob);
 
@@ -153,7 +157,7 @@ void GraphPanelWidget::setAxisAttr(const QVector<SV_Graph::AxisAttributes>& attr
 QVector<SV_Graph::AxisAttributes> GraphPanelWidget::getAxisAttr() {
 
   QVector<SV_Graph::AxisAttributes> res;
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     int ind = splitterGraph_->indexOf(ob);
 
@@ -183,7 +187,7 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
     if (sd->buffMinTime == sd->buffMaxTime)
       ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMinTime + 1000);
 
-    ui.axisTime->req_axisChange();
+    emit ui.axisTime->req_axisChange();
   }
 
   if (selGraph_) {
@@ -250,7 +254,7 @@ void GraphPanelWidget::addGraph(QString sign) {
 
 void GraphPanelWidget::delSignal(QString sign) {
 
-  for (auto gr : graphObj_) {
+  for (auto gr : qAsConst(graphObj_)) {
 
     gr->delSignal(sign, false);
   }
@@ -293,14 +297,16 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
       if (sd && !sd->isBuffEnable && pfLoadSignalData)
         pfLoadSignalData(sign);
 
-      if (lb) lb->req_delSignal(sign);
+      if (lb){
+          emit lb->req_delSignal(sign);
+      }
       if (graphObj_.isEmpty()) {
 
         ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
 
         addGraph(sign);
 
-        ui.axisTime->req_axisChange();
+        emit ui.axisTime->req_axisChange();
       }
       else addGraph(sign);
 
@@ -308,6 +314,29 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
 
     event->accept();
   }
+}
+
+void GraphPanelWidget::keyPressEvent(QKeyEvent* event) {
+
+    if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier)){
+        auto cells = ui.tblValues->selectedItems();
+
+        QString text;
+        int currentRow = 0;
+        foreach (const QTableWidgetItem* cell, cells) {
+            if (text.length() != 0) {
+                if (cell->row() != currentRow) {
+                    text += '\n';
+                } else {
+                    text += '\t';
+                }
+            }
+            currentRow = cell->row();
+            text += cell->text();
+        }
+
+        QApplication::clipboard()->setText(text);
+    }
 }
 
 void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
@@ -323,10 +352,10 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
   QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
   double tmScale = ui.axisTime->getTimeScale();
 
-  QVector<GraphWidget::graphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
-  QVector<GraphWidget::graphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
+  QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
+  QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
 
-  QVector<GraphWidget::graphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
+  QVector<GraphWidget::GraphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
 
   QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
   QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
@@ -369,8 +398,6 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
   }
   ui.tblValues->resizeColumnsToContents();
 
-  ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
-  ui.tblValues->sortByColumn(ui.tblValues->horizontalHeader()->sortIndicatorSection(), ui.tblValues->horizontalHeader()->sortIndicatorOrder());
 }
 
 void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
@@ -385,10 +412,10 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
   QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
   double tmScale = ui.axisTime->getTimeScale();
 
-  QVector<GraphWidget::graphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
-  QVector<GraphWidget::graphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
+  QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
+  QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
 
-  QVector<GraphWidget::graphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
+  QVector<GraphWidget::GraphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
 
   QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
   QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
@@ -431,9 +458,6 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
     ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
   }
   ui.tblValues->resizeColumnsToContents();
-
-  ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
-  ui.tblValues->sortByColumn(ui.tblValues->horizontalHeader()->sortIndicatorSection(), ui.tblValues->horizontalHeader()->sortIndicatorOrder());
 }
 
 void GraphPanelWidget::diapTimeUpdate() {
@@ -453,7 +477,7 @@ void GraphPanelWidget::axisTimeChange(QString obj) {
 
   diapTimeUpdate();
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     if (ob->objectName() != obj)
       ob->plotUpdate();
@@ -472,7 +496,7 @@ void GraphPanelWidget::markerChange(QString obj) {
   QPoint leftMarkPos, rightMarkPos;
   graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     if (ob->objectName() != obj) {
       ob->setMarkersPos(leftMarkPos, rightMarkPos);
@@ -483,7 +507,7 @@ void GraphPanelWidget::markerChange(QString obj) {
 
 void GraphPanelWidget::selectGraph(QString obj) {
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     if (ob->objectName() == obj) {
       selGraph_ = ob;
@@ -558,7 +582,7 @@ void GraphPanelWidget::updateSignals() {
   if (graphObj_.isEmpty() || !isPlay_) return;
 
   if (ui.btnAScale->isChecked()) {
-    for (auto ob : graphObj_)
+    for (auto ob : qAsConst(graphObj_))
       ob->resizeByValue();
   }
 
@@ -573,8 +597,9 @@ void GraphPanelWidget::updateSignals() {
     ui.axisTime->update();
   }
 
-  for (auto ob : graphObj_)
+  for (auto ob : qAsConst(graphObj_)){
     ob->plotUpdate();
+  }
 
   if (selGraph_) {
     tableUpdate(selGraph_);
@@ -588,7 +613,7 @@ void GraphPanelWidget::graphToDn(QString obj) {
 
   if (!graph) return;
 
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     if (ob->objectName() == obj) {
 
@@ -612,7 +637,7 @@ void GraphPanelWidget::graphToUp(QString obj) {
   if (!graph) return;
 
   int sz = graphObj_.size();
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     if (ob->objectName() == obj) {
 
@@ -641,7 +666,7 @@ void GraphPanelWidget::setTimeInterval(qint64 stTime, qint64 enTime) {
 QVector<QVector<QString>> GraphPanelWidget::getLocateSignals() {
 
   QVector<QVector<QString>> res;
-  for (auto ob : graphObj_) {
+  for (auto ob : qAsConst(graphObj_)) {
 
     int ind = splitterGraph_->indexOf(ob);
 

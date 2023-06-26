@@ -24,8 +24,10 @@
 //
 #pragma once
 
-#include <QtCore>
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
+
+#include <QString>
+#include <QMap>
 
 namespace SV_Web {
 
@@ -43,12 +45,12 @@ namespace SV_Web {
 
   void stopServer();
 
-  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(pf_getCopySignalRef f);
+  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
+  void setGetCopySignalRef(getCopySignalRefCBack f);
 
-  typedef QMap<QString, SV_Base::ModuleData*>(*pf_getCopyModuleRef)();
-  void setGetCopyModuleRef(pf_getCopyModuleRef f);
+  using getCopyModuleRefCBack = std::function<QMap<QString, SV_Base::ModuleData*>()>;
+  void setGetCopyModuleRef(getCopyModuleRefCBack f);
 
-  typedef SV_Base::SignalData* (*pf_getSignalData)(const QString &sign);
-  void setGetSignalData(pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
+  void setGetSignalData(getSignalDataCBack f);
 }

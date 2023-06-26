@@ -77,7 +77,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <pointsize>8</pointsize>
            </font>
           </property>
           <property name="toolTip">

@@ -27,9 +27,9 @@
 
 #include <QtGui>
 
-AxisValueWidget::AxisValueWidget(QWidget *parent) {
-
-  setParent(parent);
+AxisValueWidget::AxisValueWidget(QWidget *parent):
+    QWidget(parent)
+{
 
   valInterval_.first = 0;
   valInterval_.second = 1000;

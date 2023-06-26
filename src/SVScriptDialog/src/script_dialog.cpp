@@ -41,37 +41,37 @@ namespace SV_Script {
       ((ScriptDialog *)stp)->startUpdateThread();
   }
 
-  void setGetCopySignalRef(QDialog *stp, pf_getCopySignalRef f) {
+  void setGetCopySignalRef(QDialog *stp, getCopySignalRefCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfGetCopySignalRef = f;
   }
 
-  void setGetModuleData(QDialog* stp, pf_getModuleData f) {
+  void setGetModuleData(QDialog* stp, getModuleDataCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfGetModuleData = f;
   }
 
-  void setGetSignalData(QDialog *stp, pf_getSignalData f) {
+  void setGetSignalData(QDialog *stp, getSignalDataCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfGetSignalData = f;
   }
 
-  void setAddSignal(QDialog *stp, pf_addSignal f) {
+  void setAddSignal(QDialog *stp, addSignalCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfAddSignal = f;
   }
 
-  void setAddModule(QDialog *stp, pf_addModule f) {
+  void setAddModule(QDialog *stp, addModuleCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfAddModule = f;
   }
 
-  void setChangeSignColor(QDialog* stp, pf_changeSignColor f) {
+  void setChangeSignColor(QDialog* stp, changeSignColorCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfChangeSignColor = f;
@@ -103,28 +103,28 @@ namespace SV_Script {
       ((ScriptDialog *)stp)->refreshScript(fname);
   }
 
-  void setLoadSignalData(QDialog *stp, pf_loadSignalData f) {
+  void setLoadSignalData(QDialog *stp, isLoadSignalDataCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfLoadSignalData = f;
   }
 
   // обновление данных callBack
-  void setUpdateSignalsCBack(QDialog *stp, pf_updateSignalsCBack f) {
+  void setUpdateSignalsCBack(QDialog *stp, updateSignalsCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfUpdateSignalsCBack = f;
   }
 
   // добавление сигнала callBack
-  void setAddSignalsCBack(QDialog *stp, pf_addSignalsCBack f) {
+  void setAddSignalsCBack(QDialog *stp, addSignalsCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfAddSignalsCBack = f;
   }
 
   // модуль подключен
-  void setModuleConnectCBack(QDialog* stp, pf_moduleConnectCBack f) {
+  void setModuleConnectCBack(QDialog* stp, moduleConnectCBack f) {
 
     if (stp)
       ((ScriptDialog *)stp)->pfModuleConnectCBack = f;

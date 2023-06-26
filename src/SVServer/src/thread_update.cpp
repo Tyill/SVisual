@@ -23,9 +23,9 @@
 // THE SOFTWARE.
 //
 
-#include "SVServer/server.h"
-#include "SVAuxFunc/timer_delay.h"
-#include "SVAuxFunc/aux_func.h"
+#include "SVServer/sv_server.h"
+#include "SVMisc/timer_delay.h"
+#include "SVMisc/misc.h"
 #include "thread_update.h"
 #include "buffer_data.h"
 #include "archive.h"
@@ -34,7 +34,7 @@
 #include <cstring>
 
 using namespace SV_Base;
-using namespace SV_Aux;
+using namespace SV_Misc;
 using namespace std;
 
 extern SV_Srv::onModuleConnectCBack pfModuleConnectCBack;
@@ -59,11 +59,12 @@ ThreadUpdate::~ThreadUpdate(){
 void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
 
   cng.outArchiveEna = cng_.outArchiveEna;
+  cng.outDataBaseEna = cng_.outDataBaseEna;
 
   _archive.setConfig(cng_);
 }
 
-void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp){
+void ThreadUpdate::addSignal(const BufferData::InputData& bp){
 
   SignalData* sd = new SignalData();
 
@@ -76,7 +77,7 @@ void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp
   sd->type = bp.type;
 
   sd->lastData.vals = new SV_Base::Value[cng.packetSz];
-  sd->lastData.beginTime = SV_Aux::currDateTimeSinceEpochMs();
+  sd->lastData.beginTime = SV_Misc::currDateTimeSinceEpochMs();
   memset(sd->lastData.vals, 0, sizeof(SV_Base::Value) * cng.packetSz);
 
   sd->buffMinTime = sd->lastData.beginTime - 5000;
@@ -95,7 +96,7 @@ void ThreadUpdate::addSignal(const string& sign, const BufferData::InputData& bp
 
   SV_Srv::addSignal(sd);
 
-  _archive.addSignal(sign);
+  _archive.addSignal(bp.name, bp.module, bp.type);
 }
 
 void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valuePos){
@@ -156,12 +157,12 @@ void ThreadUpdate::updateCycle(){
     moduleActive[m.first] = true;
   }
 
-  SV_Aux::TimerDelay tmDelay;
+  SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
   size_t buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
   size_t packSz = SV_PACKETSZ * sizeof(Value);                    // размер пакета
-  uint32_t checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
+  int checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
 
   while (!_thrStop){
 
@@ -177,7 +178,7 @@ void ThreadUpdate::updateCycle(){
       string sign = bufPos.name + bufPos.module;
 
       if (sref.find(sign) == sref.end()){
-        addSignal(sign, bufPos);
+        addSignal(bufPos);
         sref[sign] = SV_Srv::getSignalData(sign);
         mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);;
         isNewSign = true;
@@ -209,22 +210,25 @@ void ThreadUpdate::updateCycle(){
         }
       }
 
-      if (cng.outArchiveEna)
+      if (cng.outArchiveEna || cng.outDataBaseEna){
         _archive.addValue(sign, bufPos.data);
-
+      }
       _buffData.incReadPos();
       bufPos = _buffData.getDataByReadPos();
     }
 
-    if (isBuffActive && pfUpdateSignalsCBack)
+    if (isBuffActive && pfUpdateSignalsCBack){
       pfUpdateSignalsCBack();
+    }
 
-    if (isNewSign && pfAddSignalsCBack)
+    if (isNewSign && pfAddSignalsCBack){
       pfAddSignalsCBack();
+    }
 
     // архив
-    if (cng.outArchiveEna && tmDelay.hourOnc())
+    if (tmDelay.hourOnc() && (cng.outArchiveEna || cng.outDataBaseEna)){
       _archive.copyToDisk(false);
+    }
 
     // проверка связи
     if (tmDelay.onDelaySec(true, checkConnectTout, 0)){
@@ -239,23 +243,25 @@ void ThreadUpdate::updateCycle(){
 
         if (m.first == "Virtual") continue;
 
-        if (!mref[m.first]->isActive && m.second)
+        if (!mref[m.first]->isActive && m.second){
           moduleConnect(m.first);
-
-        else if (mref[m.first]->isActive && !m.second)
+        }
+        else if (mref[m.first]->isActive && !m.second){
           moduleDisconnect(m.first);
-
+        }
         mref[m.first]->isActive = m.second;
         m.second = false;
       }
     }
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
-    if (ms > 0)
+    if (ms > 0){
       sleepMs(std::min(ms, 10000));
+    }
   }
 
-  if (cng.outArchiveEna)
+  if (cng.outArchiveEna || cng.outDataBaseEna){
     _archive.copyToDisk(true);
+  }
 }
 

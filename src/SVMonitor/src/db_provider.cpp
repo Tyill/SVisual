@@ -24,86 +24,20 @@
 //
 
 #include "db_provider.h"
-#include "Lib/sqlite/sqlite3.h"
+#include "SVMonitor/forms/main_win.h"
+#include "sqlite/sqlite3.h"
 
-#include <sstream>
-#include <QtCore>
+#include <QSet>
 #include <QColor>
+#include <QDateTime>
+#include <sstream>
 
 using namespace std;
 using namespace SV_Base;
 using namespace SV_Trigger;
 
-void statusMess(const QString& mess);
-
-bool DbProvider::init() {
-
-  sqlite3_shutdown();
-  sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
-  sqlite3_initialize();
-
-  if (!open()) { return false; }
-
-  string req = "PRAGMA journal_mode = WAL;";
-  vector<vector<string>> results;
-  if (!query(req, results)) return false;
-
-  req = "PRAGMA synchronous = NORMAL;";
-  if (!query(req, results)) return false;
-
-  sqlite3_busy_timeout(db_, 5000);
-
-  return true;
-}
-
-bool DbProvider::open() {
-  return (sqlite3_open(qPrintable(pathDB_), &db_) == SQLITE_OK);
-}
-
-void DbProvider::close() {
-
-  if (db_)
-    sqlite3_close(db_);
-}
-
-bool DbProvider::query(const string& query, vector<vector<string>>& results) {
-
-  QMutexLocker locker(&mtx_);
-
-  bool res = true;
-  try {
-    sqlite3_stmt* statement;
-    if (sqlite3_prepare_v2(db_, query.c_str(), -1, &statement, 0) == SQLITE_OK)
-    {
-      int cols = sqlite3_column_count(statement);
-      int result = 0;
-      while (true) {
-
-        result = sqlite3_step(statement);
-
-        if (result == SQLITE_ROW) {
-          vector<string> values;
-          for (int col = 0; col < cols; col++) {
-            char* rv = (char*)sqlite3_column_text(statement, col);
-            if (rv) values.push_back(rv);
-          }
-          if (!values.empty()) results.push_back(values);
-        }
-        else break;
-      }
-
-      sqlite3_finalize(statement);
-
-    }
-    else res = false;
-
-  }
-  catch (std::exception ex) { statusMess(QString("SQL::query Exception ") + ex.what()); res = false; }
-
-  return res;
-}
-
-DbProvider::DbProvider(const QString& filename) {
+DbProvider::DbProvider(const QString& filename, MainWin* mainWin):
+  mainWin_(mainWin) {
 
   pathDB_ = filename;
 
@@ -173,6 +107,77 @@ DbProvider::~DbProvider() {
 bool DbProvider::isConnect() {
 
   return isConnect_;
+}
+
+
+bool DbProvider::init() {
+
+  sqlite3_shutdown();
+  sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
+  sqlite3_initialize();
+
+  if (!open()) { return false; }
+
+  string req = "PRAGMA journal_mode = WAL;";
+  vector<vector<string>> results;
+  if (!query(req, results)) return false;
+
+  req = "PRAGMA synchronous = NORMAL;";
+  if (!query(req, results)) return false;
+
+  sqlite3_busy_timeout(db_, 5000);
+
+  return true;
+}
+
+bool DbProvider::open() {
+  return (sqlite3_open(qPrintable(pathDB_), &db_) == SQLITE_OK);
+}
+
+void DbProvider::close() {
+
+  if (db_)
+    sqlite3_close(db_);
+}
+
+bool DbProvider::query(const string& query, vector<vector<string>>& results) {
+
+  QMutexLocker locker(&mtx_);
+
+  bool res = true;
+  try {
+    sqlite3_stmt* statement;
+    if (sqlite3_prepare_v2(db_, query.c_str(), -1, &statement, 0) == SQLITE_OK)
+    {
+      int cols = sqlite3_column_count(statement);
+      int result = 0;
+      while (true) {
+
+        result = sqlite3_step(statement);
+
+        if (result == SQLITE_ROW) {
+          vector<string> values;
+          for (int col = 0; col < cols; col++) {
+            char* rv = (char*)sqlite3_column_text(statement, col);
+            if (rv) values.push_back(rv);
+          }
+          if (!values.empty()) results.push_back(values);
+        }
+        else break;
+      }
+
+      sqlite3_finalize(statement);
+
+    }
+    else res = false;
+
+  }
+  catch (std::exception ex) { 
+    mainWin_->statusMess(QString("SQL::query Exception ") + ex.what()); 
+    res = false; 
+  }
+
+  return res;
 }
 
 bool DbProvider::saveTriggers(const QMap<QString, SV_Trigger::TriggerData*>& trgData) {
@@ -408,7 +413,7 @@ void DbProvider::delAttrSignal(const QString& signal, const QString& module) {
   query(ss.str(), res);
 }
 
-void DbProvider::saveEvent(QString trg, QDateTime dt) {
+void DbProvider::saveEvent(const QString& trg, const QDateTime& dt) {
 
   stringstream ss;
 
@@ -420,7 +425,7 @@ void DbProvider::saveEvent(QString trg, QDateTime dt) {
   query(ss.str(), ret);
 }
 
-QVector<UserEvent> DbProvider::getEvents(QDateTime beginDT, QDateTime endDT) {
+QVector<UserEvent> DbProvider::getEvents(const QDateTime& beginDT, const QDateTime& endDT) {
 
   QString cmd = "SELECT * FROM Events WHERE sendDateTime BETWEEN '" + beginDT.toString("yyyy-MM-dd HH:mm:ss") + "' AND '" + endDT.toString("yyyy-MM-dd HH:mm:ss") + "';";
 

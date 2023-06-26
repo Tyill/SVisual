@@ -1,5 +1,5 @@
 <div align="left">
-  <a><img src="docs/SVLabel.png" width = 150 height = 50 ></a><br>
+  <a><img src="docs/images/SVLabel.png" width = 150 height = 50 ></a><br>
 </div>
 
 | **`Docker`** | **`License`** |
@@ -9,9 +9,9 @@
 The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
 
 <p float="left">
-<img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-video.gif" width="400" height="300"/>
+<img src="docs/images/sv-video.gif" width="400" height="300"/>
  &emsp;
-<img src="https://github.com/Tyill/SVisual/blob/master/docs/sv-web.gif" width="400" height="300"/>
+<img src="docs/images/sv-web.gif" width="400" height="300"/>
 </p>
 
 ## Features
@@ -48,8 +48,6 @@ https://www.youtube.com/watch?v=LR0Rb964DLA&feature=youtu.be
 
 https://www.youtube.com/watch?v=wlvArf7h6lE
 
-https://www.youtube.com/watch?v=oBf4WSAncTQ&feature=youtu.be
-
 ## Arduino example
 
 ```cpp
@@ -78,13 +76,21 @@ void loop() {
 ```
 ### As a result
 <div align="left">
-  <a><img src="docs/example.png"></a><br>
+  <a><img src="docs/images/example.png"></a><br>
 </div>
 
 ## Use in Linux
-Should be installed: qt, libz 
+Should be installed:
+- qt
+- sqlite: `sudo apt install libsqlite3-dev`
+- libuv: `sudo apt install libuv1-dev`
+- [clickhouse-cpp](https://github.com/ClickHouse/clickhouse-cpp)
 
-## [Manual](https://github.com/Tyill/SVisual/tree/master/man) 
+Aux dependences [here](src/linux_deps/): 
+- lua53
+- qtXlsxWriter
+
+## [Manual](docs) 
 
 ## License
 Licensed under an [MIT-2.0]-[license](LICENSE).

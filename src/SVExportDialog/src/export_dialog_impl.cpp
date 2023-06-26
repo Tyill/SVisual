@@ -24,21 +24,24 @@
 //
 
 #include "SVExportDialog/forms/export_dialog_impl.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/sv_limits.h"
 #ifdef USE_QtXlsxWriter
-#include "Lib/xlsx/xlsxdocument.h"
+#include "xlsx/xlsxdocument.h"
 #endif
-#include "Lib/rapidjson/writer.h"
-#include "Lib/rapidjson/stringbuffer.h"
-#include "Lib/rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/document.h"
 
 #include <QFileDialog>
+#include <QTextStream>
+#include <QTimer>
+#include <QTranslator>
 
 using namespace SV_Base;
 
-ExportDialog::ExportDialog(QWidget *parent, SV_Exp::Config cng_) {
-
-  setParent(parent);
+ExportDialog::ExportDialog(QWidget *parent, SV_Exp::Config cng_):
+    QDialog(parent)
+{
 
 #ifdef SV_EN
   QTranslator translator;

@@ -25,7 +25,7 @@
 #pragma once
 
 #include "GeneratedFiles/ui_main_win.h"
-#include "SVAuxFunc/logger.h"
+#include "SVMisc/logger.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVMonitor/src/structurs.h"
 
@@ -43,9 +43,7 @@ class SerialPortReader;
 class MainWin : public QMainWindow
 {
   Q_OBJECT
-
-    friend void statusMess(const QString& mess);
-
+    
 public:
 
   struct Config{
@@ -54,10 +52,14 @@ public:
     QString initPath;
     QString selOpenDir;
 
-    bool outArchiveEna;        ///< запись архива активна
+    bool outArchiveEna;        ///< запись архива в файл активна
     QString outArchivePath;    ///< запись архива путь
     QString outArchiveName;    ///< запись архива имя файла
     int outArchiveHourCnt;     ///< запись архива размер файла, час
+
+    bool outDataBaseEna;       ///< запись архива в БД активна
+    QString outDataBaseName;
+    QString outDataBaseAddr;
 
     int cycleRecMs;            ///< период записи - задает пользователь
     int packetSz;              ///< размер пакета - задает пользователь
@@ -85,11 +87,11 @@ public:
 
     SV_Graph::GraphSetting graphSett;
   };
-
-  SV_Aux::Logger lg;
-
+ 
   MainWin(QWidget *parent = 0);
   ~MainWin();
+
+  void statusMess(const QString& mess);
 
   void updateConfig(const Config&);
   Config getConfig();
@@ -104,6 +106,8 @@ private:
   QVector<SerialPortReader*> comReaders_;
 
   Config cng;
+
+  SV_Misc::Logger lg_;
 
   QMap<QObject*, QWidget*> graphPanels_;
   QDialog* exportDialog_ = nullptr;
@@ -125,8 +129,8 @@ private:
 
   bool eventFilter(QObject *target, QEvent *event);
 
+  bool readSettings(QString initPath);
   bool writeSettings(QString pathIni);
-  bool init(QString initPath);
   void connects();
   void load();
 

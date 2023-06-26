@@ -24,9 +24,10 @@
 //
 
 #include "SVMonitor/forms/main_win.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/sv_limits.h"
 
 #include <QApplication>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {

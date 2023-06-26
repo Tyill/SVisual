@@ -27,9 +27,9 @@
 
 #include <QtGui>
 
-AxisTimeWidget::AxisTimeWidget(QWidget *parent) {
-
-  setParent(parent);
+AxisTimeWidget::AxisTimeWidget(QWidget *parent):
+    QWidget(parent)
+{
 
   tmInterval_.first = QDateTime::currentDateTime().toMSecsSinceEpoch();
   tmInterval_.second = tmInterval_.first + 3600000;
@@ -125,7 +125,7 @@ void AxisTimeWidget::resizeEvent(QResizeEvent * event) {
 
 void AxisTimeWidget::drawDashLines(QPainter& painter) {
 
-  int w = width(), h = height();
+  int w = width();
 
   painter.setPen(Qt::gray);
   painter.drawLine(QPoint(0, 0), QPoint(w, 0));

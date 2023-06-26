@@ -28,9 +28,9 @@
 #include <QtGui>
 #include <QApplication>
 
-TreeWidgetExt::TreeWidgetExt(QWidget *parent){
-
-  this->setParent(parent);
+TreeWidgetExt::TreeWidgetExt(QWidget *parent):
+    QTreeWidget(parent)
+{
 
   setSelectionMode(QAbstractItemView::SingleSelection);
   setDragEnabled(true);

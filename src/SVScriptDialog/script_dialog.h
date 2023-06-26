@@ -24,9 +24,10 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 
-#include <QtCore>
+#include <QString>
+#include <QMap>
 #include <QColor>
 
 class QDialog;
@@ -53,23 +54,23 @@ namespace SV_Script {
 
   void startUpdateThread(QDialog* stPanel);
 
-  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(QDialog* stPanel, pf_getCopySignalRef f);
+  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
+  void setGetCopySignalRef(QDialog* stPanel, getCopySignalRefCBack f);
 
-  typedef SV_Base::ModuleData *(*pf_getModuleData)(const QString &module);
-  void setGetModuleData(QDialog* stPanel, pf_getModuleData f);
+  using getModuleDataCBack = std::function<SV_Base::ModuleData*(const QString &module)>;
+  void setGetModuleData(QDialog* stPanel, getModuleDataCBack f);
 
-  typedef SV_Base::SignalData *(*pf_getSignalData)(const QString &sign);
-  void setGetSignalData(QDialog* stPanel, pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
+  void setGetSignalData(QDialog* stPanel, getSignalDataCBack f);
 
-  typedef bool(*pf_addSignal)(SV_Base::SignalData*);
-  void setAddSignal(QDialog* stPanel, pf_addSignal f);
+  using addSignalCBack = std::function<bool(SV_Base::SignalData*)>;
+  void setAddSignal(QDialog* stPanel, addSignalCBack f);
 
-  typedef bool(*pf_addModule)(SV_Base::ModuleData*);
-  void setAddModule(QDialog* stPanel, pf_addModule f);
+  using addModuleCBack = std::function<bool(SV_Base::ModuleData*)>;
+  void setAddModule(QDialog* stPanel, addModuleCBack f);
 
-  typedef void(*pf_changeSignColor)(const QString &module, const QString &sign, const QColor& color);
-  void setChangeSignColor(QDialog* stPanel, pf_changeSignColor f);
+  using changeSignColorCBack = std::function<void(const QString &module, const QString &sign, const QColor& color)>;
+  void setChangeSignColor(QDialog* stPanel, changeSignColorCBack f);
 
   bool isActiveScript(QDialog* stPanel, const QString& fname);
 
@@ -79,18 +80,18 @@ namespace SV_Script {
 
   void refreshScript(QDialog* stPanel, const QString& fname);
 
-  typedef bool(*pf_loadSignalData)(const QString& sign);
-  void setLoadSignalData(QDialog* stPanel, pf_loadSignalData f);
+  using isLoadSignalDataCBack = std::function<bool(const QString &sign)>;
+  void setLoadSignalData(QDialog* stPanel, isLoadSignalDataCBack f);
 
   // обновление данных callBack
-  typedef void(*pf_updateSignalsCBack)();
-  void setUpdateSignalsCBack(QDialog* stPanel, pf_updateSignalsCBack);
+  using updateSignalsCBack = std::function<void()>;
+  void setUpdateSignalsCBack(QDialog* stPanel, updateSignalsCBack);
 
   // добавление сигнала callBack
-  typedef void(*pf_addSignalsCBack)();
-  void setAddSignalsCBack(QDialog* stPanel, pf_addSignalsCBack);
+  using addSignalsCBack = std::function<void()>;
+  void setAddSignalsCBack(QDialog* stPanel, addSignalsCBack);
 
   // модуль подключен
-  typedef void(*pf_moduleConnectCBack)(const QString& module);
-  void setModuleConnectCBack(QDialog* stPanel, pf_moduleConnectCBack);
+  using moduleConnectCBack = std::function<void(const QString& module)>;
+  void setModuleConnectCBack(QDialog* stPanel, moduleConnectCBack);
 }

@@ -28,6 +28,7 @@
 #include "archive.h"
 
 #include <thread>
+#include <atomic>
 
 class ThreadUpdate{
 
@@ -43,7 +44,7 @@ private:
 
   SV_Srv::Config cng;
 
-  volatile bool _thrStop = false;
+  std::atomic_bool _thrStop = false;
 
   std::thread _thr;
   BufferData& _buffData;
@@ -53,7 +54,7 @@ private:
 
   void updateCycle();
   void updateSignal(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
-  void addSignal(const std::string& sign, const BufferData::InputData& bp);
+  void addSignal(const BufferData::InputData& bp);
   void moduleConnect(const std::string& module);
   void moduleDisconnect(const std::string& module);
 };

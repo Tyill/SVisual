@@ -29,7 +29,6 @@
 #include <cstring>
 
 using namespace std;
-using namespace SV_Base;
 
 const size_t BufferData::BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
 
@@ -37,8 +36,8 @@ void BufferData::init(const SV_Srv::Config& cng_) {
   
   cng = cng_;
 
-  Value* buff = new Value[SV_PACKETSZ * BUFF_SZ];
-  memset(buff, 0, SV_PACKETSZ * BUFF_SZ * sizeof(Value));
+  SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * BUFF_SZ];
+  memset(buff, 0, SV_PACKETSZ * BUFF_SZ * sizeof(SV_Base::Value));
   for (size_t i = 0; i < BUFF_SZ; ++i)
     _buffer[i].data.vals = &buff[i * SV_PACKETSZ];
 }
@@ -46,7 +45,7 @@ void BufferData::init(const SV_Srv::Config& cng_) {
 void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
 
   size_t dsz = indata.size(),
-    valSz = SV_NAMESZ + sizeof(ValueType) + sizeof(Value) * SV_PACKETSZ,
+    valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
     cPos = SV_NAMESZ;
   
   size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, BUFF_SZ));
@@ -60,7 +59,7 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
 
   _mtx.unlock();
 
-  size_t vlsz = sizeof(Value) * SV_PACKETSZ;
+  size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
   while (cPos < dsz){
 
     _buffer[buffWr].name = indata.data() + cPos;
@@ -68,7 +67,7 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
     _buffer[buffWr].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
     _buffer[buffWr].data.beginTime = bTm;
 
-    memcpy(_buffer[buffWr].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(ValueType), vlsz);
+    memcpy(_buffer[buffWr].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
 
     _buffer[buffWr].isActive = true;
 

@@ -190,7 +190,7 @@ namespace svisual{
     vr->vals[curCycCnt_] = val;
     vr->isOnlyFront = onlyPosFront;
     vr->isActive = true;
-	
+    
     return true;  
   }
   

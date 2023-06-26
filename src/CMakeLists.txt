@@ -1,13 +1,20 @@
 cmake_minimum_required(VERSION 3.0.2)
 
 PROJECT("SVisual")
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_VS_PLATFORM_NAME})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_VS_PLATFORM_NAME})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_VS_PLATFORM_NAME})
 
 option(USE_QtXlsxWriter "QtXlsxWriter library support" OFF)
+
+include(cmake/qt.cmake)
+
+if (UNIX)
+  SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+endif(UNIX)
 
 if(MSVC)   
   add_definitions(-DWIN32_LEAN_AND_MEAN)
@@ -17,10 +24,10 @@ if(MSVC)
 endif(MSVC)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Lib/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/)
 
-add_subdirectory(SVAuxFunc)
-add_subdirectory(SVConfig)
+add_subdirectory(SVMisc)
+add_subdirectory(SVBase)
 add_subdirectory(SVClient)
 add_subdirectory(SVServer)
 add_subdirectory(SVWebServer)

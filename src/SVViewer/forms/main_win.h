@@ -26,12 +26,16 @@
 #define MAINWIN_H
 
 #include "GeneratedFiles/ui_main_win.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include "SVGraphPanel/graph_panel.h"
 #include "SVViewer/src/structurs.h"
 
+#include <QMutex>
+
 class GraphSettingDialog;
 class ThrLoadData;
+class SettingsDialog;
+class DbClickHouseLoader;
 
 class MainWin : public QMainWindow
 {
@@ -45,6 +49,8 @@ class MainWin : public QMainWindow
   friend bool addSignal(SV_Base::SignalData* sd);
   friend bool addModule(SV_Base::ModuleData* md);
   friend QVector<QString> getModuleSignals(const QString& md);
+  friend class FileLoader;
+  friend class DbClickHouseLoader;
 
 public:
   MainWin(QWidget *parent = 0);
@@ -54,23 +60,56 @@ public:
 
   struct Config {
 
-    bool sortByMod;
+    bool sortByMod{};
 
-    int cycleRecMs;
-    int packetSz;
+    int cycleRecMs{};
+    int packetSz{};
 
     QString initPath;
     QString selOpenDir;
 
+    bool inputDataBaseEna{};
+    QString inputDataBaseName;
+    QString inputDataBaseAddr;
+
     SV_Graph::GraphSetting graphSett;
   };
 
-  bool loadModuleVals(QString path);
+  void updateConfig(const Config&);
+  Config getConfig()const;
 
   void updateGraphSetting(const SV_Graph::GraphSetting&);
 
-private:
+  bool loadSDataRequest(QWidget* from, const QString& sname);
 
+public slots:
+  void updateTblSignal();
+  void updateSignals();
+  void actionOpenData();
+  void actionOpenStat();
+  void contextMenuClick(QAction*);
+  void changeSignColor(const QString& module, const QString& signal, const QColor& color);
+
+protected:
+  bool eventFilter(QObject *target, QEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent * event) override;
+
+private:
+  void connects();
+  void load();
+  bool init(const QString& initPath);
+
+  bool writeSettings(const QString& pathIni);
+  bool readSignals(const QString& path);
+  bool writeSignals(const QString& path);
+  QDialog* addNewWindow(const QRect& pos);
+
+  void updateGroup(const QString& group, const QString& sign);
+  void sortSignalByGroupOrModule(bool byModule);
+
+  void showMessageDialog(const QString& mess);
+
+private:
   Config cng;
 
   QDialog* exportPanel_ = nullptr;
@@ -79,7 +118,7 @@ private:
   GraphSettingDialog* graphSettPanel_ = nullptr;
   QDialog* scriptPanel_ = nullptr;
 
-  ThrLoadData* thrLoadData_ = nullptr;
+  SettingsDialog* settingsDialog_ = nullptr;
 
   QMutex mtx_;
 
@@ -90,31 +129,7 @@ private:
   QMap<QString, SV_Base::SignalData*> signalRef_;   // ключ - название сигнала
   QMap<QString, FileData*> fileRef_;
 
-  bool init(QString initPath);
-  bool writeSettings(QString pathIni);
-  bool readSignals(QString path);
-  bool writeSignals(QString path);
-  QDialog* addNewWindow(const QRect& pos);
-
-  bool eventFilter(QObject *target, QEvent *event);
-
-  void updateGroup(QString group, QString sign);
-
-  void Connect();
-  void load();
-
-  void sortSignalByGroupOrModule(bool byModule);
-  void contextMenuEvent(QContextMenuEvent * event);
-
-  public slots:
-  void updateTblSignal();
-  void updateSignals();
-  void actionOpenData();
-  void actionOpenStat();
-  bool loadData(QStringList files);
-  void loadDataFinished(bool ok);
-  void contextMenuClick(QAction*);
-  void changeSignColor(QString module, QString signal, QColor color);
+  QMap<QObject*, DbClickHouseLoader*> m_chLoaders;
 };
 
 

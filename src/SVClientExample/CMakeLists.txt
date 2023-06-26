@@ -6,4 +6,4 @@ FILE(GLOB_RECURSE SRC_ClEx "*.cpp" "*.h")
 
 add_executable(SVClientExample ${SRC_ClEx})
 
-target_link_libraries(SVClientExample SVClient SVAuxFunc)
+target_link_libraries(SVClientExample SVClient SVMisc)

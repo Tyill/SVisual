@@ -24,10 +24,12 @@
 //
 #pragma once
 
-#include "SVConfig/config_limits.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/sv_limits.h"
+#include "SVBase/base.h"
 
-#include <QtCore>
+#include <QString>
+#include <QMap>
+#include <QColor>
 
 struct ValueData{
   char name[SV_NAMESZ];

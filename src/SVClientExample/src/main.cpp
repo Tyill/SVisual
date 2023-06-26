@@ -27,7 +27,7 @@
 #include <math.h>
 #include <iostream>
 #include "SVClient/SVClient.h"
-#include "SVAuxFunc/aux_func.h"
+#include "SVMisc/misc.h"
 
 #ifdef _WIN32
 #include "windows.h"
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
 
     cp += 1; if (cp > 359) cp = 0;
       
-    SV_Aux::sleepMs(100);
+    SV_Misc::sleepMs(100);
   }
   return 0;
 }

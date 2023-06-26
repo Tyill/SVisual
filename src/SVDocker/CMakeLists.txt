@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-include(../cmake/qt.cmake)
-
 project(SVDocker)
+
+find_package(Qt5 COMPONENTS Network REQUIRED)
 
 FILE(GLOB_RECURSE SRC_SVDock "*.cpp" "*.h")
 
@@ -16,6 +16,6 @@ if(MSVC)
    set_target_properties (SVDocker PROPERTIES LINK_FLAGS "/NODEFAULTLIB:LIBCMT") 
 endif(MSVC)
 
-target_link_libraries(SVDocker SVConfig SVAuxFunc SVServer SVWebServer)
+target_link_libraries(SVDocker SVBase SVMisc SVServer SVWebServer)
 
-qt5_use_modules(SVDocker Core)
+target_link_libraries(SVDocker Qt5::Core)

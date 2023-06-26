@@ -30,9 +30,9 @@
 #include <QtGui>
 #include <QApplication>
 
-PlotWidget::PlotWidget(QWidget *parent) {
-
-  setParent(parent);
+PlotWidget::PlotWidget(QWidget *parent):
+    QWidget(parent)
+{
 
   setAttribute(Qt::WA_NoSystemBackground);
 
@@ -49,7 +49,7 @@ void PlotWidget::mousePressEvent(QMouseEvent *event) {
 
     if (!tmrMarkerPos_) {
       tmrMarkerPos_ = new QTimer(this);
-      connect(tmrMarkerPos_, &QTimer::timeout, [=]() {
+      connect(tmrMarkerPos_, &QTimer::timeout, this, [this]() {
 
         if (lpm_) {
           keyCntr_ = true;
@@ -140,6 +140,12 @@ void PlotWidget::mouseMoveEvent(QMouseEvent *event) {
   }
 
   QWidget::mouseMoveEvent(event);
+}
+
+void PlotWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+
+    emit req_fullSize();
+    QWidget::mouseDoubleClickEvent(event);
 }
 
 void PlotWidget::wheelEvent(QWheelEvent * event) {

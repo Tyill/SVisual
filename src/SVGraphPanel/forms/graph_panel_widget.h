@@ -33,35 +33,16 @@ class GraphPanelWidget : public QWidget
 {
   Q_OBJECT
 
-private:
-
-  SV_Graph::Config cng;
-
-  const int MIN_HEIGHT_GRAPH = 300;
-  int graphCnt_ = 0;
-  QVector<GraphWidget*> graphObj_;
-
-  QSplitter* splitterGraph_ = nullptr;
-  GraphWidget* selGraph_ = nullptr;
-
-  SV_Graph::GraphSetting graphSett_;
-
-  bool isPlay_ = true;
-
-  void load();
-  void tableUpdate(GraphWidget* graph);
-  void tableUpdateAlter(GraphWidget* graph);
-
 public:
   Ui::GraphPanelWidget ui;
 
   GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
   ~GraphPanelWidget();
 
-  SV_Graph::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Graph::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Graph::pf_getSignalAttr pfGetSignalAttr = nullptr;
-  SV_Graph::pf_loadSignalData pfLoadSignalData = nullptr;
+  SV_Graph::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Graph::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
+  SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
 
   void addSignalOnGraph(QString name, int section);
   QPair<qint64, qint64> getTimeInterval();
@@ -73,13 +54,13 @@ public:
   void setAxisAttr(const QVector<SV_Graph::AxisAttributes>&);
   QVector<SV_Graph::AxisAttributes> getAxisAttr();
 
-  public slots:
+public slots:
   void updateSignals();
   void resizeByValue();
   void delSignal(QString sign);
   void scaleGraph();
 
-  private slots:
+private slots:
   void addGraph(QString sign);
   void axisTimeChange(QString obj);
   void diapTimeUpdate();
@@ -94,6 +75,29 @@ public:
   void resizeByTime();
   void undoCmd();
   void colorUpdate();
+
+protected:
+  void keyPressEvent(QKeyEvent* event) override;
+
+private:
+  void load();
+  void tableUpdate(GraphWidget* graph);
+  void tableUpdateAlter(GraphWidget* graph);
+
+private:
+  SV_Graph::Config cng;
+
+  const int MIN_HEIGHT_GRAPH = 300;
+  int graphCnt_ = 0;
+  QVector<GraphWidget*> graphObj_;
+
+  QSplitter* splitterGraph_ = nullptr;
+  GraphWidget* selGraph_ = nullptr;
+
+  SV_Graph::GraphSetting graphSett_;
+
+  bool isPlay_ = true;
+
 
 };
 

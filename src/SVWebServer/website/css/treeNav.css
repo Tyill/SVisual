@@ -1,24 +1,24 @@
 .treeNav-head {
-	cursor: default;
-	text-align: left;
-	background-color: rgb(137, 139, 143);
-	color: rgb(255, 255, 255);
+    cursor: default;
+    text-align: left;
+    background-color: rgb(137, 139, 143);
+    color: rgb(255, 255, 255);
 }
 
 .treeNav-row{
-	cursor: default;
-	text-align: left;
-	color: rgb(255, 255, 255);
+    cursor: default;
+    text-align: left;
+    color: rgb(255, 255, 255);
 }
 
 .treeNav-row:nth-child(odd){
-	background: rgb(94, 96, 99);	
+    background: rgb(94, 96, 99);    
 }
  
 .treeNav-row:nth-child(even){
-	background: rgb(105, 107, 109);
+    background: rgb(105, 107, 109);
 }
 
 .treeNav-row:hover {
-	background-color: rgb(116, 161, 64);
+    background-color: rgb(116, 161, 64);
 }

@@ -22,12 +22,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#include "SVAuxFunc/aux_func.h"
-#include "SVAuxFunc/tcp_server.h"
-#include "SVServer/server.h"
+#include "SVMisc/misc.h"
+#include "SVMisc/tcp_server.h"
+#include "SVServer/sv_server.h"
 #include "SVWebServer/web_server.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/sv_limits.h"
 
+#include <QCoreApplication>
+#include <QSettings>
 #include <iostream>
 
 void statusMess(const std::string& mess){
@@ -113,8 +115,8 @@ int main(int argc, char* argv[]){
 
     QCoreApplication a(argc, argv);
 
-    SV_Aux::TCPServer::setErrorCBack(statusMess);
-    SV_Aux::TCPServer::setDataCBack(SV_Srv::receiveData);
+    SV_Misc::TCPServer::setErrorCBack(statusMess);
+    SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
 
   SV_Srv::setStatusCBack(statusMess);
 
@@ -132,7 +134,7 @@ int main(int argc, char* argv[]){
   scng.outArchiveName = cng.outArchiveName;
   scng.outArchivePath = cng.outArchivePath;
     
-    if (SV_Srv::startServer(scng) && SV_Aux::TCPServer::start("0.0.0.0", cng.tcp_port)){
+    if (SV_Srv::startServer(scng) && SV_Misc::TCPServer::start("0.0.0.0", cng.tcp_port)){
     statusMess("TCP server run port: " + std::to_string(cng.tcp_port));
   }
   else{
@@ -144,8 +146,8 @@ int main(int argc, char* argv[]){
   SV_Web::setGetSignalData(getSignalDataSrv);
   SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
-    if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ)))
-      statusMess("WEB server run port: " + std::to_string(cng.web_port));
+  if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ)))
+    statusMess("WEB server run port: " + std::to_string(cng.web_port));
   else
     statusMess("WEB server not run port: " + std::to_string(cng.web_port));
 

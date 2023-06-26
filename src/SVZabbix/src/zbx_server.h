@@ -42,7 +42,7 @@ public:
 
   ~ZbxServer() = default;
 
-  SV_Zbx::pf_getSignalData pfGetSignalData = nullptr;
+  SV_Zbx::getSignalDataCBack pfGetSignalData = nullptr;
 
   void setConfig(const SV_Zbx::Config& cng);
 

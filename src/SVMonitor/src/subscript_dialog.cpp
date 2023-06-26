@@ -24,13 +24,14 @@
 //
 
 #include "SVScriptDialog/script_dialog.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVMonitor/forms/subscript_dialog.h"
 
 #include <QMessageBox>
 #include <QTextStream>
 #include <QFile>
 #include <QApplication>
+#include <QTranslator>
 
 SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent):
   QDialog(parent), mainScrPanel_(mainScrPanel){

@@ -25,15 +25,19 @@
 #pragma once
 
 #include "structurs.h"
+#include <QMutex>
+#include <QString>
 
 class sqlite3;
+class QDateTime;
+class MainWin;
 
 class DbProvider
 {
 
 public:
 
-  DbProvider(const QString& path);
+  DbProvider(const QString& path, MainWin* mainWin);
 
   ~DbProvider();
 
@@ -51,8 +55,8 @@ public:
   SignalAttr getAttrSignal(const QString& signal, const QString& module);
   void delAttrSignal(const QString& signal, const QString& module);
 
-  void saveEvent(QString trigger, QDateTime dt);
-  QVector<UserEvent> getEvents(QDateTime beginTime, QDateTime endTime);
+  void saveEvent(const QString& trigger, const QDateTime& dt);
+  QVector<UserEvent> getEvents(const QDateTime& beginTime, const QDateTime& endTime);
 
 private:
 
@@ -61,6 +65,8 @@ private:
   bool isConnect_ = false;
 
   QString pathDB_;
+
+  MainWin* mainWin_ = nullptr;
 
   QMutex mtx_;
 

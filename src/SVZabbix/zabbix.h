@@ -24,9 +24,10 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 
-#include <QtCore>
+#include <QString>
+#include <functional>
 
 namespace SV_Zbx {
 
@@ -44,7 +45,7 @@ namespace SV_Zbx {
 
   void stopAgent();
 
-  typedef SV_Base::SignalData* (*pf_getSignalData)(const QString& sign);
-  void setGetSignalData(pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString& sign)>;
+  void setGetSignalData(getSignalDataCBack f);
 
 }

@@ -28,9 +28,9 @@
 #include <QtGui>
 #include <QApplication>
 
-DragLabel::DragLabel(QWidget *parent) {
-
-  setParent(parent);
+DragLabel::DragLabel(QWidget *parent):
+    QLabel(parent)
+{
 
 }
 

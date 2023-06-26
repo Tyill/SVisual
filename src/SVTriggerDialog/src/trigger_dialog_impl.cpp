@@ -29,16 +29,16 @@ using namespace SV_Base;
 using namespace SV_Trigger;
 
 #include <QFileDialog>
+#include <QTranslator>
 
-TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_){
-
+TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_):
+    QDialog(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVTrigger/trigger_dialog_en.qm");
   QCoreApplication::installTranslator(&translator);
 #endif
-
-  setParent(parent);
 
   ui.setupUi(this);
 
@@ -611,8 +611,8 @@ void TriggerDialog::workCycle(){
   QMap<QString, int> trgId; int cid = 0;
   QMap<QString, SignalData*> sdata;
 
-  SV_Aux::TimerDelay tmDelay;
-  SV_Aux::Front front;
+  SV_Misc::TimerDelay tmDelay;
+  SV_Misc::Front front;
 
   while (!thrStop_){
 
@@ -641,7 +641,7 @@ void TriggerDialog::workCycle(){
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
     if (ms > 0)
-      SV_Aux::sleepMs(ms);
+      SV_Misc::sleepMs(ms);
   }
 }
 

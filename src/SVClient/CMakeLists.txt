@@ -10,4 +10,4 @@ FILE(GLOB_RECURSE SRC_Cl "*.cpp" "*.h")
 
 add_library(SVClient SHARED ${SRC_Cl})
 
-target_link_libraries(SVClient SVConfig SVAuxFunc)
+target_link_libraries(SVClient SVBase SVMisc)

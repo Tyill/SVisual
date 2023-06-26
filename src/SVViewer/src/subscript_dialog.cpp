@@ -23,16 +23,18 @@
 // THE SOFTWARE.
 //
 #include "SVScriptDialog/script_dialog.h"
-#include "SVConfig/config_limits.h"
+#include "SVBase/sv_limits.h"
 #include "SVViewer/forms/subscript_dialog.h"
 
 #include <QApplication>
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
+#include <QTranslator>
 
-SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent) {
-
+SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent):
+    QDialog(parent)
+{
 #ifdef SV_EN
   QTranslator translator;
   translator.load(":/SVViewer/svviewer_en.qm");
@@ -40,8 +42,6 @@ SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent) {
 #endif
 
   mainScrPanel_ = mainScrPanel;
-
-  setParent(parent);
 
   ui.setupUi(this);
 

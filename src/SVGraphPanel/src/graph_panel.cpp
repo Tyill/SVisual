@@ -25,8 +25,6 @@
 
 #include "SVGraphPanel/graph_panel.h"
 #include "SVGraphPanel/forms/graph_panel_widget.h"
-#include "SVConfig/config_limits.h"
-#include <QTranslator>
 
 namespace SV_Graph {
 
@@ -61,25 +59,25 @@ namespace SV_Graph {
       return QVector<AxisAttributes>();
   }
 
-  void setGetCopySignalRef(QWidget* gp, pf_getCopySignalRef f) {
+  void setGetCopySignalRef(QWidget* gp, getCopySignalRefCBack f) {
 
     if (gp && f)
       ((GraphPanelWidget*)gp)->pfGetCopySignalRef = f;
   }
 
-  void setGetSignalData(QWidget* gp, pf_getSignalData f) {
+  void setGetSignalData(QWidget* gp, getSignalDataCBack f) {
 
     if (gp && f)
       ((GraphPanelWidget*)gp)->pfGetSignalData = f;
   }
 
-  void setGetSignalAttr(QWidget* gp, pf_getSignalAttr f) {
+  void setGetSignalAttr(QWidget* gp, getSignalAttrCBack f) {
 
     if (gp && f)
       ((GraphPanelWidget*)gp)->pfGetSignalAttr = f;
   }
 
-  void setLoadSignalData(QWidget* gp, pf_loadSignalData f) {
+  void setLoadSignalData(QWidget* gp, isLoadSignalDataCBack f) {
 
     if (gp && f)
       ((GraphPanelWidget*)gp)->pfLoadSignalData = f;

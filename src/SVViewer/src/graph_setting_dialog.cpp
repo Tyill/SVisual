@@ -26,9 +26,9 @@
 #include "SVViewer/forms/graph_setting_dialog.h"
 #include "SVViewer/forms/main_win.h"
 
-GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting& gs) {
-
-  setParent(parent);
+GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSetting& gs):
+    QDialog(parent)
+{
 
   MainWin* mainWin = (MainWin*)parent;
 

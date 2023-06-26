@@ -28,6 +28,7 @@
 #include <QObject>
 
 class QSerialPort;
+class MainWin;
 
 class SerialPortReader : public QObject
 {
@@ -46,13 +47,13 @@ public:
       name(name_), speed(speed_), cycleRecMs(cycleRecMs_), packetSz(packetSz_){}
   };
 
-  SerialPortReader(const Config&, QObject* parant = nullptr);
+  SerialPortReader(const Config&, MainWin* parent = nullptr);
 
   bool start();
   void stop();
 
-  /// задать польз callback - получение данных
-  typedef void(*DataCBack)(std::string &inout, std::string &out);
+  /// задать польз callback - получение данных  
+  using DataCBack = std::function<void(std::string &inout, std::string &out)>;
   void setDataCBack(DataCBack uf);
 
 public slots:

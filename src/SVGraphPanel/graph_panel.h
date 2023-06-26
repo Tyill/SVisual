@@ -24,9 +24,12 @@
 //
 #pragma once
 
-#include "SVConfig/config_data.h"
-#include <QtCore>
+#include "SVBase/base.h"
+
+#include <QVector>
+#include <QString>
 #include <QColor>
+#include <functional>
 
 class QWidget;
 
@@ -76,17 +79,17 @@ namespace SV_Graph {
 
   QVector<AxisAttributes> getAxisAttr(QWidget* gp);
 
-  typedef QMap<QString, SV_Base::SignalData*>(*pf_getCopySignalRef)();
-  void setGetCopySignalRef(QWidget* gp, pf_getCopySignalRef f);
+  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
+  void setGetCopySignalRef(QWidget* gp, getCopySignalRefCBack f);
 
-  typedef SV_Base::SignalData*(*pf_getSignalData)(const QString& sign);
-  void setGetSignalData(QWidget* gp, pf_getSignalData f);
+  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString& sign)>;
+  void setGetSignalData(QWidget* gp, getSignalDataCBack f);
 
-  typedef bool(*pf_loadSignalData)(const QString& sign);
-  void setLoadSignalData(QWidget* gp, pf_loadSignalData f);
+  using isLoadSignalDataCBack = std::function<bool(const QString& sign)>;
+  void setLoadSignalData(QWidget* gp, isLoadSignalDataCBack f);
 
-  typedef bool(*pf_getSignalAttr)(const QString& sign, SignalAttributes& out);
-  void setGetSignalAttr(QWidget* gp, pf_getSignalAttr f);
+  using getSignalAttrCBack = std::function<bool(const QString& sign, SignalAttributes& out)>;
+  void setGetSignalAttr(QWidget* gp, getSignalAttrCBack f);
 
   void addSignal(QWidget* gp, QString sname, int section = 0);
 

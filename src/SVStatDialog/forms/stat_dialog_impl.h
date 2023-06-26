@@ -25,7 +25,7 @@
 #pragma once
 
 #include "ui_stat_dialog.h"
-#include "SVConfig/config_data.h"
+#include "SVBase/base.h"
 #include "SVStatDialog/stat_dialog.h"
 
 class StatDialog : public QDialog
@@ -34,11 +34,11 @@ class StatDialog : public QDialog
 
 public:
 
-  SV_Stat::pf_getCopySignalRef pfGetCopySignalRef = nullptr;
-  SV_Stat::pf_getSignalData pfGetSignalData = nullptr;
-  SV_Stat::pf_loadSignalData pfLoadSignalData = nullptr;
-  SV_Stat::pf_setTimeInterval pfSetTimeInterval = nullptr;
-  SV_Stat::pf_getTimeInterval pfGetTimeInterval = nullptr;
+  SV_Stat::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Stat::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Stat::isLoadSignalDataCBack pfLoadSignalData = nullptr;
+  SV_Stat::setTimeIntervalCBack pfSetTimeInterval = nullptr;
+  SV_Stat::getTimeIntervalCBack pfGetTimeInterval = nullptr;
 
   StatDialog(QWidget *parent, SV_Stat::Config);
   ~StatDialog();

@@ -23,16 +23,15 @@
 // THE SOFTWARE.
 //
 
-#include "SVConfig/config_limits.h"
 #include "com_reader.h"
+#include "SVBase/sv_limits.h"
+#include "SVMonitor/forms/main_win.h"
 
 #include <QTimer>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-void statusMess(const QString& mess);
-
-SerialPortReader::SerialPortReader(const Config& cng_, QObject* parent):
+SerialPortReader::SerialPortReader(const Config& cng_, MainWin* parent):
   QObject(parent), cng(cng_){
 }
 
@@ -55,7 +54,7 @@ bool SerialPortReader::start(){
   connect(pSerialPort_, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
     [this](QSerialPort::SerialPortError serialPortError) {
     if (serialPortError == QSerialPort::ReadError)
-      statusMess(QString(tr("%1 Ошибка получения данных").arg(cng.name)));
+      qobject_cast<MainWin*>(parent())->statusMess(QString(tr("%1 Ошибка получения данных").arg(cng.name)));
   });
 
   // проверка соединения  

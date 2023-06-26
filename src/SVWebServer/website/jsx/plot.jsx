@@ -750,7 +750,7 @@ class Plot extends React.Component/*::<Props>*/ {
         mark = [];
 
     while (offs < width){
-		
+        
       mark.push(offs);
 
       offs += tmDashStep;
@@ -766,7 +766,7 @@ class Plot extends React.Component/*::<Props>*/ {
 
     let {valOffsPos, valDashStep} = this.props.axisParams,
         offs = valOffsPos % valDashStep,
-        mark = [];	
+        mark = [];    
 
     while (offs < height){
     
