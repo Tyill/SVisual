@@ -1600,11 +1600,11 @@ void GraphWidget::lbSignBoolMove(bool isTop){
   QFontInfo fi(ft);
   if (!isTop){
     ui.verticalSpacerTop->changeSize(0, 0);
-    int offsBottom = height() - (axisTime_ ? axisTime_->height() : 0) + 2;
+    int offsBottom = height() - (axisTime_ ? axisTime_->height() : 0) + fi.pointSize();
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, offsBottom - (bcnt - 1) * 15));
+        s.lb->move(QPoint(13, offsBottom - bcnt * 15));
         --bcnt;
       }
     }
