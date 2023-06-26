@@ -86,11 +86,15 @@ Should be installed:
 - qt
 - sqlite: `sudo apt install libsqlite3-dev`
 - libuv: `sudo apt install libuv1-dev`
-- [clickhouse-cpp](https://github.com/ClickHouse/clickhouse-cpp)
+- [clickhouse-cpp](depends/linux_deps/clickhouse-cpp-2.2.1.zip)
 
-Aux dependences [here](src/linux_deps/): 
+Aux dependences [here](depends/linux_deps/): 
 - lua53
 - qtXlsxWriter
+
+Build:
+- open QtCreator
+- load project: open [CMakeLists.txt](src/CMakeLists.txt)
 
 ## [Manual](docs) 
 
