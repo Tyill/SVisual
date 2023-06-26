@@ -1595,12 +1595,13 @@ void GraphWidget::lbSignBoolMove(bool isTop){
   for (auto& s : signals_){
     if (s.type == SV_Base::ValueType::BOOL) ++bcnt;
   }
-  QFont ft = font();
-  ft.setPointSize(8);
-  QFontInfo fi(ft);
+  
   if (!isTop){
     ui.verticalSpacerTop->changeSize(0, 0);
-    int offsBottom = height() - (axisTime_ ? axisTime_->height() : 0) + fi.pointSize();
+    int offsBottom = height() - (axisTime_ ? axisTime_->height() : 0) + 8;
+#ifdef WIN32
+    offsBottom += 9;
+#endif
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){

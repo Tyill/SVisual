@@ -30,6 +30,7 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
+#include <QTranslator>
 
 SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent):
     QDialog(parent)

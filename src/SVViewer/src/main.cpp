@@ -26,6 +26,7 @@
 #include "SVViewer/forms/main_win.h"
 
 #include <QApplication>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {

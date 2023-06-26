@@ -32,6 +32,7 @@
 #include <QtGui>
 #include <QScrollBar>
 #include <QTreeWidget>
+#include <QTranslator>
 
 using namespace SV_Base;
 

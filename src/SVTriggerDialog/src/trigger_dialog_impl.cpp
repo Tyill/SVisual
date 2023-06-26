@@ -29,6 +29,7 @@ using namespace SV_Base;
 using namespace SV_Trigger;
 
 #include <QFileDialog>
+#include <QTranslator>
 
 TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_):
     QDialog(parent)

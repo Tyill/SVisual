@@ -35,6 +35,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QTimer>
+#include <QTranslator>
 
 using namespace SV_Base;
 

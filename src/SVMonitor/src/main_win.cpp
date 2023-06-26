@@ -804,7 +804,7 @@ void MainWin::load(){
     SV_Exp::setGetSignalData(exportDialog_, getSignalDataSrv);
 
     SV_Srv::setStatusCBack([this](const std::string& mess){
-        statusMess(mess.c_str());
+        statusMess(QString::fromLocal8Bit(mess.c_str()));
     });
     SV_Srv::setOnUpdateSignalsCBack([this](){
         QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);

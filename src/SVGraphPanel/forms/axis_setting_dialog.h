@@ -26,6 +26,9 @@
 
 #include "GeneratedFiles/ui_axis_setting_dialog.h"
 #include "SVGraphPanel/graph_panel.h"
+#include "SVBase/sv_limits.h"
+
+#include <QTranslator>
 
 class AxisSettingDialog : public QDialog
 {

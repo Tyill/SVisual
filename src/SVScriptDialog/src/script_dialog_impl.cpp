@@ -36,6 +36,7 @@
 #include <QtGui>
 #include <QMessageBox>
 #include <QMenu>
+#include <QTranslator>
 
 using namespace SV_Base;
 namespace lub = luabridge;

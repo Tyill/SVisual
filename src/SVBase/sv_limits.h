@@ -24,7 +24,7 @@
 //
 #pragma once
 
-//#define SV_EN                       ///< eng интерфейс
+#define SV_EN
 #define SV_VALUE_MAX_CNT 2048         ///< макс кол-во сигналов (на все модули)
 
 #define SV_CYCLEREC_MS cng.cycleRecMs ///< период записи сигналов, мс

@@ -31,6 +31,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QApplication>
+#include <QTranslator>
 
 SubScriptDialog::SubScriptDialog(QDialog* mainScrPanel, QWidget* parent):
   QDialog(parent), mainScrPanel_(mainScrPanel){

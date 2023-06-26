@@ -28,6 +28,7 @@
 
 #include <QtGui>
 #include <QTreeWidget>
+#include <QTranslator>
 
 using namespace SV_Base;
 
