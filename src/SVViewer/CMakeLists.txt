@@ -22,7 +22,7 @@ target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportD
 
 # copy mswin dependent
 if(WIN32)
-   target_link_libraries(SVViewer zlib clickhouse-cpp-lib lz4 cityhash absl_int128)
+   target_link_libraries(SVViewer zlib clickhouse-cpp-lib-static lz4-lib cityhash-lib absl-lib)
 else()
    target_link_libraries(SVViewer z clickhouse-cpp-lib)
 endif(WIN32)

@@ -1598,13 +1598,13 @@ void GraphWidget::lbSignBoolMove(bool isTop){
   QFont ft = font();
   ft.setPointSize(8);
   QFontInfo fi(ft);
-  int ftHeightPixel = fi.pixelSize();
   if (!isTop){
     ui.verticalSpacerTop->changeSize(0, 0);
+    int offsBottom = height() - (axisTime_ ? axisTime_->height() : 0) + 2;
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, height() - ftHeightPixel - 43 - (bcnt - 1) * 15));
+        s.lb->move(QPoint(13, offsBottom - (bcnt - 1) * 15));
         --bcnt;
       }
     }

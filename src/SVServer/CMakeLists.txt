@@ -13,7 +13,7 @@ add_library(SVServer SHARED ${SRC_Serv})
 target_link_libraries(SVServer SVBase SVMisc)
 
 if(WIN32)
-   target_link_libraries(SVServer zlib clickhouse-cpp-lib lz4 cityhash absl_int128)
+   target_link_libraries(SVServer zlib clickhouse-cpp-lib-static lz4-lib cityhash-lib absl-lib)
 else()
    target_link_libraries(SVServer z clickhouse-cpp-lib)
 endif(WIN32)

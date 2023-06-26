@@ -115,7 +115,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Builds\Debug\x64\SVMisc.lib;..\Builds\Debug\x64\SVServer.lib;..\Builds\Debug\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\Debug\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Builds\Debug\x64\SVMisc.lib;..\Builds\Debug\x64\SVServer.lib;..\Builds\Debug\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\Debug\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib-static.lib;lz4-lib.lib;cityhash-lib.lib;absl-lib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/Debug/x64;C:/cpp/SVisual/mswin/VS19/Builds/Debug/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -159,7 +159,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Builds\Release\x64\SVMisc.lib;..\Builds\Release\x64\SVServer.lib;..\Builds\Release\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\Release\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Builds\Release\x64\SVMisc.lib;..\Builds\Release\x64\SVServer.lib;..\Builds\Release\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\Release\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib-static.lib;lz4-lib.lib;cityhash-lib.lib;absl-lib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/Release/x64;C:/cpp/SVisual/mswin/VS19/Builds/Release/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -203,7 +203,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Builds\MinSizeRel\x64\SVMisc.lib;..\Builds\MinSizeRel\x64\SVServer.lib;..\Builds\MinSizeRel\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\MinSizeRel\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Builds\MinSizeRel\x64\SVMisc.lib;..\Builds\MinSizeRel\x64\SVServer.lib;..\Builds\MinSizeRel\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\MinSizeRel\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib-static.lib;lz4-lib.lib;cityhash-lib.lib;absl-lib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/MinSizeRel/x64;C:/cpp/SVisual/mswin/VS19/Builds/MinSizeRel/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -246,7 +246,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Builds\RelWithDebInfo\x64\SVMisc.lib;..\Builds\RelWithDebInfo\x64\SVServer.lib;..\Builds\RelWithDebInfo\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\RelWithDebInfo\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib.lib;lz4.lib;cityhash.lib;absl_int128.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Builds\RelWithDebInfo\x64\SVMisc.lib;..\Builds\RelWithDebInfo\x64\SVServer.lib;..\Builds\RelWithDebInfo\x64\SVMisc.lib;libuv.lib;ws2_32.lib;Iphlpapi.lib;psapi.lib;Userenv.lib;..\Builds\RelWithDebInfo\x64\SVBase.lib;zlib.lib;clickhouse-cpp-lib-static.lib;lz4-lib.lib;cityhash-lib.lib;absl-lib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:/cpp/SVisual/mswin/VS19/Builds/RelWithDebInfo/x64;C:/cpp/SVisual/mswin/VS19/Builds/RelWithDebInfo/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
