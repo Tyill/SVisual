@@ -92,9 +92,17 @@ Aux dependences [here](depends/linux_deps/):
 - lua53
 - qtXlsxWriter
 
-Build:
+Build from QtCreator:
 - open QtCreator
-- load project: open [CMakeLists.txt](src/CMakeLists.txt)
+- load project: open [CMakeLists.txt](src/CMakeLists.txt)  
+
+Build with cmake:  
+```bash
+cd src
+rm -rf build  
+mkdir build  
+cmake -B build -S . -DCMAKE_BUILD_TYPE="Release" && cmake --build build --parallel  
+```
 
 ## [Manual](docs) 
 
