@@ -547,13 +547,8 @@
        </sizepolicy>
       </property>
       <property name="rowCount">
-       <number>5</number>
+       <number>0</number>
       </property>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
       <column>
        <property name="text">
         <string>Имя</string>
