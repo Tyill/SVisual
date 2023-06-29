@@ -86,7 +86,7 @@ Should be installed:
 - qt
 - sqlite: `sudo apt install libsqlite3-dev`
 - libuv: `sudo apt install libuv1-dev`
-- [clickhouse-cpp](depends/linux_deps/clickhouse-cpp-2.2.1.zip)
+- [clickhouse-cpp](depends/clickhouse-cpp-2.2.1.zip)
 
 Aux dependences [here](depends/linux_deps/): 
 - lua53
