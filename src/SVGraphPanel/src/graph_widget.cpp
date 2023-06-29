@@ -1397,8 +1397,9 @@ QVector<GraphWidget::GraphSignStat> GraphWidget::getStatParams(int markPosBegin,
 
   QVector<GraphSignStat> res;
 
-  if (markPosBegin > markPosEnd)
-    qSwap(markPosBegin, markPosEnd);
+  if (markPosBegin > markPosEnd) {
+      qSwap(markPosBegin, markPosEnd);
+  }
 
   QPair<double, double> valIntr = ui.axisValue->getValInterval();
   double valScale = ui.axisValue->getValScale();
@@ -1418,8 +1419,9 @@ QVector<GraphWidget::GraphSignStat> GraphWidget::getStatParams(int markPosBegin,
         if ((markPosBegin <= pt.first) && (pt.first <= markPosEnd)) {
 
           double cval = pt.second * valScale + valIntr.first;
-          if (s.type == ValueType::BOOL)
-            cval = pt.second;
+          if (s.type == ValueType::BOOL) {
+              cval = pt.second;
+          }
 
           if (cval < stat.vmin) stat.vmin = cval;
           if (cval > stat.vmax) stat.vmax = cval;
@@ -1435,9 +1437,9 @@ QVector<GraphWidget::GraphSignStat> GraphWidget::getStatParams(int markPosBegin,
 
       if (isRet) break;
     }
-    if (vcnt > 0)
-      stat.vmean /= vcnt;
-
+    if (vcnt > 0) {
+        stat.vmean /= vcnt;
+    }
     res.append(stat);
   }
 

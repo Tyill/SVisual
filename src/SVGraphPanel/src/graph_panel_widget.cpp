@@ -117,10 +117,16 @@ void GraphPanelWidget::load() {
   ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
   ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
 
-  ui.tblValues->horizontalHeader()->setSortIndicatorShown(true);
-  ui.tblValues->setSortingEnabled(true);
-
+  auto header = ui.tblValues->horizontalHeader();
+  header->setSortIndicatorShown(true);
   ui.tblValues->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+
+  connect(header, &QHeaderView::sortIndicatorChanged, this, [this](int, Qt::SortOrder) {
+      if (selGraph_) {
+          tableUpdate(selGraph_);
+          tableUpdateAlter(selGraph_);
+      }
+  });
 }
 
 void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
@@ -345,7 +351,7 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
   graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
   ui.tblValues->clearContents();
-
+  
   int leftMarkP = leftMarkPos.x(),
     rightMarkP = rightMarkPos.x();
 
@@ -362,12 +368,12 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
   QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
   if (leftMarkP > rightMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
 
-  int sz = leftMarkVal.size();
-  while (sz > ui.tblValues->rowCount()) {
+  int vCount = leftMarkVal.size();
+  while (vCount > ui.tblValues->rowCount()) {
     ui.tblValues->insertRow(ui.tblValues->rowCount());
   }
-
-  for (int i = 0; i < sz; ++i) {
+  
+  for (int i = 0; i < vCount; ++i) {
 
     ValueType vt = leftMarkVal[i].type;
 
@@ -378,8 +384,9 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
     QString vmax = getSValue(vt, statVal[i].vmax).c_str();
     QString vmean = getSValue(vt, statVal[i].vmean).c_str();
 
-    if (vt == ValueType::BOOL)
-      vmean = QString::number(int(statVal[i].vmean + 0.5));
+    if (vt == ValueType::BOOL) {
+        vmean = QString::number(int(statVal[i].vmean + 0.5));
+    }
 
     QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
     nameItem->setForeground(leftMarkVal[i].color);
@@ -396,6 +403,9 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
     ui.tblValues->setItem(i, 9, new QTableWidgetItem(vmean));
     ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmax));
   }
+  int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
+  auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();
+  ui.tblValues->sortByColumn(sortSection, sortOrder);
   ui.tblValues->resizeColumnsToContents();
 
 }
@@ -420,15 +430,16 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
   QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
   QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
   QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-  if (rightMarkP < leftMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-
-  int sz = leftMarkVal.size();
-  while (sz > ui.tblValues->rowCount()) {
+  if (rightMarkP < leftMarkP) {
+      x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+  }
+  int vCount = leftMarkVal.size();
+  while (vCount > ui.tblValues->rowCount()) {
     ui.tblValues->insertRow(ui.tblValues->rowCount());
   }
 
   int offs = graph->getAllSignals().size();
-  for (int i = 0; i < sz; ++i) {
+  for (int i = 0; i < vCount; ++i) {
 
     ValueType vt = leftMarkVal[i].type;
 
@@ -439,9 +450,9 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
     QString vmax = getSValue(vt, statVal[i].vmax).c_str();
     QString vmean = getSValue(vt, statVal[i].vmean).c_str();
 
-    if (vt == ValueType::BOOL)
-      vmean = QString::number(int(statVal[i].vmean + 0.5));
-
+    if (vt == ValueType::BOOL) {
+        vmean = QString::number(int(statVal[i].vmean + 0.5));
+    }
     QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
     nameItem->setForeground(leftMarkVal[i].color);
     ui.tblValues->setItem(offs + i, 0, nameItem);
@@ -457,6 +468,9 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
     ui.tblValues->setItem(offs + i, 9, new QTableWidgetItem(vmean));
     ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
   }
+  int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
+  auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();
+  ui.tblValues->sortByColumn(sortSection, sortOrder);
   ui.tblValues->resizeColumnsToContents();
 }
 
