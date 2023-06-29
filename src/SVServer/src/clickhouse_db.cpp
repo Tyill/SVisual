@@ -13,23 +13,27 @@ extern SV_Srv::statusCBack pfStatusCBack;
 ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
     cng(_cng)
 {
-    try{
-        if (auto clt = newClient(); clt){
-           clt->Select("SELECT id, sname, module FROM tblSignal;", [this](const ch::Block& block){
-               for (size_t i = 0; i < block.GetRowCount(); ++i){
-                   int sId = block[0]->As<ch::ColumnInt32>()->At(i);
-                   std::string sname = std::string(block[1]->As<ch::ColumnString>()->At(i));
-                   std::string module = std::string(block[2]->As<ch::ColumnString>()->At(i));
+    std::thread([this]() {
+        try {
+            std::lock_guard lk(m_mtx);
+            if (auto clt = newClient(); clt) {
+                clt->Select("SELECT id, sname, module FROM tblSignal;", [this](const ch::Block& block) {
+                    for (size_t i = 0; i < block.GetRowCount(); ++i) {
+                        int sId = block[0]->As<ch::ColumnInt32>()->At(i);
+                        std::string sname = std::string(block[1]->As<ch::ColumnString>()->At(i));
+                        std::string module = std::string(block[2]->As<ch::ColumnString>()->At(i));
 
-                   m_signals.insert({sname + module, sId});
-               }
-           });
+                        m_signals.insert({ sname + module, sId });
+                    }
+                    });
+            }
         }
-    }catch(std::exception& e){
-        if (pfStatusCBack){
-            pfStatusCBack("ClickHouseDB read signals error: " + std::string(e.what()));
+        catch (std::exception& e) {
+            if (pfStatusCBack) {
+                pfStatusCBack("ClickHouseDB read signals error: " + std::string(e.what()));
+            }
         }
-    }
+        }).detach();
 }
 
 bool ClickHouseDB::isConnect()const
