@@ -414,9 +414,9 @@ void GraphWidget::paintSignalsAlter() {
       QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
       int zsz = zonePnts.size();
 
-      for (int i = 1; i < zsz; ++i)
+      for (int i = 1; i < zsz; ++i){
         painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
-
+      }
       if (isFillGraph) {
 
         float yPos = 0;
@@ -1593,31 +1593,31 @@ void GraphWidget::scale(bool posNeg) {
 
 void GraphWidget::lbSignBoolMove(bool isTop){
 
+  if (signalList_.isEmpty()) return;
+
   int bcnt = 0;
   for (auto& s : signals_){
     if (s.type == SV_Base::ValueType::BOOL) ++bcnt;
   }
-  
+  int plotHeight = ui.plot->height();
+  int space = 1;
+  int fontSize = signals_[signalList_[0]].lb->fontMetrics().height();
   if (!isTop){
     ui.verticalSpacerTop->changeSize(0, 0);
-    int offsBottom = height() - (axisTime_ ? axisTime_->height() : 0) + 8;
-#ifdef WIN32
-    offsBottom += 9;
-#endif
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, offsBottom - bcnt * 15));
+        s.lb->move(QPoint(13, plotHeight - fontSize - (bcnt - 1) * (fontSize + space)));
         --bcnt;
       }
     }
   }
   else{
-    ui.verticalSpacerTop->changeSize(0, bcnt * 15);
+    ui.verticalSpacerTop->changeSize(0, bcnt * (fontSize + space));
     for (int i = signalList_.size() - 1; i >= 0; --i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, 5 + (bcnt - 1) * 15));
+        s.lb->move(QPoint(13, 5 + (bcnt - 1) * (fontSize + space)));
         --bcnt;
       }
     }    

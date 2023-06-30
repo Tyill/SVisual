@@ -110,11 +110,19 @@ signals:
   void req_close();
 
 protected:
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dropEvent(QDropEvent *event);
-  void resizeEvent(QResizeEvent * event);
-  void keyPressEvent(QKeyEvent * event);
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dragMoveEvent(QDragMoveEvent *event) override;
+  void dropEvent(QDropEvent *event) override;
+  void resizeEvent(QResizeEvent * event) override;
+  void keyPressEvent(QKeyEvent * event) override;
+  bool eventFilter(QObject *target, QEvent *event) override;
+
+private:
+  void paintSignals();
+  void paintSignalsAlter();
+  void paintObjects();
+  void paintObjectsAlter();
+  void lbSignBoolMove(bool isTop);
 
 private:
   struct GraphSignData {
@@ -158,7 +166,6 @@ private:
   MarkerWidget* leftMarker_ = nullptr;
   MarkerWidget* rightMarker_ = nullptr;
 
-  bool eventFilter(QObject *target, QEvent *event);
 
   QVector<HistPos> historyPos_;
   GraphPanelWidget* grPanel_ = nullptr;
@@ -166,9 +173,4 @@ private:
 
   AxisSettingDialog* axisSettPanel_ = nullptr;
 
-  void paintSignals();
-  void paintSignalsAlter();
-  void paintObjects();
-  void paintObjectsAlter();
-  void lbSignBoolMove(bool isTop);
 };
