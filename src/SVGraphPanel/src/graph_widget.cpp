@@ -270,15 +270,14 @@ void GraphWidget::paintSignals() {
         pen.setWidth(graphSetting_.lineWidth);
         painter.setPen(pen);
 
-        QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
+        const QVector<QPair<int, int>>& zonePnts = sign.pnts[z];
 
         int zsz = zonePnts.size();
-
-        for (int i = 1; i < zsz; ++i)
-          painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+        for (int i = 1; i < zsz; ++i) {
+            painter.drawLine(zonePnts[i - 1].first, zonePnts[i - 1].second, zonePnts[i].first, zonePnts[i].second);
+        }
 
         if (isFillGraph) {
-
           float yPos = 0;
           if ((valInterval.first < 0) && (valInterval.second > 0))
             yPos = h - valInterval.second / valScale;
@@ -1600,24 +1599,24 @@ void GraphWidget::lbSignBoolMove(bool isTop){
     if (s.type == SV_Base::ValueType::BOOL) ++bcnt;
   }
   int plotHeight = ui.plot->height();
-  int space = 1;
+  int space = 15;
   int fontSize = signals_[signalList_[0]].lb->fontMetrics().height();
   if (!isTop){
     ui.verticalSpacerTop->changeSize(0, 0);
     for (int i = 0; i < signalList_.size(); ++i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, plotHeight - fontSize - (bcnt - 1) * (fontSize + space)));
+        s.lb->move(QPoint(13, plotHeight - fontSize + 1 - (bcnt - 1) * space));
         --bcnt;
       }
     }
   }
   else{
-    ui.verticalSpacerTop->changeSize(0, bcnt * (fontSize + space));
+    ui.verticalSpacerTop->changeSize(0, bcnt * space);
     for (int i = signalList_.size() - 1; i >= 0; --i){
       auto& s = signals_[signalList_[i]];
       if (s.type == SV_Base::ValueType::BOOL){
-        s.lb->move(QPoint(13, 5 + (bcnt - 1) * (fontSize + space)));
+        s.lb->move(QPoint(13, 5 + (bcnt - 1) * space));
         --bcnt;
       }
     }    
