@@ -392,16 +392,16 @@ void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
     nameItem->setForeground(leftMarkVal[i].color);
     ui.tblValues->setItem(i, 0, nameItem);
 
-    ui.tblValues->setItem(i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
-    ui.tblValues->setItem(i, 2, new QTableWidgetItem(x1));
-    ui.tblValues->setItem(i, 3, new QTableWidgetItem(x2));
-    ui.tblValues->setItem(i, 4, new QTableWidgetItem(x2_x1));
-    ui.tblValues->setItem(i, 5, new QTableWidgetItem(y1));
-    ui.tblValues->setItem(i, 6, new QTableWidgetItem(y2));
-    ui.tblValues->setItem(i, 7, new QTableWidgetItem(y2_y1));
-    ui.tblValues->setItem(i, 8, new QTableWidgetItem(vmin));
-    ui.tblValues->setItem(i, 9, new QTableWidgetItem(vmean));
-    ui.tblValues->setItem(i, 10, new QTableWidgetItem(vmax));
+    ui.tblValues->setItem(i, 1, new TableWidgetItem(getSVTypeStr(vt).c_str()));
+    ui.tblValues->setItem(i, 2, new TableWidgetItem(x1));
+    ui.tblValues->setItem(i, 3, new TableWidgetItem(x2));
+    ui.tblValues->setItem(i, 4, new TableWidgetItem(x2_x1));
+    ui.tblValues->setItem(i, 5, new TableWidgetItem(y1));
+    ui.tblValues->setItem(i, 6, new TableWidgetItem(y2));
+    ui.tblValues->setItem(i, 7, new TableWidgetItem(y2_y1));
+    ui.tblValues->setItem(i, 8, new TableWidgetItem(vmin));
+    ui.tblValues->setItem(i, 9, new TableWidgetItem(vmean));
+    ui.tblValues->setItem(i, 10, new TableWidgetItem(vmax));
   }
   int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
   auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();
@@ -457,16 +457,16 @@ void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
     nameItem->setForeground(leftMarkVal[i].color);
     ui.tblValues->setItem(offs + i, 0, nameItem);
 
-    ui.tblValues->setItem(offs + i, 1, new QTableWidgetItem(getSVTypeStr(vt).c_str()));
-    ui.tblValues->setItem(offs + i, 2, new QTableWidgetItem(x1));
-    ui.tblValues->setItem(offs + i, 3, new QTableWidgetItem(x2));
-    ui.tblValues->setItem(offs + i, 4, new QTableWidgetItem(x2_x1));
-    ui.tblValues->setItem(offs + i, 5, new QTableWidgetItem(y1));
-    ui.tblValues->setItem(offs + i, 6, new QTableWidgetItem(y2));
-    ui.tblValues->setItem(offs + i, 7, new QTableWidgetItem(y2_y1));
-    ui.tblValues->setItem(offs + i, 8, new QTableWidgetItem(vmin));
-    ui.tblValues->setItem(offs + i, 9, new QTableWidgetItem(vmean));
-    ui.tblValues->setItem(offs + i, 10, new QTableWidgetItem(vmax));
+    ui.tblValues->setItem(offs + i, 1, new TableWidgetItem(getSVTypeStr(vt).c_str()));
+    ui.tblValues->setItem(offs + i, 2, new TableWidgetItem(x1));
+    ui.tblValues->setItem(offs + i, 3, new TableWidgetItem(x2));
+    ui.tblValues->setItem(offs + i, 4, new TableWidgetItem(x2_x1));
+    ui.tblValues->setItem(offs + i, 5, new TableWidgetItem(y1));
+    ui.tblValues->setItem(offs + i, 6, new TableWidgetItem(y2));
+    ui.tblValues->setItem(offs + i, 7, new TableWidgetItem(y2_y1));
+    ui.tblValues->setItem(offs + i, 8, new TableWidgetItem(vmin));
+    ui.tblValues->setItem(offs + i, 9, new TableWidgetItem(vmean));
+    ui.tblValues->setItem(offs + i, 10, new TableWidgetItem(vmax));
   }
   int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
   auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();

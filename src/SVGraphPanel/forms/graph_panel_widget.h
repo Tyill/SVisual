@@ -97,8 +97,18 @@ private:
   SV_Graph::GraphSetting graphSett_;
 
   bool isPlay_ = true;
+};
 
-
+class TableWidgetItem : public QTableWidgetItem {
+public:
+    TableWidgetItem(const QString& item):
+        QTableWidgetItem(item)
+    {
+    }
+    bool operator <(const QTableWidgetItem& other) const
+    {
+        return text().toDouble() < other.text().toDouble();
+    }
 };
 
 
