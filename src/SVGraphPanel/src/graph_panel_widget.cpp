@@ -60,7 +60,7 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
   QTimer* tm = new QTimer(this);
   connect(tm, &QTimer::timeout, this, [this, tm]() {
 
-    if (cng.mode == SV_Graph::ModeGr::viewer) {
+    if (cng.mode == SV_Graph::ModeGr::Viewer) {
       ui.btnPlay->setVisible(false);
       ui.btnAScale->setVisible(false);
       ui.btnAScale->setChecked(false);
@@ -186,13 +186,18 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
     pfLoadSignalData(sign);
 
   if (graphObj_.size() <= section) {
-    while (graphObj_.size() <= section)
-      addGraph("");
-
-    ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
-    if (sd->buffMinTime == sd->buffMaxTime)
-      ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMinTime + 1000);
-
+    while (graphObj_.size() <= section) {
+        addGraph("");
+    }
+    uint64_t buffMinTime, buffMaxTime;
+    {LockerReadSData lock;
+        buffMinTime = sd->buffMinTime;
+        buffMaxTime = sd->buffMaxTime;
+    }
+    ui.axisTime->setTimeInterval(buffMinTime, buffMaxTime);
+    if (buffMinTime == buffMaxTime) {
+        ui.axisTime->setTimeInterval(buffMinTime, buffMinTime + 1000);
+    }
     emit ui.axisTime->req_axisChange();
   }
 
@@ -300,22 +305,27 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
 
       auto sd = pfGetSignalData(sign);
 
-      if (sd && !sd->isBuffEnable && pfLoadSignalData)
-        pfLoadSignalData(sign);
-
+      if (sd && !sd->isBuffEnable && pfLoadSignalData) {
+          pfLoadSignalData(sign);
+      }
       if (lb){
           emit lb->req_delSignal(sign);
       }
       if (graphObj_.isEmpty()) {
-
-        ui.axisTime->setTimeInterval(sd->buffMinTime, sd->buffMaxTime);
-
+        uint64_t buffMinTime, buffMaxTime;
+        {LockerReadSData lock;
+            buffMinTime = sd->buffMinTime;
+            buffMaxTime = sd->buffMaxTime;
+        }
+        ui.axisTime->setTimeInterval(buffMinTime, buffMaxTime);
+        
         addGraph(sign);
 
         emit ui.axisTime->req_axisChange();
       }
-      else addGraph(sign);
-
+      else{
+        addGraph(sign);
+      }
     }
 
     event->accept();
@@ -600,7 +610,7 @@ void GraphPanelWidget::updateSignals() {
       ob->resizeByValue();
   }
 
-  if (cng.mode == SV_Graph::ModeGr::player) {
+  if (cng.mode == SV_Graph::ModeGr::Player) {
 
     qint64 bTm = QDateTime::currentDateTime().toMSecsSinceEpoch() - SV_CYCLESAVE_MS;
 

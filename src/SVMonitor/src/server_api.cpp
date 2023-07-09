@@ -71,6 +71,13 @@ SV_Base::SignalData* getSignalDataSrv(const QString& sing){
   return SV_Srv::getSignalData(sing.toUtf8().data());
 };
 
+void lockReadSDataSrv() {
+    return SV_Srv::lockReadSData();
+}
+void unlockReadSDataSrv() {
+    return SV_Srv::unlockReadSData();
+}
+
 bool loadSignalDataSrv(const QString& name){
 
   return SV_Srv::signalBufferEna(name.toUtf8().data());

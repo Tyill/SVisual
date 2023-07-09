@@ -49,7 +49,6 @@ class ScriptDialog : public QDialog
   friend void setFloatValue(const std::string& signal, float Value, uint64_t time);
 
 public:
-
   SV_Script::updateSignalsCBack pfUpdateSignalsCBack = nullptr;
   SV_Script::addSignalsCBack pfAddSignalsCBack = nullptr;
   SV_Script::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
@@ -85,7 +84,7 @@ private:
 
   std::thread workThr_;
   std::mutex mtx_;
-  volatile bool isStopWork_ = false;
+  std::atomic_bool isStopWork_ = false;
 
   QMap<QString, SV_Base::SignalData*> signBuff_;
 
@@ -115,11 +114,16 @@ private:
   void contextMenuEvent(QContextMenuEvent * event);
   void workCycle();
 
-  private slots:
+private slots:
   void addScript(QString name = "");
   void saveScript();
   void nameScriptChange(int row, int col);
+};
 
+class LockerReadSData {
+public:
+    explicit LockerReadSData();
+    ~LockerReadSData();
 };
 
 

@@ -56,17 +56,17 @@ private:
 
   SV_Srv::Config cng;
 
-  std::string _copyStartTime = "";
-  std::string _copyDateMem = "";
+  std::string m_copyStartTime = "";
+  std::string m_copyDateMem = "";
 
-  int _crtFileHour = 0;
-  size_t _copySz = 0;
-  std::map<std::string, int> _valPos;
+  int m_crtFileHour = 0;
+  size_t m_copySz = 0;
+  std::map<std::string, int> m_valPos;
 
-  SV_Misc::Front _front;
+  SV_Misc::Front m_front;
 
-  std::map<std::string, std::vector<SV_Base::RecData>> _archiveData;
+  std::map<std::string, std::vector<SV_Base::RecData>> m_archiveData;
 
-  ClickHouseDB* _chdb{};
+  ClickHouseDB* m_chdb{};
 
 };

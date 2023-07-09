@@ -298,7 +298,7 @@ void MainWin::load() {
   ui.treeSignals->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
   ui.treeSignals->setIconSize(QSize(40, 20));
 
-  auto gp = SV_Graph::createGraphPanel(this, SV_Graph::Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::viewer));
+  auto gp = SV_Graph::createGraphPanel(this, SV_Graph::Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer));
   SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
   SV_Graph::setGetSignalData(gp, getSignalData);
   SV_Graph::setLoadSignalData(gp, loadSignalDataMain);
@@ -335,7 +335,7 @@ void MainWin::load() {
     return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
   });
 
-  scriptPanel_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::viewer);
+  scriptPanel_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::Viewer);
   scriptPanel_->setWindowFlags(Qt::Window);
   SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataMain);
   SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
@@ -992,7 +992,7 @@ QDialog* MainWin::addNewWindow(const QRect& pos) {
   vertLayout->setSpacing(0);
   vertLayout->setContentsMargins(5, 5, 5, 5);
 
-  SV_Graph::Config Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::viewer);
+  SV_Graph::Config Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer);
   Config.isShowTable = false;
 
   auto gp = SV_Graph::createGraphPanel(graphWin, Config);

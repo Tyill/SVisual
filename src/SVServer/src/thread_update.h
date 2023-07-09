@@ -44,13 +44,11 @@ private:
 
   SV_Srv::Config cng;
 
-  std::atomic_bool _thrStop = false;
+  std::atomic_bool m_thrStop = false;
 
-  std::thread _thr;
-  BufferData& _buffData;
-  Archive _archive;
-
-  std::mutex _mtx;
+  std::thread m_thr;
+  BufferData& m_buffData;
+  Archive m_archive;
 
   void updateCycle();
   void updateSignal(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);

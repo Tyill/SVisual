@@ -36,8 +36,8 @@ class QWidget;
 namespace SV_Graph {
 
   enum class ModeGr {
-    viewer = 0,
-    player = 1,
+    Viewer = 0,
+    Player = 1,
   };
 
   struct Config {
@@ -47,7 +47,7 @@ namespace SV_Graph {
 
     ModeGr mode;
 
-    Config(int cycleRecMs_ = 100, int packetSz_ = 10, ModeGr mode_ = ModeGr::player) :
+    Config(int cycleRecMs_ = 100, int packetSz_ = 10, ModeGr mode_ = ModeGr::Player) :
       cycleRecMs(cycleRecMs_),
       packetSz(packetSz_),
       mode(mode_) {}
@@ -87,6 +87,13 @@ namespace SV_Graph {
 
   using isLoadSignalDataCBack = std::function<bool(const QString& sign)>;
   void setLoadSignalData(QWidget* gp, isLoadSignalDataCBack f);
+
+  using lockReadSDataCBack = std::function<void()>;
+  void setLockReadSData(lockReadSDataCBack f);
+
+  using unlockReadSDataCBack = std::function<void()>;
+  void setUnlockReadSData(unlockReadSDataCBack f);
+
 
   using getSignalAttrCBack = std::function<bool(const QString& sign, SignalAttributes& out)>;
   void setGetSignalAttr(QWidget* gp, getSignalAttrCBack f);

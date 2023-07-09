@@ -29,6 +29,7 @@
 #include "SVMisc/misc.h"
 
 #include <cstring>
+#include <shared_mutex>
 
 using namespace std;
 
@@ -49,13 +50,14 @@ namespace SV_Srv {
 
   Config cng;
 
-  BufferData _buffData;
-  ThreadUpdate* _pThrUpdSignal = nullptr;
+  BufferData m_buffData;
+  ThreadUpdate* m_pThrUpdSignal = nullptr;
 
-  std::map <std::string, SV_Base::ModuleData*> _moduleData;
-  std::map <std::string, SV_Base::SignalData*> _signalData;
+  std::map <std::string, SV_Base::ModuleData*> m_moduleData;
+  std::map <std::string, SV_Base::SignalData*> m_signalData;
 
-  std::mutex _mtx;
+  std::mutex m_mtxCommon;
+  std::shared_mutex m_mtxRW;
 
     
   void setStatusCBack(statusCBack cback){
@@ -65,29 +67,29 @@ namespace SV_Srv {
 
   bool startServer(const Config& _cng){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    if (_pThrUpdSignal) return true;
+    if (m_pThrUpdSignal) return true;
 
     cng = _cng;
 
-    _buffData.init(cng);
+    m_buffData.init(cng);
 
-    _pThrUpdSignal = new ThreadUpdate(cng, _buffData);
+    m_pThrUpdSignal = new ThreadUpdate(cng, m_buffData);
 
     return true;
   }
 
   void stopServer(){
 
-    if (_pThrUpdSignal)
-      delete _pThrUpdSignal;
+    if (m_pThrUpdSignal)
+      delete m_pThrUpdSignal;
   }
     
   void setConfig(const Config& cng){
         
-    if (_pThrUpdSignal)
-      _pThrUpdSignal->setArchiveConfig(cng);    
+    if (m_pThrUpdSignal)
+      m_pThrUpdSignal->setArchiveConfig(cng);    
   }
 
   void receiveData(std::string& inout, std::string& out){
@@ -114,7 +116,7 @@ namespace SV_Srv {
       stPos = bePos[i].first;
       endPos = bePos[i].second;
 
-      _buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
+      m_buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
                                   bTm - (psz - i) * SV_CYCLESAVE_MS);
     }
        
@@ -145,58 +147,66 @@ namespace SV_Srv {
 
   std::map<std::string, SV_Base::ModuleData*> getCopyModuleRef(){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    map<string, SV_Base::ModuleData*> mref = _moduleData;
+    map<string, SV_Base::ModuleData*> mref = m_moduleData;
 
     return mref;
   };
 
   SV_Base::ModuleData* getModuleData(const std::string& module){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    return _moduleData.find(module) != _moduleData.end() ? _moduleData[module] : nullptr;
+    return m_moduleData.find(module) != m_moduleData.end() ? m_moduleData[module] : nullptr;
   }
    
   std::vector<std::string> getModuleSignals(const std::string& module){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    return _moduleData.find(module) != _moduleData.end() ? _moduleData[module]->signls : std::vector<std::string>();
+    return m_moduleData.find(module) != m_moduleData.end() ? m_moduleData[module]->signls : std::vector<std::string>();
   }
 
   std::map<std::string, SV_Base::SignalData*> getCopySignalRef(){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    map<string, SV_Base::SignalData*> sref = _signalData;
+    map<string, SV_Base::SignalData*> sref = m_signalData;
 
     return sref;
   };
 
   SV_Base::SignalData* getSignalData(const std::string& sign){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    return _signalData.find(sign) != _signalData.end() ? _signalData[sign] : nullptr;
+    return m_signalData.find(sign) != m_signalData.end() ? m_signalData[sign] : nullptr;
+  }
+
+  void lockReadSData() {
+      m_mtxRW.lock_shared();
+  }
+
+  void unlockReadSData() {
+      m_mtxRW.unlock_shared();
   }
 
   bool addSignal(SV_Base::SignalData* sd){
     
     if (!sd) return false;
     
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
         
     bool ok = false;
     string sign = sd->name + sd->module;
-    if (_signalData.find(sign) == _signalData.end()) {
-      _signalData[sign] = sd;
-      if (!_moduleData.count(sd->module)){
-          _moduleData[sd->module] = new SV_Base::ModuleData(sd->module);
-          _moduleData[sd->module]->isEnable = true;
+    if (m_signalData.find(sign) == m_signalData.end()) {
+      m_signalData[sign] = sd;
+      if (!m_moduleData.count(sd->module)){
+          m_moduleData[sd->module] = new SV_Base::ModuleData(sd->module);
+          m_moduleData[sd->module]->isEnable = true;
       }
-      _moduleData[sd->module]->signls.push_back(sign);
+      m_moduleData[sd->module]->signls.push_back(sign);
       ok = true;
     }
     return ok;
@@ -206,11 +216,11 @@ namespace SV_Srv {
 
     if (!md) return false;
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
     bool ok = false;
-    if (md && (_moduleData.find(md->module) == _moduleData.end())) {
-      _moduleData[md->module] = md;
+    if (md && (m_moduleData.find(md->module) == m_moduleData.end())) {
+      m_moduleData[md->module] = md;
       ok = true;
     }
     return ok;
@@ -218,21 +228,21 @@ namespace SV_Srv {
 
   bool signalBufferEna(const std::string& sign){
 
-    std::lock_guard<std::mutex> lck(_mtx);
+    std::lock_guard<std::mutex> lck(m_mtxCommon);
 
-    if (_signalData.find(sign) == _signalData.end()) return false;
+    if (m_signalData.find(sign) == m_signalData.end()) return false;
 
-    if (!_signalData[sign]->isBuffEnable){
+    if (!m_signalData[sign]->isBuffEnable){
 
       int buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS;
 
-      _signalData[sign]->buffData.resize(buffSz);
+      m_signalData[sign]->buffData.resize(buffSz);
 
       SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * buffSz];
       for (int i = 0; i < buffSz; ++i)
-        _signalData[sign]->buffData[i].vals = &buff[i * SV_PACKETSZ];
+        m_signalData[sign]->buffData[i].vals = &buff[i * SV_PACKETSZ];
 
-      _signalData[sign]->isBuffEnable = true;
+      m_signalData[sign]->isBuffEnable = true;
     }
     return true;
   }

@@ -30,8 +30,6 @@
 
 using namespace std;
 
-const size_t BufferData::BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
-
 void BufferData::init(const SV_Srv::Config& cng_) {
   
   cng = cng_;
@@ -39,7 +37,7 @@ void BufferData::init(const SV_Srv::Config& cng_) {
   SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * BUFF_SZ];
   memset(buff, 0, SV_PACKETSZ * BUFF_SZ * sizeof(SV_Base::Value));
   for (size_t i = 0; i < BUFF_SZ; ++i)
-    _buffer[i].data.vals = &buff[i * SV_PACKETSZ];
+    m_buffer[i].data.vals = &buff[i * SV_PACKETSZ];
 }
 
 void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
@@ -50,26 +48,26 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
   
   size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, BUFF_SZ));
 
-  _mtx.lock();
+  m_mtx.lock();
 
-  size_t buffWr = _buffWritePos;
-  _buffWritePos += valCnt;
+  size_t buffWr = m_buffWritePos;
+  m_buffWritePos += valCnt;
 
-  if (_buffWritePos >= BUFF_SZ) _buffWritePos -= BUFF_SZ;
+  if (m_buffWritePos >= BUFF_SZ) m_buffWritePos -= BUFF_SZ;
 
-  _mtx.unlock();
+  m_mtx.unlock();
 
   size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
   while (cPos < dsz){
 
-    _buffer[buffWr].name = indata.data() + cPos;
-    _buffer[buffWr].module = indata.c_str();
-    _buffer[buffWr].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
-    _buffer[buffWr].data.beginTime = bTm;
+    m_buffer[buffWr].name = indata.data() + cPos;
+    m_buffer[buffWr].module = indata.c_str();
+    m_buffer[buffWr].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
+    m_buffer[buffWr].data.beginTime = bTm;
 
-    memcpy(_buffer[buffWr].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
+    memcpy(m_buffer[buffWr].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
 
-    _buffer[buffWr].isActive = true;
+    m_buffer[buffWr].isActive = true;
 
     ++buffWr;
     if (buffWr == BUFF_SZ) buffWr = 0;
@@ -80,15 +78,15 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
 
 void BufferData::incReadPos(){
 
-  _buffer[_buffReadPos].isActive = false;
-  ++_buffReadPos;
+  m_buffer[m_buffReadPos].isActive = false;
+  ++m_buffReadPos;
 
-  if (_buffReadPos == BUFF_SZ) _buffReadPos = 0;
+  if (m_buffReadPos == BUFF_SZ) m_buffReadPos = 0;
 }
 
 BufferData::InputData BufferData::getDataByReadPos(){
 
-  return _buffer[_buffReadPos];
+  return m_buffer[m_buffReadPos];
 }
 
 

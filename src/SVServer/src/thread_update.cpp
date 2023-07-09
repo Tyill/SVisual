@@ -32,6 +32,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <shared_mutex>
 
 using namespace SV_Base;
 using namespace SV_Misc;
@@ -43,17 +44,21 @@ extern SV_Srv::onUpdateSignalsCBack pfUpdateSignalsCBack;
 extern SV_Srv::onAddSignalsCBack pfAddSignalsCBack;
 extern const int BUFF_SIGN_HOUR_CNT = 2;
 
+namespace SV_Srv {
+extern std::shared_mutex m_mtxRW;
+}
+
 ThreadUpdate::ThreadUpdate(const SV_Srv::Config& _cng, BufferData& buff):
-  cng(_cng), _buffData(buff){
+  cng(_cng), m_buffData(buff){
     
-  _archive.init(cng);
-  _thr = std::thread(&ThreadUpdate::updateCycle, this);
+  m_archive.init(cng);
+  m_thr = std::thread(&ThreadUpdate::updateCycle, this);
 }
 
 ThreadUpdate::~ThreadUpdate(){
 
-  _thrStop = true;
-  if (_thr.joinable()) _thr.join();  
+  m_thrStop = true;
+  if (m_thr.joinable()) m_thr.join();  
 }
 
 void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
@@ -61,7 +66,7 @@ void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
   cng.outArchiveEna = cng_.outArchiveEna;
   cng.outDataBaseEna = cng_.outDataBaseEna;
 
-  _archive.setConfig(cng_);
+  m_archive.setConfig(cng_);
 }
 
 void ThreadUpdate::addSignal(const BufferData::InputData& bp){
@@ -96,7 +101,7 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
 
   SV_Srv::addSignal(sd);
 
-  _archive.addSignal(bp.name, bp.module, bp.type);
+  m_archive.addSignal(bp.name, bp.module, bp.type);
 }
 
 void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valuePos){
@@ -126,9 +131,11 @@ void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valueP
       if (vl[i].vFloat < minValue) minValue = vl[i].vFloat;
     }
   }
-
-  sign->buffMinValue = minValue;
-  sign->buffMaxValue = maxValue;
+  {
+      std::lock_guard lock(SV_Srv::m_mtxRW);
+      sign->buffMinValue = minValue;
+      sign->buffMaxValue = maxValue;
+  }
 }
 
 void ThreadUpdate::moduleConnect(const string& module){
@@ -164,13 +171,13 @@ void ThreadUpdate::updateCycle(){
   size_t packSz = SV_PACKETSZ * sizeof(Value);                    // размер пакета
   int checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
 
-  while (!_thrStop){
+  while (!m_thrStop){
 
     tmDelay.update();
 
     bool isNewSign = false, isBuffActive = false;
     
-    BufferData::InputData bufPos = _buffData.getDataByReadPos();
+    BufferData::InputData bufPos = m_buffData.getDataByReadPos();
     while (bufPos.isActive){
 
       isBuffActive = true;
@@ -189,9 +196,11 @@ void ThreadUpdate::updateCycle(){
       signActive[sign] = true;
       moduleActive[signData->module] = true;
 
-      signData->lastData.beginTime = bufPos.data.beginTime;
-      memcpy(signData->lastData.vals, bufPos.data.vals, packSz);
-
+      {
+          std::lock_guard lock(SV_Srv::m_mtxRW);
+          signData->lastData.beginTime = bufPos.data.beginTime;
+          memcpy(signData->lastData.vals, bufPos.data.vals, packSz);
+      }
       // заполняем буфер, если разрешено
       if (signData->isBuffEnable) {
         size_t vp = signData->buffValuePos;
@@ -200,21 +209,24 @@ void ThreadUpdate::updateCycle(){
 
         updateSignal(signData, signData->buffBeginPos, vp);
 
-        ++vp;
-        if (vp == buffSz) vp = 0;
-        signData->buffValuePos = vp;
+        {
+            std::lock_guard lock(SV_Srv::m_mtxRW);
+            ++vp;
+            if (vp == buffSz) vp = 0;
+            signData->buffValuePos = vp;
 
-        if (vp == signData->buffBeginPos) {
-          ++signData->buffBeginPos;
-          if (signData->buffBeginPos >= buffSz) signData->buffBeginPos = 0;
+            if (vp == signData->buffBeginPos) {
+                ++signData->buffBeginPos;
+                if (signData->buffBeginPos >= buffSz) signData->buffBeginPos = 0;
+            }
         }
       }
 
       if (cng.outArchiveEna || cng.outDataBaseEna){
-        _archive.addValue(sign, bufPos.data);
+        m_archive.addValue(sign, bufPos.data);
       }
-      _buffData.incReadPos();
-      bufPos = _buffData.getDataByReadPos();
+      m_buffData.incReadPos();
+      bufPos = m_buffData.getDataByReadPos();
     }
 
     if (isBuffActive && pfUpdateSignalsCBack){
@@ -227,7 +239,7 @@ void ThreadUpdate::updateCycle(){
 
     // архив
     if (tmDelay.hourOnc() && (cng.outArchiveEna || cng.outDataBaseEna)){
-      _archive.copyToDisk(false);
+      m_archive.copyToDisk(false);
     }
 
     // проверка связи
@@ -261,7 +273,7 @@ void ThreadUpdate::updateCycle(){
   }
 
   if (cng.outArchiveEna || cng.outDataBaseEna){
-    _archive.copyToDisk(true);
+    m_archive.copyToDisk(true);
   }
 }
 

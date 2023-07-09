@@ -43,7 +43,7 @@ public:
   SV_Graph::getSignalDataCBack pfGetSignalData = nullptr;
   SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
   SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
-
+  
   void addSignalOnGraph(QString name, int section);
   QPair<qint64, qint64> getTimeInterval();
   void setTimeInterval(qint64 stTime, qint64 enTime);
@@ -53,7 +53,7 @@ public:
   void setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att);
   void setAxisAttr(const QVector<SV_Graph::AxisAttributes>&);
   QVector<SV_Graph::AxisAttributes> getAxisAttr();
-
+  
 public slots:
   void updateSignals();
   void resizeByValue();
@@ -111,4 +111,9 @@ public:
     }
 };
 
+class LockerReadSData {
+public:
+    explicit LockerReadSData();
+    ~LockerReadSData();
+};
 

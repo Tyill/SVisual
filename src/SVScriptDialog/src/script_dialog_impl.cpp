@@ -44,7 +44,6 @@ namespace lub = luabridge;
 extern ScriptDialog* scrDialogRef;
 
 void printMess(const std::string& mess) {
-
   if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0)) {
     QString qmess = QString::fromStdString(SV_Misc::currDateTime()) + " " + mess.c_str();
     QMetaObject::invokeMethod(scrDialogRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
@@ -52,7 +51,6 @@ void printMess(const std::string& mess) {
 }
 
 uint64_t getCTimeMS() {
-
   return SV_Misc::currDateTimeSinceEpochMs();
 }
 
@@ -69,91 +67,86 @@ void changeSignColor(const std::string& module, const std::string& signal, const
 }
 
 uint64_t getTimeValue(const std::string& module, const std::string& signal) {
-
   QString md = qUtf8Printable(module.c_str()),
     sn = qUtf8Printable(signal.c_str()),
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
-
-    if (scrDialogRef->mode_ == SV_Script::ModeGr::player)
-      return scrDialogRef->signBuff_[sign]->lastData.beginTime;
-    else {
-      if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-        scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
-
-      size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
-      return scrDialogRef->signBuff_[sign]->buffData[inx].beginTime;
-    }
+      if (scrDialogRef->mode_ == SV_Script::ModeGr::Player){
+          return scrDialogRef->signBuff_[sign]->lastData.beginTime;
+      }else {
+          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0)) {
+              scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
+          }
+          size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
+          return scrDialogRef->signBuff_[sign]->buffData[inx].beginTime;
+      }
   }
-  else
-    return 0;
+  else {
+      return 0;
+  }
 }
 
 bool getBoolValue(const std::string& module, const std::string& signal) {
-
   QString md = qUtf8Printable(module.c_str()),
     sn = qUtf8Printable(signal.c_str()),
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
+      if (scrDialogRef->mode_ == SV_Script::ModeGr::Player) {
+          return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vBool;
+      }else {
+          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
+            scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
 
-    if (scrDialogRef->mode_ == SV_Script::ModeGr::player)
-      return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vBool;
-    else {
-      if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-        scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
+          size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
 
-      size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
-      return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vBool;
-    }
+          return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vBool;
+      }
   }
-  else
-    return false;
+  else {
+      return false;
+  }
 }
 
 int getIntValue(const std::string& module, const std::string& signal) {
-
   QString md = qUtf8Printable(module.c_str()),
     sn = qUtf8Printable(signal.c_str()),
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::INT)) {
+      if (scrDialogRef->mode_ == SV_Script::ModeGr::Player){
+          return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vInt;
+      }else {
+          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
+            scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
 
-    if (scrDialogRef->mode_ == SV_Script::ModeGr::player)
-      return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vInt;
-    else {
-      if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-        scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
+          size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
 
-      size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
-      return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vInt;
-    }
+          return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vInt;
+      }
   }
-  else
-    return 0;
+  else {
+      return 0;
+  }
 }
 
 float getFloatValue(const std::string& module, const std::string& signal) {
-
   QString md = qUtf8Printable(module.c_str()),
     sn = qUtf8Printable(signal.c_str()),
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT)) {
+      if (scrDialogRef->mode_ == SV_Script::ModeGr::Player){
+          return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vFloat;
+      }else {
+          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
+            scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
 
-    if (scrDialogRef->mode_ == SV_Script::ModeGr::player)
-      return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vFloat;
-    else {
-      if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-        scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
+          size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
 
-      size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
-      return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vFloat;
-    }
+          return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vFloat;
+      }
   }
-  else
-    return 0.F;
+  else {
+      return 0.F;
+  }
 }
 
 void setBoolValue(const std::string& signal, bool bval, uint64_t time) {
@@ -165,8 +158,9 @@ void setBoolValue(const std::string& signal, bool bval, uint64_t time) {
   SV_Base::Value val;
   val.vBool = bval;
 
-  if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL))
-    scrDialogRef->setValue(sign, val, time);
+  if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
+      scrDialogRef->setValue(sign, val, time);
+  }
 }
 
 void setIntValue(const std::string& signal, int ival, uint64_t time) {
@@ -178,8 +172,9 @@ void setIntValue(const std::string& signal, int ival, uint64_t time) {
   SV_Base::Value val;
   val.vInt = ival;
 
-  if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::INT))
-    scrDialogRef->setValue(sign, val, time);
+  if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::INT)) {
+      scrDialogRef->setValue(sign, val, time);
+  }
 }
 
 void setFloatValue(const std::string& signal, float fval, uint64_t time) {
@@ -191,8 +186,9 @@ void setFloatValue(const std::string& signal, float fval, uint64_t time) {
   SV_Base::Value val;
   val.vFloat = fval;
 
-  if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT))
-    scrDialogRef->setValue(sign, val, time);
+  if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT)) {
+      scrDialogRef->setValue(sign, val, time);
+  }
 }
 
 void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t time) {
@@ -202,7 +198,7 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
   sd->lastData.vals[iterValue_] = val;
 
   // заполняем буфер
-  size_t vp = (mode_ == SV_Script::ModeGr::player) ? sd->buffValuePos : buffCPos_;
+  size_t vp = (mode_ == SV_Script::ModeGr::Player) ? sd->buffValuePos : buffCPos_;
 
   sd->buffData[vp].vals[iterValue_] = val;
 
@@ -215,7 +211,7 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
 
     ++vp;
 
-    if (mode_ == SV_Script::ModeGr::player) {
+    if (mode_ == SV_Script::ModeGr::Player) {
       size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
 
       if (vp == buffSz) vp = 0;
@@ -327,7 +323,7 @@ bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, 
 
     pfAddSignal(sd);
 
-    if (mode_ == SV_Script::ModeGr::player) {
+    if (mode_ == SV_Script::ModeGr::Player) {
       pfLoadSignalData(sign);
     }
     else {
@@ -343,7 +339,7 @@ bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, 
     }
     return true;
   }
-  else {
+  else { // (module != "Virtual")
     if (isStopWork_) {
       return false;
     }
@@ -939,7 +935,7 @@ void ScriptDialog::workCycle() {
 
       luaL_loadstring(luaState_, qUtf8Printable(allScr));
 
-      if (mode_ == SV_Script::ModeGr::viewer) {
+      if (mode_ == SV_Script::ModeGr::Viewer) {
 
         bool isNoError = false;
         while (buffCPos_ < buffSz_) {
@@ -967,7 +963,7 @@ void ScriptDialog::workCycle() {
           if (!isNoError) break;
         }
       }
-      else { // SV_Script::ModeGr::player
+      else { // SV_Script::ModeGr::Player
 
         bool isNoError = false;
         for (iterValue_ = 0; iterValue_ < size_t(SV_PACKETSZ); ++iterValue_) {
@@ -993,7 +989,7 @@ void ScriptDialog::workCycle() {
 
     mtx_.unlock();
 
-    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::ModeGr::viewer))
+    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::ModeGr::Viewer))
       pfUpdateSignalsCBack();
 
     if (!serr.isEmpty()) {

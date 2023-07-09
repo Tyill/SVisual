@@ -27,106 +27,109 @@
 
 ScriptDialog* scrDialogRef = nullptr;
 
+SV_Script::lockReadSDataCBack pfLockReadSData;
+SV_Script::unlockReadSDataCBack pfUnlockReadSData;
+
 namespace SV_Script {
     
   QDialog* getScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
-    if (!scrDialogRef)
-      scrDialogRef = new ScriptDialog(parent, cng, mode);
-    return scrDialogRef;
+      if (!scrDialogRef) {
+          scrDialogRef = new ScriptDialog(parent, cng, mode);
+      }
+      return scrDialogRef;
   }
-
   void startUpdateThread(QDialog* stp) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->startUpdateThread();
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->startUpdateThread();
+      }
   }
-
   void setGetCopySignalRef(QDialog *stp, getCopySignalRefCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfGetCopySignalRef = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfGetCopySignalRef = f;
+      }
   }
-
   void setGetModuleData(QDialog* stp, getModuleDataCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfGetModuleData = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfGetModuleData = f;
+      }
   }
-
   void setGetSignalData(QDialog *stp, getSignalDataCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfGetSignalData = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfGetSignalData = f;
+      }
   }
-
   void setAddSignal(QDialog *stp, addSignalCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfAddSignal = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfAddSignal = f;
+      }
   }
-
   void setAddModule(QDialog *stp, addModuleCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfAddModule = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfAddModule = f;
+      }
   }
-
   void setChangeSignColor(QDialog* stp, changeSignColorCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfChangeSignColor = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfChangeSignColor = f;
+      }
   }
-
+  void setLockReadSData(lockReadSDataCBack f) {
+      if (f) {
+          pfLockReadSData = f;
+      }
+  }
+  void setUnlockReadSData(unlockReadSDataCBack f) {
+      if (f) {
+          pfUnlockReadSData = f;
+      }
+  }
   bool isActiveScript(QDialog* stp, const QString& fname) {
-
-    if (stp)
-      return ((ScriptDialog *)stp)->isActiveScript(fname);
-    else
-      return false;
+      if (stp) {
+          return static_cast<ScriptDialog*>(stp)->isActiveScript(fname);
+      }else {
+          return false;
+      }
   }
-
   void activeScript(QDialog* stp, const QString& fname) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->activeScript(fname);
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->activeScript(fname);
+      }
   }
-
   void deactiveScript(QDialog* stp, const QString& fname) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->deactiveScript(fname);
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->deactiveScript(fname);
+      }
   }
-
   void refreshScript(QDialog* stp, const QString& fname) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->refreshScript(fname);
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->refreshScript(fname);
+      }
   }
-
   void setLoadSignalData(QDialog *stp, isLoadSignalDataCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfLoadSignalData = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfLoadSignalData = f;
+      }
   }
-
-  // обновление данных callBack
-  void setUpdateSignalsCBack(QDialog *stp, updateSignalsCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfUpdateSignalsCBack = f;
+  void setUpdateSignalsCBack(QDialog* stp, updateSignalsCBack f) {
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfUpdateSignalsCBack = f;
+      }
   }
-
-  // добавление сигнала callBack
   void setAddSignalsCBack(QDialog *stp, addSignalsCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfAddSignalsCBack = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfAddSignalsCBack = f;
+      }
   }
-
-  // модуль подключен
   void setModuleConnectCBack(QDialog* stp, moduleConnectCBack f) {
-
-    if (stp)
-      ((ScriptDialog *)stp)->pfModuleConnectCBack = f;
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->pfModuleConnectCBack = f;
+      }
   }
+}
+
+LockerReadSData::LockerReadSData() {
+    if (pfLockReadSData) pfLockReadSData();
+}
+LockerReadSData::~LockerReadSData() {
+    if (pfUnlockReadSData) pfUnlockReadSData();
 }

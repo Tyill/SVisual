@@ -175,6 +175,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\..\src\SVMonitor\resources\resource.rc" />
+    <ResourceCompile Include="..\..\..\src\SVMonitor\resources\resource.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -753,6 +753,8 @@ void MainWin::load(){
     settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
     graphSettDialog_ = new GraphSettingDialog(cng.graphSett, this); graphSettDialog_->setWindowFlags(Qt::Window);
 
+    SV_Graph::setLockReadSData(lockReadSDataSrv);
+    SV_Graph::setUnlockReadSData(unlockReadSDataSrv);
     SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
     SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
     SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
@@ -775,7 +777,7 @@ void MainWin::load(){
         onTrigger(name);
     });
 
-    scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::player);
+    scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::Player);
     scriptDialog_->setWindowFlags(Qt::Window);
     SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
     SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);

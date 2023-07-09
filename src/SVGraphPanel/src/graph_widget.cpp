@@ -627,9 +627,14 @@ void GraphWidget::addSignal(QString sign) {
 
   connect(lb, SIGNAL(req_delSignal(QString)), this, SLOT(delSignal(QString)));
   
+  double buffMinValue, buffMaxValue;
+  {LockerReadSData lock;
+      buffMinValue = sdata->buffMinValue;
+      buffMaxValue = sdata->buffMaxValue;
+  }
   if (sdata->type != ValueType::BOOL) {
-    if (sdata->buffMinValue < sdata->buffMaxValue)
-      ui.axisValue->setValInterval(sdata->buffMinValue - 1, sdata->buffMaxValue + 1);
+    if (buffMinValue < buffMaxValue)
+      ui.axisValue->setValInterval(buffMinValue - 1, buffMaxValue + 1);
     else
       ui.axisValue->setValInterval(-100, 100);
   }
@@ -840,9 +845,11 @@ QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const
       backVal = 0,
       prevBackVal = 0;
 
-  const size_t buffSz = sign->buffData.size(),
-               endPos = sign->buffValuePos;
-
+  size_t buffSz, endPos;
+  {LockerReadSData lock;
+    buffSz = sign->buffData.size(),
+    endPos = sign->buffValuePos;
+  }
   int backValInd = 0,
       prevBackValInd = 0;
 
@@ -973,18 +980,23 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
 
 
   //////////// Предварит поиск старт точки
-
-  uint64_t tmZnBegin = sign->buffMinTime,
-           tmZnEnd = sign->buffMaxTime;
-  
+  uint64_t tmZnBegin, tmZnEnd;
+  {LockerReadSData lock;
+      tmZnBegin = sign->buffMinTime;
+      tmZnEnd = sign->buffMaxTime;
+  }
+    
   const uint64_t tmMinInterval = tmInterval.first,
                  tmMaxInterval = tmInterval.second;
 
   if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval))
     return QVector<QVector<QPair<int, int>>>();
 
-  size_t iBuf = sign->buffBeginPos;
-  if ((cng.mode == SV_Graph::ModeGr::viewer) && (tmZnBegin < tmMinInterval)) {
+  size_t iBuf;
+  {LockerReadSData lock;
+      iBuf = sign->buffBeginPos;
+  }
+  if ((cng.mode == SV_Graph::ModeGr::Viewer) && (tmZnBegin < tmMinInterval)) {
 
     auto bIt = std::lower_bound(sign->buffData.begin(), sign->buffData.end(), tmMinInterval,
       [](const RecData& rd, uint64_t stm) {
@@ -1034,10 +1046,13 @@ QPair<double, double> GraphWidget::getSignPntsMaxMinValue(const GraphSignData& s
 
 QPair<double, double> GraphWidget::getSignMaxMinValue(SignalData* sign, QPair<qint64, qint64>& tmInterval) {
 
-  uint64_t tmZnBegin = sign->buffMinTime,
-    tmZnEnd = sign->buffMaxTime,
-    tmMinInterval = tmInterval.first,
-    tmMaxInterval = tmInterval.second;
+    uint64_t tmZnBegin, tmZnEnd;
+    {LockerReadSData lock;
+        tmZnBegin = sign->buffMinTime;
+        tmZnEnd = sign->buffMaxTime;
+    }
+    uint64_t tmMinInterval = tmInterval.first,
+            tmMaxInterval = tmInterval.second;
 
   if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QPair<double, double >(0, 1);
 
@@ -1196,17 +1211,15 @@ void GraphWidget::resizeByTime() {
   if (signalList_.isEmpty() && signalsAlter_.isEmpty()) return;
 
   uint64_t minTm = INT64_MAX, maxTm = 0;
-
-  for (auto& s : signals_) {
-
-    if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
-    if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;
-  }
-
-  for (auto& s : signalsAlter_) {
-
-    if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
-    if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;
+  {LockerReadSData lock;
+      for (auto& s : signals_) {
+          if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
+          if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;
+      }
+      for (auto& s : signalsAlter_) {
+          if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
+          if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;
+      }
   }
 
   axisTime_->setTimeInterval(minTm, maxTm);

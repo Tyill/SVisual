@@ -117,6 +117,10 @@ namespace SV_Srv {
   /// \return
   SV_API SV_Base::SignalData* getSignalData(const std::string& sign);
 
+  SV_API void lockReadSData();
+
+  SV_API void unlockReadSData();
+
   /// добавить сигнал
   SV_API bool addSignal(SV_Base::SignalData*);
 

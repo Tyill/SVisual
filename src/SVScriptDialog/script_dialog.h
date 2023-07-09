@@ -36,8 +36,8 @@ class QWidget;
 namespace SV_Script {
 
   enum class ModeGr {
-    viewer = 0,
-    player = 1,
+    Viewer = 0,
+    Player = 1,
   };
 
   struct Config {
@@ -68,6 +68,12 @@ namespace SV_Script {
 
   using addModuleCBack = std::function<bool(SV_Base::ModuleData*)>;
   void setAddModule(QDialog* stPanel, addModuleCBack f);
+
+  using lockReadSDataCBack = std::function<void()>;
+  void setLockReadSData(lockReadSDataCBack f);
+
+  using unlockReadSDataCBack = std::function<void()>;
+  void setUnlockReadSData(unlockReadSDataCBack f);
 
   using changeSignColorCBack = std::function<void(const QString &module, const QString &sign, const QColor& color)>;
   void setChangeSignColor(QDialog* stPanel, changeSignColorCBack f);
