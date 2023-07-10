@@ -1026,9 +1026,9 @@ void MainWin::contextMenuClick(QAction* act){
   // module
   else{
     if (act->text() == tr("Показать все")){
+      if (tmWinSetts_->isActive()) tmWinSetts_->stop();
       for (auto& s : mref[root]->signls){
         if (sref.contains(s.c_str()) && sref[s.c_str()]->isActive){
-          if (tmWinSetts_->isActive()) tmWinSetts_->stop();
           SV_Graph::addSignal(graphPanels_[this], QString::fromStdString(s));
         }
       }

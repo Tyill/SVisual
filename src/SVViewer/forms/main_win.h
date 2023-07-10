@@ -72,6 +72,8 @@ public:
     QString inputDataBaseName;
     QString inputDataBaseAddr;
 
+    int toutLoadWinStateSec = 10;
+
     SV_Graph::GraphSetting graphSett;
   };
 
@@ -97,9 +99,10 @@ protected:
 private:
   void connects();
   void load();
-  bool init(const QString& initPath);
 
+  bool readSettings(const QString& initPath);
   bool writeSettings(const QString& pathIni);
+
   bool readSignals(const QString& path);
   bool writeSignals(const QString& path);
   QDialog* addNewWindow(const QRect& pos);
@@ -119,6 +122,8 @@ private:
   QDialog* scriptPanel_ = nullptr;
 
   SettingsDialog* settingsDialog_ = nullptr;
+
+  QTimer* tmWinSetts_ = nullptr;
 
   QMutex mtx_;
 

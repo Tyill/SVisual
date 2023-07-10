@@ -132,7 +132,7 @@ MainWin::MainWin(QWidget *parent)
 
   QStringList args = QApplication::arguments();
   cng.initPath = QApplication::applicationDirPath(); if (args.size() == 2) cng.initPath = args[1];
-  init(cng.initPath + "/sviewer.ini");
+  readSettings(cng.initPath + "/sviewer.ini");
 
   connects();
 
@@ -143,6 +143,111 @@ MainWin::~MainWin()
 {
   writeSettings(cng.initPath + "/sviewer.ini");
   writeSignals(cng.initPath + "/svsignals.txt");
+}
+
+bool MainWin::readSettings(const QString& initPath) {
+
+    QSettings settings(initPath, QSettings::IniFormat);
+    settings.beginGroup("Param");
+
+    cng.cycleRecMs = settings.value("cycleRecMs", 100).toInt();
+    cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
+    cng.packetSz = settings.value("packetSz", 10).toInt();
+    cng.packetSz = qMax(cng.packetSz, 1);
+
+    cng.selOpenDir = settings.value("selOpenDir", "").toString();
+    cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
+
+    cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
+    cng.graphSett.transparent = settings.value("transparent", "100").toInt();
+    cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
+    cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
+
+    cng.inputDataBaseEna = settings.value("inputDataBaseEna", "0").toInt() == 1;
+    cng.inputDataBaseName = settings.value("inputDataBaseName", "svdb").toString();
+    cng.inputDataBaseAddr = settings.value("inputDataBaseAddr", "localhost:9000").toString();
+
+    cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
+
+    QFont ft = QApplication::font();
+    int fsz = settings.value("fontSz", ft.pointSize()).toInt();
+    ft.setPointSize(fsz);
+    QApplication::setFont(ft);
+
+    tmWinSetts_ = new QTimer(this);
+    connect(tmWinSetts_, &QTimer::timeout, this, [this, initPath]() {
+
+        QSettings settings(initPath, QSettings::IniFormat);
+        settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+        auto grps = settings.childGroups();
+        for (auto& g : grps) {
+
+            if (!g.startsWith("graphWin"))
+                continue;
+
+            settings.beginGroup(g);
+
+            QString locate = settings.value("locate").toString();
+            QObject* win = this;
+            if (locate != "0") {
+                auto lt = locate.split(' ');
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+            }
+
+            int sect = 0;
+            while (true) {
+
+                QString str = settings.value("section" + QString::number(sect), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList signs = str.split(' ');
+                for (auto& s : signs) {
+                    SV_Graph::addSignal(graphPanels_[win], s, sect);
+                }
+                ++sect;
+            }
+
+            QVector< SV_Graph::AxisAttributes> axisAttrs;
+            int axisInx = 0;
+            while (true) {
+
+                QString str = settings.value("axisAttr" + QString::number(axisInx), "").toString();
+                if (str.isEmpty()) break;
+
+                QStringList attr = str.split(' ');
+
+                SV_Graph::AxisAttributes axAttr;
+                axAttr.isAuto = attr[0] == "1";
+                axAttr.min = attr[1].toDouble();
+                axAttr.max = attr[2].toDouble();
+                axAttr.step = attr[3].toDouble();
+
+                axisAttrs.push_back(axAttr);
+
+                ++axisInx;
+            }
+
+            if (!axisAttrs.empty()) {
+                SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
+            }
+            QString tmDiap = settings.value("tmDiap", "10000").toString();
+
+            auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
+            ctmIntl.second = ctmIntl.first + tmDiap.toLongLong();
+
+            SV_Graph::setTimeInterval(graphPanels_[win], ctmIntl.first, ctmIntl.second);
+
+            settings.endGroup();
+        }
+        tmWinSetts_->stop();
+        });
+    tmWinSetts_->start(cng.toutLoadWinStateSec * 1000);
+
+    if (!QFile(initPath).exists())
+        writeSettings(initPath);
+
+    return true;
+
 }
 
 bool MainWin::writeSettings(const QString& pathIni) {
@@ -170,6 +275,52 @@ bool MainWin::writeSettings(const QString& pathIni) {
   txtStream << "inputDataBaseName = " << cng.inputDataBaseName << Qt::endl;
   txtStream << "inputDataBaseAddr = " << cng.inputDataBaseAddr << Qt::endl;
   txtStream << Qt::endl;
+  txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << Qt::endl;
+  txtStream << Qt::endl;
+
+  // состояние окон
+  auto wins = graphPanels_.keys();
+  int cnt = 0;
+  for (auto w : wins) {
+
+      txtStream << "[graphWin" << cnt << "]" << Qt::endl;
+
+      if (w == this)
+          txtStream << "locate = 0" << Qt::endl;
+      else {
+          auto geom = ((QDialog*)w)->geometry();
+          txtStream << "locate = " << geom.x() << " " << geom.y() << " " << geom.width() << " " << geom.height() << Qt::endl;
+      }
+
+      auto tmIntl = SV_Graph::getTimeInterval(graphPanels_[w]);
+      txtStream << "tmDiap = " << (tmIntl.second - tmIntl.first) << Qt::endl;
+
+      QVector<QVector<QString>> signs = SV_Graph::getLocateSignals(graphPanels_[w]);
+      for (int i = 0; i < signs.size(); ++i) {
+
+          txtStream << "section" << i << " = ";
+          for (int j = signs[i].size() - 1; j >= 0; --j)
+              txtStream << signs[i][j] << " ";
+
+          txtStream << Qt::endl;
+      }
+
+      QVector<SV_Graph::AxisAttributes> axisAttr = SV_Graph::getAxisAttr(graphPanels_[w]);
+      for (int i = 0; i < axisAttr.size(); ++i) {
+
+          txtStream << "axisAttr" << i << " = ";
+          txtStream << (axisAttr[i].isAuto ? "1" : "0") << " ";
+          txtStream << axisAttr[i].min << " ";
+          txtStream << axisAttr[i].max << " ";
+          txtStream << axisAttr[i].step << " ";
+
+          txtStream << Qt::endl;
+      }
+
+      txtStream << Qt::endl;
+      ++cnt;
+  }
+
   file.close();
 
   return true;
@@ -401,6 +552,7 @@ void MainWin::connects() {
     auto sign = item->text(5);
 
     if (column == 0) {
+        if (tmWinSetts_->isActive()) tmWinSetts_->stop();
         if (cng.inputDataBaseEna){
             TsDataBaseDialog dialog(this);
             dialog.setInterval(m_chLoaders[this]->getSignalInterval(sign));
@@ -583,6 +735,8 @@ void MainWin::connects() {
     if (fname.isEmpty()) return;
     cng.selOpenDir = fname;
 
+    if (tmWinSetts_->isActive()) tmWinSetts_->stop();
+
     QSettings settings(fname, QSettings::IniFormat);
     settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
@@ -654,40 +808,6 @@ void MainWin::connects() {
         "<p>для анализа сигналов с устройст."
         "<p>2017"));
   });
-}
-
-bool MainWin::init(const QString& initPath) {
-
-  QSettings settings(initPath, QSettings::IniFormat);
-  settings.beginGroup("Param");
-
-  cng.cycleRecMs = settings.value("cycleRecMs", 100).toInt();
-  cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
-  cng.packetSz = settings.value("packetSz", 10).toInt();
-  cng.packetSz = qMax(cng.packetSz, 1);
-
-  cng.selOpenDir = settings.value("selOpenDir", "").toString();
-  cng.sortByMod = settings.value("sortByMod", 1).toInt() == 1;
-
-  cng.graphSett.lineWidth = settings.value("lineWidth", "2").toInt();
-  cng.graphSett.transparent = settings.value("transparent", "100").toInt();
-  cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
-  cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
-
-  cng.inputDataBaseEna = settings.value("inputDataBaseEna", "0").toInt() == 1;
-  cng.inputDataBaseName = settings.value("inputDataBaseName", "svdb").toString();
-  cng.inputDataBaseAddr = settings.value("inputDataBaseAddr", "localhost:9000").toString();
-
-  QFont ft = QApplication::font();
-  int fsz = settings.value("fontSz", ft.pointSize()).toInt();
-  ft.setPointSize(fsz);
-  QApplication::setFont(ft);
-
-  if (!QFile(initPath).exists())
-    writeSettings(initPath);
-
-  return true;
-
 }
 
 MainWin::Config MainWin::getConfig()const{
@@ -947,10 +1067,11 @@ void MainWin::contextMenuClick(QAction* act) {
   if (root.isEmpty()) return;
 
   if (act->text() == tr("Показать все")) {
+    if (tmWinSetts_->isActive()) tmWinSetts_->stop();
     auto sref = getCopySignalRef();
     auto signls = getModuleSignals(root);
     for (auto& s : signls) {
-      if (sref.contains(s) && sref[s]->isActive) {
+      if (sref.contains(s) && sref[s]->isActive) {        
         SV_Graph::addSignal(graphPanels_[this], s);
       }
     }
