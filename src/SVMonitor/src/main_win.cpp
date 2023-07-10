@@ -395,7 +395,6 @@ bool MainWin::writeSettings(QString pathIni){
     int cnt = 0;
     for (auto w : wins){
 
-        file.open(QIODevice::WriteOnly);
         txtStream << "[graphWin" << cnt << "]" << Qt::endl;
 
         if (w == this)

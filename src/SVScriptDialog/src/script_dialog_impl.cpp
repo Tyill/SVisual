@@ -206,10 +206,10 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
   size_t vp;
   if (mode_ == SV_Script::ModeGr::Player) {
       LockerReadSDataScript lock;
-      sd->buffValuePos;
+      vp = sd->buffValuePos;
+  }else{
+      vp = buffCPos_;
   }
-  vp = buffCPos_;
-
   sd->buffData[vp].vals[iterValue_] = val;
 
   if (iterValue_ == (SV_PACKETSZ - 1)) {
