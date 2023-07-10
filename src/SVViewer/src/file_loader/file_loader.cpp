@@ -200,8 +200,8 @@ bool FileLoader::loadSignalData(const QString& sign) {
     Value* buff = new Value[buffSz];
     memset(buff, 0, buffSz);
 
-    for (size_t i = csz; i < newsz; ++i){
-      sdata->buffData[i].vals = &buff[i * SV_PACKETSZ];
+    for (size_t i = csz, j = 0; i < newsz; ++i, ++j){
+      sdata->buffData[i].vals = &buff[j * SV_PACKETSZ];
     }
     int psz = path->signls[sign].patchApos.size(),
       posMem = 0,
