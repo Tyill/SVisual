@@ -30,6 +30,9 @@ WebServer WServer;
 
 namespace SV_Web {
 
+  lockReadSDataCBack pfLockReadSData = nullptr;
+  unlockReadSDataCBack pfUnlockReadSData = nullptr;
+
   bool startServer(const QString& addr, int port, const Config& cng) {
 
     if (WServer.isListening()) return true;
@@ -43,6 +46,18 @@ namespace SV_Web {
 
     if (WServer.isListening())
       WServer.close();
+  }
+
+  void setLockReadSData(lockReadSDataCBack f) {
+      if (f) {
+          pfLockReadSData = f;
+      }
+  }
+
+  void setUnlockReadSData(unlockReadSDataCBack f) {
+      if (f) {
+          pfUnlockReadSData = f;
+      }
   }
 
   void setGetCopySignalRef(getCopySignalRefCBack f) {
@@ -59,4 +74,11 @@ namespace SV_Web {
 
     WServer.pfGetSignalData = f;
   }
+}
+
+LockerReadSDataWeb::LockerReadSDataWeb() {
+    if (SV_Web::pfLockReadSData) SV_Web::pfLockReadSData();
+}
+LockerReadSDataWeb::~LockerReadSDataWeb() {
+    if (SV_Web::pfUnlockReadSData) SV_Web::pfUnlockReadSData();
 }

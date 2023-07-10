@@ -769,6 +769,8 @@ void MainWin::load(){
 
     triggerDialog_ = SV_Trigger::getTriggerDialog(this, SV_Trigger::Config(cng.cycleRecMs, cng.packetSz));
     triggerDialog_->setWindowFlags(Qt::Window);
+    SV_Trigger::setLockReadSData(lockReadSDataSrv);
+    SV_Trigger::setUnlockReadSData(unlockReadSDataSrv);
     SV_Trigger::setGetCopySignalRef(triggerDialog_, getCopySignalRefSrv);
     SV_Trigger::setGetSignalData(triggerDialog_, getSignalDataSrv);
     SV_Trigger::setGetCopyModuleRef(triggerDialog_, getCopyModuleRefSrv);
@@ -779,6 +781,10 @@ void MainWin::load(){
 
     scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::Player);
     scriptDialog_->setWindowFlags(Qt::Window);
+    SV_Script::setLockReadSData(lockReadSDataSrv);
+    SV_Script::setUnlockReadSData(unlockReadSDataSrv);
+    SV_Script::setLockWriteSData(lockWriteSDataSrv);
+    SV_Script::setUnlockWriteSData(unlockWriteSDataSrv);
     SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
     SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
     SV_Script::setGetSignalData(scriptDialog_, getSignalDataSrv);
@@ -800,6 +806,8 @@ void MainWin::load(){
 
     exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
     exportDialog_->setWindowFlags(Qt::Window);
+    SV_Exp::setLockReadSData(lockReadSDataSrv);
+    SV_Exp::setUnlockReadSData(unlockReadSDataSrv);
     SV_Exp::setLoadSignalData(exportDialog_, loadSignalDataSrv);
     SV_Exp::setGetCopySignalRef(exportDialog_, getCopySignalRefSrv);
     SV_Exp::setGetCopyModuleRef(exportDialog_, getCopyModuleRefSrv);
@@ -821,10 +829,14 @@ void MainWin::load(){
         QMetaObject::invokeMethod(this, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
     });
 
+    SV_Web::setLockReadSData(lockReadSDataSrv);
+    SV_Web::setUnlockReadSData(unlockReadSDataSrv);
     SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
     SV_Web::setGetSignalData(getSignalDataSrv);
     SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
 
+    SV_Zbx::setLockReadSData(lockReadSDataSrv);
+    SV_Zbx::setUnlockReadSData(unlockReadSDataSrv);
     SV_Zbx::setGetSignalData(getSignalDataSrv);
 
     db_ = new DbProvider(qUtf8Printable(cng.dbPath), this);

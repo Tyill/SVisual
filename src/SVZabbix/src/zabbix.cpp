@@ -32,6 +32,9 @@ ZbxServer zServer;
 
 namespace SV_Zbx {
 
+  lockReadSDataCBack pfLockReadSData = nullptr;
+  unlockReadSDataCBack pfUnlockReadSData = nullptr;
+
   bool startAgent(const QString& addr, int port, const Config& cng) {
 
     if (zServer.isListening()) return true;
@@ -47,8 +50,27 @@ namespace SV_Zbx {
       zServer.close();
   }
 
+  void setLockReadSData(lockReadSDataCBack f) {
+      if (f) {
+          pfLockReadSData = f;
+      }
+  }
+
+  void setUnlockReadSData(unlockReadSDataCBack f) {
+      if (f) {
+          pfUnlockReadSData = f;
+      }
+  }
+
   void setGetSignalData(getSignalDataCBack f) {
 
     zServer.pfGetSignalData = f;
   }
+}
+
+LockerReadSDataZbx::LockerReadSDataZbx() {
+    if (SV_Zbx::pfLockReadSData) SV_Zbx::pfLockReadSData();
+}
+LockerReadSDataZbx::~LockerReadSDataZbx() {
+    if (SV_Zbx::pfUnlockReadSData) SV_Zbx::pfUnlockReadSData();
 }

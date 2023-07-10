@@ -75,6 +75,12 @@ namespace SV_Script {
   using unlockReadSDataCBack = std::function<void()>;
   void setUnlockReadSData(unlockReadSDataCBack f);
 
+  using lockWriteSDataCBack = std::function<void()>;
+  void setLockWriteSData(lockWriteSDataCBack f);
+
+  using unlockWriteSDataCBack = std::function<void()>;
+  void setUnlockWriteSData(unlockWriteSDataCBack f);
+
   using changeSignColorCBack = std::function<void(const QString &module, const QString &sign, const QColor& color)>;
   void setChangeSignColor(QDialog* stPanel, changeSignColorCBack f);
 

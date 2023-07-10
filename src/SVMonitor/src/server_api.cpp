@@ -77,6 +77,12 @@ void lockReadSDataSrv() {
 void unlockReadSDataSrv() {
     return SV_Srv::unlockReadSData();
 }
+void lockWriteSDataSrv() {
+    return SV_Srv::lockWriteSData();
+}
+void unlockWriteSDataSrv() {
+    return SV_Srv::unlockWriteSData();
+}
 
 bool loadSignalDataSrv(const QString& name){
 

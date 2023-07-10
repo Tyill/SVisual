@@ -106,4 +106,8 @@ private:
   std::atomic_bool thrStop_ = false;
 };
 
-
+class LockerReadSDataTrigger {
+public:
+    explicit LockerReadSDataTrigger();
+    ~LockerReadSDataTrigger();
+};

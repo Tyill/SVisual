@@ -187,9 +187,14 @@ namespace SV_Srv {
   void lockReadSData() {
       m_mtxRW.lock_shared();
   }
-
   void unlockReadSData() {
       m_mtxRW.unlock_shared();
+  }
+  void lockWriteSData() {
+      m_mtxRW.lock();
+  }
+  void unlockWriteSData() {
+      m_mtxRW.unlock();
   }
 
   bool addSignal(SV_Base::SignalData* sd){

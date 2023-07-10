@@ -26,10 +26,10 @@
 #include "SVGraphPanel/graph_panel.h"
 #include "SVGraphPanel/forms/graph_panel_widget.h"
 
-SV_Graph::lockReadSDataCBack pfLockReadSData;
-SV_Graph::unlockReadSDataCBack pfUnlockReadSData;
-
 namespace SV_Graph {
+
+  lockReadSDataCBack pfLockReadSData = nullptr;
+  unlockReadSDataCBack pfUnlockReadSData = nullptr;
 
   QWidget* createGraphPanel(QWidget* parent, const SV_Graph::Config& cng) {
 
@@ -135,9 +135,9 @@ namespace SV_Graph {
   }
 }
 
-LockerReadSData::LockerReadSData(){
-    if (pfLockReadSData) pfLockReadSData();
+LockerReadSDataGraph::LockerReadSDataGraph(){
+    if (SV_Graph::pfLockReadSData) SV_Graph::pfLockReadSData();
 }
-LockerReadSData::~LockerReadSData() {
-    if (pfUnlockReadSData) pfUnlockReadSData();
+LockerReadSDataGraph::~LockerReadSDataGraph() {
+    if (SV_Graph::pfUnlockReadSData) SV_Graph::pfUnlockReadSData();
 }

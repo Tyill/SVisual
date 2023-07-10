@@ -120,10 +120,16 @@ private slots:
   void nameScriptChange(int row, int col);
 };
 
-class LockerReadSData {
+class LockerReadSDataScript {
 public:
-    explicit LockerReadSData();
-    ~LockerReadSData();
+    explicit LockerReadSDataScript();
+    ~LockerReadSDataScript();
 };
+class LockerWriteSDataScript {
+public:
+    explicit LockerWriteSDataScript();
+    ~LockerWriteSDataScript();
+};
+
 
 

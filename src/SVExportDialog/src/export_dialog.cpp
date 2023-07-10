@@ -27,9 +27,24 @@
 
 namespace SV_Exp {
 
+  lockReadSDataCBack pfLockReadSData = nullptr;
+  unlockReadSDataCBack pfUnlockReadSData = nullptr;
+  
   QDialog* createExportDialog(QWidget *parent, SV_Exp::Config cng) {
 
     return new ExportDialog(parent, cng);
+  }
+
+  void setLockReadSData(lockReadSDataCBack f) {
+      if (f) {
+          pfLockReadSData = f;
+      }
+  }
+
+  void setUnlockReadSData(unlockReadSDataCBack f) {
+      if (f) {
+          pfUnlockReadSData = f;
+      }
   }
 
   void setGetCopySignalRef(QDialog *exp, getCopySignalRefCBack f) {
@@ -68,4 +83,11 @@ namespace SV_Exp {
       ((ExportDialog *)exp)->pfSetTimeInterval = f;
   }
 
+}
+
+LockerReadSDataExp::LockerReadSDataExp() {
+    if (SV_Exp::pfLockReadSData) SV_Exp::pfLockReadSData();
+}
+LockerReadSDataExp::~LockerReadSDataExp() {
+    if (SV_Exp::pfUnlockReadSData) SV_Exp::pfUnlockReadSData();
 }

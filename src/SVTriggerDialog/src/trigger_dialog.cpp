@@ -29,6 +29,9 @@ namespace SV_Trigger {
 
   TriggerDialog* trgDialogRef = nullptr;
 
+  lockReadSDataCBack pfLockReadSData = nullptr;
+  unlockReadSDataCBack pfUnlockReadSData = nullptr;
+
   QDialog* getTriggerDialog(QWidget *parent, Config cng) {
     if (!trgDialogRef)
       trgDialogRef = new TriggerDialog(parent, cng);
@@ -64,6 +67,19 @@ namespace SV_Trigger {
     if (stp)
       ((TriggerDialog*)stp)->pfGetSignalData = f;
   }
+
+  void setLockReadSData(lockReadSDataCBack f) {
+      if (f) {
+          pfLockReadSData = f;
+      }
+  }
+
+  void setUnlockReadSData(unlockReadSDataCBack f) {
+      if (f) {
+          pfUnlockReadSData = f;
+      }
+  }
+
 
   // вернуть все триггеры
   QMap<QString, TriggerData*> getCopyTriggerRef(QDialog *stp){
@@ -134,4 +150,11 @@ namespace SV_Trigger {
 
     return res;
   }
+}
+
+LockerReadSDataTrigger::LockerReadSDataTrigger() {
+    if (SV_Trigger::pfLockReadSData) SV_Trigger::pfLockReadSData();
+}
+LockerReadSDataTrigger::~LockerReadSDataTrigger() {
+    if (SV_Trigger::pfUnlockReadSData) SV_Trigger::pfUnlockReadSData();
 }

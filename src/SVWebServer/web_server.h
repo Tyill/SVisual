@@ -45,6 +45,12 @@ namespace SV_Web {
 
   void stopServer();
 
+  using lockReadSDataCBack = std::function<void()>;
+  void setLockReadSData(lockReadSDataCBack f);
+
+  using unlockReadSDataCBack = std::function<void()>;
+  void setUnlockReadSData(unlockReadSDataCBack f);
+
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
   void setGetCopySignalRef(getCopySignalRefCBack f);
 

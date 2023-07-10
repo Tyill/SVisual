@@ -60,14 +60,17 @@ class zbxClientSocket : public QTcpSocket
   Q_OBJECT
 
 public:
-
   zbxClientSocket(QObject *parent);
 
 private:
-
   ZbxServer* server_ = nullptr;
-
 
   private slots:
   void readData();
+};
+
+class LockerReadSDataZbx {
+public:
+    explicit LockerReadSDataZbx();
+    ~LockerReadSDataZbx();
 };

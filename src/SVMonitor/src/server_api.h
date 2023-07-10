@@ -33,6 +33,8 @@ QVector<QString> getModuleSignalsSrv(const QString& module);
 
 void lockReadSDataSrv();
 void unlockReadSDataSrv();
+void lockWriteSDataSrv();
+void unlockWriteSDataSrv();
 
 bool loadSignalDataSrv(const QString& name);
 bool addSignalSrv(SV_Base::SignalData* sd);

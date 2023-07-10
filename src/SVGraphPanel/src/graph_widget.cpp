@@ -628,7 +628,7 @@ void GraphWidget::addSignal(QString sign) {
   connect(lb, SIGNAL(req_delSignal(QString)), this, SLOT(delSignal(QString)));
   
   double buffMinValue, buffMaxValue;
-  {LockerReadSData lock;
+  {LockerReadSDataGraph lock;
       buffMinValue = sdata->buffMinValue;
       buffMaxValue = sdata->buffMaxValue;
   }
@@ -846,7 +846,7 @@ QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const
       prevBackVal = 0;
 
   size_t buffSz, endPos;
-  {LockerReadSData lock;
+  {LockerReadSDataGraph lock;
     buffSz = sign->buffData.size(),
     endPos = sign->buffValuePos;
   }
@@ -981,7 +981,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
 
   //////////// Предварит поиск старт точки
   uint64_t tmZnBegin, tmZnEnd;
-  {LockerReadSData lock;
+  {LockerReadSDataGraph lock;
       tmZnBegin = sign->buffMinTime;
       tmZnEnd = sign->buffMaxTime;
   }
@@ -993,7 +993,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
     return QVector<QVector<QPair<int, int>>>();
 
   size_t iBuf;
-  {LockerReadSData lock;
+  {LockerReadSDataGraph lock;
       iBuf = sign->buffBeginPos;
   }
   if ((cng.mode == SV_Graph::ModeGr::Viewer) && (tmZnBegin < tmMinInterval)) {
@@ -1047,7 +1047,7 @@ QPair<double, double> GraphWidget::getSignPntsMaxMinValue(const GraphSignData& s
 QPair<double, double> GraphWidget::getSignMaxMinValue(SignalData* sign, QPair<qint64, qint64>& tmInterval) {
 
     uint64_t tmZnBegin, tmZnEnd;
-    {LockerReadSData lock;
+    {LockerReadSDataGraph lock;
         tmZnBegin = sign->buffMinTime;
         tmZnEnd = sign->buffMaxTime;
     }
@@ -1211,7 +1211,7 @@ void GraphWidget::resizeByTime() {
   if (signalList_.isEmpty() && signalsAlter_.isEmpty()) return;
 
   uint64_t minTm = INT64_MAX, maxTm = 0;
-  {LockerReadSData lock;
+  {LockerReadSDataGraph lock;
       for (auto& s : signals_) {
           if (s.sdata->buffMinTime < minTm) minTm = s.sdata->buffMinTime;
           if (s.sdata->buffMaxTime > maxTm) maxTm = s.sdata->buffMaxTime;

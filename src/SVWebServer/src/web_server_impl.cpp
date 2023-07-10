@@ -239,16 +239,24 @@ QByteArray WebServer::jsonGetLastSignalData(const QStringList& snames) {
 
     if (!sd) continue;
 
+    SV_Base::RecData lastData;
+    QVector<SV_Base::Value> values(SV_PACKETSZ);
+    {LockerReadSDataWeb lock;
+        lastData.beginTime = sd->lastData.beginTime;
+        memcpy(values.data(), sd->lastData.vals, sizeof(SV_Base::Value) * SV_PACKETSZ);
+        lastData.vals = values.data();
+    }
+
     QJsonObject jnSign;
-    jnSign["beginTime"] = qint64(sd->lastData.beginTime);
+    jnSign["beginTime"] = qint64(lastData.beginTime);
 
     QJsonArray jnVals;
     for (int i = 0; i < SV_PACKETSZ; ++i) {
 
       switch (sd->type) {
-      case SV_Base::ValueType::BOOL: jnVals.append(sd->lastData.vals[i].vBool); break;
-      case SV_Base::ValueType::INT: jnVals.append(sd->lastData.vals[i].vInt); break;
-      case SV_Base::ValueType::FLOAT: jnVals.append(sd->lastData.vals[i].vFloat); break;
+      case SV_Base::ValueType::BOOL: jnVals.append(lastData.vals[i].vBool); break;
+      case SV_Base::ValueType::INT: jnVals.append(lastData.vals[i].vInt); break;
+      case SV_Base::ValueType::FLOAT: jnVals.append(lastData.vals[i].vFloat); break;
       }
     }
     jnSign["vals"] = jnVals;

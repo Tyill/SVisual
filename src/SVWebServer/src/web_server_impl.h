@@ -91,3 +91,9 @@ private:
 private slots:
     void readData();
 };
+
+class LockerReadSDataWeb {
+public:
+    explicit LockerReadSDataWeb();
+    ~LockerReadSDataWeb();
+};

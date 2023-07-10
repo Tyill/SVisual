@@ -45,6 +45,12 @@ namespace SV_Zbx {
 
   void stopAgent();
 
+  using lockReadSDataCBack = std::function<void()>;
+  void setLockReadSData(lockReadSDataCBack f);
+
+  using unlockReadSDataCBack = std::function<void()>;
+  void setUnlockReadSData(unlockReadSDataCBack f);
+
   using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString& sign)>;
   void setGetSignalData(getSignalDataCBack f);
 

@@ -445,6 +445,14 @@ bool TriggerDialog::delTrigger(const QString& trg){
 
 bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
 
+  SV_Base::RecData lastData;
+  QVector<SV_Base::Value> values(SV_PACKETSZ);
+  {LockerReadSDataTrigger lock;
+      lastData.beginTime = sd->lastData.beginTime;
+      memcpy(values.data(), sd->lastData.vals, sizeof(SV_Base::Value) * SV_PACKETSZ);
+      lastData.vals = values.data();
+  }
+
   bool ena = true, isImpulse = tr->condTOut <= 0;
   switch (tr->condType){
   case EventType::EQUALS:
@@ -452,14 +460,14 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       ena = false;
       if (sd->type == ValueType::INT){
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vInt == tr->condValue){
+          if (lastData.vals[i].vInt == tr->condValue){
             ena = true; break;
           }
         }
       }
       else{
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vFloat == tr->condValue){
+          if (lastData.vals[i].vFloat == tr->condValue){
             ena = true; break;
           }
         }
@@ -469,14 +477,14 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       ena = true;
       if (sd->type == ValueType::INT){
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vInt != tr->condValue){
+          if (lastData.vals[i].vInt != tr->condValue){
             ena = false; break;
           }
         }
       }
       else{
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vFloat != tr->condValue){
+          if (lastData.vals[i].vFloat != tr->condValue){
             ena = false; break;
           }
         }
@@ -488,14 +496,14 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       ena = false;
       if (sd->type == ValueType::INT){
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vInt < tr->condValue){
+          if (lastData.vals[i].vInt < tr->condValue){
             ena = true; break;
           }
         }
       }
       else{
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vFloat < tr->condValue){
+          if (lastData.vals[i].vFloat < tr->condValue){
             ena = true; break;
           }
         }
@@ -505,14 +513,14 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       ena = true;
       if (sd->type == ValueType::INT){
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vInt >= tr->condValue){
+          if (lastData.vals[i].vInt >= tr->condValue){
             ena = false; break;
           }
         }
       }
       else{
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vFloat >= tr->condValue){
+          if (lastData.vals[i].vFloat >= tr->condValue){
             ena = false; break;
           }
         }
@@ -524,14 +532,14 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       ena = false;
       if (sd->type == ValueType::INT){
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vInt > tr->condValue){
+          if (lastData.vals[i].vInt > tr->condValue){
             ena = true; break;
           }
         }
       }
       else{
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vFloat > tr->condValue){
+          if (lastData.vals[i].vFloat > tr->condValue){
             ena = true; break;
           }
         }
@@ -541,14 +549,14 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       ena = true;
       if (sd->type == ValueType::INT){
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vInt <= tr->condValue){
+          if (lastData.vals[i].vInt <= tr->condValue){
             ena = false; break;
           }
         }
       }
       else{
         for (int i = 0; i < SV_PACKETSZ; ++i) {
-          if (sd->lastData.vals[i].vFloat <= tr->condValue){
+          if (lastData.vals[i].vFloat <= tr->condValue){
             ena = false; break;
           }
         }
@@ -559,7 +567,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
     if (isImpulse){
       ena = false;
       for (int i = 0; i < SV_PACKETSZ; ++i) {
-        if (sd->lastData.vals[i].vBool){
+        if (lastData.vals[i].vBool){
           ena = true; break;
         }
       }
@@ -567,7 +575,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
     else{
       ena = true;
       for (int i = 0; i < SV_PACKETSZ; ++i) {
-        if (!sd->lastData.vals[i].vBool){
+        if (!lastData.vals[i].vBool){
           ena = false; break;
         }
       }
@@ -577,7 +585,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
     if (isImpulse){
       ena = false;
       for (int i = 0; i < SV_PACKETSZ; ++i) {
-        if (!sd->lastData.vals[i].vBool){
+        if (!lastData.vals[i].vBool){
           ena = true; break;
         }
       }
@@ -585,7 +593,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
     else{
       ena = true;
       for (int i = 0; i < SV_PACKETSZ; ++i) {
-        if (sd->lastData.vals[i].vBool){
+        if (lastData.vals[i].vBool){
           ena = false; break;
         }
       }

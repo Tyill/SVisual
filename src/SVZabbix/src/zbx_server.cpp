@@ -66,7 +66,10 @@ QString ZbxServer::getLastValueStr(const QString& sname) {
 
   if (sdata) {
 
-    auto val = sdata->lastData.vals[SV_PACKETSZ - 1];
+    SV_Base::Value val;
+    {LockerReadSDataZbx lock;
+        val = sdata->lastData.vals[SV_PACKETSZ - 1];
+    }
 
     switch (sdata->type) {
     case SV_Base::ValueType::BOOL:  return val.vBool ? "1" : "0";

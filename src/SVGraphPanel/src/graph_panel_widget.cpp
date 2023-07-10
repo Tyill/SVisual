@@ -190,7 +190,7 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
         addGraph("");
     }
     uint64_t buffMinTime, buffMaxTime;
-    {LockerReadSData lock;
+    {LockerReadSDataGraph lock;
         buffMinTime = sd->buffMinTime;
         buffMaxTime = sd->buffMaxTime;
     }
@@ -313,7 +313,7 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
       }
       if (graphObj_.isEmpty()) {
         uint64_t buffMinTime, buffMaxTime;
-        {LockerReadSData lock;
+        {LockerReadSDataGraph lock;
             buffMinTime = sd->buffMinTime;
             buffMaxTime = sd->buffMaxTime;
         }

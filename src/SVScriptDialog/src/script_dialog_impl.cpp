@@ -72,6 +72,7 @@ uint64_t getTimeValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
       if (scrDialogRef->mode_ == SV_Script::ModeGr::Player){
+          LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.beginTime;
       }else {
           if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0)) {
@@ -92,6 +93,7 @@ bool getBoolValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::BOOL)) {
       if (scrDialogRef->mode_ == SV_Script::ModeGr::Player) {
+          LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vBool;
       }else {
           if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
@@ -113,6 +115,7 @@ int getIntValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::INT)) {
       if (scrDialogRef->mode_ == SV_Script::ModeGr::Player){
+          LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vInt;
       }else {
           if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
@@ -134,6 +137,7 @@ float getFloatValue(const std::string& module, const std::string& signal) {
     sign = sn + md;
   if (scrDialogRef->updateBuffValue(md, sn, SV_Base::ValueType::FLOAT)) {
       if (scrDialogRef->mode_ == SV_Script::ModeGr::Player){
+          LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vFloat;
       }else {
           if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
@@ -195,25 +199,33 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
 
   auto sd = signBuff_[sign];
 
-  sd->lastData.vals[iterValue_] = val;
-
+  {LockerWriteSDataScript lock;
+    sd->lastData.vals[iterValue_] = val;
+  }
   // заполняем буфер
-  size_t vp = (mode_ == SV_Script::ModeGr::Player) ? sd->buffValuePos : buffCPos_;
+  size_t vp;
+  if (mode_ == SV_Script::ModeGr::Player) {
+      LockerReadSDataScript lock;
+      sd->buffValuePos;
+  }
+  vp = buffCPos_;
 
   sd->buffData[vp].vals[iterValue_] = val;
 
   if (iterValue_ == (SV_PACKETSZ - 1)) {
 
-    sd->lastData.beginTime = time;
-    sd->buffData[vp].beginTime = time;
-
+    {LockerWriteSDataScript lock;
+        sd->lastData.beginTime = time;
+        sd->buffData[vp].beginTime = time;
+    }
     updateSign(sd, sd->buffBeginPos, vp);
 
     ++vp;
 
     if (mode_ == SV_Script::ModeGr::Player) {
+      LockerWriteSDataScript lock;
+      
       size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
-
       if (vp == buffSz) vp = 0;
 
       sd->buffValuePos = vp;
@@ -224,15 +236,16 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
       }
     }
     else {
+      LockerWriteSDataScript lock;
 
-      if (vp == buffSz_)
-        vp = buffSz_ - 1;
+      if (vp == buffSz_) {
+          vp = buffSz_ - 1;
+      }
 
       sd->buffValuePos = vp;
 
       size_t csz = sd->buffData.size();
       if (csz < buffSz_) {
-
         sd->buffData.resize(buffSz_);
 
         SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * (buffSz_ - csz)];
@@ -270,10 +283,10 @@ void ScriptDialog::updateSign(SignalData* sign, size_t beginPos, size_t valuePos
       if (vl[i].vFloat < minValue) minValue = vl[i].vFloat;
     }
   }
-
-  sign->buffMinValue = minValue;
-  sign->buffMaxValue = maxValue;
-
+  {LockerWriteSDataScript lock;
+      sign->buffMinValue = minValue;
+      sign->buffMaxValue = maxValue;
+  }
 }
 
 bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, SV_Base::ValueType stype) {

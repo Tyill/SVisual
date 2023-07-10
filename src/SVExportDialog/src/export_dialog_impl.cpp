@@ -227,9 +227,13 @@ void ExportDialog::exportToXLSX(QString fileName) {
     xlsx.write(1, col, sd->name.c_str()); ++col;
 
     row = 2;
-    auto bsz = sd->buffData.size(); 
-    size_t cp = sd->buffBeginPos;
-    while (cp != sd->buffValuePos) {
+    size_t bsz, cp, vp;
+    {LockerReadSDataExp lock;
+        bsz = sd->buffData.size();
+        cp = sd->buffBeginPos;
+        vp = sd->buffValuePos;
+    }
+    while (cp != vp) {
 
       uint64_t dt = sd->buffData[cp].beginTime;
       if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()) {
@@ -314,11 +318,15 @@ void ExportDialog::exportToTXT(QString fileName) {
 
       out << "module = " << sd->module.c_str() << '\n';
       out << "signal = " << sd->name.c_str() << '\n';
-
-      auto bsz = sd->buffData.size(); 
-      size_t cp = sd->buffBeginPos;
+            
       QString Value, time;
-      while (cp != sd->buffValuePos) {
+      size_t bsz, cp, vp;
+      {LockerReadSDataExp lock;
+          bsz = sd->buffData.size();
+          cp = sd->buffBeginPos;
+          vp = sd->buffValuePos;
+      }
+      while (cp != vp) {
 
         uint64_t dt = sd->buffData[cp].beginTime;
         if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()) {
@@ -414,16 +422,18 @@ void ExportDialog::exportToJSON(QString fileName) {
 
     writer.Key("Signal");
     writer.String(sd->name.c_str());
-
-    auto bsz = sd->buffData.size();
-    size_t cp = sd->buffBeginPos;
+        
     QString time, Value;
-    while (cp != sd->buffValuePos) {
+    size_t bsz, cp, vp;
+    {LockerReadSDataExp lock;
+        bsz = sd->buffData.size();
+        cp = sd->buffBeginPos;
+        vp = sd->buffValuePos;
+    }
+    while (cp != vp) {
 
       uint64_t dt = sd->buffData[cp].beginTime;
-
-      if ((dt < sd->buffMinTime) || (dt > sd->buffMaxTime)) break;
-
+            
       if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()) {
 
         if (ui.rbtnEveryVal->isChecked()) {

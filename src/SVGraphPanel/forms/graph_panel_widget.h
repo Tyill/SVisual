@@ -111,9 +111,9 @@ public:
     }
 };
 
-class LockerReadSData {
+class LockerReadSDataGraph {
 public:
-    explicit LockerReadSData();
-    ~LockerReadSData();
+    explicit LockerReadSDataGraph();
+    ~LockerReadSDataGraph();
 };
 

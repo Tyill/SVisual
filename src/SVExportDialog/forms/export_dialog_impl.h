@@ -69,4 +69,9 @@ private:
   void delSignalFromExport();
 };
 
+class LockerReadSDataExp {
+public:
+    explicit LockerReadSDataExp();
+    ~LockerReadSDataExp();
+};
 

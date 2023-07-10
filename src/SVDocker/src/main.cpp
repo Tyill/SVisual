@@ -37,6 +37,13 @@ void statusMess(const std::string& mess){
   std::cout << mess << std::endl;
 }
 
+void lockReadSDataSrv() {
+    return SV_Srv::lockReadSData();
+}
+void unlockReadSDataSrv() {
+    return SV_Srv::unlockReadSData();
+}
+
 QMap<QString, SV_Base::ModuleData *> getCopyModuleRefSrv(){
 
   QMap<QString, SV_Base::ModuleData *> cmref;
@@ -113,19 +120,19 @@ void init(const std::string& initPath, config& cng){
 
 int main(int argc, char* argv[]){
 
-    QCoreApplication a(argc, argv);
+  QCoreApplication a(argc, argv);
 
-    SV_Misc::TCPServer::setErrorCBack(statusMess);
-    SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
+  SV_Misc::TCPServer::setErrorCBack(statusMess);
+  SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
 
   SV_Srv::setStatusCBack(statusMess);
 
   config cng;
 
   std::string iniPath = argc > 1 ? argv[1] : a.applicationDirPath().toStdString() + "/svdocker.ini";
-    init(iniPath, cng);
+  init(iniPath, cng);
 
-    SV_Srv::Config scng;
+  SV_Srv::Config scng;
 
   scng.cycleRecMs = cng.cycleRecMs;
   scng.packetSz = cng.packetSz;
@@ -134,7 +141,7 @@ int main(int argc, char* argv[]){
   scng.outArchiveName = cng.outArchiveName;
   scng.outArchivePath = cng.outArchivePath;
     
-    if (SV_Srv::startServer(scng) && SV_Misc::TCPServer::start("0.0.0.0", cng.tcp_port)){
+  if (SV_Srv::startServer(scng) && SV_Misc::TCPServer::start("0.0.0.0", cng.tcp_port)){
     statusMess("TCP server run port: " + std::to_string(cng.tcp_port));
   }
   else{
@@ -142,6 +149,8 @@ int main(int argc, char* argv[]){
     return -1;
   }
 
+  SV_Web::setLockReadSData(lockReadSDataSrv);
+  SV_Web::setUnlockReadSData(unlockReadSDataSrv);
   SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
   SV_Web::setGetSignalData(getSignalDataSrv);
   SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
@@ -151,9 +160,8 @@ int main(int argc, char* argv[]){
   else
     statusMess("WEB server not run port: " + std::to_string(cng.web_port));
 
-    statusMess("runPath " + QCoreApplication::applicationDirPath().toStdString());
-    statusMess("outArchivePath " + cng.outArchivePath);
-
+  statusMess("runPath " + QCoreApplication::applicationDirPath().toStdString());
+  statusMess("outArchivePath " + cng.outArchivePath);
 
   return a.exec();
 }
