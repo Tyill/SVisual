@@ -42,7 +42,6 @@ extern SV_Srv::onModuleConnectCBack pfModuleConnectCBack;
 extern SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack;
 extern SV_Srv::onUpdateSignalsCBack pfUpdateSignalsCBack;
 extern SV_Srv::onAddSignalsCBack pfAddSignalsCBack;
-extern const int BUFF_SIGN_HOUR_CNT = 2;
 
 namespace SV_Srv {
 extern std::shared_mutex m_mtxRW;
@@ -104,38 +103,67 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
   m_archive.addSignal(bp.name, bp.module, bp.type);
 }
 
-void ThreadUpdate::updateSignal(SignalData* sign, size_t beginPos, size_t valuePos){
+void ThreadUpdate::updateSignals(std::map<std::string, LastSData>& sLast, std::map<std::string, SV_Base::SignalData*>& sref){
 
-  sign->buffMinTime = sign->buffData[beginPos].beginTime;
-  sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
+    std::lock_guard lock(SV_Srv::m_mtxRW);
+
+    const size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+    const size_t packSz = SV_PACKETSZ * sizeof(Value);
+
+    for (auto& s : sLast){
+       auto& slast = s.second;
+       if (slast.isActive){
+            auto sdata = sref[s.first];
+
+            sdata->lastData.beginTime = slast.beginTime;
+            memcpy(sdata->lastData.vals, slast.vals.data(), packSz);
+            if (sdata->isBuffEnable){
+                size_t vp = sdata->buffValuePos;
+                sdata->buffData[vp].beginTime = slast.beginTime;
+                memcpy(sdata->buffData[vp].vals, slast.vals.data(), packSz);
+
+                updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
+
+                ++vp;
+                if (vp == buffSz) vp = 0;
+                sdata->buffValuePos = vp;
+
+                if (vp == sdata->buffBeginPos) {
+                    ++sdata->buffBeginPos;
+                    if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
+                }
+            }
+            slast.isActive = false;
+        }
+    }
+}
+
+void ThreadUpdate::updateSignalsBuff(SignalData* sign, size_t beginPos, size_t valuePos){
 
   double minValue = sign->buffMinValue,
          maxValue = sign->buffMaxValue;
 
   if (sign->type == ValueType::INT){
-
     Value* vl = sign->buffData[valuePos].vals;
     for (int i = 0; i < SV_PACKETSZ; ++i){
-
       if (vl[i].vInt > maxValue) maxValue = vl[i].vInt;
       if (vl[i].vInt < minValue) minValue = vl[i].vInt;
     }
 
   }
   else if (sign->type == ValueType::FLOAT){
-
     Value* vl = sign->buffData[valuePos].vals;
     for (int i = 0; i < SV_PACKETSZ; ++i){
-
       if (vl[i].vFloat > maxValue) maxValue = vl[i].vFloat;
       if (vl[i].vFloat < minValue) minValue = vl[i].vFloat;
     }
   }
-  {
-      std::lock_guard lock(SV_Srv::m_mtxRW);
-      sign->buffMinValue = minValue;
-      sign->buffMaxValue = maxValue;
-  }
+
+  sign->buffMinValue = minValue;
+  sign->buffMaxValue = maxValue;
+
+  sign->buffMinTime = sign->buffData[beginPos].beginTime;
+  sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
 }
 
 void ThreadUpdate::moduleConnect(const string& module){
@@ -153,11 +181,12 @@ void ThreadUpdate::moduleDisconnect(const string& module){
 void ThreadUpdate::updateCycle(){
 
   auto sref = SV_Srv::getCopySignalRef();
+  std::map<std::string, LastSData> sLast;
   map<string, bool> signActive;
   for (auto& s : sref) {
-    signActive[s.second->name + s.second->module] = true;
+      sLast[s.first] = LastSData(SV_PACKETSZ);
+      signActive[s.first] = true;
   }
-
   auto mref = SV_Srv::getCopyModuleRef();
   map<string, bool> moduleActive;
   for (auto& m : mref) {
@@ -167,7 +196,6 @@ void ThreadUpdate::updateCycle(){
   SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
-  size_t buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
   size_t packSz = SV_PACKETSZ * sizeof(Value);                    // размер пакета
   int checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;           // проверка связи, тоже жестко
 
@@ -179,55 +207,34 @@ void ThreadUpdate::updateCycle(){
     
     BufferData::InputData bufPos = m_buffData.getDataByReadPos();
     while (bufPos.isActive){
-
       isBuffActive = true;
 
       string sign = bufPos.name + bufPos.module;
-
-      if (sref.find(sign) == sref.end()){
+      if (sLast.find(sign) == sLast.end()){
         addSignal(bufPos);
         sref[sign] = SV_Srv::getSignalData(sign);
-        mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);;
+        mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);
+        sLast[sign] = LastSData(SV_PACKETSZ);
         isNewSign = true;
       }
 
-      auto signData = sref[sign];
+      auto& sdata = sLast[sign];
 
+      sdata.isActive = true;
       signActive[sign] = true;
-      moduleActive[signData->module] = true;
+      moduleActive[bufPos.module] = true;
 
-      {
-          std::lock_guard lock(SV_Srv::m_mtxRW);
-          signData->lastData.beginTime = bufPos.data.beginTime;
-          memcpy(signData->lastData.vals, bufPos.data.vals, packSz);
-      }
-      // заполняем буфер, если разрешено
-      if (signData->isBuffEnable) {
-        size_t vp = signData->buffValuePos;
-        signData->buffData[vp].beginTime = bufPos.data.beginTime;
-        memcpy(signData->buffData[vp].vals, bufPos.data.vals, packSz);
-
-        updateSignal(signData, signData->buffBeginPos, vp);
-
-        {
-            std::lock_guard lock(SV_Srv::m_mtxRW);
-            ++vp;
-            if (vp == buffSz) vp = 0;
-            signData->buffValuePos = vp;
-
-            if (vp == signData->buffBeginPos) {
-                ++signData->buffBeginPos;
-                if (signData->buffBeginPos >= buffSz) signData->buffBeginPos = 0;
-            }
-        }
-      }
+      sdata.beginTime = bufPos.data.beginTime;
+      memcpy(sdata.vals.data(), bufPos.data.vals, packSz);
 
       if (cng.outArchiveEna || cng.outDataBaseEna){
-        m_archive.addValue(sign, bufPos.data);
+          m_archive.addValue(sign, bufPos.data);
       }
       m_buffData.incReadPos();
       bufPos = m_buffData.getDataByReadPos();
     }
+
+    updateSignals(sLast, sref);
 
     if (isBuffActive && pfUpdateSignalsCBack){
       pfUpdateSignalsCBack();
@@ -244,26 +251,26 @@ void ThreadUpdate::updateCycle(){
 
     // проверка связи
     if (tmDelay.onDelaySec(true, checkConnectTout, 0)){
-      tmDelay.onDelaySec(false, 0, 0);
+        tmDelay.onDelaySec(false, 0, 0);
 
-      for (auto& s : signActive){
-        sref[s.first]->isActive = s.second;
-        s.second = false;
-      }
+        std::lock_guard lock(SV_Srv::m_mtxRW);
 
-      for (auto& m : moduleActive){
-
-        if (m.first == "Virtual") continue;
-
-        if (!mref[m.first]->isActive && m.second){
-          moduleConnect(m.first);
+        for (auto& s : signActive){
+            sref[s.first]->isActive = s.second;
+            s.second = false;
         }
-        else if (mref[m.first]->isActive && !m.second){
-          moduleDisconnect(m.first);
+        for (auto& m : moduleActive){
+            if (m.first == "Virtual") continue;
+
+            if (!mref[m.first]->isActive && m.second){
+                moduleConnect(m.first);
+            }
+            else if (mref[m.first]->isActive && !m.second){
+                moduleDisconnect(m.first);
+            }
+            mref[m.first]->isActive = m.second;
+            m.second = false;
         }
-        mref[m.first]->isActive = m.second;
-        m.second = false;
-      }
     }
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();

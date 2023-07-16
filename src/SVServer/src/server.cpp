@@ -39,8 +39,6 @@ SV_Srv::onAddSignalsCBack pfAddSignalsCBack = nullptr;
 SV_Srv::onModuleConnectCBack pfModuleConnectCBack = nullptr;
 SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack = nullptr;
 
-const int BUFF_SIGN_HOUR_CNT = 2;  // жестко размер буфера, час
-
 namespace{
     const char* beginMess = "=begin=";
     const char* endMess = "=end=";
@@ -233,21 +231,21 @@ namespace SV_Srv {
 
   bool signalBufferEna(const std::string& sign){
 
-    std::lock_guard<std::mutex> lck(m_mtxCommon);
+    std::lock_guard lck(m_mtxCommon);
 
     if (m_signalData.find(sign) == m_signalData.end()) return false;
 
     if (!m_signalData[sign]->isBuffEnable){
-
-      int buffSz = BUFF_SIGN_HOUR_CNT * 3600000 / SV_CYCLESAVE_MS;
-
+      const int buffSz = 2 * 3600000 / SV_CYCLESAVE_MS;  // размер буфера 2 часа
       m_signalData[sign]->buffData.resize(buffSz);
 
       SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * buffSz];
-      for (int i = 0; i < buffSz; ++i)
+      for (int i = 0; i < buffSz; ++i){
         m_signalData[sign]->buffData[i].vals = &buff[i * SV_PACKETSZ];
-
-      m_signalData[sign]->isBuffEnable = true;
+      }
+      {std::lock_guard lckw(m_mtxRW);
+         m_signalData[sign]->isBuffEnable = true;
+      }
     }
     return true;
   }
