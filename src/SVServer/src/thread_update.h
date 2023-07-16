@@ -62,7 +62,7 @@ private:
 
   void updateCycle();
   void addSignal(const BufferData::InputData& bp);
-  void updateSignals(std::map<std::string, LastSData>&, std::map<std::string, SV_Base::SignalData*>&);
+  void updateSignals(std::map<std::string, std::vector<LastSData>>&, std::map<std::string, SV_Base::SignalData*>&);
   void updateSignalsBuff(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
   void moduleConnect(const std::string& module);
   void moduleDisconnect(const std::string& module);

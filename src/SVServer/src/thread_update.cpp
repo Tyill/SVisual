@@ -103,7 +103,7 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
   m_archive.addSignal(bp.name, bp.module, bp.type);
 }
 
-void ThreadUpdate::updateSignals(std::map<std::string, LastSData>& sLast, std::map<std::string, SV_Base::SignalData*>& sref){
+void ThreadUpdate::updateSignals(map<string, vector<LastSData>>& sLast, std::map<std::string, SV_Base::SignalData*>& sref){
 
     std::lock_guard lock(SV_Srv::m_mtxRW);
 
@@ -111,30 +111,32 @@ void ThreadUpdate::updateSignals(std::map<std::string, LastSData>& sLast, std::m
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
 
     for (auto& s : sLast){
-       auto& slast = s.second;
-       if (slast.isActive){
-            auto sdata = sref[s.first];
+       for (auto& slast : s.second){
+           if (slast.isActive) {
+               auto sdata = sref[s.first];
 
-            sdata->lastData.beginTime = slast.beginTime;
-            memcpy(sdata->lastData.vals, slast.vals.data(), packSz);
-            if (sdata->isBuffEnable){
-                size_t vp = sdata->buffValuePos;
-                sdata->buffData[vp].beginTime = slast.beginTime;
-                memcpy(sdata->buffData[vp].vals, slast.vals.data(), packSz);
+               sdata->lastData.beginTime = slast.beginTime;
+               memcpy(sdata->lastData.vals, slast.vals.data(), packSz);
+               if (sdata->isBuffEnable) {
+                   size_t vp = sdata->buffValuePos;
+                   sdata->buffData[vp].beginTime = slast.beginTime;
+                   memcpy(sdata->buffData[vp].vals, slast.vals.data(), packSz);
 
-                updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
+                   updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
 
-                ++vp;
-                if (vp == buffSz) vp = 0;
-                sdata->buffValuePos = vp;
+                   ++vp;
+                   if (vp == buffSz) vp = 0;
+                   sdata->buffValuePos = vp;
 
-                if (vp == sdata->buffBeginPos) {
-                    ++sdata->buffBeginPos;
-                    if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
-                }
-            }
-            slast.isActive = false;
-        }
+                   if (vp == sdata->buffBeginPos) {
+                       ++sdata->buffBeginPos;
+                       if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
+                   }
+               }
+               slast.isActive = false;
+           }
+       }
+       s.second.resize(1);
     }
 }
 
@@ -181,10 +183,10 @@ void ThreadUpdate::moduleDisconnect(const string& module){
 void ThreadUpdate::updateCycle(){
 
   auto sref = SV_Srv::getCopySignalRef();
-  std::map<std::string, LastSData> sLast;
+  map<string, vector<LastSData>> sLast;
   map<string, bool> signActive;
   for (auto& s : sref) {
-      sLast[s.first] = LastSData(SV_PACKETSZ);
+      sLast[s.first] = vector<LastSData>{ LastSData(SV_PACKETSZ)};
       signActive[s.first] = true;
   }
   auto mref = SV_Srv::getCopyModuleRef();
@@ -214,11 +216,13 @@ void ThreadUpdate::updateCycle(){
         addSignal(bufPos);
         sref[sign] = SV_Srv::getSignalData(sign);
         mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);
-        sLast[sign] = LastSData(SV_PACKETSZ);
+        sLast[sign] = vector<LastSData>{ LastSData(SV_PACKETSZ) };
         isNewSign = true;
       }
-
-      auto& sdata = sLast[sign];
+      if (sLast[sign].back().isActive) {
+          sLast[sign].push_back(LastSData(SV_PACKETSZ));
+      }
+      auto& sdata = sLast[sign].back();
 
       sdata.isActive = true;
       signActive[sign] = true;
