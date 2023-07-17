@@ -782,8 +782,6 @@ void MainWin::load(){
     scriptDialog_->setWindowFlags(Qt::Window);
     SV_Script::setLockReadSData(lockReadSDataSrv);
     SV_Script::setUnlockReadSData(unlockReadSDataSrv);
-    SV_Script::setLockWriteSData(lockWriteSDataSrv);
-    SV_Script::setUnlockWriteSData(unlockWriteSDataSrv);
     SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
     SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
     SV_Script::setGetSignalData(scriptDialog_, getSignalDataSrv);

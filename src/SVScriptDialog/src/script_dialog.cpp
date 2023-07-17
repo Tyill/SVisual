@@ -31,8 +31,6 @@ namespace SV_Script {
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
-  lockWriteSDataCBack pfLockWriteSData = nullptr;
-  unlockWriteSDataCBack pfUnlockWriteSData = nullptr;
     
   QDialog* getScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
       if (!scrDialogRef) {
@@ -84,17 +82,7 @@ namespace SV_Script {
       if (f) {
           pfUnlockReadSData = f;
       }
-  }
-  void setLockWriteSData(lockWriteSDataCBack f) {
-      if (f) {
-          pfLockWriteSData = f;
-      }
-  }
-  void setUnlockWriteSData(unlockWriteSDataCBack f) {
-      if (f) {
-          pfUnlockWriteSData = f;
-      }
-  }
+  }  
   bool isActiveScript(QDialog* stp, const QString& fname) {
       if (stp) {
           return static_cast<ScriptDialog*>(stp)->isActiveScript(fname);
@@ -115,6 +103,11 @@ namespace SV_Script {
   void refreshScript(QDialog* stp, const QString& fname) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->refreshScript(fname);
+      }
+  }
+  void restartScript(QDialog* stp) {
+      if (stp) {
+          static_cast<ScriptDialog*>(stp)->restartScript();
       }
   }
   void setLoadSignalData(QDialog *stp, isLoadSignalDataCBack f) {
@@ -144,10 +137,4 @@ LockerReadSDataScript::LockerReadSDataScript() {
 }
 LockerReadSDataScript::~LockerReadSDataScript() {
     if (SV_Script::pfUnlockReadSData) SV_Script::pfUnlockReadSData();
-}
-LockerWriteSDataScript::LockerWriteSDataScript() {
-    if (SV_Script::pfLockWriteSData) SV_Script::pfLockWriteSData();
-}
-LockerWriteSDataScript::~LockerWriteSDataScript() {
-    if (SV_Script::pfUnlockWriteSData) SV_Script::pfUnlockWriteSData();
 }

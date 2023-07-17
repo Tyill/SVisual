@@ -104,10 +104,11 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
 }
 
 void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sref, std::map<std::string, SV_Base::ModuleData*>& mref,
-                                 std::map<std::string, bool>& signActive, std::map<std::string, bool>& moduleActive,
-                                 bool& isNewSign, bool& isBuffActive){
+                                 std::map<std::string, bool>& signActive, std::map<std::string, bool>& moduleActive){
 
     std::lock_guard lock(SV_Srv::m_mtxRW);
+
+    bool isNewSign = false, isBuffActive = false;
 
     const size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
@@ -153,6 +154,13 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
       }
       m_buffData.incReadPos();
       bufPos = m_buffData.getDataByReadPos();
+    }
+
+    if (isBuffActive && pfUpdateSignalsCBack) {
+        pfUpdateSignalsCBack();
+    }
+    if (isNewSign && pfAddSignalsCBack) {
+        pfAddSignalsCBack();
     }
 }
 
@@ -217,19 +225,9 @@ void ThreadUpdate::updateCycle(){
   while (!m_thrStop){
 
     tmDelay.update();
-
-    bool isNewSign = false, isBuffActive = false;
-
-    updateSignals(sref, mref, signActive, moduleActive, isNewSign, isBuffActive);
-
-    if (isBuffActive && pfUpdateSignalsCBack){
-      pfUpdateSignalsCBack();
-    }
-
-    if (isNewSign && pfAddSignalsCBack){
-      pfAddSignalsCBack();
-    }
-
+       
+    updateSignals(sref, mref, signActive, moduleActive);
+       
     // архив
     if (tmDelay.hourOnc() && (cng.outArchiveEna || cng.outDataBaseEna)){
       m_archive.copyToDisk(false);

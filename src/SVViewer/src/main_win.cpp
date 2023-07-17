@@ -970,8 +970,8 @@ void MainWin::actionOpenData() {
       if (ok) {
         ui.lbStatusMess->setText(cng.selOpenDir);
         sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
-      }
-      else{
+        SV_Script::restartScript(scriptPanel_);
+      }else{
         ui.lbStatusMess->setText(tr("Файл не удалось прочитать"));
       }
       ui.progressBar->setVisible(false);

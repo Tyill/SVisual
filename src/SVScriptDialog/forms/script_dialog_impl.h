@@ -64,14 +64,11 @@ public:
   ~ScriptDialog();
 
   void startUpdateThread();
-
   bool isActiveScript(const QString& fname);
-
   void activeScript(const QString& fname);
-
   void deactiveScript(const QString& fname);
-
   void refreshScript(const QString& fname);
+  void restartScript();
 
 private:
   Ui::ScriptDialog ui;
@@ -125,11 +122,3 @@ public:
     explicit LockerReadSDataScript();
     ~LockerReadSDataScript();
 };
-class LockerWriteSDataScript {
-public:
-    explicit LockerWriteSDataScript();
-    ~LockerWriteSDataScript();
-};
-
-
-

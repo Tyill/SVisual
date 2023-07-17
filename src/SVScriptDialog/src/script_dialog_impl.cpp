@@ -75,9 +75,6 @@ uint64_t getTimeValue(const std::string& module, const std::string& signal) {
           LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.beginTime;
       }else {
-          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0)) {
-              scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
-          }
           size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
           return scrDialogRef->signBuff_[sign]->buffData[inx].beginTime;
       }
@@ -96,11 +93,7 @@ bool getBoolValue(const std::string& module, const std::string& signal) {
           LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vBool;
       }else {
-          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-            scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
-
           size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
           return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vBool;
       }
   }
@@ -118,11 +111,7 @@ int getIntValue(const std::string& module, const std::string& signal) {
           LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vInt;
       }else {
-          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-            scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
-
           size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
           return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vInt;
       }
   }
@@ -140,11 +129,7 @@ float getFloatValue(const std::string& module, const std::string& signal) {
           LockerReadSDataScript lock;
           return scrDialogRef->signBuff_[sign]->lastData.vals[scrDialogRef->iterValue_].vFloat;
       }else {
-          if ((scrDialogRef->buffCPos_ == 0) && (scrDialogRef->iterValue_ == 0))
-            scrDialogRef->buffSz_ = qMax(scrDialogRef->buffSz_, scrDialogRef->signBuff_[sign]->buffData.size());
-
           size_t inx = qMin(scrDialogRef->buffCPos_, scrDialogRef->signBuff_[sign]->buffData.size() - 1);
-
           return scrDialogRef->signBuff_[sign]->buffData[inx].vals[scrDialogRef->iterValue_].vFloat;
       }
   }
@@ -198,10 +183,8 @@ void setFloatValue(const std::string& signal, float fval, uint64_t time) {
 void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t time) {
 
   auto sd = signBuff_[sign];
-
-  {LockerWriteSDataScript lock;
-    sd->lastData.vals[iterValue_] = val;
-  }
+  sd->lastData.vals[iterValue_] = val;
+  
   // заполняем буфер
   size_t vp;
   if (mode_ == SV_Script::ModeGr::Player) {
@@ -213,21 +196,17 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
   sd->buffData[vp].vals[iterValue_] = val;
 
   if (iterValue_ == (SV_PACKETSZ - 1)) {
+    sd->lastData.beginTime = time;
+    sd->buffData[vp].beginTime = time;
 
-    {LockerWriteSDataScript lock;
-        sd->lastData.beginTime = time;
-        sd->buffData[vp].beginTime = time;
-    }
     updateSign(sd, sd->buffBeginPos, vp);
 
     ++vp;
-
     if (mode_ == SV_Script::ModeGr::Player) {
-      LockerWriteSDataScript lock;
-      
-      size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа жестко
-      if (vp == buffSz) vp = 0;
-
+      size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+      if (vp == buffSz) {
+          vp = 0;
+      }
       sd->buffValuePos = vp;
 
       if (vp == sd->buffBeginPos) {
@@ -236,12 +215,9 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
       }
     }
     else {
-      LockerWriteSDataScript lock;
-
       if (vp == buffSz_) {
           vp = buffSz_ - 1;
       }
-
       sd->buffValuePos = vp;
 
       size_t csz = sd->buffData.size();
@@ -257,36 +233,28 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
 }
 
 void ScriptDialog::updateSign(SignalData* sign, size_t beginPos, size_t valuePos) {
-
-  sign->buffMinTime = sign->buffData[beginPos].beginTime;
-  sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
-
+     
   double minValue = sign->buffMinValue, maxValue = sign->buffMaxValue;
 
   if (sign->type == ValueType::INT) {
-
     Value* vl = sign->buffData[valuePos].vals;
-
     for (int i = 0; i < SV_PACKETSZ; ++i) {
-
       if (vl[i].vInt > maxValue) maxValue = vl[i].vInt;
       if (vl[i].vInt < minValue) minValue = vl[i].vInt;
     }
-
   }
   else if (sign->type == ValueType::FLOAT) {
-
     Value* vl = sign->buffData[valuePos].vals;
     for (int i = 0; i < SV_PACKETSZ; ++i) {
-
       if (vl[i].vFloat > maxValue) maxValue = vl[i].vFloat;
       if (vl[i].vFloat < minValue) minValue = vl[i].vFloat;
     }
   }
-  {LockerWriteSDataScript lock;
-      sign->buffMinValue = minValue;
-      sign->buffMaxValue = maxValue;
-  }
+  sign->buffMinTime = sign->buffData[beginPos].beginTime;
+  sign->buffMaxTime = sign->buffData[valuePos].beginTime + SV_CYCLESAVE_MS;
+
+  sign->buffMinValue = minValue;
+  sign->buffMaxValue = maxValue;
 }
 
 bool ScriptDialog::updateBuffValue(const QString& module, const QString& sname, SV_Base::ValueType stype) {
@@ -388,19 +356,17 @@ ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::M
 
   connect(ui.btnNewScript, SIGNAL(clicked()), SLOT(addScript()));
   connect(ui.btnSave, SIGNAL(clicked()), SLOT(saveScript()));
+
   connect(ui.btnSetActive, &QPushButton::clicked, [this]() {
-    std::unique_lock<std::mutex> lck(mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
     auto items = ui.tblScripts->selectedItems();
     for (auto it : items) {
       QString sname = it->text();
-      auto sts = std::find_if(scrState_.begin(), scrState_.end(),
-        [sname](const scriptState& st) {
+      auto sts = std::find_if(scrState_.begin(), scrState_.end(),[sname](const scriptState& st) {
         return st.name == sname;
-      }
-      );
-
-      if (!sts->isActive) {
+      });
+      if (sts != scrState_.end() && !sts->isActive) {
         int rowCnt = ui.tblActiveScripts->rowCount();
         ui.tblActiveScripts->insertRow(rowCnt);
         auto itm = new QTableWidgetItem(sname);
@@ -413,7 +379,6 @@ ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::M
     }
   });
   connect(ui.btnResetActive, &QPushButton::clicked, [this]() {
-
     auto items = ui.tblActiveScripts->selectedItems();
     for (auto it : items) {
       QString sname = it->text();
@@ -427,20 +392,15 @@ ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::M
     }
   });
   connect(ui.btnClear, &QPushButton::clicked, [this]() {
-
     ui.txtStatusMess->clear();
   });
   connect(ui.tblScripts, SIGNAL(cellChanged(int, int)), SLOT(nameScriptChange(int, int)));
+
   connect(ui.tabWidget, &QTabWidget::tabCloseRequested, [this](int inx) {
-
     QString sname = ui.tabWidget->tabText(inx);
-    auto it = std::find_if(scrState_.begin(), scrState_.end(),
-
-      [sname](const scriptState& st) {
-
+    auto it = std::find_if(scrState_.begin(), scrState_.end(), [sname](const scriptState& st) {
       return st.name == sname;
     });
-
     if (it->isChange) {
       QMessageBox msgBox;
       msgBox.setText(sname + tr(" изменен."));
@@ -457,7 +417,6 @@ ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::M
     ui.tabWidget->removeTab(inx);
 
     for (int i = 0; i < scrState_.size(); ++i) {
-
       if (scrState_[i].tabInx == inx)
         scrState_[i].tabInx = -1;
       else if (scrState_[i].tabInx > inx)
@@ -466,13 +425,9 @@ ScriptDialog::ScriptDialog(QWidget *parent, SV_Script::Config cng_, SV_Script::M
 
     if ((inx - 1) >= 0) {
       QString sname = ui.tabWidget->tabText(inx - 1);
-      auto it = std::find_if(scrState_.begin(), scrState_.end(),
-
-        [sname](const scriptState& st) {
-
+      auto it = std::find_if(scrState_.begin(), scrState_.end(), [sname](const scriptState& st) {
         return st.name == sname;
       });
-
       ui.lbChange->setText(it->isChange ? "*" : "");
     }
   });
@@ -596,7 +551,7 @@ void ScriptDialog::contextMenuEvent(QContextMenuEvent * event) {
   menu->addAction(tr("Удалить"));
 
   connect(menu, &QMenu::triggered, [this, item](QAction*) {
-    std::unique_lock<std::mutex> lck(mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
     int row = item->row();
     QString scrName = ui.tblScripts->item(row, 0)->text();
@@ -650,7 +605,7 @@ void ScriptDialog::startUpdateThread() {
 
 void ScriptDialog::addScript(QString name) {
 
-  std::unique_lock<std::mutex> lck(mtx_);
+  std::lock_guard<std::mutex> lck(mtx_);
 
   bool isNew = name.isEmpty();
   if (isNew)
@@ -727,13 +682,12 @@ void ScriptDialog::activeScript(const QString& sname) {
 
   if (!isActiveScript(sname)) {
 
-    std::unique_lock<std::mutex> lck(mtx_);
+    std::lock_guard<std::mutex> lck(mtx_);
 
     std::find_if(scrState_.begin(), scrState_.end(),
       [sname](const scriptState& st) {
       return st.name == sname;
-    }
-    )->isActive = true;
+    })->isActive = true;
 
     int rowCnt = ui.tblActiveScripts->rowCount();
     ui.tblActiveScripts->insertRow(rowCnt);
@@ -768,36 +722,56 @@ void ScriptDialog::deactiveScript(const QString& sname) {
 }
 
 void ScriptDialog::refreshScript(const QString& sname) {
-
-  QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
-
-  QTextStream txtStream(&file);
-  txtStream.setCodec("utf8");
-
-  file.open(QIODevice::ReadOnly);
-
-  auto sts = std::find_if(scrState_.begin(), scrState_.end(),
-    [sname](const scriptState& st) {
-    return st.name == sname;
+     
+  if (auto sts = std::find_if(scrState_.begin(), scrState_.end(), [sname](const scriptState& st) {
+          return st.name == sname;
+      }); sts != scrState_.end()) {
+    
+      QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
+      QTextStream txtStream(&file);
+      txtStream.setCodec("utf8");
+      if (file.open(QIODevice::ReadOnly)) {
+          sts->text = txtStream.readAll();
+          file.close();
+      }
+      int sz = ui.tabWidget->count();
+      for (int i = 0; i < sz; ++i) {
+          if (ui.tabWidget->tabText(i) == sname) {
+              qobject_cast<QTextEdit*>(ui.tabWidget->widget(i))->setText(sts->text);
+              sts->isChange = false;
+              ui.lbChange->setText("");
+              break;
+          }
+      }
   }
-  );
+}
 
-  sts->text = txtStream.readAll();
+void ScriptDialog::restartScript() {
+    std::lock_guard<std::mutex> lck(mtx_);
 
-  file.close();
-
-  int sz = ui.tabWidget->count();
-  for (int i = 0; i < sz; ++i) {
-    if (ui.tabWidget->tabText(i) == sname) {
-
-      ((QTextEdit*)ui.tabWidget->widget(i))->setText(sts->text);
-
-      sts->isChange = false;
-      ui.lbChange->setText("");
-
-      break;
+    const auto items = ui.tblScripts->selectedItems();
+    if(!items.isEmpty() && pfGetCopySignalRef){
+        for (const auto s : pfGetCopySignalRef()) {
+            buffSz_ = qMax(buffSz_, s->buffData.size());
+        }
+        buffCPos_ = 0;
     }
-  }
+    for (auto s : signBuff_) {
+        if (s->module == "Virtual") {
+            s->buffBeginPos = 0;
+            s->buffValuePos = 0;
+            s->buffMinTime = 0;
+            s->buffMaxTime = 1;
+            size_t csz = s->buffData.size();
+            if (csz < buffSz_) {
+                s->buffData.resize(buffSz_);
+                SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * (buffSz_ - csz)];
+                for (size_t i = 0; i < (buffSz_ - csz); ++i) {
+                    s->buffData[i + csz].vals = &buff[i * SV_PACKETSZ];
+                }
+            }
+        }
+    }
 }
 
 void ScriptDialog::nameScriptChange(int row, int col) {
@@ -806,23 +780,16 @@ void ScriptDialog::nameScriptChange(int row, int col) {
 
     QString sname = ui.tblScripts->item(row, 0)->text();
 
-    if (std::find_if(scrState_.begin(), scrState_.end(),
-
-      [sname](const scriptState& st) {
-
+    if (std::find_if(scrState_.begin(), scrState_.end(), [sname](const scriptState& st) {
       return st.name == sname;
-
-    }) != scrState_.end())
-    {
+    }) != scrState_.end()){
       ui.txtStatusMess->append(QString::fromStdString(SV_Misc::currDateTime()) + " " + tr("Скрипт с таким именем уже существует"));
-
       ui.tblScripts->item(row, 0)->setText(scrState_[row].name);
       return;
     }
-
-    if (scrState_[row].tabInx >= 0)
-      ui.tabWidget->setTabText(scrState_[row].tabInx, sname);
-
+    if (scrState_[row].tabInx >= 0) {
+        ui.tabWidget->setTabText(scrState_[row].tabInx, sname);
+    }
     int sz = ui.tblActiveScripts->rowCount();
     for (int i = 0; i < sz; ++i) {
       if (ui.tblActiveScripts->item(i, 0)->text() == scrState_[row].name) {
@@ -830,7 +797,6 @@ void ScriptDialog::nameScriptChange(int row, int col) {
         break;
       }
     }
-
     QFile::rename(QApplication::applicationDirPath() + "/scripts/" + scrState_[row].name,
       QApplication::applicationDirPath() + "/scripts/" + sname);
 
@@ -840,38 +806,27 @@ void ScriptDialog::nameScriptChange(int row, int col) {
 
 void ScriptDialog::saveScript() {
 
-  if (ui.tabWidget->currentIndex() < 0)
+  if (ui.tabWidget->currentIndex() < 0) {
     return;
+  }
 
   QString sname = ui.tabWidget->tabText(ui.tabWidget->currentIndex());
-  auto it = std::find_if(scrState_.begin(), scrState_.end(),
-
-    [sname](const scriptState& st) {
-
+  auto it = std::find_if(scrState_.begin(), scrState_.end(),[sname](const scriptState& st) {
     return st.name == sname;
-  }
-  );
+  });
 
-  if (it->isChange && mtx_.try_lock()) {
-
+  if (it != scrState_.end() && it->isChange && mtx_.try_lock()) {
     QFile file(QApplication::applicationDirPath() + "/scripts/" + sname);
-
     QTextStream txtStream(&file);
     txtStream.setCodec("utf8");
-
-    file.open(QIODevice::WriteOnly);
-
-    it->text = ((QTextEdit*)ui.tabWidget->currentWidget())->toPlainText();
-    it->isChange = false;
-
-    txtStream << it->text;
-
-    file.close();
-
+    if (file.open(QIODevice::WriteOnly)) {
+        it->text = ((QTextEdit*)ui.tabWidget->currentWidget())->toPlainText();
+        it->isChange = false;
+        txtStream << it->text;
+        file.close();
+    }
     buffCPos_ = 0;
-
     mtx_.unlock();
-
     ui.lbChange->setText("");
   }
 }
@@ -884,15 +839,12 @@ QString ScriptDialog::exlName(QString name) {
 
   int rowCnt = ui.tblScripts->rowCount(), newScpCnt = 0;
   for (int i = 0; i < rowCnt; ++i) {
-
     if (ui.tblScripts->item(i, 0)->text() == name) {
       ++newScpCnt;
-
       name = begName + QString::number(newScpCnt) + endName;
       i = -1;
     }
   }
-
   return name;
 }
 
@@ -938,7 +890,6 @@ void ScriptDialog::workCycle() {
     for (auto& s : scrState_) {
       if (s.isActive && (s.name != "load.lua")) {
         isActive = true;
-
         allScr += s.text + '\n';
       }
     }
@@ -949,7 +900,11 @@ void ScriptDialog::workCycle() {
       luaL_loadstring(luaState_, qUtf8Printable(allScr));
 
       if (mode_ == SV_Script::ModeGr::Viewer) {
-
+        if (buffCPos_ == 0 && pfGetCopySignalRef) {
+            for (const auto s : pfGetCopySignalRef()) {
+                buffSz_ = qMax(buffSz_, s->buffData.size());
+            }
+        }
         bool isNoError = false;
         while (buffCPos_ < buffSz_) {
 
@@ -965,9 +920,9 @@ void ScriptDialog::workCycle() {
                 serr = QString(err);
                 lua_pop(luaState_, -1);
                 break;
+              } else {
+                  isNoError = true;
               }
-              else
-                isNoError = true;
             }
           }
           iterValue_ = 0;
@@ -991,9 +946,9 @@ void ScriptDialog::workCycle() {
               serr = QString(err);
               lua_pop(luaState_, -1);
               break;
+            } else {
+                isNoError = true;
             }
-            else
-              isNoError = true;
           }
         }
         iterValue_ = 0;
@@ -1002,16 +957,16 @@ void ScriptDialog::workCycle() {
 
     mtx_.unlock();
 
-    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::ModeGr::Viewer))
-      pfUpdateSignalsCBack();
-
+    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::ModeGr::Viewer)) {
+        pfUpdateSignalsCBack();
+    }
     if (!serr.isEmpty()) {
       QString qmess = QString::fromStdString(SV_Misc::currDateTime()) + " " + serr;
       QMetaObject::invokeMethod(scrDialogRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));
     }
-
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
-    if (ms > 0)
-      SV_Misc::sleepMs(ms);
+    if (ms > 0) {
+        SV_Misc::sleepMs(ms);
+    }
   }
 }
