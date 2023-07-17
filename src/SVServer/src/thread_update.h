@@ -50,19 +50,11 @@ private:
   BufferData& m_buffData;
   Archive m_archive;
 
-  struct LastSData{
-      uint64_t beginTime{};
-      std::vector<SV_Base::Value> vals;
-      bool isActive{};
-      LastSData(){};
-      LastSData(int vsz){
-          vals = std::vector<SV_Base::Value>(vsz);
-      }
-  };
-
   void updateCycle();
   void addSignal(const BufferData::InputData& bp);
-  void updateSignals(std::map<std::string, std::vector<LastSData>>&, std::map<std::string, SV_Base::SignalData*>&);
+  void updateSignals(std::map<std::string, SV_Base::SignalData*>&, std::map<std::string, SV_Base::ModuleData*>&,
+                     std::map<std::string, bool>& signActive, std::map<std::string, bool>& moduleActive,
+                     bool& isNewSign, bool& isBuffActive);
   void updateSignalsBuff(SV_Base::SignalData* sign, size_t beginPos, size_t valuePos);
   void moduleConnect(const std::string& module);
   void moduleDisconnect(const std::string& module);
