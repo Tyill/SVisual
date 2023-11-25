@@ -817,7 +817,7 @@ constexpr int calcValuePnt<bool>(Value v, double valScale, double valPosMem) {
 
 template<typename T>
 QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, const AxisTimeWidget* axisTime,
-    const QPair<double, double>& valInterval, const double valScale) {
+    const QPair<double, double>& valInterval, const double valScale, const int gapTolerance) {
 
   const QPair<qint64, qint64> tmInterval = axisTime->getTimeInterval();
 
@@ -861,7 +861,7 @@ QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const
 
     if (tmZnEnd > tmMinInterval) {
 
-      if (int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS) {
+      if (int64_t(tmZnBegin - tmZnEndPrev) > SV_CYCLESAVE_MS * gapTolerance) {
 
         zonePnts.push_back(QVector<QPair<int, int>>());
 
@@ -1012,9 +1012,9 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   //////////// Получаем точки
       
   switch (sign->type) {
-  case ValueType::FLOAT: return getPoints<float>(sign, iBuf, cng, axisTime_, valInterval, vScale);
-  case ValueType::INT:   return getPoints<int>(sign, iBuf, cng, axisTime_, valInterval, vScale);
-  case ValueType::BOOL:  return getPoints<bool>(sign, iBuf, cng, axisTime_, valInterval, vScale);
+  case ValueType::FLOAT: return getPoints<float>(sign, iBuf, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
+  case ValueType::INT:   return getPoints<int>(sign, iBuf, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
+  case ValueType::BOOL:  return getPoints<bool>(sign, iBuf, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
   default: Q_UNREACHABLE(); break;
   }  
   return {};

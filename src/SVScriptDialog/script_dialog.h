@@ -86,8 +86,6 @@ namespace SV_Script {
 
   void refreshScript(QDialog* stPanel, const QString& fname);
 
-  void restartScript(QDialog* stPanel);
-
   using isLoadSignalDataCBack = std::function<bool(const QString &sign)>;
   void setLoadSignalData(QDialog* stPanel, isLoadSignalDataCBack f);
 

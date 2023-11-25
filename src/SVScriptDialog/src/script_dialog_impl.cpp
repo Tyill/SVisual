@@ -188,7 +188,6 @@ void ScriptDialog::setValue(const QString& sign, SV_Base::Value val, uint64_t ti
   // заполняем буфер
   size_t vp;
   if (mode_ == SV_Script::ModeGr::Player) {
-      LockerReadSDataScript lock;
       vp = sd->buffValuePos;
   }else{
       vp = buffCPos_;
@@ -746,32 +745,34 @@ void ScriptDialog::refreshScript(const QString& sname) {
   }
 }
 
-void ScriptDialog::restartScript() {
-    std::lock_guard<std::mutex> lck(mtx_);
-
+bool ScriptDialog::fillBuffer() {
     const auto items = ui.tblScripts->selectedItems();
-    if(!items.isEmpty() && pfGetCopySignalRef){
+    if (!items.isEmpty() && pfGetCopySignalRef) {
         for (const auto s : pfGetCopySignalRef()) {
             buffSz_ = qMax(buffSz_, s->buffData.size());
-        }
-        buffCPos_ = 0;
+        }        
     }
-    for (auto s : signBuff_) {
-        if (s->module == "Virtual") {
-            s->buffBeginPos = 0;
-            s->buffValuePos = 0;
-            s->buffMinTime = 0;
-            s->buffMaxTime = 1;
-            size_t csz = s->buffData.size();
-            if (csz < buffSz_) {
-                s->buffData.resize(buffSz_);
-                SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * (buffSz_ - csz)];
-                for (size_t i = 0; i < (buffSz_ - csz); ++i) {
-                    s->buffData[i + csz].vals = &buff[i * SV_PACKETSZ];
+    if (buffSzMem_ != buffSz_) {
+        buffSzMem_ = buffSz_;
+        for (auto s : signBuff_) {
+            if (s->module == "Virtual") {
+                s->buffBeginPos = 0;
+                s->buffValuePos = 0;
+                s->buffMinTime = 0;
+                s->buffMaxTime = 1;
+                size_t csz = s->buffData.size();
+                if (csz < buffSz_) {
+                    s->buffData.resize(buffSz_);
+                    SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * (buffSz_ - csz)];
+                    for (size_t i = 0; i < (buffSz_ - csz); ++i) {
+                        s->buffData[i + csz].vals = &buff[i * SV_PACKETSZ];
+                    }
                 }
             }
         }
+        return true;
     }
+    return false;
 }
 
 void ScriptDialog::nameScriptChange(int row, int col) {
@@ -883,8 +884,7 @@ void ScriptDialog::workCycle() {
       }
     }
 
-    bool isActive = false,
-      isNewCycle = (buffCPos_ == 0);
+    bool isActive = false;
 
     QString allScr;
     for (auto& s : scrState_) {
@@ -896,16 +896,15 @@ void ScriptDialog::workCycle() {
 
     // other scripts
     if (isActive && serr.isEmpty()) {
-
-      luaL_loadstring(luaState_, qUtf8Printable(allScr));
-
       if (mode_ == SV_Script::ModeGr::Viewer) {
-        if (buffCPos_ == 0 && pfGetCopySignalRef) {
-            for (const auto s : pfGetCopySignalRef()) {
-                buffSz_ = qMax(buffSz_, s->buffData.size());
-            }
+        if (fillBuffer()) {
+            buffCPos_ = 0;
         }
+        bool isNewCycle = (buffCPos_ == 0);
         bool isNoError = false;
+        if (isNewCycle){
+            luaL_loadstring(luaState_, qUtf8Printable(allScr));
+        }
         while (buffCPos_ < buffSz_) {
 
           for (iterValue_ = 0; iterValue_ < size_t(SV_PACKETSZ); ++iterValue_) {
@@ -930,9 +929,12 @@ void ScriptDialog::workCycle() {
 
           if (!isNoError) break;
         }
+        if (isActive && isNewCycle && pfUpdateSignalsCBack) {
+            pfUpdateSignalsCBack();
+        }
       }
       else { // SV_Script::ModeGr::Player
-
+        luaL_loadstring(luaState_, qUtf8Printable(allScr));
         bool isNoError = false;
         for (iterValue_ = 0; iterValue_ < size_t(SV_PACKETSZ); ++iterValue_) {
 
@@ -956,10 +958,7 @@ void ScriptDialog::workCycle() {
     }
 
     mtx_.unlock();
-
-    if (isActive && isNewCycle && pfUpdateSignalsCBack && (mode_ == SV_Script::ModeGr::Viewer)) {
-        pfUpdateSignalsCBack();
-    }
+       
     if (!serr.isEmpty()) {
       QString qmess = QString::fromStdString(SV_Misc::currDateTime()) + " " + serr;
       QMetaObject::invokeMethod(scrDialogRef->ui.txtStatusMess, "append", Qt::AutoConnection, Q_ARG(QString, qmess));

@@ -38,6 +38,7 @@ GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSet
   ui.slrPenWidth->setValue(gs.lineWidth);
   ui.chbDarkTheme->setChecked(gs.darkTheme);
   ui.chbSignBoolOnTop->setChecked(gs.signBoolOnTop);
+  ui.sbGapTolerance->setValue(gs.gapTolerance);
 
   connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos) {
 
@@ -45,6 +46,14 @@ GraphSettingDialog::GraphSettingDialog(QWidget *parent, const SV_Graph::GraphSet
     gs.transparent = pos;
    
     mainWin->updateGraphSetting(gs);
+  });
+
+  connect(ui.sbGapTolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, mainWin](int pos) {
+
+      SV_Graph::GraphSetting gs = graphSetting();
+      gs.gapTolerance = pos;
+
+      mainWin->updateGraphSetting(gs);
   });
 
   connect(ui.slrPenWidth, &QSlider::sliderMoved, [this, mainWin](int pos) {

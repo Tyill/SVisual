@@ -76,6 +76,11 @@
         <source>Булевы сигналы сверху</source>
         <translation>Signal boolean on top</translation>
     </message>
+	 <message>
+        <location filename="../forms/graph_setting_dialog.ui" line="128"/>
+        <source>Допустимый интервал между точками</source>
+        <translation>Tolerance of gap between points</translation>
+    </message>
 </context>
 <context>
     <name>MainWin</name>

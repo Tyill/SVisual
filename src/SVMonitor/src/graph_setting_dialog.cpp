@@ -26,6 +26,8 @@
 #include "SVMonitor/forms/graph_setting_dialog.h"
 #include "SVMonitor/forms/main_win.h"
 
+#include <QSpinBox>
+
 GraphSettingDialog::GraphSettingDialog(const SV_Graph::GraphSetting& gs, QWidget* parent):
   QDialog(parent){
   
@@ -37,6 +39,7 @@ GraphSettingDialog::GraphSettingDialog(const SV_Graph::GraphSetting& gs, QWidget
   ui.slrPenWidth->setValue(gs.lineWidth);
   ui.chbDarkTheme->setChecked(gs.darkTheme);
   ui.chbSignBoolOnTop->setChecked(gs.signBoolOnTop);
+  ui.sbGapTolerance->setValue(gs.gapTolerance);
 
   connect(ui.slrColorTransparent, &QSlider::sliderMoved, [this, mainWin](int pos) {
 
@@ -52,6 +55,14 @@ GraphSettingDialog::GraphSettingDialog(const SV_Graph::GraphSetting& gs, QWidget
     gs.lineWidth = pos;
 
     mainWin->updateGraphSetting(gs);
+  });
+
+  connect(ui.sbGapTolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, mainWin](int pos) {
+
+      SV_Graph::GraphSetting gs = graphSetting();
+      gs.gapTolerance = pos;
+
+      mainWin->updateGraphSetting(gs);
   });
 
   connect(ui.chbDarkTheme, &QCheckBox::stateChanged, [this, mainWin]() {

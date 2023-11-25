@@ -105,11 +105,6 @@ namespace SV_Script {
           static_cast<ScriptDialog*>(stp)->refreshScript(fname);
       }
   }
-  void restartScript(QDialog* stp) {
-      if (stp) {
-          static_cast<ScriptDialog*>(stp)->restartScript();
-      }
-  }
   void setLoadSignalData(QDialog *stp, isLoadSignalDataCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfLoadSignalData = f;

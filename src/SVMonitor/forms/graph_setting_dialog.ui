@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>267</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
     <width>400</width>
-    <height>267</height>
+    <height>367</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -103,6 +103,33 @@
       <bool>false</bool>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QSpinBox" name="sbGapTolerance">
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbGapTolerance">
+       <property name="text">
+        <string>Допустимый интервал между точками</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

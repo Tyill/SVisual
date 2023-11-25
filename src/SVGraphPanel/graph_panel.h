@@ -58,6 +58,7 @@ namespace SV_Graph {
     bool signBoolOnTop = false;
     int transparent = 0;
     int lineWidth = 1;
+    int gapTolerance = 1;
   };
 
   struct SignalAttributes {

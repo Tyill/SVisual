@@ -162,6 +162,7 @@ bool MainWin::readSettings(const QString& initPath) {
     cng.graphSett.transparent = settings.value("transparent", "100").toInt();
     cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
     cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
+    cng.graphSett.gapTolerance = settings.value("gapTolerance", "1").toInt();
 
     cng.inputDataBaseEna = settings.value("inputDataBaseEna", "0").toInt() == 1;
     cng.inputDataBaseName = settings.value("inputDataBaseName", "svdb").toString();
@@ -270,6 +271,7 @@ bool MainWin::writeSettings(const QString& pathIni) {
   txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
   txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
   txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
+  txtStream << "gapTolerance = " << cng.graphSett.gapTolerance << Qt::endl;
   txtStream << Qt::endl;
   txtStream << "inputDataBaseEna = " << (cng.inputDataBaseEna ? 1 : 0) << Qt::endl;
   txtStream << "inputDataBaseName = " << cng.inputDataBaseName << Qt::endl;
@@ -970,7 +972,6 @@ void MainWin::actionOpenData() {
       if (ok) {
         ui.lbStatusMess->setText(cng.selOpenDir);
         sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
-        SV_Script::restartScript(scriptPanel_);
       }else{
         ui.lbStatusMess->setText(tr("Файл не удалось прочитать"));
       }

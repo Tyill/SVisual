@@ -68,7 +68,9 @@ public:
   void activeScript(const QString& fname);
   void deactiveScript(const QString& fname);
   void refreshScript(const QString& fname);
-  void restartScript();
+  
+private:
+  bool fillBuffer();
 
 private:
   Ui::ScriptDialog ui;
@@ -87,7 +89,8 @@ private:
 
   size_t iterValue_ = 0,
     buffCPos_ = 0,
-    buffSz_ = 1;
+    buffSz_ = 1,
+    buffSzMem_ = 0;
 
   struct scriptState {
     bool isChange = true;

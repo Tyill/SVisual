@@ -255,6 +255,7 @@ bool MainWin::readSettings(QString initPath){
     cng.graphSett.transparent = settings.value("transparent", "100").toInt();
     cng.graphSett.darkTheme = settings.value("darkTheme", "0").toInt() == 1;
     cng.graphSett.signBoolOnTop = settings.value("signBoolOnTop", "0").toInt() == 1;
+    cng.graphSett.gapTolerance = settings.value("gapTolerance", "1").toInt();
 
     cng.toutLoadWinStateSec = settings.value("toutLoadWinStateSec", "10").toInt();
 
@@ -386,6 +387,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << "lineWidth = " << cng.graphSett.lineWidth << Qt::endl;
     txtStream << "darkTheme = " << (cng.graphSett.darkTheme ? "1" : "0") << Qt::endl;
     txtStream << "signBoolOnTop = " << (cng.graphSett.signBoolOnTop ? "1" : "0") << Qt::endl;
+    txtStream << "gapTolerance = " << cng.graphSett.gapTolerance << Qt::endl;
     txtStream << Qt::endl;
     txtStream << "toutLoadWinStateSec = " << cng.toutLoadWinStateSec << Qt::endl;
     txtStream << Qt::endl;
