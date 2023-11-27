@@ -56,22 +56,24 @@ public:
 
   /// вернуть данные по текущей позиции чтения
   /// \return
-  InputData getDataByReadPos();
+  InputData getDataByReadPos()const;
 
   /// инкремент позиции чтения
   void incReadPos();
   
-  const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
+  bool hasNewData();
+  
+  static const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
 
 private:
     
   SV_Srv::Config cng;
 
   /// данные  
-  InputData m_buffer[SV_VALUE_MAX_CNT * 10]; // 10 сек - запас;
+  InputData m_buffer[BUFF_SZ];
 
   size_t m_buffReadPos = 0;  ///< тек позиция чтения
   size_t m_buffWritePos = 0; ///< тек позиция записи
-
-  std::mutex m_mtx;
+ 
+  std::mutex m_mtxRead, m_mtxWrite;
 };

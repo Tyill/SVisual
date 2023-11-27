@@ -112,9 +112,10 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
 
     const size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
-
-    BufferData::InputData bufPos = m_buffData.getDataByReadPos();
-    while (bufPos.isActive){
+    
+    while (m_buffData.hasNewData()){
+      BufferData::InputData bufPos = m_buffData.getDataByReadPos();
+    
       isBuffActive = true;
 
       string sign = bufPos.name + bufPos.module;
@@ -148,12 +149,10 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
               if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
           }
       }
-
       if (cng.outArchiveEna || cng.outDataBaseEna){
           m_archive.addValue(sign, bufPos.data);
       }
       m_buffData.incReadPos();
-      bufPos = m_buffData.getDataByReadPos();
     }
 
     if (isBuffActive && pfUpdateSignalsCBack) {
@@ -220,7 +219,7 @@ void ThreadUpdate::updateCycle(){
   SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
-  int checkConnectTout = 5 * SV_CYCLESAVE_MS / 1000;
+  int checkConnectTout = 5 * SV_CYCLESAVE_MS;
 
   while (!m_thrStop){
 
@@ -234,8 +233,8 @@ void ThreadUpdate::updateCycle(){
     }
 
     // проверка связи
-    if (tmDelay.onDelaySec(true, checkConnectTout, 0)){
-        tmDelay.onDelaySec(false, 0, 0);
+    if (tmDelay.onDelayMS(true, checkConnectTout, 0)){
+        tmDelay.onDelayMS(false, 0, 0);
 
         std::lock_guard lock(SV_Srv::m_mtxRW);
 

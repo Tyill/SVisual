@@ -28,6 +28,7 @@
 #include "SVServer/sv_server.h"
 
 #include <map>
+#include <thread>
 
 class ClickHouseDB;
 
@@ -40,7 +41,7 @@ public:
 
   void init(const SV_Srv::Config&);
 
-  bool copyToDisk(bool isStop);
+  void copyToDisk(bool isStop);
 
   void addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype);
   void addValue(const std::string& sign, const SV_Base::RecData& rd);
@@ -48,6 +49,7 @@ public:
   void setConfig(const SV_Srv::Config&);
 
 private:
+  void copyToDiskImpl(bool isStop, int archiveIndex);
   bool isCopyTimeHour();
   std::string getOutPath(bool isStop);
   bool compressData(size_t insz, const std::vector<char>& inArr, size_t& outsz, std::vector<char>& outArr);
@@ -60,13 +62,15 @@ private:
   std::string m_copyDateMem = "";
 
   int m_crtFileHour = 0;
+  int m_archiveIndex = 0;
   size_t m_copySz = 0;
-  std::map<std::string, int> m_valPos;
+  std::map<std::string, int> m_valPos[2];
 
   SV_Misc::Front m_front;
 
-  std::map<std::string, std::vector<SV_Base::RecData>> m_archiveData;
+  std::map<std::string, std::vector<SV_Base::RecData>> m_archiveData[2];
 
   ClickHouseDB* m_chdb{};
+  std::shared_ptr<std::thread> m_saveThread;
 
 };

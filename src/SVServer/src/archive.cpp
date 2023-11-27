@@ -32,6 +32,7 @@
 #include <cstdio>
 #include <fstream>
 #include <cstring>
+#include <thread>
 
 using namespace std;
 
@@ -62,125 +63,147 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
 
 void Archive::addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype) {
 
-  std::string sign = sname + module;
-  if (m_archiveData.find(sign) != m_archiveData.end()) return;
+  for (int aIndex = 0; aIndex < 2; ++aIndex){
+    std::string sign = sname + module;
+    auto& archiveData = m_archiveData[aIndex];
+    if (archiveData.find(sign) != archiveData.end()) return;
 
-  m_archiveData[sign] = vector<SV_Base::RecData>(m_copySz);
+    archiveData[sign] = vector<SV_Base::RecData>(m_copySz);
 
-  m_valPos[sign] = 0;
+    auto& vpos = m_valPos[aIndex];
+    vpos[sign] = 0;
 
-  SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * m_copySz];
-  memset(buff, 0, SV_PACKETSZ * m_copySz * sizeof(SV_Base::Value));
-  for (size_t i = 0; i < m_copySz; ++i){
-    m_archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
-  }
-  if (m_chdb){
-      m_chdb->addSignal(sname, module, stype);
+    SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * m_copySz];
+    memset(buff, 0, SV_PACKETSZ * m_copySz * sizeof(SV_Base::Value));
+    for (size_t i = 0; i < m_copySz; ++i){
+      archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
+    }
+    if (m_chdb){
+        m_chdb->addSignal(sname, module, stype);
+    }
   }
 }
 
 void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
 
-  int vp = m_valPos[sign];
+  auto& valPos = m_valPos[m_archiveIndex];
+  int vp = valPos[sign];
+  auto& archiveData = m_archiveData[m_archiveIndex];
+  archiveData[sign][vp].beginTime = rd.beginTime;
+  memcpy(archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(SV_Base::Value));
 
-  m_archiveData[sign][vp].beginTime = rd.beginTime;
-  memcpy(m_archiveData[sign][vp].vals, rd.vals, SV_PACKETSZ * sizeof(SV_Base::Value));
+  ++valPos[sign];
 
-  ++m_valPos[sign];
-
-  if (m_valPos[sign] == m_copySz) {
-
+  if (valPos[sign] == m_copySz) {   
     copyToDisk(false);
   }
 }
 
-bool Archive::copyToDisk(bool isStop){
+void Archive::copyToDisk(bool isStop){
+  if (m_saveThread && m_saveThread->joinable()){
+    m_saveThread->join();
+  }
+  if (!isStop){    
+    m_saveThread = std::make_shared<std::thread>([this, aIndex = m_archiveIndex]{
+      copyToDiskImpl(false, aIndex);
+    });
+    m_archiveIndex = m_archiveIndex ? 0 : 1; 
+  }else{
+    copyToDiskImpl(isStop, m_archiveIndex);
+  }
+}
 
-    const size_t dataSz = m_archiveData.size();
-    if (dataSz == 0){
-      return true;
-    }
+void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
 
-    if (cng.outArchiveEna){
-        const size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
+  auto& valPos = m_valPos[archiveIndex];
+  auto& archiveData = m_archiveData[archiveIndex];
+  const size_t dataSz = archiveData.size();
+  if (dataSz == 0){
+    return;
+  }
 
-        const size_t intSz = sizeof(int32_t),
-          tmSz = sizeof(uint64_t),
-          vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
+  if (cng.outArchiveEna){
+      const size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
 
-        //                     name        module      group       comment      type    vCnt
-        const size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
+      const size_t intSz = sizeof(int32_t),
+        tmSz = sizeof(uint64_t),
+        vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
 
-        vector<char> inArr((tmSz + vlSz) * m_copySz * SMAXCNT + headSz * SMAXCNT);
-        vector<char> compArr;
+      //                     name        module      group       comment      type    vCnt
+      const size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
 
-        vector<string> keys;
-        keys.reserve(dataSz);
-        for (auto &it : m_archiveData){
-            keys.push_back(it.first);
-        }
+      vector<char> inArr((tmSz + vlSz) * m_copySz * SMAXCNT + headSz * SMAXCNT);
+      vector<char> compArr;
 
-        fstream file(getOutPath(isStop), std::fstream::binary | std::fstream::app);
-        if (!file.good()){
-            return false;
-        }
+      vector<string> keys;
+      keys.reserve(dataSz);
+      for (auto &it : archiveData){
+          keys.push_back(it.first);
+      }
 
-        size_t sCnt = 0, csize = 0;
-        for (size_t i = 0; i < dataSz; ++i) {
+      const auto fpath = getOutPath(isStop);
+      fstream file(fpath, std::fstream::binary | std::fstream::app);
+      if (!file.good()){
+          if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk file not open for write, fpath " + fpath);
+          return;
+      }
 
-          auto sign = SV_Srv::getSignalData(keys[i]);
+      size_t sCnt = 0, csize = 0;
+      for (size_t i = 0; i < dataSz; ++i) {
 
-          string sn = sign->name + sign->module;
+        auto sign = SV_Srv::getSignalData(keys[i]);
 
-          char* pIn = inArr.data();
+        string sn = sign->name + sign->module;
 
-          int vCnt = m_valPos[sn];
-          if (vCnt > 0) {
-            memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
-            memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
-            memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
-            memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-            memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
-            memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
+        char* pIn = inArr.data();       
+        
+        int vCnt = valPos[sn];
+        if (vCnt > 0) {
+          memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
+          memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
+          memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
+          memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
+          memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
+          memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
 
-            for (int j = 0; j < vCnt; ++j) {
-              memcpy(pIn + csize, &m_archiveData[sn][j].beginTime, tmSz); csize += tmSz;
-              memcpy(pIn + csize, m_archiveData[sn][j].vals, vlSz);       csize += vlSz;
-            }
-
-            ++sCnt;
+          for (int j = 0; j < vCnt; ++j) {
+            memcpy(pIn + csize, &archiveData[sn][j].beginTime, tmSz); csize += tmSz;
+            memcpy(pIn + csize, archiveData[sn][j].vals, vlSz);       csize += vlSz;
           }
 
-          if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dataSz - 1)))) {
-            sCnt = 0;
-
-            size_t compSz = 0;
-
-            if (!compressData(csize, inArr, compSz, compArr)) {
-              if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk compressData error");
-              file.close();
-              return false;
-            };
-
-            file.write((char *)&compSz, sizeof(int));
-            file.write((char *)&csize, sizeof(int));
-            file.write((char *)compArr.data(), compSz);
-
-            csize = 0;
-          }
+          ++sCnt;
         }
-        file.close();
-    }
 
-    if (m_chdb && cng.outDataBaseEna){
-      m_chdb->saveSData(isStop, m_valPos, m_archiveData);
-    }
+        if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dataSz - 1)))) {
+          sCnt = 0;
 
-    for(auto& v : m_valPos){
-      v.second = 0;
-    }
+          size_t compSz = 0;
 
-    return true;
+          if (!compressData(csize, inArr, compSz, compArr)) {
+            if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk compressData error");
+            file.close();
+            return;
+          };
+
+          file.write((char *)&compSz, sizeof(int));
+          file.write((char *)&csize, sizeof(int));
+          file.write((char *)compArr.data(), compSz);
+
+          csize = 0;
+        }
+      }
+      file.close();
+  }
+
+  if (m_chdb && cng.outDataBaseEna){
+    m_chdb->saveSData(isStop, valPos, archiveData);
+  }
+
+  for(auto& v : valPos){
+    v.second = 0;
+  }
+
+  return;
 }
 
 bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
