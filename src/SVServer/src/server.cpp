@@ -93,43 +93,38 @@ namespace SV_Srv {
   void receiveData(std::string& inout, std::string& out){
     
     vector<pair<size_t, size_t>> bePos;
-    size_t stPos = inout.find(beginMess), endPos = inout.find(endMess);
-    while ((stPos != std::string::npos) && (endPos != std::string::npos)){
-
-      int allSz = *(int*)(inout.c_str() + stPos + strlen(beginMess));
-
-      if (allSz == (endPos - stPos - 11)) // 11 - strlen(beginMess) + sizeof(int32)
-        bePos.push_back(pair<size_t, size_t>(stPos + 11, endPos));
-
-      stPos = inout.find(beginMess, endPos + strlen(endMess));
-      if (stPos != std::string::npos){
-        endPos = inout.find(endMess, stPos + 11);
+    const size_t mlen = 4, beginLen = strlen(beginMess), endLen = strlen(endMess);
+    size_t stPos = inout.find(beginMess), endPos = 0;
+    while (stPos != std::string::npos && stPos + beginLen + mlen < inout.size()){
+      int allSz = *(int*)(inout.c_str() + stPos + beginLen);
+      if (allSz > 0){
+        endPos = stPos + beginLen + mlen + allSz;
+      }
+      if (endPos + endLen <= inout.size() && endMess == string(inout.data() + endPos, inout.data() + endPos + endLen)){
+        bePos.push_back(pair<size_t, size_t>(beginLen + mlen, endPos));
+        stPos = inout.find(beginMess, endPos + endLen);
+      }else{
+        stPos = inout.find(beginMess, stPos + beginLen);
       }
     };
-
-    uint64_t bTm = SV_Misc::currDateTimeSinceEpochMs();
-    auto psz = bePos.size();
+    const auto bTm = SV_Misc::currDateTimeSinceEpochMs();
+    const auto psz = bePos.size();
     for (size_t i = 0; i < psz; ++i){
-
       stPos = bePos[i].first;
       endPos = bePos[i].second;
-
       m_buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
                                   bTm - (psz - i) * SV_CYCLESAVE_MS);
     }
-       
     if (psz > 0){
-      inout = std::string(inout.data() + endPos + strlen(endMess));
+      inout = std::string(inout.data() + endPos + endLen);
     }
   }
 
   void setOnUpdateSignalsCBack(onUpdateSignalsCBack cback){
-
     pfUpdateSignalsCBack = cback;
   }
 
   void setOnAddSignalsCBack(onAddSignalsCBack cback){
-
     pfAddSignalsCBack = cback;
   }
 
@@ -139,46 +134,33 @@ namespace SV_Srv {
   }
 
   void setOnModuleDisconnectCBack(onModuleDisconnectCBack cback){
-
     pfModuleDisconnectCBack = cback;
   }
 
   std::map<std::string, SV_Base::ModuleData*> getCopyModuleRef(){
-
     std::lock_guard<std::mutex> lck(m_mtxCommon);
-
     map<string, SV_Base::ModuleData*> mref = m_moduleData;
-
     return mref;
   };
 
   SV_Base::ModuleData* getModuleData(const std::string& module){
-
     std::lock_guard<std::mutex> lck(m_mtxCommon);
-
     return m_moduleData.find(module) != m_moduleData.end() ? m_moduleData[module] : nullptr;
   }
    
   std::vector<std::string> getModuleSignals(const std::string& module){
-
     std::lock_guard<std::mutex> lck(m_mtxCommon);
-
     return m_moduleData.find(module) != m_moduleData.end() ? m_moduleData[module]->signls : std::vector<std::string>();
   }
 
   std::map<std::string, SV_Base::SignalData*> getCopySignalRef(){
-
     std::lock_guard<std::mutex> lck(m_mtxCommon);
-
     map<string, SV_Base::SignalData*> sref = m_signalData;
-
     return sref;
   };
 
   SV_Base::SignalData* getSignalData(const std::string& sign){
-
     std::lock_guard<std::mutex> lck(m_mtxCommon);
-
     return m_signalData.find(sign) != m_signalData.end() ? m_signalData[sign] : nullptr;
   }
 
@@ -196,7 +178,6 @@ namespace SV_Srv {
   }
 
   bool addSignal(SV_Base::SignalData* sd){
-    
     if (!sd) return false;
     
     std::lock_guard<std::mutex> lck(m_mtxCommon);
@@ -216,7 +197,6 @@ namespace SV_Srv {
   }
 
   bool addModule(SV_Base::ModuleData* md){
-
     if (!md) return false;
 
     std::lock_guard<std::mutex> lck(m_mtxCommon);

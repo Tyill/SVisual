@@ -1162,12 +1162,13 @@ void MainWin::moduleConnect(QString module){
   sortSignalByModule();
 
   auto tr = SV_Trigger::getTriggerData(triggerDialog_, module + "On");
-  if (tr->isActive)
+  if (tr && tr->isActive){
     tr->condValue = 1;
-
+  }
   tr = SV_Trigger::getTriggerData(triggerDialog_, module + "Off");
-  if (tr->isActive)
+  if (tr && tr->isActive){
     tr->condValue = 0;
+  }
 }
 
 void MainWin::moduleDisconnect(QString module){
