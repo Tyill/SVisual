@@ -99,13 +99,16 @@ namespace SV_Srv {
       int allSz = *(int*)(inout.c_str() + stPos + beginLen);
       if (allSz > 0){
         endPos = stPos + beginLen + mlen + allSz;
-      }
-      if (endPos + endLen <= inout.size() && endMess == string(inout.data() + endPos, inout.data() + endPos + endLen)){
-        bePos.push_back(pair<size_t, size_t>(beginLen + mlen, endPos));
-        stPos = inout.find(beginMess, endPos + endLen);
+        if (endPos + endLen <= inout.size() && 
+            endMess == string(inout.data() + endPos, inout.data() + endPos + endLen)){
+          bePos.push_back(pair<size_t, size_t>(beginLen + mlen, endPos));
+          stPos = inout.find(beginMess, endPos + endLen);
+        }else{
+          break;
+        }
       }else{
-        stPos = inout.find(beginMess, stPos + beginLen);
-      }
+        break;
+      }      
     };
     const auto bTm = SV_Misc::currDateTimeSinceEpochMs();
     const auto psz = bePos.size();
