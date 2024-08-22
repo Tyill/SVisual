@@ -101,7 +101,7 @@ namespace SV_Srv {
         endPos = stPos + beginLen + mlen + allSz;
         if (endPos + endLen <= inout.size() && 
             endMess == string(inout.data() + endPos, inout.data() + endPos + endLen)){
-          bePos.push_back(pair<size_t, size_t>(beginLen + mlen, endPos));
+          bePos.push_back(pair<size_t, size_t>(stPos + beginLen + mlen, endPos));
           stPos = inout.find(beginMess, endPos + endLen);
         }else{
           break;
