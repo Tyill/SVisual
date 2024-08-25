@@ -103,12 +103,10 @@ namespace SV_Srv {
             endMess == string(inout.data() + endPos, inout.data() + endPos + endLen)){
           bePos.push_back(pair<size_t, size_t>(stPos + beginLen + mlen, endPos));
           stPos = inout.find(beginMess, endPos + endLen);
-        }else{
-          break;
+          continue;
         }
-      }else{
-        break;
-      }      
+      }
+      stPos = inout.find(beginMess, stPos + beginLen);
     };
     const auto bTm = SV_Misc::currDateTimeSinceEpochMs();
     const auto psz = bePos.size();
