@@ -39,83 +39,96 @@ namespace SV_Misc {
   public:
      
     Logger(const std::string& pathFile = ""):
-      _pathFile(pathFile){
+      pathFile_(pathFile){
 
       createSubDirectory(pathFile);
 
-      _deqMess.resize(MAX_CNT_MESS);
+      deqMess_.resize(MAX_CNT_MESS);
       
-      _thrWriteMess = std::thread(&Logger::writeCycle, this);
+      thrWriteMess_ = std::thread(&Logger::writeCycle, this);
     }
     
     ~Logger() {
       {
-        std::lock_guard<std::mutex> lck (_mtxRd);
-        _fStop = true;
-        _cval.notify_one();
+        std::lock_guard<std::mutex> lck (mtxRd_);
+        fStop_ = true;
+        cval_.notify_one();
       }      
-      if (_thrWriteMess.joinable()) _thrWriteMess.join();
+      if (thrWriteMess_.joinable()){
+        thrWriteMess_.join();
+      }
     }
 
     void setPathFile(const std::string& pathFile) {
       createSubDirectory(pathFile);
-      _pathFile = pathFile;
+
+      std::lock_guard<std::mutex> lck(mtxRd_);
+      
+      pathFile_ = pathFile;
     }
     
-    bool writeLine(const std::string &mess) {
+    void writeLine(const std::string &mess) {
 
-      _mtxWr.lock();
+      std::lock_guard<std::mutex> lck(mtxWr_);
 
-      _deqMess[_writeMessCnt] = Message{ true, currDateTimeMs(), mess };
-      ++_writeMessCnt;
-      if (_writeMessCnt >= MAX_CNT_MESS) _writeMessCnt = 0;
-
-      _mtxWr.unlock();
-
-      _cval.notify_one();
-
-      return true;
+      deqMess_[writeMessCnt_] = Message{ currDateTimeMs(), mess };
+      ++writeMessCnt_;
+      if (writeMessCnt_ >= MAX_CNT_MESS){
+        writeMessCnt_ = 0;
+      }
+      cval_.notify_one();
     }
 
   private:
 
     const int MAX_CNT_MESS = 100;
 
-    std::string _pathFile;
+    std::string pathFile_;
 
-    int _readMessCnt = 0, _writeMessCnt = 0;
+    int readMessCnt_ = 0, writeMessCnt_ = 0;
 
-    struct Message {
-      bool activ;
+    struct Message { 
       std::string cTime;
       std::string mess;
         
     };
-    std::vector<Message> _deqMess;
+    std::vector<Message> deqMess_;
 
-    std::mutex _mtxWr, _mtxRd;
-    std::thread _thrWriteMess;
-    std::condition_variable _cval;
-    std::atomic_bool _fStop = false;
+    std::mutex mtxWr_, mtxRd_;
+    std::thread thrWriteMess_;
+    std::condition_variable cval_;
+    std::atomic_bool fStop_{};
     
     void writeCycle() {
 
-      while (!_fStop) {
+      while (!fStop_) {
 
-        std::unique_lock<std::mutex> lck(_mtxRd);
-        _cval.wait(lck);
-                
-        std::ofstream slg(_pathFile.c_str(), std::ios::app);
-        while (_deqMess[_readMessCnt].activ) {
+        std::unique_lock<std::mutex> lck(mtxRd_);
+        cval_.wait(lck);
 
-          slg << "[" << _deqMess[_readMessCnt].cTime << "] " << _deqMess[_readMessCnt].mess << std::endl;
-
-          _deqMess[_readMessCnt].activ = false;
-          ++_readMessCnt;
-          if (_readMessCnt >= MAX_CNT_MESS) _readMessCnt = 0;
+        std::ofstream slg(pathFile_.c_str(), std::ios::app);
+        std::vector<Message> mess;
+        while (readMess(mess)) {
+          for (const auto& m : mess){
+            slg << "[" << m.cTime << "] " << m.mess << std::endl;
+          }
         }
         slg.close();
       }
+    }
+    bool readMess(std::vector<Message>& mess){
+      std::lock_guard<std::mutex> lck(mtxWr_);
+
+      mess.clear();
+      while (readMessCnt_ != writeMessCnt_){
+        mess.push_back(deqMess_[readMessCnt_]);
+     
+        ++readMessCnt_;
+        if (readMessCnt_ >= MAX_CNT_MESS){
+          readMessCnt_ = 0;
+        } 
+      }
+      return !mess.empty();
     }
   };
 }
