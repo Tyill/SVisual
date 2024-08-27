@@ -112,6 +112,7 @@ namespace SV_Misc {
           for (const auto& m : mess){
             slg << "[" << m.cTime << "] " << m.mess << std::endl;
           }
+          mess.clear();
         }
         slg.close();
       }
@@ -119,7 +120,6 @@ namespace SV_Misc {
     bool readMess(std::vector<Message>& mess){
       std::lock_guard<std::mutex> lck(mtxWr_);
 
-      mess.clear();
       while (readMessCnt_ != writeMessCnt_){
         mess.push_back(deqMess_[readMessCnt_]);
      
