@@ -29,51 +29,34 @@
 
 #include <mutex>
 
-/// циклический буфер данных
 class BufferData
 {
 public:
    
   BufferData() = default;
 
-  /// инициализировать буфер
   void init(const SV_Srv::Config&);
 
-  /// входная переменная
   struct InputData{
-    bool isActive = false;     
     std::string name;          
     std::string module;        
     SV_Base::ValueType type;   
     SV_Base::RecData data;     
   };
 
-  /// обновить данные буфера
-  /// \param in новые данные
-  /// \param bTm отметка времени, мс
-  /// \return true - ok
   void updateDataSignals(const std::string& in, uint64_t bTm);
 
-  /// вернуть данные по текущей позиции чтения
-  /// \return
-  InputData getDataByReadPos()const;
-
-  /// инкремент позиции чтения
-  void incReadPos();
-  
-  bool hasNewData();
-  
-  static const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
+  bool getDataByReadPos(std::vector<InputData>&);
 
 private:
-    
+
   SV_Srv::Config cng;
 
-  /// данные  
+  static const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
   InputData m_buffer[BUFF_SZ];
 
-  size_t m_buffReadPos = 0;  ///< тек позиция чтения
-  size_t m_buffWritePos = 0; ///< тек позиция записи
- 
-  std::mutex m_mtxRead, m_mtxWrite;
+  size_t m_buffReadPos = 0;
+  size_t m_buffWritePos = 0;
+
+  std::mutex m_mtxWrite;
 };

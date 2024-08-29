@@ -1178,19 +1178,22 @@ void MainWin::moduleDisconnect(QString module){
   sortSignalByModule();
 
   auto tr = SV_Trigger::getTriggerData(triggerDialog_, module + "On");
-  if (tr->isActive)
+  if (tr && tr->isActive)
     tr->condValue = 0;
 
   tr = SV_Trigger::getTriggerData(triggerDialog_, module + "Off");
-  if (tr->isActive)
+  if (tr && tr->isActive)
     tr->condValue = 1;
 }
 
 void MainWin::onTrigger(QString trigger){
 
-  SV_Trigger::TriggerData* td = SV_Trigger::getTriggerData(triggerDialog_, trigger);
+  auto* td = SV_Trigger::getTriggerData(triggerDialog_, trigger);
+  if (!td){
+      return;
+  }
 
-  QString name = td->module + QString(":") + td->signal + ":" + td->name;
+  const auto name = QString("%1:%2:%3").arg(td->module, td->signal, td->name);
 
   statusMess(QObject::tr("Событие: ") + name);
 

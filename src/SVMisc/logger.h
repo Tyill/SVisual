@@ -89,8 +89,7 @@ namespace SV_Misc {
 
     struct Message { 
       std::string cTime;
-      std::string mess;
-        
+      std::string mess;        
     };
     std::vector<Message> deqMess_;
 
@@ -112,15 +111,18 @@ namespace SV_Misc {
           for (const auto& m : mess){
             slg << "[" << m.cTime << "] " << m.mess << std::endl;
           }
-          mess.clear();
         }
         slg.close();
       }
     }
     bool readMess(std::vector<Message>& mess){
-      std::lock_guard<std::mutex> lck(mtxWr_);
-
-      while (readMessCnt_ != writeMessCnt_){
+      int writeMessCnt;
+      {
+        std::lock_guard<std::mutex> lck(mtxWr_);
+        writeMessCnt = writeMessCnt_;
+      }
+      mess.clear();
+      while (readMessCnt_ != writeMessCnt){
         mess.push_back(deqMess_[readMessCnt_]);
      
         ++readMessCnt_;

@@ -113,27 +113,28 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
     const size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
     
-    while (m_buffData.hasNewData()){
-      BufferData::InputData bufPos = m_buffData.getDataByReadPos();
-    
-      isBuffActive = true;
+    std::vector<BufferData::InputData> bufData;
+    while (m_buffData.getDataByReadPos(bufData)){
+      for(const auto& bufPos : bufData){
 
-      string sign = bufPos.name + bufPos.module;
-      if (sref.find(sign) == sref.end()){
-        addSignal(bufPos);
-        sref[sign] = SV_Srv::getSignalData(sign);
-        mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);
-        isNewSign = true;
-      }
+        isBuffActive = true;
 
-      auto sdata = sref[sign];
+        string sign = bufPos.name + bufPos.module;
+        if (sref.find(sign) == sref.end()){
+          addSignal(bufPos);
+          sref[sign] = SV_Srv::getSignalData(sign);
+          mref[bufPos.module] = SV_Srv::getModuleData(bufPos.module);
+          isNewSign = true;
+        }
 
-      signActive[sign] = true;
-      moduleActive[bufPos.module] = true;
+        auto sdata = sref[sign];
 
-      sdata->lastData.beginTime = bufPos.data.beginTime;
-      memcpy(sdata->lastData.vals, bufPos.data.vals, packSz);
-      if (sdata->isBuffEnable) {
+        signActive[sign] = true;
+        moduleActive[bufPos.module] = true;
+
+        sdata->lastData.beginTime = bufPos.data.beginTime;
+        memcpy(sdata->lastData.vals, bufPos.data.vals, packSz);
+        if (sdata->isBuffEnable) {
           size_t vp = sdata->buffValuePos;
           sdata->buffData[vp].beginTime = bufPos.data.beginTime;
           memcpy(sdata->buffData[vp].vals, bufPos.data.vals, packSz);
@@ -148,11 +149,11 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
               ++sdata->buffBeginPos;
               if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
           }
+        }
+        if (cng.outArchiveEna || cng.outDataBaseEna){
+            m_archive.addValue(sign, bufPos.data);
+        }
       }
-      if (cng.outArchiveEna || cng.outDataBaseEna){
-          m_archive.addValue(sign, bufPos.data);
-      }
-      m_buffData.incReadPos();
     }
 
     if (isBuffActive && pfUpdateSignalsCBack) {

@@ -43,62 +43,46 @@ void BufferData::init(const SV_Srv::Config& cng_) {
 void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
 
   size_t dsz = indata.size(),
-    valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
-    cPos = SV_NAMESZ;
-  
+         valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
+         cPos = SV_NAMESZ;
   size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, BUFF_SZ / 10));  // 10 сек - запас
-
-  m_mtxWrite.lock();
-    
-  size_t buffWritePos = m_buffWritePos;
-  m_buffWritePos += valCnt;
-  if (m_buffWritePos >= BUFF_SZ) m_buffWritePos -= BUFF_SZ;
-
-  m_mtxWrite.unlock();
-
-  size_t wPos = buffWritePos;
+  size_t wPos;
+  {
+    std::lock_guard<std::mutex> lck(m_mtxWrite);
+    wPos = m_buffWritePos;
+    m_buffWritePos += valCnt;
+    if (m_buffWritePos >= BUFF_SZ) m_buffWritePos -= BUFF_SZ;
+  }
   size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
   while (cPos < dsz){
-
     m_buffer[wPos].module = indata.c_str();
     m_buffer[wPos].name = indata.data() + cPos;
     m_buffer[wPos].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
     m_buffer[wPos].data.beginTime = bTm;
-
     memcpy(m_buffer[wPos].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
-    
     ++wPos;
-    if (wPos == BUFF_SZ) wPos = 0;
-
+    if (wPos == BUFF_SZ){
+      wPos = 0;
+    }
     cPos += valSz;
-  }  
-  {std::lock_guard<std::mutex> lck(m_mtxRead);
-    size_t wPos = buffWritePos;
-    for (size_t i = 0; i < valCnt; ++i){
-      m_buffer[wPos].isActive = true;
-      ++wPos;
-      if (wPos == BUFF_SZ) wPos = 0;
+  }
+}
+
+bool BufferData::getDataByReadPos(std::vector<InputData>& out){
+
+  size_t buffWritePos;
+  {
+    std::lock_guard<std::mutex> lck(m_mtxWrite);
+    buffWritePos = m_buffWritePos;
+  }
+  out.clear();
+  while(m_buffReadPos != buffWritePos){
+    out.push_back(m_buffer[m_buffReadPos]);
+
+    ++m_buffReadPos;
+    if (m_buffReadPos == BUFF_SZ){
+      m_buffReadPos = 0;
     }
   }
-
+  return !out.empty();
 }
-
-void BufferData::incReadPos(){
-  std::lock_guard<std::mutex> lck(m_mtxRead);
-  m_buffer[m_buffReadPos].isActive = false;
-  
-  ++m_buffReadPos;
-  if (m_buffReadPos == BUFF_SZ) m_buffReadPos = 0;
-}
-
-BufferData::InputData BufferData::getDataByReadPos()const{
-
-  return m_buffer[m_buffReadPos];
-}
-
-bool BufferData::hasNewData(){
-  std::lock_guard<std::mutex> lck(m_mtxRead);
-    
-  return m_buffer[m_buffReadPos].isActive;
-}
-
