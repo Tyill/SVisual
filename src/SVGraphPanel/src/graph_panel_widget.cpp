@@ -585,9 +585,9 @@ void GraphPanelWidget::scaleGraph() {
   if (selGraph_) {
 
     if (sender()->objectName() == "btnScalePos")
-      selGraph_->scale(true);
+      selGraph_->scale(true, QPoint(selGraph_->width()/2, selGraph_->height()/2));
     else
-      selGraph_->scale(false);
+      selGraph_->scale(false, QPoint(selGraph_->width()/2, selGraph_->height()/2));
   }
 }
 

@@ -77,7 +77,7 @@ public:
   void mouseMoveEvent(QMouseEvent * event);
   void mousePressEvent(QMouseEvent * event);
   void wheelEvent(QWheelEvent * event);
-  void scale(int delta);
+  void scale(int delta, int mpos);
 
   void setAxisAttr(const SV_Graph::AxisAttributes&);
   SV_Graph::AxisAttributes getAxisAttr();

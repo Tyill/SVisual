@@ -67,9 +67,11 @@ void AxisValueWidget::mousePressEvent(QMouseEvent * event) {
   mousePrevPosY_ = event->pos().y();
 }
 
-void AxisValueWidget::scale(int delta) {
+void AxisValueWidget::scale(int delta, int mpos) {
 
   if (!axisAttr_.isAuto) return;
+
+  double mposValueBefore = (valInterval_.second - valInterval_.first) * (height() - mpos) / height() + valInterval_.first;
 
   if (delta > 0) curDashStep_++;
   else curDashStep_--;
@@ -93,6 +95,10 @@ void AxisValueWidget::scale(int delta) {
     valInterval_.first -= offs;
     valInterval_.second += offs;
   }
+  double mposValuePost = (valInterval_.second - valInterval_.first) * (height() - mpos) / height() + valInterval_.first;
+
+  valInterval_.first -= mposValuePost - mposValueBefore;
+  valInterval_.second -= mposValuePost - mposValueBefore;
 
   curInterv_ = abs(valInterval_.second - valInterval_.first);
 
@@ -134,7 +140,7 @@ SV_Graph::AxisAttributes AxisValueWidget::getAxisAttr() {
 
 void AxisValueWidget::wheelEvent(QWheelEvent * event) {
 
-  scale(event->delta());
+  scale(event->delta(), event->pos().y());
 
 }
 

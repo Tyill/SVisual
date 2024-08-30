@@ -166,12 +166,12 @@ void PlotWidget::wheelEvent(QWheelEvent * event) {
   }
 }
 
-void PlotWidget::scale(int delta) {
+void PlotWidget::scale(int delta, const QPoint& mpos) {
 
   if (axisTime_ && axisValue_) {
 
-    axisTime_->scale(delta);
-    axisValue_->scale(delta);
+    axisTime_->scale(delta, mpos.x());
+    axisValue_->scale(delta, mpos.y());
   }
 }
 

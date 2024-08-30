@@ -40,7 +40,7 @@ public:
 
   void setAxisTime(AxisTimeWidget* ax);
   void setAxisValue(AxisValueWidget* ax);
-  void scale(int delta);
+  void scale(int delta, const QPoint& mpos);
 
 signals:
   void req_rctChange();

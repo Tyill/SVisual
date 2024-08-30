@@ -1598,9 +1598,9 @@ void GraphWidget::showMarkPos() {
   updateByMarker();
 }
 
-void GraphWidget::scale(bool posNeg) {
+void GraphWidget::scale(bool posNeg, const QPoint& mpos) {
 
-  ui.plot->scale(posNeg ? 5 : -5);
+  ui.plot->scale(posNeg ? 5 : -5, mpos);
 }
 
 void GraphWidget::lbSignBoolMove(bool isTop){

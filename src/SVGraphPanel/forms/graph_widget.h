@@ -85,7 +85,7 @@ public:
   QStringList getAllAlterSignals();
 
   QSize sizeHint();
-  void scale(bool posNeg);
+  void scale(bool posNeg, const QPoint& mpos);
   void plotUpdate();
 
 public slots:

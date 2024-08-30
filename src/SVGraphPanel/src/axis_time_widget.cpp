@@ -70,7 +70,9 @@ void AxisTimeWidget::mousePressEvent(QMouseEvent * event) {
   mousePrevPosX_ = event->pos().x();
 }
 
-void AxisTimeWidget::scale(int delta) {
+void AxisTimeWidget::scale(int delta, int mpos) {
+
+  qint64 mposTimeBefore = (double(tmInterval_.second - tmInterval_.first) * mpos) / width() + tmInterval_.first;
 
   if (delta > 0) curDashStep_++;
   else curDashStep_--;
@@ -102,6 +104,10 @@ void AxisTimeWidget::scale(int delta) {
     tmInterval_.first += -offs;
     tmInterval_.second += offs;
   }
+  qint64 mposTimePost = (double(tmInterval_.second - tmInterval_.first) * mpos) / width() + tmInterval_.first;
+
+  tmInterval_.first -= mposTimePost - mposTimeBefore;
+  tmInterval_.second -= mposTimePost - mposTimeBefore;
 
   curIntervSec_ = (tmInterval_.second - tmInterval_.first) / 1000;
 
@@ -113,7 +119,7 @@ void AxisTimeWidget::scale(int delta) {
 
 void AxisTimeWidget::wheelEvent(QWheelEvent * event) {
 
-  scale(event->delta());
+  scale(event->delta(), event->pos().x());
 }
 
 void AxisTimeWidget::resizeEvent(QResizeEvent * event) {
