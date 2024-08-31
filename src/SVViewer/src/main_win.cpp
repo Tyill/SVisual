@@ -49,7 +49,7 @@
 MainWin* mainWin = {};
 
 namespace{
-const QString VERSION = QStringLiteral("1.2.1");
+const QString VERSION = QStringLiteral("1.2.2");
 }
 
 using namespace SV_Base;
