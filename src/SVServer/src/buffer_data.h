@@ -57,6 +57,7 @@ private:
 
   size_t m_buffReadPos = 0;
   size_t m_buffWritePos = 0;
+  size_t m_buffWritePosForReader = 0;
 
   std::mutex m_mtxWrite;
 };

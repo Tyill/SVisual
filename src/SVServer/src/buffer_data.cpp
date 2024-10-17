@@ -51,7 +51,9 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
     std::lock_guard<std::mutex> lck(m_mtxWrite);
     wPos = m_buffWritePos;
     m_buffWritePos += valCnt;
-    if (m_buffWritePos >= BUFF_SZ) m_buffWritePos -= BUFF_SZ;
+    if (m_buffWritePos >= BUFF_SZ){
+      m_buffWritePos -= BUFF_SZ;
+    }
   }
   size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
   while (cPos < dsz){
@@ -66,6 +68,13 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
     }
     cPos += valSz;
   }
+  {
+    std::lock_guard<std::mutex> lck(m_mtxWrite);
+    m_buffWritePosForReader += valCnt;
+    if (m_buffWritePosForReader >= BUFF_SZ){
+      m_buffWritePosForReader -= BUFF_SZ;
+    }
+  }
 }
 
 bool BufferData::getDataByReadPos(std::vector<InputData>& out){
@@ -73,7 +82,7 @@ bool BufferData::getDataByReadPos(std::vector<InputData>& out){
   size_t buffWritePos;
   {
     std::lock_guard<std::mutex> lck(m_mtxWrite);
-    buffWritePos = m_buffWritePos;
+    buffWritePos = m_buffWritePosForReader;
   }
   out.clear();
   while(m_buffReadPos != buffWritePos){
