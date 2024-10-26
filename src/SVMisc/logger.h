@@ -116,13 +116,10 @@ namespace SV_Misc {
       }
     }
     bool readMess(std::vector<Message>& mess){
-      int writeMessCnt;
-      {
-        std::lock_guard<std::mutex> lck(mtxWr_);
-        writeMessCnt = writeMessCnt_;
-      }
+      std::lock_guard<std::mutex> lck(mtxWr_);
+      
       mess.clear();
-      while (readMessCnt_ != writeMessCnt){
+      while (readMessCnt_ != writeMessCnt_){
         mess.push_back(deqMess_[readMessCnt_]);
      
         ++readMessCnt_;
