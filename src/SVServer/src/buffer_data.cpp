@@ -79,10 +79,13 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
 
 bool BufferData::getDataByReadPos(std::vector<InputData>& out){
 
-  std::lock_guard<std::mutex> lck(m_mtxWrite);
-  
+  size_t buffWritePos;
+  {
+    std::lock_guard<std::mutex> lck(m_mtxWrite);
+    buffWritePos = m_buffWritePosForReader;
+  }  
   out.clear();
-  while(m_buffReadPos != m_buffWritePosForReader){
+  while(m_buffReadPos != buffWritePos){
     out.push_back(m_buffer[m_buffReadPos]);
 
     ++m_buffReadPos;
