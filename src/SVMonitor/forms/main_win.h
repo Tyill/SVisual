@@ -63,6 +63,7 @@ public:
 
     int cycleRecMs;            ///< период записи - задает пользователь
     int packetSz;              ///< размер пакета - задает пользователь
+    int offsetMs;              ///< сдвиг вперед по времени, мс - задает пользователь для записи с частотой > 1кГц
 
     bool com_ena;              ///< запись по com
     QVector<QPair<QString, QString>> com_ports;   ///< COM name, speed

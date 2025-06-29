@@ -94,6 +94,7 @@ MainWin::MainWin(QWidget *parent)
   SV_Srv::Config srvCng; {
     srvCng.cycleRecMs = cng.cycleRecMs;
     srvCng.packetSz = cng.packetSz;
+    srvCng.offsetMs = cng.offsetMs;
     srvCng.outArchiveEna = cng.outArchiveEna;
     srvCng.outArchiveHourCnt = cng.outArchiveHourCnt;
     srvCng.outArchiveName = cng.outArchiveName.toStdString();
@@ -191,6 +192,8 @@ bool MainWin::readSettings(QString initPath){
     cng.cycleRecMs = qMax(cng.cycleRecMs, 1);
     cng.packetSz = settings.value("packetSz", 10).toInt();
     cng.packetSz = qMax(cng.packetSz, 1);
+    cng.offsetMs = settings.value("offsetMs", 0).toInt();
+    cng.offsetMs = qMax(cng.offsetMs, 0);
     cng.selOpenDir = settings.value("selOpenDir", "").toString();
 
     QFont ft = QApplication::font();
@@ -370,6 +373,7 @@ bool MainWin::writeSettings(QString pathIni){
     txtStream << Qt::endl;
     txtStream << "cycleRecMs = " << cng.cycleRecMs << Qt::endl;
     txtStream << "packetSz = " << cng.packetSz << Qt::endl;
+    txtStream << "offsetMs = " << cng.offsetMs << Qt::endl;
     txtStream << Qt::endl;
     txtStream << "; save on disk" << Qt::endl;
     txtStream << "outArchiveEna = " << (cng.outArchiveEna ? "1" : "0") << Qt::endl;
