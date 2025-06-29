@@ -110,7 +110,10 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
 
     bool isNewSign = false, isBuffActive = false;
 
-    const size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+    size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+    if (buffSz == 0){
+        buffSz = 1;
+    }
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
     
     std::vector<BufferData::InputData> bufData;

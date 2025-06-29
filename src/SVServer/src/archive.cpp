@@ -44,6 +44,9 @@ void Archive::init(const SV_Srv::Config& cng_) {
   m_copyStartTime = SV_Misc::currDateTimeEx();
   m_copyDateMem = SV_Misc::currDateS();
   m_copySz = 600000 / SV_CYCLESAVE_MS; // 10мин
+  if (m_copySz == 0){
+      m_copySz = 1;
+  }
 
   if(cng.outDataBaseEna && !cng.outDataBaseName.empty() && !cng.outDataBaseAddr.empty()){
       m_chdb = new ClickHouseDB(cng);

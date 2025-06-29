@@ -52,12 +52,14 @@ private:
 
   SV_Srv::Config cng;
 
-  static const size_t BUFF_SZ = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
-  InputData m_buffer[BUFF_SZ];
+  size_t m_buffSz = SV_VALUE_MAX_CNT * 10; // 10 сек - запас
+  std::vector<InputData> m_buffer;
 
   size_t m_buffReadPos = 0;
   size_t m_buffWritePos = 0;
   size_t m_buffWritePosForReader = 0;
+
+  std::map<std::string, uint64_t> m_timeOffsetMs;
 
   std::mutex m_mtxWrite;
 };
