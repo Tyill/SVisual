@@ -475,19 +475,7 @@ void MainWin::load() {
   SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRef);
   SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRef);
   SV_Exp::setGetSignalData(exportPanel_, getSignalData);
-
-  statPanel_ = SV_Stat::createStatDialog(this, SV_Stat::Config(cng.cycleRecMs, cng.packetSz));
-  statPanel_->setWindowFlags(Qt::Window);
-  SV_Stat::setGetCopySignalRef(statPanel_, getCopySignalRef);
-  SV_Stat::setGetSignalData(statPanel_, getSignalData);
-  SV_Stat::setLoadSignalData(statPanel_, loadSignalDataMain);
-  SV_Stat::setSetTimeInterval(statPanel_, [](qint64 st, qint64 en) {
-    SV_Graph::setTimeInterval(mainWin->graphPanels_[mainWin], st, en);
-  });
-  SV_Stat::setGetTimeInterval(statPanel_, []() {
-    return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
-  });
-
+  
   scriptPanel_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::Viewer);
   scriptPanel_->setWindowFlags(Qt::Window);
   SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataMain);
@@ -1011,7 +999,18 @@ bool MainWin::loadSDataRequest(QWidget* from, const QString& sname)
 
 void MainWin::actionOpenStat() {
 
-  statPanel_->showNormal();
+  auto statPanel = SV_Stat::createStatDialog(this, SV_Stat::Config(cng.cycleRecMs, cng.packetSz));
+  statPanel->setWindowFlags(Qt::Window);
+  SV_Stat::setGetCopySignalRef(statPanel, getCopySignalRef);
+  SV_Stat::setGetSignalData(statPanel, getSignalData);
+  SV_Stat::setLoadSignalData(statPanel, loadSignalDataMain);
+  SV_Stat::setSetTimeInterval(statPanel, [](qint64 st, qint64 en) {
+    SV_Graph::setTimeInterval(mainWin->graphPanels_[mainWin], st, en);
+  });
+  SV_Stat::setGetTimeInterval(statPanel, []() {
+    return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
+  });
+  statPanel->showNormal();
 }
 
 void MainWin::contextMenuEvent(QContextMenuEvent * event) {
