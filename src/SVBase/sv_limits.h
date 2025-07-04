@@ -26,6 +26,7 @@
 
 #define SV_EN
 #define SV_VALUE_MAX_CNT 2048         ///< макс кол-во сигналов (на все модули)
+#define SV_PACKETSZ_MAX 1000000       ///< макс кол-во значений в пакете
 
 #define SV_CYCLEREC_MS cng.cycleRecMs ///< период записи сигналов, мс
 #define SV_NAMESZ 24                  ///< имя переменной
