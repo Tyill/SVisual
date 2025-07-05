@@ -34,7 +34,7 @@ namespace SV_Misc {
 
     using ErrorCBack = std::function<void(const std::string& err)>;
 
-    bool start(const std::string& addr, uint16_t port);
+    bool start(const std::string& addr, uint16_t port, bool intoOtherThread = true);
 
     void stop();
 
