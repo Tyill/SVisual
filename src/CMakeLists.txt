@@ -42,7 +42,7 @@ add_subdirectory(SVStatDialog)
 add_subdirectory(SVTriggerDialog)
 add_subdirectory(SVExportDialog)
 add_subdirectory(SVScriptDialog)
-add_subdirectory(SVDistrGraphDialog)
+#add_subdirectory(SVDistrGraphDialog)
 add_subdirectory(SVMonitor)
 add_subdirectory(SVViewer)
 

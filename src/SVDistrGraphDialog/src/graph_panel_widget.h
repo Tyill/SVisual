@@ -24,35 +24,34 @@
 //
 #pragma once
 
-#include "SVDistrGraphDialog/graph_panel.h"
+#include "SVDistrGraphDialog/distr_dialog.h"
+
+#include <QWidget>
 
 class GraphWidget;
+class QSplitter;
+
 
 class GraphPanelWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  Ui::GraphPanelWidget ui;
 
-  GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
+  GraphPanelWidget(QWidget *parent, const SV_Distr::Config& cng);
   ~GraphPanelWidget();
 
-  SV_Graph::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
-  SV_Graph::getSignalDataCBack pfGetSignalData = nullptr;
-  SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
-  SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
+  SV_Distr::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
+  SV_Distr::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Distr::isLoadSignalDataCBack pfLoadSignalData = nullptr;
   
   void addSignalOnGraph(QString name, int section);
   QPair<qint64, qint64> getTimeInterval();
   void setTimeInterval(qint64 stTime, qint64 enTime);
   QVector<QVector<QString>> getLocateSignals();
 
-  void setGraphSetting(const SV_Graph::GraphSetting&);
-  void setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att);
-  void setAxisAttr(const QVector<SV_Graph::AxisAttributes>&);
-  QVector<SV_Graph::AxisAttributes> getAxisAttr();
-  
+  void setGraphSetting(const SV_Distr::GraphSetting&);
+
 public slots:
   void updateSignals();
   void resizeByValue();
@@ -84,7 +83,7 @@ private:
   void tableUpdateAlter(GraphWidget* graph);
 
 private:
-  SV_Graph::Config cng;
+  SV_Distr::Config cng;
 
   const int MIN_HEIGHT_GRAPH = 300;
   int graphCnt_ = 0;
@@ -92,22 +91,6 @@ private:
 
   QSplitter* splitterGraph_ = nullptr;
   GraphWidget* selGraph_ = nullptr;
-
-  SV_Graph::GraphSetting graphSett_;
-
-  bool isPlay_ = true;
-};
-
-class TableWidgetItem : public QTableWidgetItem {
-public:
-    TableWidgetItem(const QString& item):
-        QTableWidgetItem(item)
-    {
-    }
-    bool operator <(const QTableWidgetItem& other) const
-    {
-        return text().toDouble() < other.text().toDouble();
-    }
 };
 
 class LockerReadSDataGraph {

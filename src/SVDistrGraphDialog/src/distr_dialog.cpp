@@ -23,8 +23,8 @@
 // THE SOFTWARE.
 //
 
-#include "SVDistributionDialog/distr_dialog.h"
-#include "SVDistributionDialog/forms/graph_panel_widget.h"
+#include "SVDistrGraphDialog/distr_dialog.h"
+#include "SVDistrGraphDialog/src/graph_panel_widget.h"
 
 namespace SV_Distr {
 

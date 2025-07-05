@@ -23,10 +23,9 @@
 // THE SOFTWARE.
 //
 
-#include "forms/graph_panel_widget.h"
+#include "src/graph_panel_widget.h"
 #include "SVBase/base.h"
 #include "SVBase/sv_limits.h"
-#include "drag_label.h"
 #include "forms/graph_widget.h"
 
 #include <QtGui>
@@ -37,7 +36,7 @@
 using namespace SV_Base;
 
 
-GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
+GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Distr::Config& cng_):
     QWidget(parent)
 {
 #ifdef SV_EN
@@ -48,34 +47,34 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
 
   cng = cng_;
 
-  ui.setupUi(this);
+//  ui.setupUi(this);
 
-  load();
+//  load();
 
-  ////// хак. не открывается на полную
-  ui.dTimeBegin->setVisible(false);
-  ui.dTimeEnd->setVisible(false);
-  ui.lbDTime->setVisible(false);
+//  ////// хак. не открывается на полную
+//  ui.dTimeBegin->setVisible(false);
+//  ui.dTimeEnd->setVisible(false);
+//  ui.lbDTime->setVisible(false);
 
-  QTimer* tm = new QTimer(this);
-  connect(tm, &QTimer::timeout, this, [this, tm]() {
+//  QTimer* tm = new QTimer(this);
+//  connect(tm, &QTimer::timeout, this, [this, tm]() {
 
-    if (cng.mode == SV_Graph::ModeGr::Viewer) {
-      ui.btnPlay->setVisible(false);
-      ui.btnAScale->setVisible(false);
-      ui.btnAScale->setChecked(false);
-      ui.dTimeBegin->setVisible(true);
-      ui.dTimeEnd->setVisible(true);
-      ui.lbDTime->setVisible(true);
-    }
-    else {
-      ui.dTimeBegin->setVisible(false);
-      ui.dTimeEnd->setVisible(false);
-      ui.lbDTime->setVisible(false);
-    }
-    tm->stop();  tm->deleteLater();
-  });
-  tm->start(100);
+//    if (cng.mode == SV_Distr::ModeGr::Viewer) {
+//      ui.btnPlay->setVisible(false);
+//      ui.btnAScale->setVisible(false);
+//      ui.btnAScale->setChecked(false);
+//      ui.dTimeBegin->setVisible(true);
+//      ui.dTimeEnd->setVisible(true);
+//      ui.lbDTime->setVisible(true);
+//    }
+//    else {
+//      ui.dTimeBegin->setVisible(false);
+//      ui.dTimeEnd->setVisible(false);
+//      ui.lbDTime->setVisible(false);
+//    }
+//    tm->stop();  tm->deleteLater();
+//  });
+//  tm->start(100);
   ////////////
 
 }
@@ -129,7 +128,7 @@ void GraphPanelWidget::load() {
   });
 }
 
-void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
+void GraphPanelWidget::setGraphSetting(const SV_Distr::GraphSetting& gs) {
 
   graphSett_ = gs;
 
@@ -138,42 +137,6 @@ void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
     ob->setGraphSetting(gs);
     ob->plotUpdate();
   }
-}
-
-void GraphPanelWidget::setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att) {
-
-  for (auto ob : qAsConst(graphObj_)) {
-
-    ob->setSignalAttr(sign, att);
-  }
-}
-
-void GraphPanelWidget::setAxisAttr(const QVector<SV_Graph::AxisAttributes>& attr) {
-
-  for (auto ob : qAsConst(graphObj_)) {
-
-    int ind = splitterGraph_->indexOf(ob);
-
-    if (ind < attr.size())
-      ob->setAxisAttr(attr[ind]);
-  }
-
-}
-
-QVector<SV_Graph::AxisAttributes> GraphPanelWidget::getAxisAttr() {
-
-  QVector<SV_Graph::AxisAttributes> res;
-  for (auto ob : qAsConst(graphObj_)) {
-
-    int ind = splitterGraph_->indexOf(ob);
-
-    if (ind >= res.size())
-      res.resize(ind + 1);
-
-    res[ind] = ob->getAxisAttr();
-  }
-
-  return res;
 }
 
 void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
@@ -610,7 +573,7 @@ void GraphPanelWidget::updateSignals() {
       ob->resizeByValue();
   }
 
-  if (cng.mode == SV_Graph::ModeGr::Player) {
+  if (cng.mode == SV_Distr::ModeGr::Player) {
 
     qint64 bTm = QDateTime::currentDateTime().toMSecsSinceEpoch() - SV_CYCLESAVE_MS;
 
