@@ -217,10 +217,7 @@ namespace SV_Srv {
     if (m_signalData.find(sign) == m_signalData.end()) return false;
 
     if (!m_signalData[sign]->isBuffEnable){
-      int buffSz = (2 * 3600000) / SV_CYCLESAVE_MS;  // размер буфера 2 часа
-      if (buffSz < 10){
-          buffSz = 10;
-      }
+      int buffSz = std::max(10, (2 * 3600000) / SV_CYCLESAVE_MS);  // размер буфера 2 часа
       m_signalData[sign]->buffData.resize(buffSz);
 
       SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * buffSz];

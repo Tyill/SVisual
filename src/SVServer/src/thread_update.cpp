@@ -223,7 +223,7 @@ void ThreadUpdate::updateCycle(){
   SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
-  int checkConnectTout = 5 * SV_CYCLESAVE_MS;
+  int checkConnectTout = std::min(10000, 5 * SV_CYCLESAVE_MS);
 
   while (!m_thrStop){
 
