@@ -35,7 +35,6 @@ TreeWidgetExt::TreeWidgetExt(QWidget *parent):
   setSelectionMode(QAbstractItemView::SingleSelection);
   setDragEnabled(true);
   setDropIndicatorShown(true);
-
 }
 
 TreeWidgetExt::~TreeWidgetExt(){

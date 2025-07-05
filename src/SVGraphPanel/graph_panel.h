@@ -81,23 +81,23 @@ namespace SV_Graph {
   QVector<AxisAttributes> getAxisAttr(QWidget* gp);
 
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
-  void setGetCopySignalRef(QWidget* gp, getCopySignalRefCBack f);
+  void setGetCopySignalRefCBack(QWidget* gp, getCopySignalRefCBack f);
 
   using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString& sign)>;
-  void setGetSignalData(QWidget* gp, getSignalDataCBack f);
+  void setGetSignalDataCBack(QWidget* gp, getSignalDataCBack f);
 
   using isLoadSignalDataCBack = std::function<bool(const QString& sign)>;
-  void setLoadSignalData(QWidget* gp, isLoadSignalDataCBack f);
+  void setLoadSignalDataCBack(QWidget* gp, isLoadSignalDataCBack f);
 
   using lockReadSDataCBack = std::function<void()>;
-  void setLockReadSData(lockReadSDataCBack f);
+  void setLockReadSDataCBack(lockReadSDataCBack f);
 
   using unlockReadSDataCBack = std::function<void()>;
-  void setUnlockReadSData(unlockReadSDataCBack f);
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f);
 
 
   using getSignalAttrCBack = std::function<bool(const QString& sign, SignalAttributes& out)>;
-  void setGetSignalAttr(QWidget* gp, getSignalAttrCBack f);
+  void setGetSignalAttrCBack(QWidget* gp, getSignalAttrCBack f);
 
   void addSignal(QWidget* gp, QString sname, int section = 0);
 

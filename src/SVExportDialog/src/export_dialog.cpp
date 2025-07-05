@@ -35,49 +35,49 @@ namespace SV_Exp {
     return new ExportDialog(parent, cng);
   }
 
-  void setLockReadSData(lockReadSDataCBack f) {
+  void setLockReadSDataCBack(lockReadSDataCBack f) {
       if (f) {
           pfLockReadSData = f;
       }
   }
 
-  void setUnlockReadSData(unlockReadSDataCBack f) {
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f) {
       if (f) {
           pfUnlockReadSData = f;
       }
   }
 
-  void setGetCopySignalRef(QDialog *exp, getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(QDialog *exp, getCopySignalRefCBack f) {
       if (exp) {
           static_cast<ExportDialog*>(exp)->pfGetCopySignalRef = f;
       }
   }
 
-  void setGetCopyModuleRef(QDialog *exp, getCopyModuleRefCBack f) {
+  void setGetCopyModuleRefCBack(QDialog *exp, getCopyModuleRefCBack f) {
       if (exp) {
           static_cast<ExportDialog*>(exp)->pfGetCopyModuleRef = f;
       }
   }
 
-  void setGetSignalData(QDialog *exp, getSignalDataCBack f) {
+  void setGetSignalDataCBack(QDialog *exp, getSignalDataCBack f) {
       if (exp) {
           static_cast<ExportDialog*>(exp)->pfGetSignalData = f;
       }
   }
 
-  void setLoadSignalData(QDialog *exp, isLoadSignalDataCBack f) {
+  void setLoadSignalDataCBack(QDialog *exp, isLoadSignalDataCBack f) {
       if (exp) {
           static_cast<ExportDialog*>(exp)->pfLoadSignalData = f;
       }
   }
 
-  void setGetTimeInterval(QDialog* exp, getTimeIntervalCBack f) {
+  void setGetTimeIntervalCBack(QDialog* exp, getTimeIntervalCBack f) {
       if (exp) {
           static_cast<ExportDialog*>(exp)->pfGetTimeInterval = f;
       }
   }
 
-  void setSetTimeInterval(QDialog* exp, setTimeIntervalCBack f) {
+  void setSetTimeIntervalCBack(QDialog* exp, setTimeIntervalCBack f) {
       if (exp) {
           static_cast<ExportDialog*>(exp)->pfSetTimeInterval = f;
       }

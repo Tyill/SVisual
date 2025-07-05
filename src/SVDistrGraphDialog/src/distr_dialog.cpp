@@ -62,37 +62,37 @@ namespace SV_Distr {
       }
   }
 
-  void setGetCopySignalRef(QWidget* gp, getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(QWidget* gp, getCopySignalRefCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfGetCopySignalRef = f;
       }
   }
 
-  void setGetSignalData(QWidget* gp, getSignalDataCBack f) {
+  void setGetSignalDataCBack(QWidget* gp, getSignalDataCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfGetSignalData = f;
       }
   }
 
-  void setGetSignalAttr(QWidget* gp, getSignalAttrCBack f) {
+  void setGetSignalAttrCBack(QWidget* gp, getSignalAttrCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfGetSignalAttr = f;
       }
   }
 
-  void setLoadSignalData(QWidget* gp, isLoadSignalDataCBack f) {
+  void setLoadSignalDataCBack(QWidget* gp, isLoadSignalDataCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfLoadSignalData = f;
       }
   }
 
-  void setLockReadSData(lockReadSDataCBack f) {
+  void setLockReadSDataCBack(lockReadSDataCBack f) {
       if (f) {
           pfLockReadSData = f;
       }
   }
 
-  void setUnlockReadSData(unlockReadSDataCBack f) {
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f) {
       if (f) {
           pfUnlockReadSData = f;
       }
@@ -133,11 +133,11 @@ namespace SV_Distr {
           return QVector<QVector<QString>>();
       }
   }
-}
 
 LockerReadSDataGraph::LockerReadSDataGraph(){
     if (SV_Graph::pfLockReadSData) SV_Graph::pfLockReadSData();
 }
 LockerReadSDataGraph::~LockerReadSDataGraph() {
     if (SV_Graph::pfUnlockReadSData) SV_Graph::pfUnlockReadSData();
+}
 }

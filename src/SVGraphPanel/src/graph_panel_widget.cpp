@@ -183,9 +183,9 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
 
   if (!sd) return;
 
-  if (sd && !sd->isBuffEnable && pfLoadSignalData)
+  if (sd && !sd->isBuffEnable && pfLoadSignalData){
     pfLoadSignalData(sign);
-
+  }
   if (graphObj_.size() <= section) {
     while (graphObj_.size() <= section) {
         addGraph("");
@@ -202,14 +202,19 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
     emit ui.axisTime->req_axisChange();
   }
 
-  if (selGraph_) {
-    selGraph_->addSignal(sign);
+  SignalAttributes attr;
+  bool hasAttr = false;
+  if (pfGetSignalAttr){
+      hasAttr = pfGetSignalAttr(sign, attr);
+  }
+  if (selGraph_) {    
+    selGraph_->addSignal(sd, hasAttr ? &attr : nullptr);
 
     tableUpdate(selGraph_);
     tableUpdateAlter(selGraph_);
   }
   else {
-    graphObj_[section]->addSignal(sign);
+    graphObj_[section]->addSignal(sd, hasAttr ? &attr : nullptr);
 
     tableUpdate(graphObj_[section]);
     tableUpdateAlter(graphObj_[section]);
@@ -222,6 +227,10 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
 void GraphPanelWidget::addGraph(QString sign) {
 
   GraphWidget* graph = new GraphWidget(this, cng);
+
+  graph->pfGetSignalData = pfGetSignalData;
+  graph->pfLoadSignalData = pfLoadSignalData;
+  graph->pfGetSignalAttr = pfGetSignalAttr;
 
   graph->setObjectName("graph_" + QString::number(graphCnt_));
   ++graphCnt_;
@@ -239,9 +248,17 @@ void GraphPanelWidget::addGraph(QString sign) {
 
   graph->setAxisTime(ui.axisTime);
 
-  if (!sign.isEmpty())
-    graph->addSignal(sign);
-
+  if (!sign.isEmpty()){
+    auto* sd = pfGetSignalData(sign);
+    if (sd){
+      SignalAttributes attr;
+      bool hasAttr = false;
+      if (pfGetSignalAttr){
+        hasAttr = pfGetSignalAttr(sign, attr);
+      }
+      graph->addSignal(sd, hasAttr ? &attr : nullptr);
+    }
+  }
   connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
   connect(ui.axisTime, SIGNAL(req_axisChange()), graph, SLOT(axisTimeChange()));
   connect(graph, SIGNAL(req_axisTimeUpdate(QString)), this, SLOT(axisTimeChange(QString)));

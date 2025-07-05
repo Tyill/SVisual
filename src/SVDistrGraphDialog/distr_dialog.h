@@ -65,19 +65,19 @@ namespace SV_Distr {
   void setSignalAttr(QDialog* gp, const QString& sign, const SignalAttributes&);
   
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
-  void setGetCopySignalRefCback(QWidget* gp, getCopySignalRefCBack f);
+  void setGetCopySignalRefCBack(QWidget* gp, getCopySignalRefCBack f);
 
   using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString& sign)>;
-  void setGetSignalDataCback(QWidget* gp, getSignalDataCBack f);
+  void setGetSignalDataCBack(QWidget* gp, getSignalDataCBack f);
 
   using isLoadSignalDataCBack = std::function<bool(const QString& sign)>;
-  void setLoadSignalDataCback(QWidget* gp, isLoadSignalDataCBack f);
+  void setLoadSignalDataCBack(QWidget* gp, isLoadSignalDataCBack f);
 
   using lockReadSDataCBack = std::function<void()>;
-  void setLockReadSDataCback(lockReadSDataCBack f);
+  void setLockReadSDataCBack(lockReadSDataCBack f);
 
   using unlockReadSDataCBack = std::function<void()>;
-  void setUnlockReadSDataCback(unlockReadSDataCBack f);
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f);
 
 
   void addSignal(QDialog* gp, QString sname, int section = 0);

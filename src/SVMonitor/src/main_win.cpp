@@ -758,12 +758,12 @@ void MainWin::load(){
     settingsDialog_ = new SettingsDialog(this); settingsDialog_->setWindowFlags(Qt::Window);
     graphSettDialog_ = new GraphSettingDialog(cng.graphSett, this); graphSettDialog_->setWindowFlags(Qt::Window);
 
-    SV_Graph::setLockReadSData(lockReadSDataSrv);
-    SV_Graph::setUnlockReadSData(unlockReadSDataSrv);
-    SV_Graph::setLoadSignalData(graphPanels_[this], loadSignalDataSrv);
-    SV_Graph::setGetCopySignalRef(graphPanels_[this], getCopySignalRefSrv);
-    SV_Graph::setGetSignalData(graphPanels_[this], getSignalDataSrv);
-    SV_Graph::setGetSignalAttr(graphPanels_[this], [this](const QString& sname, SV_Graph::SignalAttributes& out){
+    SV_Graph::setLockReadSDataCBack(lockReadSDataSrv);
+    SV_Graph::setUnlockReadSDataCBack(unlockReadSDataSrv);
+    SV_Graph::setLoadSignalDataCBack(graphPanels_[this], loadSignalDataSrv);
+    SV_Graph::setGetCopySignalRefCBack(graphPanels_[this], getCopySignalRefSrv);
+    SV_Graph::setGetSignalDataCBack(graphPanels_[this], getSignalDataSrv);
+    SV_Graph::setGetSignalAttrCBack(graphPanels_[this], [this](const QString& sname, SV_Graph::SignalAttributes& out){
         if (signAttr_.contains(sname)){
             out.color = signAttr_[sname].color;
             return true;
@@ -774,26 +774,26 @@ void MainWin::load(){
 
     triggerDialog_ = SV_Trigger::getTriggerDialog(this, SV_Trigger::Config(cng.cycleRecMs, cng.packetSz));
     triggerDialog_->setWindowFlags(Qt::Window);
-    SV_Trigger::setLockReadSData(lockReadSDataSrv);
-    SV_Trigger::setUnlockReadSData(unlockReadSDataSrv);
-    SV_Trigger::setGetCopySignalRef(triggerDialog_, getCopySignalRefSrv);
-    SV_Trigger::setGetSignalData(triggerDialog_, getSignalDataSrv);
-    SV_Trigger::setGetCopyModuleRef(triggerDialog_, getCopyModuleRefSrv);
-    SV_Trigger::setGetModuleData(triggerDialog_, getModuleDataSrv);
+    SV_Trigger::setLockReadSDataCBack(lockReadSDataSrv);
+    SV_Trigger::setUnlockReadSDataCBack(unlockReadSDataSrv);
+    SV_Trigger::setGetCopySignalRefCBack(triggerDialog_, getCopySignalRefSrv);
+    SV_Trigger::setGetSignalDataCBack(triggerDialog_, getSignalDataSrv);
+    SV_Trigger::setGetCopyModuleRefCBack(triggerDialog_, getCopyModuleRefSrv);
+    SV_Trigger::setGetModuleDataCBack(triggerDialog_, getModuleDataSrv);
     SV_Trigger::setOnTriggerCBack(triggerDialog_, [this](const QString& name){
         onTrigger(name);
     });
 
     scriptDialog_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::Player);
     scriptDialog_->setWindowFlags(Qt::Window);
-    SV_Script::setLockReadSData(lockReadSDataSrv);
-    SV_Script::setUnlockReadSData(unlockReadSDataSrv);
-    SV_Script::setLoadSignalData(scriptDialog_, loadSignalDataSrv);
-    SV_Script::setGetCopySignalRef(scriptDialog_, getCopySignalRefSrv);
-    SV_Script::setGetSignalData(scriptDialog_, getSignalDataSrv);
-    SV_Script::setGetModuleData(scriptDialog_, getModuleDataSrv);
-    SV_Script::setAddSignal(scriptDialog_, addSignalSrv);
-    SV_Script::setAddModule(scriptDialog_, addModuleSrv);
+    SV_Script::setLockReadSDataCBack(lockReadSDataSrv);
+    SV_Script::setUnlockReadSDataCBack(unlockReadSDataSrv);
+    SV_Script::setLoadSignalDataCBack(scriptDialog_, loadSignalDataSrv);
+    SV_Script::setGetCopySignalRefCBack(scriptDialog_, getCopySignalRefSrv);
+    SV_Script::setGetSignalDataCBack(scriptDialog_, getSignalDataSrv);
+    SV_Script::setGetModuleDataCBack(scriptDialog_, getModuleDataSrv);
+    SV_Script::setAddSignalCBack(scriptDialog_, addSignalSrv);
+    SV_Script::setAddModuleCBack(scriptDialog_, addModuleSrv);
     SV_Script::setAddSignalsCBack(scriptDialog_, [this](){
         QMetaObject::invokeMethod(this, "updateTblSignal", Qt::AutoConnection);
     });
@@ -803,18 +803,18 @@ void MainWin::load(){
     SV_Script::setModuleConnectCBack(scriptDialog_, [this](const QString& module){
         QMetaObject::invokeMethod(this, "moduleConnect", Qt::AutoConnection, Q_ARG(QString, module));
     });
-    SV_Script::setChangeSignColor(scriptDialog_, [this](const QString& module, const QString& name, const QColor& clr){
+    SV_Script::setChangeSignColorCBack(scriptDialog_, [this](const QString& module, const QString& name, const QColor& clr){
         QMetaObject::invokeMethod(this, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
     });
 
     exportDialog_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
     exportDialog_->setWindowFlags(Qt::Window);
-    SV_Exp::setLockReadSData(lockReadSDataSrv);
-    SV_Exp::setUnlockReadSData(unlockReadSDataSrv);
-    SV_Exp::setLoadSignalData(exportDialog_, loadSignalDataSrv);
-    SV_Exp::setGetCopySignalRef(exportDialog_, getCopySignalRefSrv);
-    SV_Exp::setGetCopyModuleRef(exportDialog_, getCopyModuleRefSrv);
-    SV_Exp::setGetSignalData(exportDialog_, getSignalDataSrv);
+    SV_Exp::setLockReadSDataCBack(lockReadSDataSrv);
+    SV_Exp::setUnlockReadSDataCBack(unlockReadSDataSrv);
+    SV_Exp::setLoadSignalDataCBack(exportDialog_, loadSignalDataSrv);
+    SV_Exp::setGetCopySignalRefCBack(exportDialog_, getCopySignalRefSrv);
+    SV_Exp::setGetCopyModuleRefCBack(exportDialog_, getCopyModuleRefSrv);
+    SV_Exp::setGetSignalDataCBack(exportDialog_, getSignalDataSrv);
 
     SV_Srv::setStatusCBack([this](const std::string& mess){
         statusMess(QString::fromLocal8Bit(mess.c_str()));
@@ -832,11 +832,11 @@ void MainWin::load(){
         QMetaObject::invokeMethod(this, "moduleDisconnect", Qt::AutoConnection, Q_ARG(QString, QString::fromStdString(module)));
     });
 
-    SV_Web::setLockReadSData(lockReadSDataSrv);
-    SV_Web::setUnlockReadSData(unlockReadSDataSrv);
-    SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
-    SV_Web::setGetSignalData(getSignalDataSrv);
-    SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+    SV_Web::setLockReadSDataCBack(lockReadSDataSrv);
+    SV_Web::setUnlockReadSDataCBack(unlockReadSDataSrv);
+    SV_Web::setGetCopySignalRefCBack(getCopySignalRefSrv);
+    SV_Web::setGetSignalDataCBack(getSignalDataSrv);
+    SV_Web::setGetCopyModuleRefCBack(getCopyModuleRefSrv);
 
     SV_Zbx::setLockReadSData(lockReadSDataSrv);
     SV_Zbx::setUnlockReadSData(unlockReadSDataSrv);
@@ -1297,12 +1297,12 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
   Config.isShowTable = false;
 
   auto gp = SV_Graph::createGraphPanel(graphWin, Config);
-  SV_Graph::setLoadSignalData(gp, [](const QString& sign){
+  SV_Graph::setLoadSignalDataCBack(gp, [](const QString& sign){
     return SV_Srv::signalBufferEna(sign.toUtf8().data());
   });
-  SV_Graph::setGetCopySignalRef(gp, getCopySignalRefSrv);
-  SV_Graph::setGetSignalData(gp, getSignalDataSrv);
-  SV_Graph::setGetSignalAttr(gp, [this](const QString& sname, SV_Graph::SignalAttributes& out){
+  SV_Graph::setGetCopySignalRefCBack(gp, getCopySignalRefSrv);
+  SV_Graph::setGetSignalDataCBack(gp, getSignalDataSrv);
+  SV_Graph::setGetSignalAttrCBack(gp, [this](const QString& sname, SV_Graph::SignalAttributes& out){
     if (signAttr_.contains(sname)){
       out.color = signAttr_[sname].color;
       return true;

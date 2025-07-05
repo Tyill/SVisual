@@ -27,8 +27,6 @@
 #include <QLabel>
 
 
-namespace SV_Graph {
-
 class DragLabel : public QLabel
 {
   Q_OBJECT
@@ -48,4 +46,3 @@ protected:
 signals:
   void req_delSignal(QString sign);
 };
-}

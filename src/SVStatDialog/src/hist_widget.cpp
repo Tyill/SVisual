@@ -28,7 +28,6 @@
 #include <QtGui>
 
 
-namespace SV_Stat {
 
 HistWidget::HistWidget(QWidget *parent) {
 
@@ -154,5 +153,4 @@ int HistWidget::getAreaHist(int leftPos, int rightPos) {
 int HistWidget::getAreaByPos() {
 
   return getAreaHist(minXPos_, targPos_ / sclX_ + minXPos_);
-}
 }

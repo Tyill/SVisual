@@ -30,7 +30,6 @@
 #include <QtGui>
 #include <QApplication>
 
-namespace SV_Graph {
 
 PlotWidget::PlotWidget(QWidget *parent):
     QWidget(parent)
@@ -42,7 +41,6 @@ PlotWidget::PlotWidget(QWidget *parent):
 }
 
 void PlotWidget::mousePressEvent(QMouseEvent *event) {
-
 
   presPnt_ = event->pos();
 
@@ -87,7 +85,6 @@ void PlotWidget::mouseReleaseEvent(QMouseEvent *event) {
 
     lpm_ = false;
 
-
     if (!keyCntr_) emit req_rctChange();
 
     keyCntr_ = false;
@@ -116,31 +113,27 @@ void PlotWidget::mouseMoveEvent(QMouseEvent *event) {
   }
 
   if (lpm_ && keyCntr_) {
-
     emit req_updMarker();
-
   }
   else if (lpm_) {
     int w = event->pos().x() - presPnt_.x();
     int h = event->pos().y() - presPnt_.y();
 
     if ((w > 0) && (h > 0))
-      SelRect = QRect(presPnt_.x(), presPnt_.y(), w, h);
+      selRect_ = QRect(presPnt_.x(), presPnt_.y(), w, h);
     else if ((w < 0) && (h > 0))
-      SelRect = QRect(event->pos().x(), presPnt_.y(), abs(w), h);
+      selRect_ = QRect(event->pos().x(), presPnt_.y(), abs(w), h);
     else if ((w > 0) && (h < 0))
-      SelRect = QRect(presPnt_.x(), event->pos().y(), w, abs(h));
+      selRect_ = QRect(presPnt_.x(), event->pos().y(), w, abs(h));
     else if ((w < 0) && (h < 0))
-      SelRect = QRect(event->pos().x(), event->pos().y(), abs(w), abs(h));
+      selRect_ = QRect(event->pos().x(), event->pos().y(), abs(w), abs(h));
 
     update();
   }
   else if (rpm_ && axisTime_ && axisValue_) {
-
     axisTime_->mouseMoveEvent(event);
     axisValue_->mouseMoveEvent(event);
   }
-
   QWidget::mouseMoveEvent(event);
 }
 
@@ -166,6 +159,7 @@ void PlotWidget::wheelEvent(QWheelEvent * event) {
       axisValue_->wheelEvent(event);
     }
   }
+  event->accept();
 }
 
 void PlotWidget::scale(int delta, const QPoint& mpos) {
@@ -196,10 +190,9 @@ void PlotWidget::paintEvent(QPaintEvent *event) {
   QPen pn(Qt::green, Qt::DashLine);  pn.setWidth(2);
   painter.setPen(pn);
 
-  painter.drawRect(SelRect);
+  painter.drawRect(selRect_);
 
   QWidget::paintEvent(event);
-}
 }
 
 

@@ -26,8 +26,6 @@
 
 #include <QWidget>
 
-namespace SV_Graph {
-
 class AxisTimeWidget;
 class AxisValueWidget;
 
@@ -38,7 +36,12 @@ class PlotWidget : public QWidget
 public:
   PlotWidget(QWidget *parent = 0);
 
-  QRect SelRect;
+  void setRect(const QRect& rect){
+    selRect_ = rect;
+  }
+  QRect rect()const{
+    return selRect_;
+  }
 
   void setAxisTime(AxisTimeWidget* ax);
   void setAxisValue(AxisValueWidget* ax);
@@ -60,6 +63,7 @@ protected:
 
 private:
   QPoint presPnt_;
+  QRect selRect_;
 
   bool lpm_ = false, rpm_ = false, keyCntr_ = false;
   QTimer* tmrMarkerPos_ = NULL;
@@ -67,4 +71,3 @@ private:
   AxisTimeWidget* axisTime_ = NULL;
   AxisValueWidget* axisValue_ = NULL;
 };
-}

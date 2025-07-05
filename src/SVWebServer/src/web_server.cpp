@@ -48,29 +48,29 @@ namespace SV_Web {
       WServer.close();
   }
 
-  void setLockReadSData(lockReadSDataCBack f) {
+  void setLockReadSDataCBack(lockReadSDataCBack f) {
       if (f) {
           pfLockReadSData = f;
       }
   }
 
-  void setUnlockReadSData(unlockReadSDataCBack f) {
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f) {
       if (f) {
           pfUnlockReadSData = f;
       }
   }
 
-  void setGetCopySignalRef(getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(getCopySignalRefCBack f) {
 
     WServer.pfGetCopySignalRef = f;
   }
 
-  void setGetCopyModuleRef(getCopyModuleRefCBack f) {
+  void setGetCopyModuleRefCBack(getCopyModuleRefCBack f) {
 
     WServer.pfGetCopyModuleRef = f;
   }
 
-  void setGetSignalData(getSignalDataCBack f) {
+  void setGetSignalDataCBack(getSignalDataCBack f) {
 
     WServer.pfGetSignalData = f;
   }

@@ -26,8 +26,6 @@
 
 #include <QWidget>
 
-namespace SV_Stat {
-
 class HistWidget : public QWidget
 {
   Q_OBJECT
@@ -65,4 +63,3 @@ signals:
   void selValueChange();
 
 };
-}

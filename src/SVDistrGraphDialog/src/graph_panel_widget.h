@@ -31,6 +31,7 @@
 class GraphWidget;
 class QSplitter;
 
+namespace SV_Distr {
 
 class GraphPanelWidget : public QWidget
 {
@@ -98,4 +99,4 @@ public:
     explicit LockerReadSDataGraph();
     ~LockerReadSDataGraph();
 };
-
+}

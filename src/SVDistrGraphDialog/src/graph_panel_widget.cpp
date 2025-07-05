@@ -35,6 +35,7 @@
 
 using namespace SV_Base;
 
+namespace SV_Distr {
 
 GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Distr::Config& cng_):
     QWidget(parent)
@@ -668,4 +669,5 @@ QVector<QVector<QString>> GraphPanelWidget::getLocateSignals() {
   }
 
   return res;
+}
 }

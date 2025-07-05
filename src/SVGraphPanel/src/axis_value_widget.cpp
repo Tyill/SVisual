@@ -27,8 +27,6 @@
 
 #include <QtGui>
 
-namespace SV_Graph {
-
 AxisValueWidget::AxisValueWidget(QWidget *parent):
     QWidget(parent)
 {
@@ -143,7 +141,7 @@ SV_Graph::AxisAttributes AxisValueWidget::getAxisAttr() {
 void AxisValueWidget::wheelEvent(QWheelEvent * event) {
 
   scale(event->delta(), event->pos().y());
-
+  event->accept();
 }
 
 void AxisValueWidget::resizeEvent(QResizeEvent * event) {
@@ -262,5 +260,4 @@ QString AxisValueWidget::getValMark(double vl) {
   else                  vl = int(vl * 1000 + 0.5) / 1000.;
 
   return QString::number(vl * sign);
-}
 }

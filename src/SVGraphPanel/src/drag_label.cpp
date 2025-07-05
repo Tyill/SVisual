@@ -28,8 +28,6 @@
 #include <QtGui>
 #include <QApplication>
 
-namespace SV_Graph {
-
 DragLabel::DragLabel(QWidget *parent):
     QLabel(parent)
 {
@@ -72,5 +70,4 @@ void DragLabel::mouseMoveEvent(QMouseEvent *event) {
   }
 
   QLabel::mouseMoveEvent(event);
-}
 }
