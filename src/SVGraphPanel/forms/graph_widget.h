@@ -28,6 +28,9 @@
 #include "GeneratedFiles/ui_graph_widget.h"
 
 class QLabel;
+
+namespace SV_Graph {
+
 class GraphPanelWidget;
 class AxisSettingDialog;
 class AxisTimeWidget;
@@ -174,3 +177,4 @@ private:
   AxisSettingDialog* axisSettPanel_ = nullptr;
 
 };
+}

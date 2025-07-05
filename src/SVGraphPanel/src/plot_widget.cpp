@@ -30,6 +30,8 @@
 #include <QtGui>
 #include <QApplication>
 
+namespace SV_Graph {
+
 PlotWidget::PlotWidget(QWidget *parent):
     QWidget(parent)
 {
@@ -198,6 +200,6 @@ void PlotWidget::paintEvent(QPaintEvent *event) {
 
   QWidget::paintEvent(event);
 }
-
+}
 
 

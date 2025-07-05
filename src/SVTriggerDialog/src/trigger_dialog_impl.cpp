@@ -26,10 +26,11 @@
 #include "SVTriggerDialog/forms/trigger_dialog_impl.h"
 
 using namespace SV_Base;
-using namespace SV_Trigger;
 
 #include <QFileDialog>
 #include <QTranslator>
+
+namespace SV_Trigger {
 
 TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_):
     QDialog(parent)
@@ -649,8 +650,9 @@ void TriggerDialog::workCycle(){
 
     int ms = SV_CYCLESAVE_MS - (int)tmDelay.getCTime();
     if (ms > 0)
-      SV_Misc::sleepMs(ms);
+      SV_Misc::sleepMs(std::min(ms, 10000));
   }
+}
 }
 
 

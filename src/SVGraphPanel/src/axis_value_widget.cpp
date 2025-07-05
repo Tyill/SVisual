@@ -27,6 +27,8 @@
 
 #include <QtGui>
 
+namespace SV_Graph {
+
 AxisValueWidget::AxisValueWidget(QWidget *parent):
     QWidget(parent)
 {
@@ -260,4 +262,5 @@ QString AxisValueWidget::getValMark(double vl) {
   else                  vl = int(vl * 1000 + 0.5) / 1000.;
 
   return QString::number(vl * sign);
+}
 }

@@ -25,9 +25,9 @@
 
 #include "SVScriptDialog/forms/script_dialog_impl.h"
 
-ScriptDialog* scrDialogRef = nullptr;
-
 namespace SV_Script {
+
+  ScriptDialog* scrDialogRef = nullptr;
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
@@ -125,11 +125,12 @@ namespace SV_Script {
           static_cast<ScriptDialog*>(stp)->pfModuleConnectCBack = f;
       }
   }
-}
 
 LockerReadSDataScript::LockerReadSDataScript() {
     if (SV_Script::pfLockReadSData) SV_Script::pfLockReadSData();
 }
 LockerReadSDataScript::~LockerReadSDataScript() {
     if (SV_Script::pfUnlockReadSData) SV_Script::pfUnlockReadSData();
+}
+
 }

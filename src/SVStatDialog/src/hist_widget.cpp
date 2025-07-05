@@ -27,7 +27,8 @@
 
 #include <QtGui>
 
-using namespace std;
+
+namespace SV_Stat {
 
 HistWidget::HistWidget(QWidget *parent) {
 
@@ -42,17 +43,6 @@ HistWidget::~HistWidget() {}
 void HistWidget::setGraphPnt(QVector<QPair<int, int>> pnts) {
 
   grPnts_ = pnts;
-
-  update();
-}
-
-void HistWidget::setGraphPnt(vector<pair<int, int>> pnts) {
-
-  grPnts_.clear();
-
-  size_t sz = pnts.size();
-  for (size_t i = 0; i < sz; ++i)
-    grPnts_.push_back(QPair<int, int>(pnts[i].first, pnts[i].second));
 
   update();
 }
@@ -164,4 +154,5 @@ int HistWidget::getAreaHist(int leftPos, int rightPos) {
 int HistWidget::getAreaByPos() {
 
   return getAreaHist(minXPos_, targPos_ / sclX_ + minXPos_);
+}
 }

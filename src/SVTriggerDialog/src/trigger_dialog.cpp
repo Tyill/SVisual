@@ -150,11 +150,11 @@ namespace SV_Trigger {
 
     return res;
   }
-}
 
 LockerReadSDataTrigger::LockerReadSDataTrigger() {
     if (SV_Trigger::pfLockReadSData) SV_Trigger::pfLockReadSData();
 }
 LockerReadSDataTrigger::~LockerReadSDataTrigger() {
     if (SV_Trigger::pfUnlockReadSData) SV_Trigger::pfUnlockReadSData();
+}
 }

@@ -29,6 +29,7 @@
 #include "SVBase/base.h"
 
 class QDialog;
+class QWidget;
 
 namespace SV_Stat {
 

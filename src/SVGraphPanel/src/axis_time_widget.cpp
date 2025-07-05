@@ -27,6 +27,8 @@
 
 #include <QtGui>
 
+namespace SV_Graph {
+
 AxisTimeWidget::AxisTimeWidget(QWidget *parent):
     QWidget(parent)
 {
@@ -223,4 +225,5 @@ QVector<int> AxisTimeWidget::getAxisMark() {
   }
 
   return mark;
+}
 }

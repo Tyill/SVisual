@@ -83,11 +83,11 @@ namespace SV_Exp {
       }
   }
 
-}
-
 LockerReadSDataExp::LockerReadSDataExp() {
     if (SV_Exp::pfLockReadSData) SV_Exp::pfLockReadSData();
 }
 LockerReadSDataExp::~LockerReadSDataExp() {
     if (SV_Exp::pfUnlockReadSData) SV_Exp::pfUnlockReadSData();
+}
+
 }

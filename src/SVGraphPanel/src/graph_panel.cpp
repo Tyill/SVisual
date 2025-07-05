@@ -133,11 +133,11 @@ namespace SV_Graph {
           return QVector<QVector<QString>>();
       }
   }
-}
 
 LockerReadSDataGraph::LockerReadSDataGraph(){
     if (SV_Graph::pfLockReadSData) SV_Graph::pfLockReadSData();
 }
 LockerReadSDataGraph::~LockerReadSDataGraph() {
     if (SV_Graph::pfUnlockReadSData) SV_Graph::pfUnlockReadSData();
+}
 }

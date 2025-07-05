@@ -28,6 +28,9 @@
 
 #include <QWidget>
 
+
+namespace SV_Graph {
+
 class AxisValueWidget : public QWidget
 {
   Q_OBJECT
@@ -88,3 +91,4 @@ protected:
 signals:
   void req_axisChange();
 };
+}

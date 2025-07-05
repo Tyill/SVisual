@@ -29,6 +29,9 @@
 #include <QDir>
 #include <QUrl>
 
+
+namespace SV_Zbx {
+
 void ZbxServer::setConfig(const SV_Zbx::Config& cng_) {
 
   cng = cng_;
@@ -80,4 +83,5 @@ QString ZbxServer::getLastValueStr(const QString& sname) {
   }
   else
     return "0";
+}
 }

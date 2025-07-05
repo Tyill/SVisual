@@ -38,6 +38,7 @@
 #include <QTranslator>
 
 using namespace SV_Base;
+namespace SV_Exp{
 
 ExportDialog::ExportDialog(QWidget *parent, SV_Exp::Config cng_):
     QDialog(parent)
@@ -512,6 +513,6 @@ void ExportDialog::exportToJSON(QString fileName) {
   tmr->setInterval(5000);
   tmr->start();
 }
-
+}
 
 

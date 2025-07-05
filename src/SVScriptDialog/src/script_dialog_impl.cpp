@@ -41,6 +41,8 @@
 using namespace SV_Base;
 namespace lub = luabridge;
 
+namespace SV_Script {
+
 extern ScriptDialog* scrDialogRef;
 
 void printMess(const std::string& mess) {
@@ -968,4 +970,5 @@ void ScriptDialog::workCycle() {
         SV_Misc::sleepMs(ms);
     }
   }
+}
 }

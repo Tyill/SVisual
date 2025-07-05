@@ -34,6 +34,8 @@
 #include "SVTriggerDialog/trigger_dialog.h"
 #include "GeneratedFiles/ui_trigger_dialog.h"
 
+namespace SV_Trigger {
+
 class TriggerDialog : public QDialog
 {
   Q_OBJECT
@@ -111,3 +113,4 @@ public:
     explicit LockerReadSDataTrigger();
     ~LockerReadSDataTrigger();
 };
+}

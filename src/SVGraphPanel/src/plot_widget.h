@@ -26,6 +26,8 @@
 
 #include <QWidget>
 
+namespace SV_Graph {
+
 class AxisTimeWidget;
 class AxisValueWidget;
 
@@ -65,3 +67,4 @@ private:
   AxisTimeWidget* axisTime_ = NULL;
   AxisValueWidget* axisValue_ = NULL;
 };
+}

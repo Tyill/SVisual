@@ -26,6 +26,9 @@
 
 #include <QWidget>
 
+
+namespace SV_Graph {
+
 class AxisTimeWidget : public QWidget
 {
   Q_OBJECT
@@ -80,3 +83,4 @@ signals:
   void req_axisChange();
 
 };
+}

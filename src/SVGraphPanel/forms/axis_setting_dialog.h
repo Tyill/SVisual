@@ -30,6 +30,9 @@
 
 #include <QTranslator>
 
+
+namespace SV_Graph {
+
 class AxisSettingDialog : public QDialog
 {
   Q_OBJECT
@@ -86,6 +89,6 @@ private slots:
 signals:
   void req_settChange(SV_Graph::AxisAttributes);
 };
-
+}
 
 

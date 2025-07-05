@@ -26,9 +26,9 @@
 #include "SVWebServer/web_server.h"
 #include "web_server_impl.h"
 
-WebServer WServer;
-
 namespace SV_Web {
+
+  WebServer WServer;
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
@@ -74,11 +74,11 @@ namespace SV_Web {
 
     WServer.pfGetSignalData = f;
   }
-}
 
 LockerReadSDataWeb::LockerReadSDataWeb() {
     if (SV_Web::pfLockReadSData) SV_Web::pfLockReadSData();
 }
 LockerReadSDataWeb::~LockerReadSDataWeb() {
     if (SV_Web::pfUnlockReadSData) SV_Web::pfUnlockReadSData();
+}
 }

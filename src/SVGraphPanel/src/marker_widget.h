@@ -26,31 +26,39 @@
 
 #include <QWidget>
 
+
+namespace SV_Graph {
+
 class MarkerWidget : public QWidget
 {
   Q_OBJECT
-private:
-    
-  int minPosX_ = -1, maxPosX_ = -1, minPosY_ = -1, maxPosY_ = -1;
-  int presPosX_ = 0;
   
 public:
   MarkerWidget(QWidget *parent = 0);
   ~MarkerWidget();
 
-  bool IsSelect = false;
+  bool isSelect()const{
+      return isSelect_;
+  }
 
   void setPos(QPoint pos);
   
   void setLimitPosX(int min, int max);
   void setLimitPosY(int min, int max);
-    
+
+signals:
+  void req_markerChange();
+
 protected:
   void mouseMoveEvent(QMouseEvent * event);
   void mousePressEvent(QMouseEvent * event);
   void mouseReleaseEvent(QMouseEvent * event);
 
-signals:
-  void req_markerChange();
+private:
+
+  int minPosX_ = -1, maxPosX_ = -1, minPosY_ = -1, maxPosY_ = -1;
+  int presPosX_ = 0;
+  bool isSelect_ = false;
 
 };
+}

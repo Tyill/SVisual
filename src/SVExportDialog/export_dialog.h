@@ -31,6 +31,7 @@
 #include <functional>
 
 class QDialog;
+class QWidget;
 
 namespace SV_Exp {
 
