@@ -32,8 +32,11 @@ namespace SV_Graph {
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
 
   QWidget* createGraphPanel(QWidget* parent, const SV_Graph::Config& cng) {
-
-    return new GraphPanelWidget(parent, cng);
+    if (cng.mode != SV_Graph::ModeGr::Distr){
+        return new DistrGraphPanelWidget(parent, cng);
+    }else{
+        return new GraphPanelWidget(parent, cng);
+    }
   }
 
   void setGraphSetting(QWidget* gp, const GraphSetting& gs) {

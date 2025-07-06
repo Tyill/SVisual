@@ -357,6 +357,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QSpinBox" name="spnPeriodMin">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>1000000</number>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="lbDTime">
             <property name="text">
              <string>-</string>
@@ -464,8 +474,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>768</width>
-            <height>189</height>
+            <width>780</width>
+            <height>160</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -619,7 +629,6 @@
  </customwidgets>
  <resources>
   <include location="../../SVMonitor/resources/resource.qrc"/>
-  <include location="../resources/graph_panel_resource.qrc"/>
  </resources>
  <connections/>
 </ui>

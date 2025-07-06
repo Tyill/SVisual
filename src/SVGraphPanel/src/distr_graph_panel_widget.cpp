@@ -41,8 +41,12 @@ namespace SV_Graph {
 DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
     GraphPanelWidget(parent, cng_)
 {
+    ui.axisTime->hide();
+    while (auto item = ui.horizontalLayout_2->itemAt(0)){
+        ui.horizontalLayout_2->removeItem(item);
+    }
 }
 
-GraphPanelWidget::~GraphPanelWidget() {}
+DistrGraphPanelWidget::~DistrGraphPanelWidget() {}
 
 }
