@@ -23,42 +23,22 @@
 // THE SOFTWARE.
 //
 
-#include "SVDistrGraphDialog/distr_dialog.h"
-#include "SVDistrGraphDialog/src/graph_panel_widget.h"
+#include "SVDistrGraphPanel/distr_panel.h"
+#include "forms/graph_panel_widget.h"
 
 namespace SV_Distr {
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
 
-  QWidget* createGraphPanel(QWidget* parent, const SV_Graph::Config& cng) {
+  QWidget* createDistrGraphPanel(QWidget* parent, const SV_Graph::Config& cng) {
 
     return new GraphPanelWidget(parent, cng);
   }
 
-  void setGraphSetting(QWidget* gp, const GraphSetting& gs) {
+  void setGraphSetting(QWidget* gp, const SV_Graph::GraphSetting& gs) {
       if (gp) {
           static_cast<GraphPanelWidget*>(gp)->setGraphSetting(gs);
-      }
-  }
-
-  void setSignalAttr(QWidget* gp, const QString& sign, const SignalAttributes& att) {
-      if (gp) {
-          static_cast<GraphPanelWidget*>(gp)->setSignalAttr(sign, att);
-      }
-  }
-
-  void setAxisAttr(QWidget* gp, const QVector<AxisAttributes>& attr) {
-      if (gp) {
-          static_cast<GraphPanelWidget*>(gp)->setAxisAttr(attr);
-      }
-  }
-
-  QVector<AxisAttributes> getAxisAttr(QWidget* gp) {
-      if (gp) {
-          return static_cast<GraphPanelWidget*>(gp)->getAxisAttr();
-      }else {
-          return QVector<AxisAttributes>();
       }
   }
 
@@ -110,34 +90,10 @@ namespace SV_Distr {
       }
   }
 
-  QPair<qint64, qint64> getTimeInterval(QWidget* gp) {
-      if (gp) {
-          return static_cast<GraphPanelWidget*>(gp)->getTimeInterval();
-      }else {
-          return QPair<qint64, qint64>();
-      }
-  }
-
-  void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime) {
-    if (gp) {
-      static_cast<GraphPanelWidget*>(gp)->setTimeInterval(stTime, enTime);
-      static_cast<GraphPanelWidget*>(gp)->ui.axisTime->update();
-      static_cast<GraphPanelWidget*>(gp)->resizeByValue();
-    }
-  }
-
-  QVector<QVector<QString>> getLocateSignals(QWidget* gp) {
-      if (gp) {
-          return static_cast<GraphPanelWidget*>(gp)->getLocateSignals();
-      }else {
-          return QVector<QVector<QString>>();
-      }
-  }
-
 LockerReadSDataGraph::LockerReadSDataGraph(){
-    if (SV_Graph::pfLockReadSData) SV_Graph::pfLockReadSData();
+    if (SV_Distr::pfLockReadSData) SV_Distr::pfLockReadSData();
 }
 LockerReadSDataGraph::~LockerReadSDataGraph() {
-    if (SV_Graph::pfUnlockReadSData) SV_Graph::pfUnlockReadSData();
+    if (SV_Distr::pfUnlockReadSData) SV_Distr::pfUnlockReadSData();
 }
 }

@@ -32,37 +32,18 @@
 #include <functional>
 
 class QWidget;
-class QDialog;
+
+namespace SV_Graph {
+struct Config;
+struct GraphSetting;
+struct SignalAttributes;
+}
 
 namespace SV_Distr {
 
-  struct Config {
-    bool isShowTable = true;
-    int cycleRecMs;
-    int packetSz;
-    
-    Config(int cycleRecMs_ = 100, int packetSz_ = 10) :
-      cycleRecMs(cycleRecMs_),
-      packetSz(packetSz_) {}
-  };
+  QWidget* createDistrGraphPanel(QWidget* parent, const SV_Graph::Config& cng);
 
-  struct GraphSetting {
-    bool darkTheme = false;
-    bool signBoolOnTop = false;
-    int transparent = 0;
-    int lineWidth = 1;
-    int gapTolerance = 1;
-  };
-
-  struct SignalAttributes {
-    QColor color;
-  };  
-
-  QDialog* createDistrGraphDialog(QWidget* parent, const Config& cng);
-
-  void setGraphSetting(QDialog* gp, const GraphSetting&);
-
-  void setSignalAttr(QDialog* gp, const QString& sign, const SignalAttributes&);
+  void setGraphSetting(QWidget* gp, const SV_Graph::GraphSetting&);
   
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
   void setGetCopySignalRefCBack(QWidget* gp, getCopySignalRefCBack f);
@@ -79,12 +60,10 @@ namespace SV_Distr {
   using unlockReadSDataCBack = std::function<void()>;
   void setUnlockReadSDataCBack(unlockReadSDataCBack f);
 
+  using getSignalAttrCBack = std::function<bool(const QString& sign, SV_Graph::SignalAttributes& out)>;
+  void setGetSignalAttrCBack(QWidget* gp, getSignalAttrCBack f);
 
-  void addSignal(QDialog* gp, QString sname, int section = 0);
+  void addSignal(QWidget* gp, QString sname, int section = 0);
 
-  void update(QDialog* gp);
-
-  QPair<qint64, qint64> getTimeInterval(QWidget* gp);
-
-  void setTimeInterval(QWidget* gp, qint64 stTime, qint64 enTime);
+  void update(QWidget* gp);
 }

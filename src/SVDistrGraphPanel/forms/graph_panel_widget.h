@@ -24,12 +24,18 @@
 //
 #pragma once
 
-#include "SVDistrGraphDialog/distr_dialog.h"
+#include "SVDistrGraphPanel/distr_panel.h"
+#include "SVGraphPanel/graph_panel.h"
+#include "GeneratedFiles/ui_graph_panel_widget.h"
 
 #include <QWidget>
 
-class GraphWidget;
 class QSplitter;
+
+
+namespace SV_Graph {
+class GraphWidget;
+}
 
 namespace SV_Distr {
 
@@ -38,20 +44,22 @@ class GraphPanelWidget : public QWidget
   Q_OBJECT
 
 public:
+  Ui::GraphPanelWidget ui;
 
-  GraphPanelWidget(QWidget *parent, const SV_Distr::Config& cng);
+  GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
   ~GraphPanelWidget();
 
   SV_Distr::getCopySignalRefCBack pfGetCopySignalRef = nullptr;
   SV_Distr::getSignalDataCBack pfGetSignalData = nullptr;
   SV_Distr::isLoadSignalDataCBack pfLoadSignalData = nullptr;
+  SV_Distr::getSignalAttrCBack pfGetSignalAttr = nullptr;
   
   void addSignalOnGraph(QString name, int section);
   QPair<qint64, qint64> getTimeInterval();
   void setTimeInterval(qint64 stTime, qint64 enTime);
   QVector<QVector<QString>> getLocateSignals();
 
-  void setGraphSetting(const SV_Distr::GraphSetting&);
+  void setGraphSetting(const SV_Graph::GraphSetting&);
 
 public slots:
   void updateSignals();
@@ -68,9 +76,9 @@ private slots:
   void graphToUp(QString obj);
   void graphToDn(QString obj);
   void closeGraph();
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dropEvent(QDropEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event)override;
+  void dragMoveEvent(QDragMoveEvent *event)override;
+  void dropEvent(QDropEvent *event)override;
   void resizeByTime();
   void undoCmd();
   void colorUpdate();
@@ -80,18 +88,32 @@ protected:
 
 private:
   void load();
-  void tableUpdate(GraphWidget* graph);
-  void tableUpdateAlter(GraphWidget* graph);
+  void tableUpdate(SV_Graph::GraphWidget* graph);
+  void tableUpdateAlter(SV_Graph::GraphWidget* graph);
 
 private:
-  SV_Distr::Config cng;
+  SV_Graph::Config cng;
 
   const int MIN_HEIGHT_GRAPH = 300;
   int graphCnt_ = 0;
-  QVector<GraphWidget*> graphObj_;
+  QVector<SV_Graph::GraphWidget*> graphObj_;
+
+  SV_Graph::GraphSetting graphSett_;
 
   QSplitter* splitterGraph_ = nullptr;
-  GraphWidget* selGraph_ = nullptr;
+  SV_Graph::GraphWidget* selGraph_ = nullptr;
+};
+
+class TableWidgetItem : public QTableWidgetItem {
+public:
+    TableWidgetItem(const QString& item):
+        QTableWidgetItem(item)
+    {
+    }
+    bool operator <(const QTableWidgetItem& other) const
+    {
+        return text().toDouble() < other.text().toDouble();
+    }
 };
 
 class LockerReadSDataGraph {
