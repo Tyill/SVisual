@@ -38,7 +38,6 @@ add_subdirectory(SVWriterExample)
 
 # gui
 add_subdirectory(SVGraphPanel)
-add_subdirectory(SVDistrGraphPanel)
 add_subdirectory(SVStatDialog)
 add_subdirectory(SVTriggerDialog)
 add_subdirectory(SVExportDialog)

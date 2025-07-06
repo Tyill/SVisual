@@ -177,7 +177,7 @@ QVector<SV_Graph::AxisAttributes> GraphPanelWidget::getAxisAttr() {
   return res;
 }
 
-void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
+void GraphPanelWidget::addSignalOnGraph(const QString& sign, int section) {
 
   SV_Base::SignalData* sd = pfGetSignalData(sign);
 

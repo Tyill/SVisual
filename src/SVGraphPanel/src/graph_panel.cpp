@@ -98,9 +98,9 @@ namespace SV_Graph {
       }
   }
 
-  void addSignal(QWidget* gp, QString sname, int section) {
+  void addSignal(QWidget* gp, const QString& sign, int section) {
       if (gp) {
-          static_cast<GraphPanelWidget*>(gp)->addSignalOnGraph(sname, section);
+          static_cast<GraphPanelWidget*>(gp)->addSignalOnGraph(sign, section);
       }
   }
 

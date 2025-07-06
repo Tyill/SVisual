@@ -38,6 +38,7 @@ namespace SV_Graph {
   enum class ModeGr {
     Viewer = 0,
     Player = 1,
+    Distr = 2,
   };
 
   struct Config {
@@ -99,7 +100,7 @@ namespace SV_Graph {
   using getSignalAttrCBack = std::function<bool(const QString& sign, SignalAttributes& out)>;
   void setGetSignalAttrCBack(QWidget* gp, getSignalAttrCBack f);
 
-  void addSignal(QWidget* gp, QString sname, int section = 0);
+  void addSignal(QWidget* gp, const QString& sign, int section = 0);
 
   void update(QWidget* gp);
 

@@ -22,48 +22,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
 
+#include "forms/graph_panel_widget.h"
 #include "SVBase/base.h"
+#include "SVBase/sv_limits.h"
+#include "drag_label.h"
+#include "forms/graph_widget.h"
 
-#include <QVector>
-#include <QString>
-#include <QColor>
-#include <functional>
+#include <QtGui>
+#include <QScrollBar>
+#include <QTreeWidget>
+#include <QTranslator>
 
-class QWidget;
+using namespace SV_Base;
 
 namespace SV_Graph {
-struct Config;
-struct GraphSetting;
-struct SignalAttributes;
+
+DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
+    GraphPanelWidget(parent, cng_)
+{
 }
 
-namespace SV_Distr {
+GraphPanelWidget::~GraphPanelWidget() {}
 
-  QWidget* createDistrGraphPanel(QWidget* parent, const SV_Graph::Config& cng);
-
-  void setGraphSetting(QWidget* gp, const SV_Graph::GraphSetting&);
-  
-  using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
-  void setGetCopySignalRefCBack(QWidget* gp, getCopySignalRefCBack f);
-
-  using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString& sign)>;
-  void setGetSignalDataCBack(QWidget* gp, getSignalDataCBack f);
-
-  using isLoadSignalDataCBack = std::function<bool(const QString& sign)>;
-  void setLoadSignalDataCBack(QWidget* gp, isLoadSignalDataCBack f);
-
-  using lockReadSDataCBack = std::function<void()>;
-  void setLockReadSDataCBack(lockReadSDataCBack f);
-
-  using unlockReadSDataCBack = std::function<void()>;
-  void setUnlockReadSDataCBack(unlockReadSDataCBack f);
-
-  using getSignalAttrCBack = std::function<bool(const QString& sign, SV_Graph::SignalAttributes& out)>;
-  void setGetSignalAttrCBack(QWidget* gp, getSignalAttrCBack f);
-
-  void addSignal(QWidget* gp, QString sname, int section = 0);
-
-  void update(QWidget* gp);
 }
