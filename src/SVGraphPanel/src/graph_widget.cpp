@@ -696,12 +696,12 @@ void GraphWidget::addAlterSignal(SV_Base::SignalData* sdata, SV_Graph::SignalAtt
   addPosToHistory();
 }
 
-QStringList GraphWidget::getAllSignals() {
+QStringList GraphWidget::getAllSignals() const{
 
   return signalList_;
 }
 
-QStringList GraphWidget::getAllAlterSignals() {
+QStringList GraphWidget::getAllAlterSignals() const{
 
   return signalListAlter_;
 }

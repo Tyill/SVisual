@@ -89,8 +89,8 @@ public:
   void addSignal(SV_Base::SignalData* sign, SV_Graph::SignalAttributes*);
   void addAlterSignal(SV_Base::SignalData* sign, SV_Graph::SignalAttributes*);
 
-  QStringList getAllSignals();
-  QStringList getAllAlterSignals();
+  QStringList getAllSignals()const;
+  QStringList getAllAlterSignals()const;
 
   QSize sizeHint();
   void scale(bool posNeg, const QPoint& mpos);

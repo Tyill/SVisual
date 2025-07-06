@@ -72,9 +72,9 @@ private slots:
   void graphToUp(QString obj);
   void graphToDn(QString obj);
   void closeGraph();
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dropEvent(QDropEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event)override;
+  void dragMoveEvent(QDragMoveEvent *event)override;
+  void dropEvent(QDropEvent *event)override;
   void resizeByTime();
   void undoCmd();
   void colorUpdate();
@@ -84,8 +84,8 @@ protected:
 
 private:
   void load();
-  void tableUpdate(GraphWidget* graph);
-  void tableUpdateAlter(GraphWidget* graph);
+  void tableUpdate();
+  void tableUpdateAlter();
 
 private:
   SV_Graph::Config cng;
