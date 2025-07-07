@@ -36,7 +36,6 @@
 
 using namespace SV_Base;
 
-namespace SV_Graph {
 
 DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
     GraphPanelWidget(parent, cng_)
@@ -48,5 +47,3 @@ DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Co
 }
 
 DistrGraphPanelWidget::~DistrGraphPanelWidget() {}
-
-}

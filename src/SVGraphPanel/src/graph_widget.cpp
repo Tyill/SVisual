@@ -37,8 +37,6 @@
 
 using namespace SV_Base;
 
-namespace SV_Graph {
-
 GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
     QWidget(parent)
 {
@@ -607,7 +605,7 @@ void GraphWidget::addSignal(SV_Base::SignalData* sdata) {
   
   int num = signals_.size() + 1;
 
-  SignalAttributes attr;
+  SV_Graph::SignalAttributes attr;
   const auto hasAttr = getSignalAttributes(sign, attr);
   colorCnt_ += 30;
   QColor clr = hasAttr ? attr.color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
@@ -669,7 +667,7 @@ void GraphWidget::addAlterSignal(SV_Base::SignalData* sdata) {
   }
   
   int num = signalsAlter_.size() + 1;
-  SignalAttributes attr;
+  SV_Graph::SignalAttributes attr;
   const auto hasAttr = getSignalAttributes(sign, attr);
   colorCnt_ += 30;
   QColor clr = hasAttr ? attr.color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
@@ -709,7 +707,7 @@ QStringList GraphWidget::getAllAlterSignals() const{
   return signalListAlter_;
 }
 
-void GraphWidget::setAxisTime(AxisTimeWidget* axisTime) {
+void GraphWidget::setAxisTime(AxisTimeAdapter* axisTime) {
 
   axisTime_ = axisTime;
 
@@ -830,7 +828,7 @@ constexpr int calcValuePnt<bool>(Value v, double valScale, double valPosMem) {
 }
 
 template<typename T>
-QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, const AxisTimeWidget* axisTime,
+QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, AxisTimeAdapter* axisTime,
     const QPair<double, double>& valInterval, const double valScale, const int gapTolerance) {
 
   const QPair<qint64, qint64> tmInterval = axisTime->getTimeInterval();
@@ -1556,7 +1554,7 @@ void GraphWidget::colorUpdate() {
     colorCnt_ += 30;
 
     int num = s.num;
-    SignalAttributes attr;
+    SV_Graph::SignalAttributes attr;
     const auto hasAttr = getSignalAttributes(s.sign, attr);
     if (!hasAttr){
       s.color = QColor((num * (60 + colorCnt_)) % 255,
@@ -1576,7 +1574,7 @@ void GraphWidget::colorUpdate() {
     colorCnt_ += 30;
 
     int num = s.num;
-    SignalAttributes attr;
+    SV_Graph::SignalAttributes attr;
     if (!getSignalAttributes(s.sign, attr)){
       s.color = QColor((num * (60 + colorCnt_)) % 255,
       (num * (120 + colorCnt_)) % 255,
@@ -1656,5 +1654,4 @@ bool GraphWidget::getSignalAttributes(const QString& sign, SV_Graph::SignalAttri
       hasAttr = pfGetSignalAttr(sign, attr);
     }
     return hasAttr;
-}
 }

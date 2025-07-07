@@ -36,8 +36,6 @@
 
 using namespace SV_Base;
 
-namespace SV_Graph {
-
 GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
     QWidget(parent)
 {
@@ -247,7 +245,9 @@ void GraphPanelWidget::addGraph(QString sign) {
   QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
   vscr->setValue(vscr->maximumHeight());
 
-  graph->setAxisTime(ui.axisTime);
+  AxisTimeAdapter* ata = new AxisTimeAdapter(graph, this);
+
+  graph->setAxisTime(ata);
 
   if (!sign.isEmpty()){
     auto* sd = pfGetSignalData(sign);
@@ -739,4 +739,4 @@ QVector<QVector<QString>> GraphPanelWidget::getLocateSignals() {
 
   return res;
 }
-}
+

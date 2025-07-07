@@ -27,8 +27,6 @@
 
 #include <QtGui>
 
-namespace SV_Graph {
-
 MarkerWidget::MarkerWidget(QWidget *parent):
     QWidget(parent)
 {
@@ -117,6 +115,4 @@ void MarkerWidget::setPos(QPoint pos) {
   QRect gm = this->geometry(); gm.setX(pos.x()); //gm.setY(pos.y());
 
   this->setGeometry(gm);
-
-}
 }

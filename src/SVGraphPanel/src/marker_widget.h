@@ -26,9 +26,6 @@
 
 #include <QWidget>
 
-
-namespace SV_Graph {
-
 class MarkerWidget : public QWidget
 {
   Q_OBJECT
@@ -61,4 +58,3 @@ private:
   bool isSelect_ = false;
 
 };
-}

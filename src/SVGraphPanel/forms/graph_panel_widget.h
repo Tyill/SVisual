@@ -27,9 +27,6 @@
 #include "SVGraphPanel/graph_panel.h"
 #include "GeneratedFiles/ui_graph_panel_widget.h"
 
-
-namespace SV_Graph {
-
 class GraphWidget;
 
 class GraphPanelWidget : public QWidget
@@ -127,5 +124,4 @@ public:
     explicit LockerReadSDataGraph();
     ~LockerReadSDataGraph();
 };
-}
 
