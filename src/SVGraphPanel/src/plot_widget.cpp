@@ -172,15 +172,11 @@ void PlotWidget::scale(int delta, const QPoint& mpos) {
 }
 
 void PlotWidget::setAxisTime(AxisTimeWidget* ax) {
-
   axisTime_ = ax;
-
 }
 
 void PlotWidget::setAxisValue(AxisValueWidget* ax) {
-
   axisValue_ = ax;
-
 }
 
 void PlotWidget::paintEvent(QPaintEvent *event) {

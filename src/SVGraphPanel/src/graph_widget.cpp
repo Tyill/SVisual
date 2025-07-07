@@ -598,7 +598,7 @@ bool GraphWidget::eventFilter(QObject *target, QEvent *event) {
   return QWidget::eventFilter(target, event);
 }
 
-void GraphWidget::addSignal(SV_Base::SignalData* sdata, SV_Graph::SignalAttributes* sAttr) {
+void GraphWidget::addSignal(SV_Base::SignalData* sdata) {
 
   const auto sign = QString::fromStdString(sdata->name + sdata->module);
   if (!sdata || signals_.contains(sign)){
@@ -606,16 +606,18 @@ void GraphWidget::addSignal(SV_Base::SignalData* sdata, SV_Graph::SignalAttribut
   }
   
   int num = signals_.size() + 1;
-    
+
+  SignalAttributes attr;
+  const auto hasAttr = getSignalAttributes(sign, attr);
   colorCnt_ += 30;
-  QColor clr = sAttr ? sAttr->color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+  QColor clr = hasAttr ? attr.color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
   
   DragLabel* lb = new DragLabel(ui.plot);
   QLabel* lbLeftVal = new QLabel(ui.plot);
   QLabel* lbRightVal = new QLabel(ui.plot);
     
   signals_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr,
-                                       lb, lbLeftVal, lbRightVal, sdata, {}, sAttr != nullptr });
+                                       lb, lbLeftVal, lbRightVal, sdata, {}});
   signalList_.push_front(sign);
 
   QPalette palette = lb->palette();
@@ -659,7 +661,7 @@ void GraphWidget::addSignal(SV_Base::SignalData* sdata, SV_Graph::SignalAttribut
   addPosToHistory();
 }
 
-void GraphWidget::addAlterSignal(SV_Base::SignalData* sdata, SV_Graph::SignalAttributes* sAttr) {
+void GraphWidget::addAlterSignal(SV_Base::SignalData* sdata) {
 
   const auto sign = QString::fromStdString(sdata->name + sdata->module);
   if (!sdata || (sdata->type == SV_Base::ValueType::BOOL) || signalsAlter_.contains(sign)){
@@ -667,16 +669,17 @@ void GraphWidget::addAlterSignal(SV_Base::SignalData* sdata, SV_Graph::SignalAtt
   }
   
   int num = signalsAlter_.size() + 1;
-
+  SignalAttributes attr;
+  const auto hasAttr = getSignalAttributes(sign, attr);
   colorCnt_ += 30;
-  QColor clr = sAttr ? sAttr->color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+  QColor clr = hasAttr ? attr.color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
 
   DragLabel* lb = new DragLabel(this);
   QLabel* lbLeftVal = new QLabel(ui.plot);
   QLabel* lbRightVal = new QLabel(ui.plot);
   
   signalsAlter_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr,
-                                            lb, lbLeftVal, lbRightVal, sdata, {}, sAttr != nullptr });
+                                            lb, lbLeftVal, lbRightVal, sdata, {} });
   signalListAlter_.push_front(sign);
 
   QPalette palette = lb->palette();
@@ -748,24 +751,19 @@ void GraphWidget::dropEvent(QDropEvent *event){
       if (!sd->isBuffEnable && pfLoadSignalData){
         pfLoadSignalData(sign);
       }
-      SignalAttributes attr;
-      bool hasAttr = false;
-      if (pfGetSignalAttr){
-        hasAttr = pfGetSignalAttr(sign, attr);
-      }
+
       if (lb) {
         if (signals_.contains(sign)) {
           if (sd->type != SV_Base::ValueType::BOOL){
             delSignal(sign, false);
-            addAlterSignal(sd, hasAttr ? &attr : nullptr);
+            addAlterSignal(sd);
           }
-        }
-        else {
+        } else {
           delSignalAlter(sign, false);
-          addSignal(sd, hasAttr ? &attr : nullptr);
+          addSignal(sd);
         }
       }else{
-        addSignal(sd, hasAttr ? &attr : nullptr);
+        addSignal(sd);
       }
       emit req_markerChange(this->objectName());
     }
@@ -1558,7 +1556,9 @@ void GraphWidget::colorUpdate() {
     colorCnt_ += 30;
 
     int num = s.num;
-    if (!s.colorFromAttr){
+    SignalAttributes attr;
+    const auto hasAttr = getSignalAttributes(s.sign, attr);
+    if (!hasAttr){
       s.color = QColor((num * (60 + colorCnt_)) % 255,
       (num * (120 + colorCnt_)) % 255,
       (num * (180 + colorCnt_)) % 255, 255);
@@ -1576,7 +1576,8 @@ void GraphWidget::colorUpdate() {
     colorCnt_ += 30;
 
     int num = s.num;
-    if (!s.colorFromAttr){
+    SignalAttributes attr;
+    if (!getSignalAttributes(s.sign, attr)){
       s.color = QColor((num * (60 + colorCnt_)) % 255,
       (num * (120 + colorCnt_)) % 255,
       (num * (180 + colorCnt_)) % 255, 255);
@@ -1646,5 +1647,14 @@ void GraphWidget::lbSignBoolMove(bool isTop){
     }    
   }
   ui.vLayoutPlot->update();
+}
+
+bool GraphWidget::getSignalAttributes(const QString& sign, SV_Graph::SignalAttributes& attr)const
+{
+    bool hasAttr = false;
+    if (pfGetSignalAttr){
+      hasAttr = pfGetSignalAttr(sign, attr);
+    }
+    return hasAttr;
 }
 }

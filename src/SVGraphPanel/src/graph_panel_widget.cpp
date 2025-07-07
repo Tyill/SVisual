@@ -57,10 +57,10 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
   ui.dTimeBegin->setVisible(false);
   ui.dTimeEnd->setVisible(false);
   ui.lbDTime->setVisible(false);
+  ui.spnPeriodMin->setVisible(false);
 
   QTimer* tm = new QTimer(this);
   connect(tm, &QTimer::timeout, this, [this, tm]() {
-
     if (cng.mode == SV_Graph::ModeGr::Viewer) {
       ui.btnPlay->setVisible(false);
       ui.btnAScale->setVisible(false);
@@ -69,12 +69,19 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
       ui.dTimeEnd->setVisible(true);
       ui.lbDTime->setVisible(true);
     }
-    else {
+    else if (cng.mode == SV_Graph::ModeGr::Player) {
       ui.dTimeBegin->setVisible(false);
       ui.dTimeEnd->setVisible(false);
       ui.lbDTime->setVisible(false);
     }
-    tm->stop();  tm->deleteLater();
+    else if (cng.mode == SV_Graph::ModeGr::Distr){
+      ui.btnPlay->setVisible(false);
+      ui.btnAScale->setVisible(false);
+      ui.btnAScale->setChecked(false);
+      ui.spnPeriodMin->setVisible(true);
+    }
+    tm->stop();
+    tm->deleteLater();
   });
   tm->start(100);
   ////////////
@@ -200,21 +207,15 @@ void GraphPanelWidget::addSignalOnGraph(const QString& sign, int section) {
         ui.axisTime->setTimeInterval(buffMinTime, buffMinTime + 1000);
     }
     emit ui.axisTime->req_axisChange();
-  }
-
-  SignalAttributes attr;
-  bool hasAttr = false;
-  if (pfGetSignalAttr){
-      hasAttr = pfGetSignalAttr(sign, attr);
-  }
+  } 
   if (selGraph_) {    
-    selGraph_->addSignal(sd, hasAttr ? &attr : nullptr);
+    selGraph_->addSignal(sd);
 
     tableUpdate();
     tableUpdateAlter();
   }
   else {
-    graphObj_[section]->addSignal(sd, hasAttr ? &attr : nullptr);
+    graphObj_[section]->addSignal(sd);
 
     tableUpdate();
     tableUpdateAlter();
@@ -250,13 +251,8 @@ void GraphPanelWidget::addGraph(QString sign) {
 
   if (!sign.isEmpty()){
     auto* sd = pfGetSignalData(sign);
-    if (sd){
-      SignalAttributes attr;
-      bool hasAttr = false;
-      if (pfGetSignalAttr){
-        hasAttr = pfGetSignalAttr(sign, attr);
-      }
-      graph->addSignal(sd, hasAttr ? &attr : nullptr);
+    if (sd){      
+      graph->addSignal(sd);
     }
   }
   connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
@@ -284,35 +280,44 @@ void GraphPanelWidget::addGraph(QString sign) {
 void GraphPanelWidget::delSignal(QString sign) {
 
   for (auto gr : qAsConst(graphObj_)) {
-
     gr->delSignal(sign, false);
   }
   tableUpdate();
-
 }
 
 void GraphPanelWidget::dragEnterEvent(QDragEnterEvent *event)
 {
+  if (cng.mode == SV_Graph::ModeGr::Distr){
+      event->ignore();
+      return;
+  }
   if (qobject_cast<QTreeWidget *>(event->source()) ||
     qobject_cast<DragLabel *>(event->source())) {
 
     event->accept();
-
   }
 }
 
-void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event) {
-
+void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+  if (cng.mode == SV_Graph::ModeGr::Distr){
+      event->ignore();
+      return;
+  }
   if (qobject_cast<QTreeWidget *>(event->source()) ||
     qobject_cast<DragLabel *>(event->source())) {
 
     event->accept();
-
   }
 }
 
 void GraphPanelWidget::dropEvent(QDropEvent *event)
 {
+  if (cng.mode == SV_Graph::ModeGr::Distr){
+      event->ignore();
+      return;
+  }
+
   DragLabel* lb = qobject_cast<DragLabel *>(event->source());
 
   if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
@@ -340,12 +345,10 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
         addGraph(sign);
 
         emit ui.axisTime->req_axisChange();
-      }
-      else{
+      }else{
         addGraph(sign);
       }
     }
-
     event->accept();
   }
 }

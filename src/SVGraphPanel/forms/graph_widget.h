@@ -86,8 +86,8 @@ public:
 
   QVector<GraphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
 
-  void addSignal(SV_Base::SignalData* sign, SV_Graph::SignalAttributes*);
-  void addAlterSignal(SV_Base::SignalData* sign, SV_Graph::SignalAttributes*);
+  void addSignal(SV_Base::SignalData* sign);
+  void addAlterSignal(SV_Base::SignalData* sign);
 
   QStringList getAllSignals()const;
   QStringList getAllAlterSignals()const;
@@ -131,6 +131,7 @@ private:
   void paintObjects();
   void paintObjectsAlter();
   void lbSignBoolMove(bool isTop);
+  bool getSignalAttributes(const QString& sign, SV_Graph::SignalAttributes&)const;
 
 private:
   struct GraphSignData {
@@ -144,7 +145,6 @@ private:
     QLabel* lbRightMarkVal;
     SV_Base::SignalData* sdata;
     QVector<QVector<QPair<int, int>>> pnts;
-    bool colorFromAttr;
   };
 
   QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Base::SignalData* sign, bool isAlter = false);
