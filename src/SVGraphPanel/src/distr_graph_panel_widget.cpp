@@ -22,20 +22,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#pragma once
 
-#define SV_EN
-#define SV_VALUE_MAX_CNT 2048         ///< макс кол-во сигналов (на все модули)
-#define SV_PACKETSZ_MAX 1000000       ///< макс кол-во значений в пакете
+#include "forms/graph_panel_widget.h"
+#include "SVBase/base.h"
+#include "SVBase/sv_limits.h"
+#include "drag_label.h"
+#include "forms/graph_widget.h"
 
-#define SV_CYCLEREC_MS cng.cycleRecMs ///< период записи сигналов, мс
-#define SV_NAMESZ 24                  ///< имя переменной
-#define SV_COMMENTSZ 48               ///< комментарий
-#define SV_PACKETSZ cng.packetSz      ///< пакет отправки - кол-во циклов записи
-#define SV_CYCLESAVE_MS (cng.cycleRecMs * cng.packetSz)   ///< период отправки данных, мс
+#include <QtGui>
+#include <QScrollBar>
+#include <QTreeWidget>
+#include <QTranslator>
 
-
-
-
+using namespace SV_Base;
 
 
+DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
+    GraphPanelWidget(parent, cng_)
+{
+    ui.axisTime->hide();
+    while (auto item = ui.horizontalLayout_2->itemAt(0)){
+        ui.horizontalLayout_2->removeItem(item);
+    }
+}
+
+DistrGraphPanelWidget::~DistrGraphPanelWidget() {}

@@ -144,41 +144,43 @@ namespace SV_Misc {
         "on_connect::uv_read_start error");
     }
                    
-    bool start(const std::string& addr, uint16_t port) {
+    bool start(const std::string& addr, uint16_t port, bool intoOtherThread) {
                  
       if (srv.u_loop) return true;
-            
+
       std::condition_variable cval;
-      srv.thr = std::thread([&cval, &addr, port]() {
-        
-        srv.u_loop = uv_default_loop();
+      auto startImpl = [&cval](std::string addr, uint16_t port){
+          srv.u_loop = uv_default_loop();
 
-        CHECK(uv_tcp_init(srv.u_loop, &srv.u_server),
-          "initConnection::uv_tcp_init error");
+          CHECK(uv_tcp_init(srv.u_loop, &srv.u_server),
+            "initConnection::uv_tcp_init error");
 
-        CHECK(uv_tcp_keepalive(&srv.u_server, true, 60),
-          "initConnection::uv_tcp_keepalive error");
+          CHECK(uv_tcp_keepalive(&srv.u_server, true, 60),
+            "initConnection::uv_tcp_keepalive error");
 
-        struct sockaddr_in address;
-        CHECK(uv_ip4_addr(addr.c_str(), port, &address),
-          "initConnection::uv_ip4_addr error");
+          struct sockaddr_in address;
+          CHECK(uv_ip4_addr(addr.c_str(), port, &address),
+            "initConnection::uv_ip4_addr error");
 
-        CHECK(uv_tcp_bind(&srv.u_server, (const struct sockaddr*)&address, 0),
-          "initConnection::uv_tcp_bind error");
+          CHECK(uv_tcp_bind(&srv.u_server, (const struct sockaddr*)&address, 0),
+            "initConnection::uv_tcp_bind error");
 
-        CHECK(uv_listen((uv_stream_t*)&srv.u_server, 1000, on_connect),
-          "initConnection::uv_listen error");
-               
-        cval.notify_one();
+          CHECK(uv_listen((uv_stream_t*)&srv.u_server, 1000, on_connect),
+            "initConnection::uv_listen error");
 
-        CHECK(uv_run(srv.u_loop, UV_RUN_DEFAULT),
-          "initConnection::uv_run error");
-      });
-            
-      std::mutex mtx;
-      std::unique_lock<std::mutex> lck(mtx);
-      cval.wait_for(lck, std::chrono::milliseconds(100));
+          cval.notify_one();
 
+          CHECK(uv_run(srv.u_loop, UV_RUN_DEFAULT),
+            "initConnection::uv_run error");
+      };
+      if (intoOtherThread){
+          srv.thr = std::thread(startImpl, addr, port);
+          std::mutex mtx;
+          std::unique_lock<std::mutex> lck(mtx);
+          cval.wait_for(lck, std::chrono::milliseconds(100));
+      }else{
+          startImpl(addr, port);
+      }
       return srv.error.empty();
     }
 

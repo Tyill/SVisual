@@ -26,6 +26,7 @@
 
 #include <QLabel>
 
+
 class DragLabel : public QLabel
 {
   Q_OBJECT

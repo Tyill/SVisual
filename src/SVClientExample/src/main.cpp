@@ -33,12 +33,12 @@
 #include "windows.h"
 
 BOOL WINAPI CloseHandler(DWORD CEvent)
-{ 
+{
   switch (CEvent)
   {
-  case CTRL_C_EVENT: 
+  case CTRL_C_EVENT:
   case CTRL_BREAK_EVENT:
-  case CTRL_CLOSE_EVENT:    
+  case CTRL_CLOSE_EVENT:
   case CTRL_LOGOFF_EVENT:
   case CTRL_SHUTDOWN_EVENT:
     SV::svDisconnect();
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
 
   if (SV::svConnect(nm.c_str(), "127.0.0.1", 2144)){
 
-    std::cout << "connect " << nm.c_str() << " ok" << std::endl;  
+    std::cout << "connect " << nm.c_str() << " ok" << std::endl;
   }
   else std::cout << "connect no" << std::endl;
 

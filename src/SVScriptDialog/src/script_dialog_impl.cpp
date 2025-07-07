@@ -41,6 +41,7 @@
 using namespace SV_Base;
 namespace lub = luabridge;
 
+
 extern ScriptDialog* scrDialogRef;
 
 void printMess(const std::string& mess) {

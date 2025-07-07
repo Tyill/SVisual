@@ -44,7 +44,7 @@ public:
   SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
   SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
   
-  void addSignalOnGraph(QString name, int section);
+  void addSignalOnGraph(const QString& sign, int section);
   QPair<qint64, qint64> getTimeInterval();
   void setTimeInterval(qint64 stTime, qint64 enTime);
   QVector<QVector<QString>> getLocateSignals();
@@ -69,9 +69,9 @@ private slots:
   void graphToUp(QString obj);
   void graphToDn(QString obj);
   void closeGraph();
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dropEvent(QDropEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event)override;
+  void dragMoveEvent(QDragMoveEvent *event)override;
+  void dropEvent(QDropEvent *event)override;
   void resizeByTime();
   void undoCmd();
   void colorUpdate();
@@ -81,8 +81,8 @@ protected:
 
 private:
   void load();
-  void tableUpdate(GraphWidget* graph);
-  void tableUpdateAlter(GraphWidget* graph);
+  void tableUpdate();
+  void tableUpdateAlter();
 
 private:
   SV_Graph::Config cng;
@@ -97,6 +97,14 @@ private:
   SV_Graph::GraphSetting graphSett_;
 
   bool isPlay_ = true;
+};
+
+class DistrGraphPanelWidget : public GraphPanelWidget
+{
+public:
+  DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
+  ~DistrGraphPanelWidget();
+
 };
 
 class TableWidgetItem : public QTableWidgetItem {

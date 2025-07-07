@@ -46,7 +46,6 @@ public:
   ~HistWidget();
 
   void setGraphPnt(QVector<QPair<int, int>> pnts);
-  void setGraphPnt(std::vector<std::pair<int, int>> pnts);
   void setColor(QColor clr);
 
   int getAreaHist(int leftPos, int rightPos);

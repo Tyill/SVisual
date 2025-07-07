@@ -95,6 +95,7 @@ SettingsDialog::SettingsDialog(QWidget *parent):
   connect(ui.txtChAddr, SIGNAL(textEdited(QString)), this, SLOT(paramChange()));
   connect(ui.spinCycleRecMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
   connect(ui.spinPacketSz, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
+  connect(ui.spinTimeOffsetMs, SIGNAL(valueChanged(QString)), this, SLOT(paramChange()));
 
   MainWin::Config cng = mainWin_->getConfig();
 
@@ -131,6 +132,7 @@ void SettingsDialog::showEvent(QShowEvent * event){
 
   ui.spinCycleRecMs->setValue(cng.cycleRecMs);
   ui.spinPacketSz->setValue(cng.packetSz);
+  ui.spinTimeOffsetMs->setValue(cng.offsetMs);
 
   selParamLoad_ = false;
   ui.lbChange->setText("");
@@ -252,6 +254,7 @@ void SettingsDialog::saveChange(){
 
   cng.cycleRecMs = ui.spinCycleRecMs->value();
   cng.packetSz = ui.spinPacketSz->value();
+  cng.offsetMs = ui.spinTimeOffsetMs->value();
 
   mainWin_->updateConfig(cng);
 

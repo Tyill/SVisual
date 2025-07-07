@@ -50,7 +50,7 @@ private:
   int mousePrevPosY_ = 0;
 
 
-  void resizeEvent(QResizeEvent * event);
+  void resizeEvent(QResizeEvent * event)override;
 
   void drawDashLines(QPainter& painter);
   void drawValMark(QPainter& painter);
@@ -74,9 +74,9 @@ public:
 
   QVector<int> getAxisMark();
 
-  void mouseMoveEvent(QMouseEvent * event);
-  void mousePressEvent(QMouseEvent * event);
-  void wheelEvent(QWheelEvent * event);
+  void mouseMoveEvent(QMouseEvent * event)override;
+  void mousePressEvent(QMouseEvent * event)override;
+  void wheelEvent(QWheelEvent * event)override;
   void scale(int delta, int mpos);
 
   void setAxisAttr(const SV_Graph::AxisAttributes&);
