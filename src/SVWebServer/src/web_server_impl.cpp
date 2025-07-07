@@ -35,7 +35,6 @@
 #include <QUrl>
 #include <QCoreApplication>
 
-namespace SV_Web {
 
 void WebServer::setConfig(const SV_Web::Config& cng_) {
 
@@ -288,5 +287,4 @@ QByteArray WebServer::jsonGetAllModules() {
   QJsonDocument jsDoc(jnObject);
 
   return jsDoc.toJson();
-}
 }

@@ -32,7 +32,6 @@
 
 #include "SVZabbix/zabbix.h"
 
-namespace SV_Zbx {
 
 class ZbxServer : public QTcpServer {
 
@@ -76,4 +75,3 @@ public:
     explicit LockerReadSDataZbx();
     ~LockerReadSDataZbx();
 };
-}

@@ -74,11 +74,10 @@ namespace SV_Web {
 
     WServer.pfGetSignalData = f;
   }
-
+}
 LockerReadSDataWeb::LockerReadSDataWeb() {
     if (SV_Web::pfLockReadSData) SV_Web::pfLockReadSData();
 }
 LockerReadSDataWeb::~LockerReadSDataWeb() {
     if (SV_Web::pfUnlockReadSData) SV_Web::pfUnlockReadSData();
-}
 }

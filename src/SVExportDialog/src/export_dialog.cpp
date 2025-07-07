@@ -82,12 +82,10 @@ namespace SV_Exp {
           static_cast<ExportDialog*>(exp)->pfSetTimeInterval = f;
       }
   }
-
+}
 LockerReadSDataExp::LockerReadSDataExp() {
     if (SV_Exp::pfLockReadSData) SV_Exp::pfLockReadSData();
 }
 LockerReadSDataExp::~LockerReadSDataExp() {
     if (SV_Exp::pfUnlockReadSData) SV_Exp::pfUnlockReadSData();
-}
-
 }

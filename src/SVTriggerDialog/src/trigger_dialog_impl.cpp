@@ -30,7 +30,6 @@ using namespace SV_Base;
 #include <QFileDialog>
 #include <QTranslator>
 
-namespace SV_Trigger {
 
 TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_):
     QDialog(parent)
@@ -50,15 +49,15 @@ TriggerDialog::TriggerDialog(QWidget *parent, SV_Trigger::Config cng_):
   connect(ui.btnChangeTrigger, SIGNAL(clicked()), this, SLOT(changeTrigger()));
 
   connect(ui.btnLess, &QPushButton::clicked, [this](){
-    paramChange(); selCondition(EventType::LESS); });
+    paramChange(); selCondition(SV_Trigger::EventType::LESS); });
   connect(ui.btnEqual, &QPushButton::clicked, [this](){
-    paramChange(); selCondition(EventType::EQUALS); });
+    paramChange(); selCondition(SV_Trigger::EventType::EQUALS); });
   connect(ui.btnMore, &QPushButton::clicked, [this](){
-    paramChange(); selCondition(EventType::MORE); });
+    paramChange(); selCondition(SV_Trigger::EventType::MORE); });
   connect(ui.btnNegFront, &QPushButton::clicked, [this](){
-    paramChange(); selCondition(EventType::NEG_FRONT); });
+    paramChange(); selCondition(SV_Trigger::EventType::NEG_FRONT); });
   connect(ui.btnPosFront, &QPushButton::clicked, [this](){
-    paramChange(); selCondition(EventType::POS_FRONT); });
+    paramChange(); selCondition(SV_Trigger::EventType::POS_FRONT); });
 
   connect(ui.listModule, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selModule(QListWidgetItem*)));
   connect(ui.tableTrigger, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(selTrigger(QTableWidgetItem*)));
@@ -124,12 +123,12 @@ void TriggerDialog::selSignal(QTableWidgetItem* item){
 
   enaBtnCondition(true);
 
-  EventType cond = EventType::LESS;
+  SV_Trigger::EventType cond = SV_Trigger::EventType::LESS;
 
   SignalData* sd = pfGetSignalData(selSignal_ + selModule_);
 
   if (sd){
-    if (sd->type == ValueType::BOOL) cond = EventType::POS_FRONT;
+    if (sd->type == ValueType::BOOL) cond = SV_Trigger::EventType::POS_FRONT;
 
     ui.btnEqual->setEnabled(sd->type != ValueType::BOOL);
     ui.btnLess->setEnabled(sd->type != ValueType::BOOL);
@@ -160,7 +159,7 @@ void TriggerDialog::updateTableTrigger(){
   for (auto t : tref){
 
     bool isModule = isSelModule_ && (t->module == selModule_) &&
-      ((t->condType == EventType::CONNECT_MODULE) || (t->condType == EventType::DISCONNECT_MODULE));
+      ((t->condType == SV_Trigger::EventType::CONNECT_MODULE) || (t->condType == SV_Trigger::EventType::DISCONNECT_MODULE));
 
     bool isSignal = !isSelModule_ && (t->signal == selSignal_);
 
@@ -221,7 +220,7 @@ void TriggerDialog::updateStateSignal(){
   QString trigr = ui.tableTrigger->item(crow, 0)->text();
   if (trigr.isEmpty()) return;
 
-  TriggerData* td = getTriggerData(trigr);
+  SV_Trigger::TriggerData* td = getTriggerData(trigr);
 
   if (!td) return;
 
@@ -261,7 +260,7 @@ void TriggerDialog::enaBtnCondition(bool ena){
   ui.lbIsChange->setText("");
 }
 
-void TriggerDialog::selCondition(EventType type){
+void TriggerDialog::selCondition(SV_Trigger::EventType type){
 
   ui.btnLess->setChecked(false);
   ui.btnEqual->setChecked(false);
@@ -271,31 +270,31 @@ void TriggerDialog::selCondition(EventType type){
 
   switch (type)
   {
-  case EventType::NONE:
+  case SV_Trigger::EventType::NONE:
     break;
-  case EventType::CONNECT_MODULE:
+  case SV_Trigger::EventType::CONNECT_MODULE:
     break;
-  case EventType::DISCONNECT_MODULE:
+  case SV_Trigger::EventType::DISCONNECT_MODULE:
     break;
-  case EventType::LESS:
+  case SV_Trigger::EventType::LESS:
     if (ui.btnLess->isEnabled())
-      currCondition_ = EventType::LESS; ui.btnLess->setChecked(true);
+      currCondition_ = SV_Trigger::EventType::LESS; ui.btnLess->setChecked(true);
     break;
-  case EventType::EQUALS:
+  case SV_Trigger::EventType::EQUALS:
     if (ui.btnEqual->isEnabled())
-      currCondition_ = EventType::EQUALS; ui.btnEqual->setChecked(true);
+      currCondition_ = SV_Trigger::EventType::EQUALS; ui.btnEqual->setChecked(true);
     break;
-  case EventType::MORE:
+  case SV_Trigger::EventType::MORE:
     if (ui.btnMore->isEnabled())
-      currCondition_ = EventType::MORE; ui.btnMore->setChecked(true);
+      currCondition_ = SV_Trigger::EventType::MORE; ui.btnMore->setChecked(true);
     break;
-  case EventType::POS_FRONT:
+  case SV_Trigger::EventType::POS_FRONT:
     if (ui.btnPosFront->isEnabled())
-      currCondition_ = EventType::POS_FRONT; ui.btnPosFront->setChecked(true);
+      currCondition_ = SV_Trigger::EventType::POS_FRONT; ui.btnPosFront->setChecked(true);
     break;
-  case EventType::NEG_FRONT:
+  case SV_Trigger::EventType::NEG_FRONT:
     if (ui.btnNegFront->isEnabled())
-      currCondition_ = EventType::NEG_FRONT; ui.btnNegFront->setChecked(true);
+      currCondition_ = SV_Trigger::EventType::NEG_FRONT; ui.btnNegFront->setChecked(true);
     break;
   default:
     break;
@@ -310,7 +309,7 @@ void TriggerDialog::addTrigger(){
 
   if (tname.isEmpty() || getTriggerData(tname)) return;
 
-  TriggerData* td = new TriggerData();
+  SV_Trigger::TriggerData* td = new SV_Trigger::TriggerData();
 
   td->name = tname.toUtf8().data();
   td->signal = selSignal_.toUtf8().data();
@@ -393,11 +392,11 @@ void TriggerDialog::selDirProc(){
 ///////////////////////////////////////////////////////////
 
 // вернуть все триггеры
-QMap<QString, TriggerData*> TriggerDialog::getCopyTriggerRef(){
+QMap<QString, SV_Trigger::TriggerData*> TriggerDialog::getCopyTriggerRef(){
 
   std::unique_lock<std::mutex> lck(mtx_);
 
-  QMap<QString, TriggerData*> tref = triggerData_;
+  QMap<QString, SV_Trigger::TriggerData*> tref = triggerData_;
 
   return tref;
 }
@@ -456,7 +455,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
 
   bool ena = true, isImpulse = tr->condTOut <= 0;
   switch (tr->condType){
-  case EventType::EQUALS:
+  case SV_Trigger::EventType::EQUALS:
     if (isImpulse){
       ena = false;
       if (sd->type == ValueType::INT){
@@ -492,7 +491,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       }
     }
     break;
-  case EventType::LESS:
+  case SV_Trigger::EventType::LESS:
     if (isImpulse){
       ena = false;
       if (sd->type == ValueType::INT){
@@ -528,7 +527,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       }
     }
     break;
-  case EventType::MORE:
+  case SV_Trigger::EventType::MORE:
     if (isImpulse){
       ena = false;
       if (sd->type == ValueType::INT){
@@ -564,7 +563,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       }
     }
     break;
-  case EventType::POS_FRONT:
+  case SV_Trigger::EventType::POS_FRONT:
     if (isImpulse){
       ena = false;
       for (int i = 0; i < SV_PACKETSZ; ++i) {
@@ -582,7 +581,7 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
       }
     }
     break;
-  case EventType::NEG_FRONT:
+  case SV_Trigger::EventType::NEG_FRONT:
     if (isImpulse){
       ena = false;
       for (int i = 0; i < SV_PACKETSZ; ++i) {
@@ -601,11 +600,11 @@ bool TriggerDialog::checkCondition(SV_Trigger::TriggerData* tr, SignalData* sd){
     }
     break;
 
-  case EventType::CONNECT_MODULE:
+  case SV_Trigger::EventType::CONNECT_MODULE:
     ena = tr->condValue == 1;
     break;
 
-  case EventType::DISCONNECT_MODULE:
+  case SV_Trigger::EventType::DISCONNECT_MODULE:
     ena = tr->condValue == 1;
     break;
 
@@ -637,8 +636,8 @@ void TriggerDialog::workCycle(){
         sdata[t->name] = pfGetSignalData(qUtf8Printable(t->signal + t->module));
       }
 
-      if (!sdata[t->name] && (t->condType != EventType::CONNECT_MODULE) &&
-        (t->condType != EventType::DISCONNECT_MODULE)) continue;
+      if (!sdata[t->name] && (t->condType != SV_Trigger::EventType::CONNECT_MODULE) &&
+        (t->condType != SV_Trigger::EventType::DISCONNECT_MODULE)) continue;
 
       if (front.PosFront(tmDelay.onDelaySec(t->isActive && checkCondition(t, sdata[t->name]),
         t->condTOut, trgId[t->name]), trgId[t->name])){
@@ -652,7 +651,6 @@ void TriggerDialog::workCycle(){
     if (ms > 0)
       SV_Misc::sleepMs(std::min(ms, 10000));
   }
-}
 }
 
 

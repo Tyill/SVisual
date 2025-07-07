@@ -28,7 +28,6 @@
 #include "SVBase/base.h"
 #include "SVExportDialog/export_dialog.h"
 
-namespace SV_Exp{
 
 class ExportDialog : public QDialog
 {
@@ -76,4 +75,3 @@ public:
     explicit LockerReadSDataExp();
     ~LockerReadSDataExp();
 };
-}

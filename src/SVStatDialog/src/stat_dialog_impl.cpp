@@ -32,7 +32,6 @@
 
 using namespace SV_Base;
 
-namespace SV_Stat {
 
 StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_):
     QDialog(parent)
@@ -505,5 +504,4 @@ int StatDialog::Mx(QVector<QPair<int, int>>& hist)
   if (Square > 0) return (double)Mx / Square + 0.5;
 
   return 0;
-}
 }

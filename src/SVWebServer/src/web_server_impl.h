@@ -33,7 +33,6 @@
 
 #include "SVWebServer/web_server.h"
 
-namespace SV_Web {
 
 class WebServer : public QTcpServer{
     
@@ -99,4 +98,3 @@ public:
     explicit LockerReadSDataWeb();
     ~LockerReadSDataWeb();
 };
-}

@@ -41,7 +41,6 @@
 using namespace SV_Base;
 namespace lub = luabridge;
 
-namespace SV_Script {
 
 extern ScriptDialog* scrDialogRef;
 
@@ -970,5 +969,4 @@ void ScriptDialog::workCycle() {
         SV_Misc::sleepMs(ms);
     }
   }
-}
 }

@@ -35,7 +35,6 @@
 
 #include <QDialog>
 
-namespace SV_Script {
 
 class ScriptDialog : public QDialog
 {
@@ -127,4 +126,3 @@ public:
     explicit LockerReadSDataScript();
     ~LockerReadSDataScript();
 };
-}
