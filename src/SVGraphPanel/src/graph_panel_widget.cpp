@@ -59,24 +59,21 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
 
   QTimer* tm = new QTimer(this);
   connect(tm, &QTimer::timeout, this, [this, tm]() {
-    if (cng.mode == SV_Graph::ModeGr::Viewer) {
+    if (cng.mode == SV_Graph::ModeGr::Viewer || cng.mode == SV_Graph::ModeGr::Distr) {
       ui.btnPlay->setVisible(false);
       ui.btnAScale->setVisible(false);
       ui.btnAScale->setChecked(false);
       ui.dTimeBegin->setVisible(true);
       ui.dTimeEnd->setVisible(true);
       ui.lbDTime->setVisible(true);
+      if (cng.mode == SV_Graph::ModeGr::Distr){
+          ui.spnPeriodMin->setVisible(true);
+      }
     }
     else if (cng.mode == SV_Graph::ModeGr::Player) {
       ui.dTimeBegin->setVisible(false);
       ui.dTimeEnd->setVisible(false);
       ui.lbDTime->setVisible(false);
-    }
-    else if (cng.mode == SV_Graph::ModeGr::Distr){
-      ui.btnPlay->setVisible(false);
-      ui.btnAScale->setVisible(false);
-      ui.btnAScale->setChecked(false);
-      ui.spnPeriodMin->setVisible(true);
     }
     tm->stop();
     tm->deleteLater();
@@ -223,7 +220,7 @@ void GraphPanelWidget::addSignalOnGraph(const QString& sign, int section) {
 
 }
 
-void GraphPanelWidget::addGraph(QString sign) {
+void GraphPanelWidget::addGraph(const QString& sign) {
 
   GraphWidget* graph = new GraphWidget(this, cng);
 
@@ -245,9 +242,19 @@ void GraphPanelWidget::addGraph(QString sign) {
   QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
   vscr->setValue(vscr->maximumHeight());
 
-  AxisTimeAdapter* ata = new AxisTimeAdapter(graph, this);
-
-  graph->setAxisTime(ata);
+  AxisTimeProxy* atp = new AxisTimeProxy(this);{
+      atp->pfMouseMoveEvent = [this](QMouseEvent* e){ ui.axisTime->mouseMoveEvent(e);};
+      atp->pfMousePressEvent = [this](QMouseEvent* e){ ui.axisTime->mousePressEvent(e);};
+      atp->pfWheelEvent = [this](QWheelEvent* e){ ui.axisTime->wheelEvent(e);};
+      atp->pfSetTimeIntervalCBack = [this](qint64 l, qint64 r){ ui.axisTime->setTimeInterval(l, r);};
+      atp->pfGetTimeIntervalCBack = [this](){return ui.axisTime->getTimeInterval();};
+      atp->pfGetTimeScaleCBack = [this](){return ui.axisTime->getTimeScale();};
+      atp->pfGetAxisMarkCBack = [this](){return ui.axisTime->getAxisMark();};
+      atp->pfScaleCBack = [this](int delta, int mpos){ ui.axisTime->scale(delta, mpos);};
+      atp->pfUpdate = [this](){ ui.axisTime->update();};
+      atp->pfWidthCBack = [this](){return ui.axisTime->width();};
+  }
+  graph->setAxisTime(atp);
 
   if (!sign.isEmpty()){
     auto* sd = pfGetSignalData(sign);
@@ -277,7 +284,7 @@ void GraphPanelWidget::addGraph(QString sign) {
   selGraph_ = graph;
 }
 
-void GraphPanelWidget::delSignal(QString sign) {
+void GraphPanelWidget::delSignal(const QString& sign) {
 
   for (auto gr : qAsConst(graphObj_)) {
     gr->delSignal(sign, false);
@@ -287,10 +294,6 @@ void GraphPanelWidget::delSignal(QString sign) {
 
 void GraphPanelWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-  if (cng.mode == SV_Graph::ModeGr::Distr){
-      event->ignore();
-      return;
-  }
   if (qobject_cast<QTreeWidget *>(event->source()) ||
     qobject_cast<DragLabel *>(event->source())) {
 
@@ -300,10 +303,6 @@ void GraphPanelWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event)
 {
-  if (cng.mode == SV_Graph::ModeGr::Distr){
-      event->ignore();
-      return;
-  }
   if (qobject_cast<QTreeWidget *>(event->source()) ||
     qobject_cast<DragLabel *>(event->source())) {
 
@@ -312,12 +311,7 @@ void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event)
 }
 
 void GraphPanelWidget::dropEvent(QDropEvent *event)
-{
-  if (cng.mode == SV_Graph::ModeGr::Distr){
-      event->ignore();
-      return;
-  }
-
+{  
   DragLabel* lb = qobject_cast<DragLabel *>(event->source());
 
   if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
@@ -530,7 +524,7 @@ void GraphPanelWidget::diapTimeUpdate() {
   }
 }
 
-void GraphPanelWidget::axisTimeChange(QString obj) {
+void GraphPanelWidget::axisTimeChange(const QString& obj) {
 
   diapTimeUpdate();
 
@@ -541,7 +535,7 @@ void GraphPanelWidget::axisTimeChange(QString obj) {
   }
 }
 
-void GraphPanelWidget::markerChange(QString obj) {
+void GraphPanelWidget::markerChange(const QString& obj) {
 
   GraphWidget* graph = qobject_cast<GraphWidget*>(sender());
 
@@ -562,7 +556,7 @@ void GraphPanelWidget::markerChange(QString obj) {
   }
 }
 
-void GraphPanelWidget::selectGraph(QString obj) {
+void GraphPanelWidget::selectGraph(const QString& obj) {
 
   for (auto ob : qAsConst(graphObj_)) {
 
@@ -664,7 +658,7 @@ void GraphPanelWidget::updateSignals() {
   }
 }
 
-void GraphPanelWidget::graphToDn(QString obj) {
+void GraphPanelWidget::graphToDn(const QString& obj) {
 
   GraphWidget* graph = qobject_cast<GraphWidget*>(sender());
 
@@ -687,7 +681,7 @@ void GraphPanelWidget::graphToDn(QString obj) {
 
 }
 
-void GraphPanelWidget::graphToUp(QString obj) {
+void GraphPanelWidget::graphToUp(const QString& obj) {
 
   GraphWidget* graph = qobject_cast<GraphWidget*>(sender());
 

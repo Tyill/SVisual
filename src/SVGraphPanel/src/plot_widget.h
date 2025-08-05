@@ -26,7 +26,7 @@
 
 #include <QWidget>
 
-class AxisTimeAdapter;
+class AxisTimeProxy;
 class AxisValueWidget;
 
 class PlotWidget : public QWidget
@@ -43,7 +43,7 @@ public:
     return selRect_;
   }
 
-  void setAxisTime(AxisTimeAdapter* ax);
+  void setAxisTime(AxisTimeProxy* ax);
   void setAxisValue(AxisValueWidget* ax);
   void scale(int delta, const QPoint& mpos);
 
@@ -68,6 +68,6 @@ private:
   bool lpm_ = false, rpm_ = false, keyCntr_ = false;
   QTimer* tmrMarkerPos_ = NULL;
 
-  AxisTimeAdapter* axisTime_ = NULL;
+  AxisTimeProxy* axisTime_ = NULL;
   AxisValueWidget* axisValue_ = NULL;
 };

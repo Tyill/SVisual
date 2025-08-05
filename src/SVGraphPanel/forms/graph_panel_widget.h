@@ -57,17 +57,17 @@ public:
 public slots:
   void updateSignals();
   void resizeByValue();
-  void delSignal(QString sign);
+  void delSignal(const QString& sign);
   void scaleGraph();
 
 private slots:
-  void addGraph(QString sign);
-  void axisTimeChange(QString obj);
+  virtual void addGraph(const QString& sign);
+  void axisTimeChange(const QString& obj);
   void diapTimeUpdate();
-  void markerChange(QString obj);
-  void selectGraph(QString obj);
-  void graphToUp(QString obj);
-  void graphToDn(QString obj);
+  void markerChange(const QString& obj);
+  void selectGraph(const QString& obj);
+  void graphToUp(const QString& obj);
+  void graphToDn(const QString& obj);
   void closeGraph();
   void dragEnterEvent(QDragEnterEvent *event)override;
   void dragMoveEvent(QDragMoveEvent *event)override;
@@ -79,12 +79,12 @@ private slots:
 protected:
   void keyPressEvent(QKeyEvent* event) override;
 
-private:
+protected:
   void load();
   void tableUpdate();
   void tableUpdateAlter();
 
-private:
+protected:
   SV_Graph::Config cng;
 
   const int MIN_HEIGHT_GRAPH = 300;
@@ -101,9 +101,14 @@ private:
 
 class DistrGraphPanelWidget : public GraphPanelWidget
 {
+  Q_OBJECT
 public:
   DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
   ~DistrGraphPanelWidget();
+
+private slots:
+  void dropEvent(QDropEvent *event)override;
+  void addGraph(const QString& sign)override;
 
 };
 

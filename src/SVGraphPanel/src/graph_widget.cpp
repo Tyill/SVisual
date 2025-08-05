@@ -707,7 +707,7 @@ QStringList GraphWidget::getAllAlterSignals() const{
   return signalListAlter_;
 }
 
-void GraphWidget::setAxisTime(AxisTimeAdapter* axisTime) {
+void GraphWidget::setAxisTime(AxisTimeProxy* axisTime) {
 
   axisTime_ = axisTime;
 
@@ -828,7 +828,7 @@ constexpr int calcValuePnt<bool>(Value v, double valScale, double valPosMem) {
 }
 
 template<typename T>
-QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, AxisTimeAdapter* axisTime,
+QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, AxisTimeProxy* axisTime,
     const QPair<double, double>& valInterval, const double valScale, const int gapTolerance) {
 
   const QPair<qint64, qint64> tmInterval = axisTime->getTimeInterval();

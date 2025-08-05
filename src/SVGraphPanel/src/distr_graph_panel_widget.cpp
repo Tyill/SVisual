@@ -40,10 +40,113 @@ using namespace SV_Base;
 DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
     GraphPanelWidget(parent, cng_)
 {
-    ui.axisTime->hide();
-    while (auto item = ui.horizontalLayout_2->itemAt(0)){
-        ui.horizontalLayout_2->removeItem(item);
-    }
+
 }
 
 DistrGraphPanelWidget::~DistrGraphPanelWidget() {}
+
+
+void DistrGraphPanelWidget::dropEvent(QDropEvent *event)
+{
+  if (qobject_cast<QTreeWidget *>(event->source())) {
+
+    QString sign = event->mimeData()->text();
+
+    if (!sign.isEmpty()) {
+
+      auto sd = pfGetSignalData(sign);
+
+      if (sd && !sd->isBuffEnable && pfLoadSignalData) {
+          pfLoadSignalData(sign);
+      }
+      if (graphObj_.isEmpty()) {
+        uint64_t buffMinTime, buffMaxTime;
+        {LockerReadSDataGraph lock;
+            buffMinTime = sd->buffMinTime;
+            buffMaxTime = sd->buffMaxTime;
+        }
+        ui.axisTime->setTimeInterval(buffMinTime, buffMaxTime);
+
+        addGraph(sign);
+
+        emit ui.axisTime->req_axisChange();
+      }
+    }
+    event->accept();
+  }
+}
+
+void DistrGraphPanelWidget::addGraph(const QString& sign) {
+
+  const auto tmIntl = ui.axisTime->getTimeInterval();
+  const auto count = qMax<int>(1, (tmIntl.second - tmIntl.first) / (ui.spnPeriodMin->value() * 60 * 1000));
+  for (int iGr = 0; iGr < count; ++iGr){
+      GraphWidget* graph = new GraphWidget(this, cng);
+
+      graph->pfGetSignalData = pfGetSignalData;
+      graph->pfLoadSignalData = pfLoadSignalData;
+      graph->pfGetSignalAttr = pfGetSignalAttr;
+
+      graph->setObjectName("graph_" + QString::number(graphCnt_));
+      ++graphCnt_;
+
+      graph->setGraphSetting(graphSett_);
+
+      graphObj_.append(graph);
+
+      splitterGraph_->addWidget(graph);
+
+      ui.scrollAreaWidgetContents->setMinimumHeight(graphObj_.size() * MIN_HEIGHT_GRAPH);
+
+      QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
+      vscr->setValue(vscr->maximumHeight());
+
+      AxisTimeProxy* atp = new AxisTimeProxy(this);{
+          atp->pfMouseMoveEvent = [this](QMouseEvent* e){ ui.axisTime->mouseMoveEvent(e);};
+          atp->pfMousePressEvent = [this](QMouseEvent* e){ ui.axisTime->mousePressEvent(e);};
+          atp->pfWheelEvent = [this](QWheelEvent* e){ ui.axisTime->wheelEvent(e);};
+          atp->pfSetTimeIntervalCBack = [this, iGr](qint64 l, qint64 r){
+              auto offset = (r - l) * iGr;
+              ui.axisTime->setTimeInterval(l - offset, r - offset);
+          };
+          atp->pfGetTimeIntervalCBack = [this, iGr]()->QPair<qint64, qint64>{
+              auto tintl = ui.axisTime->getTimeInterval();
+              auto offset = (tintl.second - tintl.first) * iGr;
+              return QPair(tintl.first + offset, tintl.second + offset);
+          };
+          atp->pfGetTimeScaleCBack = [this](){return ui.axisTime->getTimeScale();};
+          atp->pfGetAxisMarkCBack = [this](){return ui.axisTime->getAxisMark();};
+          atp->pfScaleCBack = [this](int delta, int mpos){ ui.axisTime->scale(delta, mpos);};
+          atp->pfUpdate = [this](){ ui.axisTime->update();};
+          atp->pfWidthCBack = [this](){return ui.axisTime->width();};
+      }
+      graph->setAxisTime(atp);
+
+      if (!sign.isEmpty()){
+        auto* sd = pfGetSignalData(sign);
+        if (sd){
+          graph->addSignal(sd);
+        }
+      }
+      connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
+      connect(ui.axisTime, SIGNAL(req_axisChange()), graph, SLOT(axisTimeChange()));
+      connect(graph, SIGNAL(req_axisTimeUpdate(QString)), this, SLOT(axisTimeChange(QString)));
+      connect(graph, SIGNAL(req_markerChange(QString)), this, SLOT(markerChange(QString)));
+      connect(graph, SIGNAL(req_selectGraph(QString)), this, SLOT(selectGraph(QString)));
+      connect(graph, SIGNAL(req_graphUp(QString)), this, SLOT(graphToUp(QString)));
+      connect(graph, SIGNAL(req_graphDn(QString)), this, SLOT(graphToDn(QString)));
+      connect(graph, SIGNAL(req_close()), this, SLOT(closeGraph()));
+
+      if (graphObj_.size() > 1) {
+
+        QPoint leftMarkPos, rightMarkPos;
+        graphObj_[0]->getMarkersPos(leftMarkPos, rightMarkPos);
+        graph->setMarkersPos(leftMarkPos, rightMarkPos);
+      }
+
+      tableUpdate();
+      tableUpdateAlter();
+
+      selGraph_ = graph;
+  }
+}

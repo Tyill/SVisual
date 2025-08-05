@@ -171,7 +171,7 @@ void PlotWidget::scale(int delta, const QPoint& mpos) {
   }
 }
 
-void PlotWidget::setAxisTime(AxisTimeAdapter* ax) {
+void PlotWidget::setAxisTime(AxisTimeProxy* ax) {
   axisTime_ = ax;
 }
 

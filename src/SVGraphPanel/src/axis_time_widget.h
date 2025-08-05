@@ -28,63 +28,63 @@
 
 class GraphWidget;
 
-class AxisTimeAdapter: public QObject{
+class AxisTimeProxy: public QObject{
   Q_OBJECT
-  public:
-  using setTimeIntervalCBack = std::function<void(GraphWidget*, qint64, qint64)>;
-  using getTimeIntervalCBack = std::function<QPair<qint64, qint64>(GraphWidget*)>;
-  using getTimeScaleCBack = std::function<double(GraphWidget*)>;
-  using getAxisMarkCBack = std::function<QVector<int>(GraphWidget*)>;
-  using scaleCBack = std::function<void(GraphWidget*, int delta, int mpos)>;
-  using mouseMoveEventCBack = std::function<void(GraphWidget*, QMouseEvent*)>;
-  using mousePressEventCBack = std::function<void(GraphWidget*, QMouseEvent*)>;
-  using wheelEventCBack = std::function<void(GraphWidget*, QWheelEvent*)>;
-  using updateCBack = std::function<void(GraphWidget*)>;
-  using widthCBack = std::function<int(GraphWidget*)>;
+public:
+  using setTimeIntervalCBack = std::function<void(qint64, qint64)>;
+  using getTimeIntervalCBack = std::function<QPair<qint64, qint64>()>;
+  using getTimeScaleCBack = std::function<double()>;
+  using getAxisMarkCBack = std::function<QVector<int>()>;
+  using scaleCBack = std::function<void(int delta, int mpos)>;
+  using mouseMoveEventCBack = std::function<void(QMouseEvent*)>;
+  using mousePressEventCBack = std::function<void(QMouseEvent*)>;
+  using wheelEventCBack = std::function<void(QWheelEvent*)>;
+  using updateCBack = std::function<void()>;
+  using widthCBack = std::function<int()>;
 
-  AxisTimeAdapter(GraphWidget* graph, QWidget *parent = 0)
-      :QObject(parent), graph_(graph){
+  AxisTimeProxy(QWidget *parent = 0)
+      :QObject(parent){
   }
   void setTimeInterval(qint64 l, qint64 r){
     if (pfSetTimeIntervalCBack){
-      pfSetTimeIntervalCBack(graph_, l, r);
+      pfSetTimeIntervalCBack(l, r);
     }
   };
   QPair<qint64, qint64> getTimeInterval(){
-    return pfGetTimeIntervalCBack ? pfGetTimeIntervalCBack(graph_) : QPair<qint64, qint64>{};
+    return pfGetTimeIntervalCBack ? pfGetTimeIntervalCBack() : QPair<qint64, qint64>{};
   };
   double getTimeScale(){
-    return pfGetTimeScaleCBack ? pfGetTimeScaleCBack(graph_) : 1.0;
+    return pfGetTimeScaleCBack ? pfGetTimeScaleCBack() : 1.0;
   };
   QVector<int> getAxisMark(){
-    return pfGetAxisMarkCBack ? pfGetAxisMarkCBack(graph_) : QVector<int>{};
+    return pfGetAxisMarkCBack ? pfGetAxisMarkCBack() : QVector<int>{};
   };
   void scale(int delta, int mpos){
     if (pfScaleCBack){
-      pfScaleCBack(graph_, delta, mpos);
+      pfScaleCBack(delta, mpos);
     }
   }
   int width(){
-    return pfWidthCBack ? pfWidthCBack(graph_) : 1;
+    return pfWidthCBack ? pfWidthCBack() : 1;
   }
   void mouseMoveEvent(QMouseEvent * event){
     if (pfMouseMoveEvent){
-        pfMouseMoveEvent(graph_, event);
+        pfMouseMoveEvent(event);
     }
   }
   void mousePressEvent(QMouseEvent * event){
     if (pfMousePressEvent){
-      pfMousePressEvent(graph_, event);
+      pfMousePressEvent(event);
     }
   }
   void wheelEvent(QWheelEvent * event){
     if (pfWheelEvent){
-      pfWheelEvent(graph_, event);
+      pfWheelEvent(event);
     }
   }
   void update(){
     if (pfUpdate){
-      pfUpdate(graph_);
+      pfUpdate();
     }
   }
 
@@ -98,7 +98,6 @@ class AxisTimeAdapter: public QObject{
   scaleCBack pfScaleCBack{};
   updateCBack pfUpdate{};
   widthCBack pfWidthCBack{};
-  GraphWidget* graph_{};
 };
 
 

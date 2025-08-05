@@ -29,7 +29,7 @@
 
 class QLabel;
 
-class AxisTimeAdapter;
+class AxisTimeProxy;
 class AxisValueWidget;
 
 class GraphPanelWidget;
@@ -66,7 +66,7 @@ public:
   GraphWidget(QWidget *parent, SV_Graph::Config cng_);
   ~GraphWidget();
 
-  void setAxisTime(AxisTimeAdapter* axisTime);
+  void setAxisTime(AxisTimeProxy* axisTime);
 
   void setGraphSetting(const SV_Graph::GraphSetting&);
   void setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att);
@@ -162,7 +162,7 @@ private:
   QMap <QString, GraphSignData> signals_, signalsAlter_;
   QStringList signalList_, signalListAlter_;
 
-  AxisTimeAdapter* axisTime_ = nullptr;
+  AxisTimeProxy* axisTime_ = nullptr;
   MarkerWidget* leftMarker_ = nullptr;
   MarkerWidget* rightMarker_ = nullptr;
 

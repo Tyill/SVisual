@@ -39,10 +39,6 @@ SV_Srv::onAddSignalsCBack pfAddSignalsCBack = nullptr;
 SV_Srv::onModuleConnectCBack pfModuleConnectCBack = nullptr;
 SV_Srv::onModuleDisconnectCBack pfModuleDisconnectCBack = nullptr;
 
-namespace{
-    const char* beginMess = "=begin=";
-    const char* endMess = "=end=";
-}
 
 namespace SV_Srv {
 
@@ -59,12 +55,10 @@ namespace SV_Srv {
 
     
   void setStatusCBack(statusCBack cback){
-
     pfStatusCBack = cback;
   }
 
   bool startServer(const Config& _cng){
-
     std::lock_guard<std::mutex> lck(m_mtxCommon);
 
     if (m_pThrUpdSignal) return true;
@@ -79,20 +73,19 @@ namespace SV_Srv {
   }
 
   void stopServer(){
-
     if (m_pThrUpdSignal)
       delete m_pThrUpdSignal;
   }
     
   void setConfig(const Config& cng){
-        
     if (m_pThrUpdSignal)
       m_pThrUpdSignal->setArchiveConfig(cng);    
   }
 
   void receiveData(std::string& inout, std::string& out){
-    
     vector<pair<size_t, size_t>> bePos;
+    const char* beginMess = "=begin=";
+    const char* endMess = "=end=";
     const size_t mlen = 4, beginLen = strlen(beginMess), endLen = strlen(endMess);
     size_t stPos = inout.find(beginMess), endPos = 0;
     while (stPos != std::string::npos && stPos + beginLen + mlen < inout.size()){
@@ -211,7 +204,6 @@ namespace SV_Srv {
   }
 
   bool signalBufferEna(const std::string& sign){
-
     std::lock_guard lck(m_mtxCommon);
 
     if (m_signalData.find(sign) == m_signalData.end()) return false;

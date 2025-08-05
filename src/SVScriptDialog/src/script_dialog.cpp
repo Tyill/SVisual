@@ -25,13 +25,15 @@
 
 #include "SVScriptDialog/forms/script_dialog_impl.h"
 
-namespace SV_Script {
 
-  ScriptDialog* scrDialogRef = nullptr;
+ScriptDialog* scrDialogRef = nullptr;
+
+
+namespace SV_Script {
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
-    
+
   QDialog* getScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
       if (!scrDialogRef) {
           scrDialogRef = new ScriptDialog(parent, cng, mode);
