@@ -44,7 +44,7 @@ public:
   SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
   SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
   
-  void addSignalOnGraph(const QString& sign, int section);
+  virtual void addSignalOnGraph(const QString& sign, int section);
   QPair<qint64, qint64> getTimeInterval();
   void setTimeInterval(qint64 stTime, qint64 enTime);
   QVector<QVector<QString>> getLocateSignals();
@@ -88,7 +88,6 @@ protected:
   SV_Graph::Config cng;
 
   const int MIN_HEIGHT_GRAPH = 300;
-  int graphCnt_ = 0;
   QVector<GraphWidget*> graphObj_;
 
   QSplitter* splitterGraph_ = nullptr;
@@ -106,10 +105,11 @@ public:
   DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng);
   ~DistrGraphPanelWidget();
 
+  void addSignalOnGraph(const QString& sign, int section) override;
+
 private slots:
   void dropEvent(QDropEvent *event)override;
   void addGraph(const QString& sign)override;
-
 };
 
 class TableWidgetItem : public QTableWidgetItem {

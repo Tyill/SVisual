@@ -133,58 +133,43 @@ void GraphPanelWidget::load() {
 }
 
 void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
-
   graphSett_ = gs;
-
   for (auto ob : qAsConst(graphObj_)) {
-
     ob->setGraphSetting(gs);
     ob->plotUpdate();
   }
 }
 
 void GraphPanelWidget::setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att) {
-
   for (auto ob : qAsConst(graphObj_)) {
-
     ob->setSignalAttr(sign, att);
   }
 }
 
 void GraphPanelWidget::setAxisAttr(const QVector<SV_Graph::AxisAttributes>& attr) {
-
   for (auto ob : qAsConst(graphObj_)) {
-
     int ind = splitterGraph_->indexOf(ob);
-
-    if (ind < attr.size())
+    if (ind < attr.size()){
       ob->setAxisAttr(attr[ind]);
+    }
   }
-
 }
 
 QVector<SV_Graph::AxisAttributes> GraphPanelWidget::getAxisAttr() {
-
   QVector<SV_Graph::AxisAttributes> res;
   for (auto ob : qAsConst(graphObj_)) {
-
     int ind = splitterGraph_->indexOf(ob);
-
-    if (ind >= res.size())
+    if (ind >= res.size()){
       res.resize(ind + 1);
-
+    }
     res[ind] = ob->getAxisAttr();
   }
-
   return res;
 }
 
 void GraphPanelWidget::addSignalOnGraph(const QString& sign, int section) {
-
   SV_Base::SignalData* sd = pfGetSignalData(sign);
-
   if (!sd) return;
-
   if (sd && !sd->isBuffEnable && pfLoadSignalData){
     pfLoadSignalData(sign);
   }
@@ -205,36 +190,22 @@ void GraphPanelWidget::addSignalOnGraph(const QString& sign, int section) {
   } 
   if (selGraph_) {    
     selGraph_->addSignal(sd);
-
-    tableUpdate();
-    tableUpdateAlter();
-  }
-  else {
+  }else{
     graphObj_[section]->addSignal(sd);
-
-    tableUpdate();
-    tableUpdateAlter();
-
     selGraph_ = graphObj_[section];
   }
-
+  tableUpdate();
+  tableUpdateAlter();
 }
 
 void GraphPanelWidget::addGraph(const QString& sign) {
-
   GraphWidget* graph = new GraphWidget(this, cng);
-
   graph->pfGetSignalData = pfGetSignalData;
   graph->pfLoadSignalData = pfLoadSignalData;
   graph->pfGetSignalAttr = pfGetSignalAttr;
-
-  graph->setObjectName("graph_" + QString::number(graphCnt_));
-  ++graphCnt_;
-
+  graph->setObjectName("graph_" + QString::number(graphObj_.size()));
   graph->setGraphSetting(graphSett_);
-
   graphObj_.append(graph);
-
   splitterGraph_->addWidget(graph);
 
   ui.scrollAreaWidgetContents->setMinimumHeight(graphObj_.size() * MIN_HEIGHT_GRAPH);
@@ -301,17 +272,14 @@ void GraphPanelWidget::dragEnterEvent(QDragEnterEvent *event)
   }
 }
 
-void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event)
-{
+void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event){
   if (qobject_cast<QTreeWidget *>(event->source()) ||
     qobject_cast<DragLabel *>(event->source())) {
-
     event->accept();
   }
 }
 
-void GraphPanelWidget::dropEvent(QDropEvent *event)
-{  
+void GraphPanelWidget::dropEvent(QDropEvent *event){  
   DragLabel* lb = qobject_cast<DragLabel *>(event->source());
 
   if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
@@ -529,7 +497,6 @@ void GraphPanelWidget::axisTimeChange(const QString& obj) {
   diapTimeUpdate();
 
   for (auto ob : qAsConst(graphObj_)) {
-
     if (ob->objectName() != obj)
       ob->plotUpdate();
   }

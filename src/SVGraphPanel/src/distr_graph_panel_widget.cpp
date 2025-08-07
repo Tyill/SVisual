@@ -45,13 +45,20 @@ DistrGraphPanelWidget::DistrGraphPanelWidget(QWidget *parent, const SV_Graph::Co
 
 DistrGraphPanelWidget::~DistrGraphPanelWidget() {}
 
-
 void DistrGraphPanelWidget::dropEvent(QDropEvent *event)
 {
   if (qobject_cast<QTreeWidget *>(event->source())) {
 
     QString sign = event->mimeData()->text();
 
+    addSignalOnGraph(sign, 0);
+
+    event->accept();
+  }
+}
+
+void DistrGraphPanelWidget::addSignalOnGraph(const QString& sign, int /*section*/)
+{
     if (!sign.isEmpty()) {
 
       auto sd = pfGetSignalData(sign);
@@ -71,15 +78,20 @@ void DistrGraphPanelWidget::dropEvent(QDropEvent *event)
 
         emit ui.axisTime->req_axisChange();
       }
+      else if (!sign.isEmpty()){
+        for (auto g : graphObj_){
+          if (auto sd = pfGetSignalData(sign); sd){
+            g->addSignal(sd);
+          }
+        }
+      }
     }
-    event->accept();
-  }
 }
 
 void DistrGraphPanelWidget::addGraph(const QString& sign) {
 
-  const auto tmIntl = ui.axisTime->getTimeInterval();
-  const auto count = qMax<int>(1, (tmIntl.second - tmIntl.first) / (ui.spnPeriodMin->value() * 60 * 1000));
+  const auto tintlMax = ui.axisTime->getTimeInterval();
+  const auto count = qBound<int>(1, (tintlMax.second - tintlMax.first) / (ui.spnPeriodMin->value() * 60 * 1000), 1000);
   for (int iGr = 0; iGr < count; ++iGr){
       GraphWidget* graph = new GraphWidget(this, cng);
 
@@ -87,8 +99,7 @@ void DistrGraphPanelWidget::addGraph(const QString& sign) {
       graph->pfLoadSignalData = pfLoadSignalData;
       graph->pfGetSignalAttr = pfGetSignalAttr;
 
-      graph->setObjectName("graph_" + QString::number(graphCnt_));
-      ++graphCnt_;
+      graph->setObjectName("graph_" + QString::number(graphObj_.size()));
 
       graph->setGraphSetting(graphSett_);
 
@@ -112,7 +123,7 @@ void DistrGraphPanelWidget::addGraph(const QString& sign) {
           atp->pfGetTimeIntervalCBack = [this, iGr]()->QPair<qint64, qint64>{
               auto tintl = ui.axisTime->getTimeInterval();
               auto offset = (tintl.second - tintl.first) * iGr;
-              return QPair(tintl.first + offset, tintl.second + offset);
+              return QPair(tintl.first - offset, tintl.second - offset);
           };
           atp->pfGetTimeScaleCBack = [this](){return ui.axisTime->getTimeScale();};
           atp->pfGetAxisMarkCBack = [this](){return ui.axisTime->getAxisMark();};
@@ -123,8 +134,7 @@ void DistrGraphPanelWidget::addGraph(const QString& sign) {
       graph->setAxisTime(atp);
 
       if (!sign.isEmpty()){
-        auto* sd = pfGetSignalData(sign);
-        if (sd){
+        if (auto sd = pfGetSignalData(sign); sd){
           graph->addSignal(sd);
         }
       }
@@ -137,16 +147,14 @@ void DistrGraphPanelWidget::addGraph(const QString& sign) {
       connect(graph, SIGNAL(req_graphDn(QString)), this, SLOT(graphToDn(QString)));
       connect(graph, SIGNAL(req_close()), this, SLOT(closeGraph()));
 
-      if (graphObj_.size() > 1) {
+      QPoint leftMarkPos, rightMarkPos;
+      graphObj_.at(0)->getMarkersPos(leftMarkPos, rightMarkPos);
+      graph->setMarkersPos(leftMarkPos, rightMarkPos);
+  }
+  tableUpdate();
+  tableUpdateAlter();
 
-        QPoint leftMarkPos, rightMarkPos;
-        graphObj_[0]->getMarkersPos(leftMarkPos, rightMarkPos);
-        graph->setMarkersPos(leftMarkPos, rightMarkPos);
-      }
-
-      tableUpdate();
-      tableUpdateAlter();
-
-      selGraph_ = graph;
+  if (!graphObj_.isEmpty()){
+    selGraph_ = graphObj_.at(0);
   }
 }
