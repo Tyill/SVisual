@@ -117,7 +117,6 @@ private:
 
   QDialog* exportPanel_ = nullptr;
   QMap<QObject*, QWidget*> graphPanels_;
-  QDialog* statPanel_ = nullptr;
   GraphSettingDialog* graphSettPanel_ = nullptr;
   QDialog* scriptPanel_ = nullptr;
 

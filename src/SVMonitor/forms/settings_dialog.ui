@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>675</height>
+    <width>700</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -574,7 +574,7 @@
            <string> мс</string>
           </property>
           <property name="minimum">
-           <number>10</number>
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>60000</number>
@@ -597,7 +597,10 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>1000</number>
+           <number>1000000</number>
+          </property>
+          <property name="value">
+           <number>1</number>
           </property>
           <property name="Value" stdset="0">
            <number>10</number>
@@ -611,6 +614,46 @@
           </property>
           <property name="sizeType">
            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Смещение по времени</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinTimeOffsetMs">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="suffix">
+           <string>мс</string>
+          </property>
+          <property name="maximum">
+           <number>1000000</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_11">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>

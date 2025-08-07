@@ -32,31 +32,31 @@ namespace SV_Stat {
     return new StatDialog(parent, cng);
   }
 
-  void setGetCopySignalRef(QDialog *stp, getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(QDialog *stp, getCopySignalRefCBack f) {
 
     if (stp)
       ((StatDialog *)stp)->pfGetCopySignalRef = f;
   }
 
-  void setGetSignalData(QDialog *stp, getSignalDataCBack f) {
+  void setGetSignalDataCBack(QDialog *stp, getSignalDataCBack f) {
 
     if (stp)
       ((StatDialog *)stp)->pfGetSignalData = f;
   }
 
-  void setLoadSignalData(QDialog *stp, isLoadSignalDataCBack f) {
+  void setLoadSignalDataCBack(QDialog *stp, isLoadSignalDataCBack f) {
 
     if (stp)
       ((StatDialog *)stp)->pfLoadSignalData = f;
   }
 
-  void setGetTimeInterval(QDialog* stp, getTimeIntervalCBack f) {
+  void setGetTimeIntervalCBack(QDialog* stp, getTimeIntervalCBack f) {
 
     if (stp)
       ((StatDialog *)stp)->pfGetTimeInterval = f;
   }
 
-  void setSetTimeInterval(QDialog* stp, setTimeIntervalCBack f) {
+  void setSetTimeIntervalCBack(QDialog* stp, setTimeIntervalCBack f) {
 
     if (stp)
       ((StatDialog *)stp)->pfSetTimeInterval = f;

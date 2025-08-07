@@ -35,6 +35,7 @@
 
 #include <QDialog>
 
+
 class ScriptDialog : public QDialog
 {
   Q_OBJECT

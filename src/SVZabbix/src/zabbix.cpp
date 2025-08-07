@@ -28,9 +28,10 @@
 
 using namespace std;
 
-ZbxServer zServer;
 
 namespace SV_Zbx {
+
+  ZbxServer zServer;
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
@@ -67,7 +68,6 @@ namespace SV_Zbx {
     zServer.pfGetSignalData = f;
   }
 }
-
 LockerReadSDataZbx::LockerReadSDataZbx() {
     if (SV_Zbx::pfLockReadSData) SV_Zbx::pfLockReadSData();
 }

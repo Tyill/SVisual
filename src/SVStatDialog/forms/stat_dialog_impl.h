@@ -28,6 +28,7 @@
 #include "SVBase/base.h"
 #include "SVStatDialog/stat_dialog.h"
 
+
 class StatDialog : public QDialog
 {
   Q_OBJECT
@@ -83,5 +84,4 @@ private:
   void selectSignalTime(int row);
 
 };
-
 

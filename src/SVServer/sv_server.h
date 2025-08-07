@@ -54,6 +54,7 @@ namespace SV_Srv {
 
     int cycleRecMs;              ///< период записи - задает пользователь
     int packetSz;                ///< размер пакета - задает пользователь
+    int offsetMs;                ///< сдвиг вперед по времени, мс - задает пользователь для записи с частотой > 1кГц
 
     Config() :
       outArchiveEna(false),
@@ -63,7 +64,8 @@ namespace SV_Srv {
       outDataBaseName("svdb"),
       outDataBaseAddr("localhost:9000"),
       cycleRecMs(100),
-      packetSz(10) {}
+      packetSz(10),
+      offsetMs(0) {}
   };
 
   /// задать статус callback

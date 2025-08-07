@@ -141,7 +141,7 @@ SV_Graph::AxisAttributes AxisValueWidget::getAxisAttr() {
 void AxisValueWidget::wheelEvent(QWheelEvent * event) {
 
   scale(event->delta(), event->pos().y());
-
+  event->accept();
 }
 
 void AxisValueWidget::resizeEvent(QResizeEvent * event) {

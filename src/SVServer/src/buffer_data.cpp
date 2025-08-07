@@ -33,11 +33,17 @@ using namespace std;
 void BufferData::init(const SV_Srv::Config& cng_) {
   
   cng = cng_;
-
-  SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * BUFF_SZ];
-  memset(buff, 0, SV_PACKETSZ * BUFF_SZ * sizeof(SV_Base::Value));
-  for (size_t i = 0; i < BUFF_SZ; ++i)
+  if (SV_PACKETSZ > 100000){
+      m_buffSz /= 100;
+  }else if (SV_PACKETSZ > 10000){
+      m_buffSz /= 10;
+  }
+  m_buffer.resize(m_buffSz);
+  SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * m_buffSz];
+  memset(buff, 0, SV_PACKETSZ * m_buffSz * sizeof(SV_Base::Value));
+  for (size_t i = 0; i < m_buffSz; ++i){
     m_buffer[i].data.vals = &buff[i * SV_PACKETSZ];
+  }
 }
 
 void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
@@ -45,15 +51,25 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
   size_t dsz = indata.size(),
          valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
          cPos = SV_NAMESZ;
-  size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, BUFF_SZ / 10));  // 10 сек - запас
+  size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, m_buffSz / 10));  // 10 сек - запас
   size_t wPos;
   {
     std::lock_guard<std::mutex> lck(m_mtxWrite);
     wPos = m_buffWritePos;
     m_buffWritePos += valCnt;
-    if (m_buffWritePos >= BUFF_SZ){
-      m_buffWritePos -= BUFF_SZ;
+    if (m_buffWritePos >= m_buffSz){
+      m_buffWritePos -= m_buffSz;
     }
+  }
+  if (cng.offsetMs > 0){
+    const std::string module = indata.c_str();
+    std::lock_guard<std::mutex> lck(m_mtxWrite);
+    if (m_timeOffsetMs.count(module)){
+      m_timeOffsetMs[module] += cng.offsetMs;
+    }else{
+      m_timeOffsetMs[module] = 0;
+    }
+    bTm += m_timeOffsetMs[module];
   }
   size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
   while (cPos < dsz){
@@ -63,7 +79,7 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
     m_buffer[wPos].data.beginTime = bTm;
     memcpy(m_buffer[wPos].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
     ++wPos;
-    if (wPos == BUFF_SZ){
+    if (wPos == m_buffSz){
       wPos = 0;
     }
     cPos += valSz;
@@ -71,8 +87,8 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
   {
     std::lock_guard<std::mutex> lck(m_mtxWrite);
     m_buffWritePosForReader += valCnt;
-    if (m_buffWritePosForReader >= BUFF_SZ){
-      m_buffWritePosForReader -= BUFF_SZ;
+    if (m_buffWritePosForReader >= m_buffSz){
+      m_buffWritePosForReader -= m_buffSz;
     }
   }
 }
@@ -89,7 +105,7 @@ bool BufferData::getDataByReadPos(std::vector<InputData>& out){
     out.push_back(m_buffer[m_buffReadPos]);
 
     ++m_buffReadPos;
-    if (m_buffReadPos == BUFF_SZ){
+    if (m_buffReadPos == m_buffSz){
       m_buffReadPos = 0;
     }
   }

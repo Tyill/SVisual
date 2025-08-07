@@ -71,4 +71,3 @@ void DragLabel::mouseMoveEvent(QMouseEvent *event) {
 
   QLabel::mouseMoveEvent(event);
 }
-

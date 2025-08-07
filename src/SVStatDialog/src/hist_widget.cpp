@@ -27,7 +27,7 @@
 
 #include <QtGui>
 
-using namespace std;
+
 
 HistWidget::HistWidget(QWidget *parent) {
 
@@ -42,17 +42,6 @@ HistWidget::~HistWidget() {}
 void HistWidget::setGraphPnt(QVector<QPair<int, int>> pnts) {
 
   grPnts_ = pnts;
-
-  update();
-}
-
-void HistWidget::setGraphPnt(vector<pair<int, int>> pnts) {
-
-  grPnts_.clear();
-
-  size_t sz = pnts.size();
-  for (size_t i = 0; i < sz; ++i)
-    grPnts_.push_back(QPair<int, int>(pnts[i].first, pnts[i].second));
 
   update();
 }
