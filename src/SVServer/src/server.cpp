@@ -128,7 +128,6 @@ namespace SV_Srv {
   }
 
   void setOnModuleConnectCBack(onModuleConnectCBack cback){
-
     pfModuleConnectCBack = cback;
   }
 

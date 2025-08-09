@@ -60,16 +60,15 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
     if (m_buffWritePos >= m_buffSz){
       m_buffWritePos -= m_buffSz;
     }
-  }
-  if (cng.offsetMs > 0){
-    const std::string module = indata.c_str();
-    std::lock_guard<std::mutex> lck(m_mtxWrite);
-    if (m_timeOffsetMs.count(module)){
-      m_timeOffsetMs[module] += cng.offsetMs;
-    }else{
-      m_timeOffsetMs[module] = 0;
+    if (cng.offsetMs > 0){
+      const std::string module = indata.c_str();
+      if (m_timeOffsetMs.count(module)){
+        m_timeOffsetMs[module] += cng.offsetMs;
+      }else{
+        m_timeOffsetMs[module] = 0;
+      }
+      bTm += m_timeOffsetMs[module];
     }
-    bTm += m_timeOffsetMs[module];
   }
   size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
   while (cPos < dsz){
