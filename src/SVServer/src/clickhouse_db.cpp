@@ -8,7 +8,7 @@
 
 namespace ch = clickhouse;
 
-extern SV_Srv::statusCBack pfStatusCBack;
+void statusMessage(const std::string&);
 
 ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
     cng(_cng)
@@ -29,9 +29,7 @@ ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
             }
         }
         catch (std::exception& e) {
-            if (pfStatusCBack) {
-                pfStatusCBack("ClickHouseDB read signals error: " + std::string(e.what()));
-            }
+            statusMessage("ClickHouseDB read signals error: " + std::string(e.what()));
         }
         }).detach();
 }
@@ -44,9 +42,7 @@ bool ClickHouseDB::isConnect()const
             return true;
         }
     }catch(std::exception& e){
-        if (pfStatusCBack){
-            pfStatusCBack("ClickHouseDB connect error: " + std::string(e.what()));
-        }
+        statusMessage("ClickHouseDB connect error: " + std::string(e.what()));
     }
     return false;
 }
@@ -84,9 +80,7 @@ void ClickHouseDB::addSignal(const std::string& sname, const std::string& module
                     }
                     m_signalBlock.reset();
                 }catch(std::exception& e){
-                    if (pfStatusCBack){
-                        pfStatusCBack("ClickHouseDB::addSignal save error: " + std::string(e.what()));
-                    }
+                    statusMessage("ClickHouseDB::addSignal save error: " + std::string(e.what()));
                 }
             }).detach();
         }
@@ -137,9 +131,7 @@ void ClickHouseDB::saveSData(bool onClose, const std::map<std::string, int>& val
                     clt->Insert("tblSData", *dblock);
                 }
             }catch(std::exception& e){
-                if (pfStatusCBack){
-                    pfStatusCBack("ClickHouseDB::addSData save error: " +  std::string(e.what()));
-                }
+                statusMessage("ClickHouseDB::addSData save error: " +  std::string(e.what()));
             }
         };
         if (!onClose){

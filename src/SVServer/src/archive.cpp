@@ -36,7 +36,7 @@
 
 using namespace std;
 
-extern SV_Srv::statusCBack pfStatusCBack;
+void statusMessage(const std::string& mess);
 
 void Archive::init(const SV_Srv::Config& cng_) {
 
@@ -143,7 +143,7 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
       const auto fpath = getOutPath(isStop);
       fstream file(fpath, std::fstream::binary | std::fstream::app);
       if (!file.good()){
-          if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk file not open for write, fpath " + fpath);
+          statusMessage("Archive::copyToDisk file not open for write, fpath " + fpath);
           return;
       }
 
@@ -173,7 +173,7 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
           sCnt = 0;
           size_t compSz = 0;
           if (!compressData(csize, inArr, compSz, compArr)) {
-            if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk compressData error");
+            statusMessage("Archive::copyToDisk compressData error");
             file.close();
             return;
           };
@@ -201,9 +201,7 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
 }
 
 bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
-
   try {
-
     uLong compressedSz = compressBound(uLong(inSz));
 
     if (outArr.size() < compressedSz)
@@ -214,10 +212,9 @@ bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz
     outsz = compressedSz;
 
     return res == Z_OK;
-
   }
   catch (exception e) {
-    if (pfStatusCBack) pfStatusCBack("Archive::compressData exception " + string(e.what()));
+    statusMessage("Archive::compressData exception " + string(e.what()));
     return false;
   }
 }

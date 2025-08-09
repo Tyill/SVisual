@@ -196,15 +196,15 @@ void ThreadUpdate::updateSignalsBuff(SignalData* sign, size_t beginPos, size_t v
 }
 
 void ThreadUpdate::moduleConnect(const string& module){
-
-  if (pfModuleConnectCBack)
+  if (pfModuleConnectCBack){
     pfModuleConnectCBack(module);
+  }
 }
 
 void ThreadUpdate::moduleDisconnect(const string& module){
-
-  if (pfModuleDisconnectCBack)
+  if (pfModuleDisconnectCBack){
     pfModuleDisconnectCBack(module);
+  }
 }
 
 void ThreadUpdate::updateCycle(){
