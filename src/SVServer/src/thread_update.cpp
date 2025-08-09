@@ -110,7 +110,10 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
 
     bool isNewSign = false, isBuffActive = false;
 
-    const size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+    size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+    if (buffSz == 0){
+        buffSz = 1;
+    }
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
     
     std::vector<BufferData::InputData> bufData;
@@ -193,15 +196,15 @@ void ThreadUpdate::updateSignalsBuff(SignalData* sign, size_t beginPos, size_t v
 }
 
 void ThreadUpdate::moduleConnect(const string& module){
-
-  if (pfModuleConnectCBack)
+  if (pfModuleConnectCBack){
     pfModuleConnectCBack(module);
+  }
 }
 
 void ThreadUpdate::moduleDisconnect(const string& module){
-
-  if (pfModuleDisconnectCBack)
+  if (pfModuleDisconnectCBack){
     pfModuleDisconnectCBack(module);
+  }
 }
 
 void ThreadUpdate::updateCycle(){
@@ -220,7 +223,7 @@ void ThreadUpdate::updateCycle(){
   SV_Misc::TimerDelay tmDelay;
   tmDelay.update();
 
-  int checkConnectTout = 5 * SV_CYCLESAVE_MS;
+  int checkConnectTout = std::min(10000, 5 * SV_CYCLESAVE_MS);
 
   while (!m_thrStop){
 

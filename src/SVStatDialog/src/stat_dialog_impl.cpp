@@ -32,6 +32,7 @@
 
 using namespace SV_Base;
 
+
 StatDialog::StatDialog(QWidget *parent, SV_Stat::Config cng_):
     QDialog(parent)
 {
@@ -233,18 +234,13 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
         }
       }
     }
-                          break;
+    break;
 
     case ValueType::INT:
-
       for (int i = 0; i < sz; ++i) {
-
         for (int j = 0; j < SV_PACKETSZ; ++j) {
-
           int val = vars_[i].vals[j].vInt;
-
           if ((minVal <= val) && (val <= maxVal)) {
-
             if (!hist.contains(val)) {
               hist.insert(val, 1);
               sign_[sname].valData.insert(val, ValSData{ 1, 1 });
@@ -254,7 +250,6 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
               if (val != prevVal) sign_[sname].valData[val].changeCnt++;
               sign_[sname].valData[val].duration++;
             }
-
             prevVal = val;
           }
         }
@@ -262,15 +257,10 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
 
       break;
     case ValueType::FLOAT:
-
       for (int i = 0; i < sz; ++i) {
-
         for (int j = 0; j < SV_PACKETSZ; ++j) {
-
           int val = vars_[i].vals[j].vFloat > 0 ? vars_[i].vals[j].vFloat + 0.5 : vars_[i].vals[j].vFloat - 0.5;
-
           if ((minVal <= val) && (val <= maxVal)) {
-
             if (!hist.contains(val)) {
               hist.insert(val, 1);
               sign_[sname].valData.insert(val, ValSData{ 1, 1 });
@@ -280,7 +270,6 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
               if (val != prevVal) sign_[sname].valData[val].changeCnt++;
               sign_[sname].valData[val].duration++;
             }
-
             prevVal = val;
           }
         }
@@ -292,7 +281,6 @@ QVector<QPair<int, int>> StatDialog::calcHist(QString sname) {
 
   }
   else {
-
     int sz = vars_.size();
     bool isOnlyFront = ui.chbFront->isChecked();
     int prevVal = 0;
@@ -504,4 +492,3 @@ int StatDialog::Mx(QVector<QPair<int, int>>& hist)
 
   return 0;
 }
-

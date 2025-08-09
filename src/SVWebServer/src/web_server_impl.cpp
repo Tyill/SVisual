@@ -35,6 +35,7 @@
 #include <QUrl>
 #include <QCoreApplication>
 
+
 void WebServer::setConfig(const SV_Web::Config& cng_) {
 
   cng = cng_;

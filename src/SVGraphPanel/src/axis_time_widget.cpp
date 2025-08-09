@@ -120,6 +120,7 @@ void AxisTimeWidget::scale(int delta, int mpos) {
 void AxisTimeWidget::wheelEvent(QWheelEvent * event) {
 
   scale(event->delta(), event->pos().x());
+  event->accept();
 }
 
 void AxisTimeWidget::resizeEvent(QResizeEvent * event) {

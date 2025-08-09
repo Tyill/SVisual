@@ -36,14 +36,14 @@
 
 using namespace std;
 
-extern SV_Srv::statusCBack pfStatusCBack;
+void statusMessage(const std::string& mess);
 
 void Archive::init(const SV_Srv::Config& cng_) {
 
   cng = cng_;
   m_copyStartTime = SV_Misc::currDateTimeEx();
   m_copyDateMem = SV_Misc::currDateS();
-  m_copySz = 600000 / SV_CYCLESAVE_MS; // 10мин
+  m_copySz = std::max(10, 600000 / SV_CYCLESAVE_MS); // 10мин
 
   if(cng.outDataBaseEna && !cng.outDataBaseName.empty() && !cng.outDataBaseAddr.empty()){
       m_chdb = new ClickHouseDB(cng);
@@ -123,7 +123,12 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
   }
 
   if (cng.outArchiveEna){
-      const size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
+      size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
+      if (SV_PACKETSZ > 100000){
+          SMAXCNT = 1;
+      }else if (SV_PACKETSZ > 10000){
+          SMAXCNT = 10;
+      }
 
       const size_t intSz = sizeof(int32_t),
         tmSz = sizeof(uint64_t),
@@ -135,29 +140,21 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
       vector<char> inArr((tmSz + vlSz) * m_copySz * SMAXCNT + headSz * SMAXCNT);
       vector<char> compArr;
 
-      vector<string> keys;
-      keys.reserve(dataSz);
-      for (auto &it : archiveData){
-          keys.push_back(it.first);
-      }
-
       const auto fpath = getOutPath(isStop);
       fstream file(fpath, std::fstream::binary | std::fstream::app);
       if (!file.good()){
-          if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk file not open for write, fpath " + fpath);
+          statusMessage("Archive::copyToDisk file not open for write, fpath " + fpath);
           return;
       }
 
-      size_t sCnt = 0, csize = 0;
-      for (size_t i = 0; i < dataSz; ++i) {
+      size_t sCnt = 0, csize = 0, ix = 0;
+      for (const auto& ad : archiveData) {
 
-        auto sign = SV_Srv::getSignalData(keys[i]);
-
-        string sn = sign->name + sign->module;
+        const auto sign = SV_Srv::getSignalData(ad.first);
 
         char* pIn = inArr.data();       
         
-        int vCnt = valPos[sn];
+        int vCnt = valPos[ad.first];
         if (vCnt > 0) {
           memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
           memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
@@ -167,20 +164,16 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
           memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
 
           for (int j = 0; j < vCnt; ++j) {
-            memcpy(pIn + csize, &archiveData[sn][j].beginTime, tmSz); csize += tmSz;
-            memcpy(pIn + csize, archiveData[sn][j].vals, vlSz);       csize += vlSz;
+            memcpy(pIn + csize, &ad.second[j].beginTime, tmSz); csize += tmSz;
+            memcpy(pIn + csize, ad.second[j].vals, vlSz);       csize += vlSz;
           }
-
           ++sCnt;
         }
-
-        if ((sCnt > 0) && ((sCnt >= SMAXCNT) || (i == (dataSz - 1)))) {
+        if (sCnt > 0 && (sCnt == SMAXCNT || ix == dataSz - 1)) {
           sCnt = 0;
-
           size_t compSz = 0;
-
           if (!compressData(csize, inArr, compSz, compArr)) {
-            if (pfStatusCBack) pfStatusCBack("Archive::copyToDisk compressData error");
+            statusMessage("Archive::copyToDisk compressData error");
             file.close();
             return;
           };
@@ -191,6 +184,7 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
 
           csize = 0;
         }
+        ++ix;
       }
       file.close();
   }
@@ -207,9 +201,7 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
 }
 
 bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
-
   try {
-
     uLong compressedSz = compressBound(uLong(inSz));
 
     if (outArr.size() < compressedSz)
@@ -220,10 +212,9 @@ bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz
     outsz = compressedSz;
 
     return res == Z_OK;
-
   }
   catch (exception e) {
-    if (pfStatusCBack) pfStatusCBack("Archive::compressData exception " + string(e.what()));
+    statusMessage("Archive::compressData exception " + string(e.what()));
     return false;
   }
 }

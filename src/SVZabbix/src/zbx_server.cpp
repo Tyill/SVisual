@@ -29,6 +29,8 @@
 #include <QDir>
 #include <QUrl>
 
+
+
 void ZbxServer::setConfig(const SV_Zbx::Config& cng_) {
 
   cng = cng_;

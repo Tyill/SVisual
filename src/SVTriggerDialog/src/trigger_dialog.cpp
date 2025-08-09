@@ -44,37 +44,37 @@ namespace SV_Trigger {
       ((TriggerDialog*)stp)->startUpdateThread();
   }
 
-  void setGetCopySignalRef(QDialog *stp, getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(QDialog *stp, getCopySignalRefCBack f) {
 
     if (stp)
       ((TriggerDialog*)stp)->pfGetCopySignalRef = f;
   }
 
-  void setGetCopyModuleRef(QDialog* stp, getCopyModuleRefCBack f){
+  void setGetCopyModuleRefCBack(QDialog* stp, getCopyModuleRefCBack f){
 
     if (stp)
       ((TriggerDialog*)stp)->pfGetCopyModuleRef = f;
   }
 
-  void setGetModuleData(QDialog* stp, getModuleDataCBack f){
+  void setGetModuleDataCBack(QDialog* stp, getModuleDataCBack f){
 
     if (stp)
       ((TriggerDialog*)stp)->pfGetModuleData = f;
   }
 
-  void setGetSignalData(QDialog *stp, getSignalDataCBack f) {
+  void setGetSignalDataCBack(QDialog *stp, getSignalDataCBack f) {
 
     if (stp)
       ((TriggerDialog*)stp)->pfGetSignalData = f;
   }
 
-  void setLockReadSData(lockReadSDataCBack f) {
+  void setLockReadSDataCBack(lockReadSDataCBack f) {
       if (f) {
           pfLockReadSData = f;
       }
   }
 
-  void setUnlockReadSData(unlockReadSDataCBack f) {
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f) {
       if (f) {
           pfUnlockReadSData = f;
       }

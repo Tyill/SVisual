@@ -25,13 +25,15 @@
 
 #include "SVScriptDialog/forms/script_dialog_impl.h"
 
+
 ScriptDialog* scrDialogRef = nullptr;
+
 
 namespace SV_Script {
 
   lockReadSDataCBack pfLockReadSData = nullptr;
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
-    
+
   QDialog* getScriptDialog(QWidget *parent, Config cng, ModeGr mode) {
       if (!scrDialogRef) {
           scrDialogRef = new ScriptDialog(parent, cng, mode);
@@ -43,42 +45,42 @@ namespace SV_Script {
           static_cast<ScriptDialog*>(stp)->startUpdateThread();
       }
   }
-  void setGetCopySignalRef(QDialog *stp, getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(QDialog *stp, getCopySignalRefCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfGetCopySignalRef = f;
       }
   }
-  void setGetModuleData(QDialog* stp, getModuleDataCBack f) {
+  void setGetModuleDataCBack(QDialog* stp, getModuleDataCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfGetModuleData = f;
       }
   }
-  void setGetSignalData(QDialog *stp, getSignalDataCBack f) {
+  void setGetSignalDataCBack(QDialog *stp, getSignalDataCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfGetSignalData = f;
       }
   }
-  void setAddSignal(QDialog *stp, addSignalCBack f) {
+  void setAddSignalCBack(QDialog *stp, addSignalCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfAddSignal = f;
       }
   }
-  void setAddModule(QDialog *stp, addModuleCBack f) {
+  void setAddModuleCBack(QDialog *stp, addModuleCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfAddModule = f;
       }
   }
-  void setChangeSignColor(QDialog* stp, changeSignColorCBack f) {
+  void setChangeSignColorCBack(QDialog* stp, changeSignColorCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfChangeSignColor = f;
       }
   }
-  void setLockReadSData(lockReadSDataCBack f) {
+  void setLockReadSDataCBack(lockReadSDataCBack f) {
       if (f) {
           pfLockReadSData = f;
       }
   }
-  void setUnlockReadSData(unlockReadSDataCBack f) {
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f) {
       if (f) {
           pfUnlockReadSData = f;
       }
@@ -105,7 +107,7 @@ namespace SV_Script {
           static_cast<ScriptDialog*>(stp)->refreshScript(fname);
       }
   }
-  void setLoadSignalData(QDialog *stp, isLoadSignalDataCBack f) {
+  void setLoadSignalDataCBack(QDialog *stp, isLoadSignalDataCBack f) {
       if (stp) {
           static_cast<ScriptDialog*>(stp)->pfLoadSignalData = f;
       }
@@ -126,10 +128,10 @@ namespace SV_Script {
       }
   }
 }
-
 LockerReadSDataScript::LockerReadSDataScript() {
     if (SV_Script::pfLockReadSData) SV_Script::pfLockReadSData();
 }
 LockerReadSDataScript::~LockerReadSDataScript() {
     if (SV_Script::pfUnlockReadSData) SV_Script::pfUnlockReadSData();
 }
+

@@ -36,7 +36,6 @@
 
 using namespace SV_Base;
 
-
 GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_):
     QWidget(parent)
 {
@@ -53,31 +52,25 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
   load();
 
   ////// хак. не открывается на полную
-  ui.dTimeBegin->setVisible(false);
-  ui.dTimeEnd->setVisible(false);
-  ui.lbDTime->setVisible(false);
+  ui.spnPeriodMin->setVisible(false);
+  ui.btnPlay->setVisible(false);
+  ui.btnAScale->setVisible(false);
+  ui.btnAScale->setChecked(false);
 
   QTimer* tm = new QTimer(this);
   connect(tm, &QTimer::timeout, this, [this, tm]() {
-
-    if (cng.mode == SV_Graph::ModeGr::Viewer) {
-      ui.btnPlay->setVisible(false);
-      ui.btnAScale->setVisible(false);
-      ui.btnAScale->setChecked(false);
-      ui.dTimeBegin->setVisible(true);
-      ui.dTimeEnd->setVisible(true);
-      ui.lbDTime->setVisible(true);
+    if (cng.mode == SV_Graph::ModeGr::Player) {
+      ui.btnPlay->setVisible(true);
+      ui.btnAScale->setVisible(true);
+      ui.btnAScale->setChecked(true);
+    } 
+    else if (cng.mode == SV_Graph::ModeGr::Distr) {
+      ui.spnPeriodMin->setVisible(true);
     }
-    else {
-      ui.dTimeBegin->setVisible(false);
-      ui.dTimeEnd->setVisible(false);
-      ui.lbDTime->setVisible(false);
-    }
-    tm->stop();  tm->deleteLater();
+    tm->stop();
+    tm->deleteLater();
   });
   tm->start(100);
-  ////////////
-
 }
 
 GraphPanelWidget::~GraphPanelWidget() {}
@@ -112,79 +105,59 @@ void GraphPanelWidget::load() {
       ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
   });
 
-  ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
-  ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
-  ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
-  ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
-
   auto header = ui.tblValues->horizontalHeader();
   header->setSortIndicatorShown(true);
   ui.tblValues->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
 
   connect(header, &QHeaderView::sortIndicatorChanged, this, [this](int, Qt::SortOrder) {
       if (selGraph_) {
-          tableUpdate(selGraph_);
-          tableUpdateAlter(selGraph_);
+          tableUpdate();
+          tableUpdateAlter();
       }
   });
 }
 
 void GraphPanelWidget::setGraphSetting(const SV_Graph::GraphSetting& gs) {
-
   graphSett_ = gs;
-
   for (auto ob : qAsConst(graphObj_)) {
-
     ob->setGraphSetting(gs);
     ob->plotUpdate();
   }
 }
 
 void GraphPanelWidget::setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att) {
-
   for (auto ob : qAsConst(graphObj_)) {
-
     ob->setSignalAttr(sign, att);
   }
 }
 
 void GraphPanelWidget::setAxisAttr(const QVector<SV_Graph::AxisAttributes>& attr) {
-
   for (auto ob : qAsConst(graphObj_)) {
-
     int ind = splitterGraph_->indexOf(ob);
-
-    if (ind < attr.size())
+    if (ind < attr.size()){
       ob->setAxisAttr(attr[ind]);
+    }
   }
-
 }
 
 QVector<SV_Graph::AxisAttributes> GraphPanelWidget::getAxisAttr() {
-
   QVector<SV_Graph::AxisAttributes> res;
   for (auto ob : qAsConst(graphObj_)) {
-
     int ind = splitterGraph_->indexOf(ob);
-
-    if (ind >= res.size())
+    if (ind >= res.size()){
       res.resize(ind + 1);
-
+    }
     res[ind] = ob->getAxisAttr();
   }
-
   return res;
 }
 
-void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
-
+void GraphPanelWidget::addSignalOnGraph(const QString& sign, int section) {
   SV_Base::SignalData* sd = pfGetSignalData(sign);
-
   if (!sd) return;
-
-  if (sd && !sd->isBuffEnable && pfLoadSignalData)
+  if (sd && !sd->isBuffEnable && pfLoadSignalData){
     pfLoadSignalData(sign);
-
+  }
   if (graphObj_.size() <= section) {
     while (graphObj_.size() <= section) {
         addGraph("");
@@ -199,36 +172,25 @@ void GraphPanelWidget::addSignalOnGraph(QString sign, int section) {
         ui.axisTime->setTimeInterval(buffMinTime, buffMinTime + 1000);
     }
     emit ui.axisTime->req_axisChange();
-  }
-
-  if (selGraph_) {
-    selGraph_->addSignal(sign);
-
-    tableUpdate(selGraph_);
-    tableUpdateAlter(selGraph_);
-  }
-  else {
-    graphObj_[section]->addSignal(sign);
-
-    tableUpdate(graphObj_[section]);
-    tableUpdateAlter(graphObj_[section]);
-
+  } 
+  if (selGraph_) {    
+    selGraph_->addSignal(sd);
+  }else{
+    graphObj_[section]->addSignal(sd);
     selGraph_ = graphObj_[section];
   }
-
+  tableUpdate();
+  tableUpdateAlter();
 }
 
-void GraphPanelWidget::addGraph(QString sign) {
-
+void GraphPanelWidget::addGraph(const QString& sign) {
   GraphWidget* graph = new GraphWidget(this, cng);
-
-  graph->setObjectName("graph_" + QString::number(graphCnt_));
-  ++graphCnt_;
-
+  graph->pfGetSignalData = pfGetSignalData;
+  graph->pfLoadSignalData = pfLoadSignalData;
+  graph->pfGetSignalAttr = pfGetSignalAttr;
+  graph->setObjectName("graph_" + QString::number(graphObj_.size()));
   graph->setGraphSetting(graphSett_);
-
   graphObj_.append(graph);
-
   splitterGraph_->addWidget(graph);
 
   ui.scrollAreaWidgetContents->setMinimumHeight(graphObj_.size() * MIN_HEIGHT_GRAPH);
@@ -236,11 +198,26 @@ void GraphPanelWidget::addGraph(QString sign) {
   QScrollBar* vscr = ui.scrollArea->verticalScrollBar();
   vscr->setValue(vscr->maximumHeight());
 
-  graph->setAxisTime(ui.axisTime);
+  AxisTimeProxy* atp = new AxisTimeProxy(this);{
+      atp->pfMouseMoveEvent = [this](QMouseEvent* e){ ui.axisTime->mouseMoveEvent(e);};
+      atp->pfMousePressEvent = [this](QMouseEvent* e){ ui.axisTime->mousePressEvent(e);};
+      atp->pfWheelEvent = [this](QWheelEvent* e){ ui.axisTime->wheelEvent(e);};
+      atp->pfSetTimeIntervalCBack = [this](qint64 l, qint64 r){ ui.axisTime->setTimeInterval(l, r);};
+      atp->pfGetTimeIntervalCBack = [this](bool){return ui.axisTime->getTimeInterval();};
+      atp->pfGetTimeScaleCBack = [this](){return ui.axisTime->getTimeScale();};
+      atp->pfGetAxisMarkCBack = [this](){return ui.axisTime->getAxisMark();};
+      atp->pfScaleCBack = [this](int delta, int mpos){ ui.axisTime->scale(delta, mpos);};
+      atp->pfUpdate = [this](){ ui.axisTime->update();};
+      atp->pfWidthCBack = [this](){return ui.axisTime->width();};
+  }
+  graph->setAxisTime(atp);
 
-  if (!sign.isEmpty())
-    graph->addSignal(sign);
-
+  if (!sign.isEmpty()){
+    auto* sd = pfGetSignalData(sign);
+    if (sd){      
+      graph->addSignal(sd);
+    }
+  }
   connect(ui.axisTime, SIGNAL(req_axisChange()), this, SLOT(diapTimeUpdate()));
   connect(ui.axisTime, SIGNAL(req_axisChange()), graph, SLOT(axisTimeChange()));
   connect(graph, SIGNAL(req_axisTimeUpdate(QString)), this, SLOT(axisTimeChange(QString)));
@@ -257,20 +234,18 @@ void GraphPanelWidget::addGraph(QString sign) {
     graph->setMarkersPos(leftMarkPos, rightMarkPos);
   }
 
-  tableUpdate(graph);
-  tableUpdateAlter(graph);
+  tableUpdate();
+  tableUpdateAlter();
 
   selGraph_ = graph;
 }
 
-void GraphPanelWidget::delSignal(QString sign) {
+void GraphPanelWidget::delSignal(const QString& sign) {
 
   for (auto gr : qAsConst(graphObj_)) {
-
     gr->delSignal(sign, false);
   }
-  tableUpdate(selGraph_);
-
+  tableUpdate();
 }
 
 void GraphPanelWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -279,22 +254,17 @@ void GraphPanelWidget::dragEnterEvent(QDragEnterEvent *event)
     qobject_cast<DragLabel *>(event->source())) {
 
     event->accept();
-
   }
 }
 
-void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event) {
-
+void GraphPanelWidget::dragMoveEvent(QDragMoveEvent *event){
   if (qobject_cast<QTreeWidget *>(event->source()) ||
     qobject_cast<DragLabel *>(event->source())) {
-
     event->accept();
-
   }
 }
 
-void GraphPanelWidget::dropEvent(QDropEvent *event)
-{
+void GraphPanelWidget::dropEvent(QDropEvent *event){  
   DragLabel* lb = qobject_cast<DragLabel *>(event->source());
 
   if (qobject_cast<QTreeWidget *>(event->source()) || lb) {
@@ -322,12 +292,10 @@ void GraphPanelWidget::dropEvent(QDropEvent *event)
         addGraph(sign);
 
         emit ui.axisTime->req_axisChange();
-      }
-      else{
+      }else{
         addGraph(sign);
       }
     }
-
     event->accept();
   }
 }
@@ -355,173 +323,177 @@ void GraphPanelWidget::keyPressEvent(QKeyEvent* event) {
     }
 }
 
-void GraphPanelWidget::tableUpdate(GraphWidget* graph) {
-
-  QPoint leftMarkPos, rightMarkPos;
-  graph->getMarkersPos(leftMarkPos, rightMarkPos);
+void GraphPanelWidget::tableUpdate() {
 
   ui.tblValues->clearContents();
-  
-  int leftMarkP = leftMarkPos.x(),
-    rightMarkP = rightMarkPos.x();
 
-  QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
-  double tmScale = ui.axisTime->getTimeScale();
+  int offs = 0;
+  for (auto graph : graphObj_){
+      if (graph->getAllSignals().isEmpty()) continue;
 
-  QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
-  QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
+      QPoint leftMarkPos, rightMarkPos;
+      graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
-  QVector<GraphWidget::GraphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
+      int leftMarkP = leftMarkPos.x(),
+        rightMarkP = rightMarkPos.x();
 
-  QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-  QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-  QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-  if (leftMarkP > rightMarkP) x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+      QPair<qint64, qint64> tmInterv = graph->getTimeInterval();
+      double tmScale = ui.axisTime->getTimeScale();
 
-  int vCount = leftMarkVal.size();
-  while (vCount > ui.tblValues->rowCount()) {
-    ui.tblValues->insertRow(ui.tblValues->rowCount());
-  }
-  
-  for (int i = 0; i < vCount; ++i) {
+      QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
+      QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalValueByMarkerPos(rightMarkP);
 
-    ValueType vt = leftMarkVal[i].type;
+      QVector<GraphWidget::GraphSignStat> statVal = graph->getStatParams(leftMarkP, rightMarkP);
 
-    QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
-    QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
-    QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
-    QString vmin = getSValue(vt, statVal[i].vmin).c_str();
-    QString vmax = getSValue(vt, statVal[i].vmax).c_str();
-    QString vmean = getSValue(vt, statVal[i].vmean).c_str();
+      QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+      QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+      QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+      if (leftMarkP > rightMarkP){
+          x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+      }
+      int vCount = leftMarkVal.size();
+      while (offs + vCount > ui.tblValues->rowCount()) {
+        ui.tblValues->insertRow(ui.tblValues->rowCount());
+      }
 
-    if (vt == ValueType::BOOL) {
-        vmean = QString::number(int(statVal[i].vmean + 0.5));
-    }
+      for (int i = 0; i < vCount; ++i) {
 
-    QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
-    nameItem->setForeground(leftMarkVal[i].color);
-    ui.tblValues->setItem(i, 0, nameItem);
+        ValueType vt = leftMarkVal[i].type;
 
-    ui.tblValues->setItem(i, 1, new TableWidgetItem(getSVTypeStr(vt).c_str()));
-    ui.tblValues->setItem(i, 2, new TableWidgetItem(x1));
-    ui.tblValues->setItem(i, 3, new TableWidgetItem(x2));
-    ui.tblValues->setItem(i, 4, new TableWidgetItem(x2_x1));
-    ui.tblValues->setItem(i, 5, new TableWidgetItem(y1));
-    ui.tblValues->setItem(i, 6, new TableWidgetItem(y2));
-    ui.tblValues->setItem(i, 7, new TableWidgetItem(y2_y1));
-    ui.tblValues->setItem(i, 8, new TableWidgetItem(vmin));
-    ui.tblValues->setItem(i, 9, new TableWidgetItem(vmean));
-    ui.tblValues->setItem(i, 10, new TableWidgetItem(vmax));
+        QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
+        QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
+        QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
+        QString vmin = getSValue(vt, statVal[i].vmin).c_str();
+        QString vmax = getSValue(vt, statVal[i].vmax).c_str();
+        QString vmean = getSValue(vt, statVal[i].vmean).c_str();
+
+        if (vt == ValueType::BOOL) {
+            vmean = QString::number(int(statVal[i].vmean + 0.5));
+        }
+
+        QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
+        nameItem->setForeground(leftMarkVal[i].color);
+        ui.tblValues->setItem(offs + i, 0, nameItem);
+
+        ui.tblValues->setItem(offs + i, 1, new TableWidgetItem(getSVTypeStr(vt).c_str()));
+        ui.tblValues->setItem(offs + i, 2, new TableWidgetItem(x1));
+        ui.tblValues->setItem(offs + i, 3, new TableWidgetItem(x2));
+        ui.tblValues->setItem(offs + i, 4, new TableWidgetItem(x2_x1));
+        ui.tblValues->setItem(offs + i, 5, new TableWidgetItem(y1));
+        ui.tblValues->setItem(offs + i, 6, new TableWidgetItem(y2));
+        ui.tblValues->setItem(offs + i, 7, new TableWidgetItem(y2_y1));
+        ui.tblValues->setItem(offs + i, 8, new TableWidgetItem(vmin));
+        ui.tblValues->setItem(offs + i, 9, new TableWidgetItem(vmean));
+        ui.tblValues->setItem(offs + i, 10, new TableWidgetItem(vmax));
+      }
+      offs += vCount;
   }
   int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
   auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();
   ui.tblValues->sortByColumn(sortSection, sortOrder);
   ui.tblValues->resizeColumnsToContents();
-
 }
 
-void GraphPanelWidget::tableUpdateAlter(GraphWidget* graph) {
+void GraphPanelWidget::tableUpdateAlter() {
 
-  if (graph->getAllAlterSignals().isEmpty()) return;
-
-  QPoint leftMarkPos, rightMarkPos;
-  graph->getMarkersPos(leftMarkPos, rightMarkPos);
-
-  int leftMarkP = leftMarkPos.x(), rightMarkP = rightMarkPos.x();
-
-  QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
-  double tmScale = ui.axisTime->getTimeScale();
-
-  QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
-  QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
-
-  QVector<GraphWidget::GraphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
-
-  QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-  QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
-  QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-  if (rightMarkP < leftMarkP) {
-      x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
-  }
-  int vCount = leftMarkVal.size();
-  while (vCount > ui.tblValues->rowCount()) {
-    ui.tblValues->insertRow(ui.tblValues->rowCount());
-  }
-
-  int offs = graph->getAllSignals().size();
-  for (int i = 0; i < vCount; ++i) {
-
-    ValueType vt = leftMarkVal[i].type;
-
-    QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
-    QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
-    QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
-    QString vmin = getSValue(vt, statVal[i].vmin).c_str();
-    QString vmax = getSValue(vt, statVal[i].vmax).c_str();
-    QString vmean = getSValue(vt, statVal[i].vmean).c_str();
-
-    if (vt == ValueType::BOOL) {
-        vmean = QString::number(int(statVal[i].vmean + 0.5));
+    int offs = 0;
+    for (auto graph : graphObj_){
+        offs += graph->getAllSignals().size();
     }
-    QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
-    nameItem->setForeground(leftMarkVal[i].color);
-    ui.tblValues->setItem(offs + i, 0, nameItem);
+    for (auto graph : graphObj_){
+      if (graph->getAllAlterSignals().isEmpty()) continue;
 
-    ui.tblValues->setItem(offs + i, 1, new TableWidgetItem(getSVTypeStr(vt).c_str()));
-    ui.tblValues->setItem(offs + i, 2, new TableWidgetItem(x1));
-    ui.tblValues->setItem(offs + i, 3, new TableWidgetItem(x2));
-    ui.tblValues->setItem(offs + i, 4, new TableWidgetItem(x2_x1));
-    ui.tblValues->setItem(offs + i, 5, new TableWidgetItem(y1));
-    ui.tblValues->setItem(offs + i, 6, new TableWidgetItem(y2));
-    ui.tblValues->setItem(offs + i, 7, new TableWidgetItem(y2_y1));
-    ui.tblValues->setItem(offs + i, 8, new TableWidgetItem(vmin));
-    ui.tblValues->setItem(offs + i, 9, new TableWidgetItem(vmean));
-    ui.tblValues->setItem(offs + i, 10, new TableWidgetItem(vmax));
-  }
-  int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
-  auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();
-  ui.tblValues->sortByColumn(sortSection, sortOrder);
-  ui.tblValues->resizeColumnsToContents();
+      QPoint leftMarkPos, rightMarkPos;
+      graph->getMarkersPos(leftMarkPos, rightMarkPos);
+
+      int leftMarkP = leftMarkPos.x(), rightMarkP = rightMarkPos.x();
+
+      QPair<qint64, qint64> tmInterv = graph->getTimeInterval();
+      double tmScale = ui.axisTime->getTimeScale();
+
+      QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
+      QVector<GraphWidget::GraphSignPoint> rightMarkVal = graph->getSignalAlterValueByMarkerPos(rightMarkP);
+
+      QVector<GraphWidget::GraphSignStat> statVal = graph->getStatAlterParams(leftMarkP, rightMarkP);
+
+      QString x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+      QString x2 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale + tmInterv.first).toString("dd.MM.yy hh:mm:ss:zzz");
+      QString x2_x1 = QDateTime::fromMSecsSinceEpoch(rightMarkP * tmScale - leftMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+      if (rightMarkP < leftMarkP) {
+          x2_x1 = QDateTime::fromMSecsSinceEpoch(leftMarkP * tmScale - rightMarkP * tmScale).toUTC().toString("hh:mm:ss:zzz");
+      }
+      int vCount = leftMarkVal.size();
+      while (vCount + offs > ui.tblValues->rowCount()) {
+        ui.tblValues->insertRow(ui.tblValues->rowCount());
+      }
+
+      for (int i = 0; i < vCount; ++i) {
+
+        ValueType vt = leftMarkVal[i].type;
+
+        QString y1 = getSValue(vt, leftMarkVal[i].val).c_str();
+        QString y2 = getSValue(vt, rightMarkVal[i].val).c_str();
+        QString y2_y1 = getSValue(vt, rightMarkVal[i].val - leftMarkVal[i].val).c_str();
+        QString vmin = getSValue(vt, statVal[i].vmin).c_str();
+        QString vmax = getSValue(vt, statVal[i].vmax).c_str();
+        QString vmean = getSValue(vt, statVal[i].vmean).c_str();
+
+        if (vt == ValueType::BOOL) {
+            vmean = QString::number(int(statVal[i].vmean + 0.5));
+        }
+        QTableWidgetItem* nameItem = new QTableWidgetItem(leftMarkVal[i].name);
+        nameItem->setForeground(leftMarkVal[i].color);
+        ui.tblValues->setItem(offs + i, 0, nameItem);
+
+        ui.tblValues->setItem(offs + i, 1, new TableWidgetItem(getSVTypeStr(vt).c_str()));
+        ui.tblValues->setItem(offs + i, 2, new TableWidgetItem(x1));
+        ui.tblValues->setItem(offs + i, 3, new TableWidgetItem(x2));
+        ui.tblValues->setItem(offs + i, 4, new TableWidgetItem(x2_x1));
+        ui.tblValues->setItem(offs + i, 5, new TableWidgetItem(y1));
+        ui.tblValues->setItem(offs + i, 6, new TableWidgetItem(y2));
+        ui.tblValues->setItem(offs + i, 7, new TableWidgetItem(y2_y1));
+        ui.tblValues->setItem(offs + i, 8, new TableWidgetItem(vmin));
+        ui.tblValues->setItem(offs + i, 9, new TableWidgetItem(vmean));
+        ui.tblValues->setItem(offs + i, 10, new TableWidgetItem(vmax));
+      }
+      offs += vCount;
+    }
+    int sortSection = ui.tblValues->horizontalHeader()->sortIndicatorSection();
+    auto sortOrder = ui.tblValues->horizontalHeader()->sortIndicatorOrder();
+    ui.tblValues->sortByColumn(sortSection, sortOrder);
+    ui.tblValues->resizeColumnsToContents();
 }
 
 void GraphPanelWidget::diapTimeUpdate() {
-
-  QPair<qint64, qint64> tIntl = ui.axisTime->getTimeInterval();
-
-  ui.dTimeBegin->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.first));
-  ui.dTimeEnd->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.second));
-
   if (selGraph_) {
-    tableUpdate(selGraph_);
-    tableUpdateAlter(selGraph_);
+    tableUpdate();
+    tableUpdateAlter();
   }
 }
 
-void GraphPanelWidget::axisTimeChange(QString obj) {
+void GraphPanelWidget::axisTimeChange(const QString& obj) {
 
   diapTimeUpdate();
 
   for (auto ob : qAsConst(graphObj_)) {
-
     if (ob->objectName() != obj)
       ob->plotUpdate();
   }
 }
 
-void GraphPanelWidget::markerChange(QString obj) {
+void GraphPanelWidget::markerChange(const QString& obj) {
 
   GraphWidget* graph = qobject_cast<GraphWidget*>(sender());
 
   if (!graph) return;
 
-  tableUpdate(graph);
-  tableUpdateAlter(graph);
+  tableUpdate();
+  tableUpdateAlter();
 
   QPoint leftMarkPos, rightMarkPos;
   graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
   for (auto ob : qAsConst(graphObj_)) {
-
     if (ob->objectName() != obj) {
       ob->setMarkersPos(leftMarkPos, rightMarkPos);
       ob->ui.plot->update();
@@ -529,10 +501,9 @@ void GraphPanelWidget::markerChange(QString obj) {
   }
 }
 
-void GraphPanelWidget::selectGraph(QString obj) {
+void GraphPanelWidget::selectGraph(const QString& obj) {
 
   for (auto ob : qAsConst(graphObj_)) {
-
     if (ob->objectName() == obj) {
       selGraph_ = ob;
       break;
@@ -550,13 +521,11 @@ void GraphPanelWidget::closeGraph() {
     int sz = graphObj_.size();
     for (int i = 0; i < sz; ++i) {
       if (graphObj_[i]->objectName() == obj->objectName()) {
-
         graphObj_.remove(i);
         sz--;
         break;
       }
     }
-
     if (obj == selGraph_) {
       if (sz > 1) selectGraph(graphObj_[0]->objectName());
       else selGraph_ = nullptr;
@@ -626,12 +595,12 @@ void GraphPanelWidget::updateSignals() {
   }
 
   if (selGraph_) {
-    tableUpdate(selGraph_);
-    tableUpdateAlter(selGraph_);
+    tableUpdate();
+    tableUpdateAlter();
   }
 }
 
-void GraphPanelWidget::graphToDn(QString obj) {
+void GraphPanelWidget::graphToDn(const QString& obj) {
 
   GraphWidget* graph = qobject_cast<GraphWidget*>(sender());
 
@@ -654,7 +623,7 @@ void GraphPanelWidget::graphToDn(QString obj) {
 
 }
 
-void GraphPanelWidget::graphToUp(QString obj) {
+void GraphPanelWidget::graphToUp(const QString& obj) {
 
   GraphWidget* graph = qobject_cast<GraphWidget*>(sender());
 
@@ -706,3 +675,4 @@ QVector<QVector<QString>> GraphPanelWidget::getLocateSignals() {
 
   return res;
 }
+

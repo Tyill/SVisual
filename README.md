@@ -18,7 +18,7 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * connection to the MK via COM port (usb for arduino), over Ethernet or Wi-Fi protocol TCP;
 
-* Interrogation of values of signals in real time with frequency before 1 kHz (default 10 Hz), the number of devices and signals is selected by the user;
+* Interrogation of values of signals in real time with frequency before 1 MHz (default 10 Hz), the number of devices and signals is selected by the user;
 
 * the permissible number of signals for recording 2048;
 

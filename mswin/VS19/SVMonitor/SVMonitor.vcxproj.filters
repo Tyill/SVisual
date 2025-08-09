@@ -174,9 +174,4 @@
       <UniqueIdentifier>{6DACD3CD-924D-3350-BC6F-0BC07E6DD228}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\..\..\src\SVMonitor\resources\resource.rc">
-      <Filter>Source Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
 </Project>

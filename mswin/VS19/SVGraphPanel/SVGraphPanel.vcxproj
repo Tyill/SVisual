@@ -437,6 +437,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_time_widget.h" />
     <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_value_widget.cpp" />
     <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_value_widget.h" />
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\distr_graph_panel_widget.cpp" />
     <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\drag_label.cpp" />
     <ClInclude Include="C:\cpp\SVisual\src\SVGraphPanel\src\drag_label.h" />
     <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\graph_panel.cpp" />

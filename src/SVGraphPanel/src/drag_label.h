@@ -26,22 +26,24 @@
 
 #include <QLabel>
 
+
 class DragLabel : public QLabel
 {
   Q_OBJECT
+public:
+  DragLabel(QWidget *parent = 0);
+
+  void setSignal(QString sign);
+
+signals:
+  void req_delSignal(QString sign);
+
+protected:
+  void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+  void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
   QPoint startMovePos_;
   QString sign_;
 
-public:
-  DragLabel(QWidget *parent = 0);
-
-  void setSignal(QString sign);
-protected:
-  void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-
-signals:
-  void req_delSignal(QString sign);
 };

@@ -55,28 +55,28 @@ namespace SV_Script {
   void startUpdateThread(QDialog* stPanel);
 
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
-  void setGetCopySignalRef(QDialog* stPanel, getCopySignalRefCBack f);
+  void setGetCopySignalRefCBack(QDialog* stPanel, getCopySignalRefCBack f);
 
   using getModuleDataCBack = std::function<SV_Base::ModuleData*(const QString &module)>;
-  void setGetModuleData(QDialog* stPanel, getModuleDataCBack f);
+  void setGetModuleDataCBack(QDialog* stPanel, getModuleDataCBack f);
 
   using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
-  void setGetSignalData(QDialog* stPanel, getSignalDataCBack f);
+  void setGetSignalDataCBack(QDialog* stPanel, getSignalDataCBack f);
 
   using addSignalCBack = std::function<bool(SV_Base::SignalData*)>;
-  void setAddSignal(QDialog* stPanel, addSignalCBack f);
+  void setAddSignalCBack(QDialog* stPanel, addSignalCBack f);
 
   using addModuleCBack = std::function<bool(SV_Base::ModuleData*)>;
-  void setAddModule(QDialog* stPanel, addModuleCBack f);
+  void setAddModuleCBack(QDialog* stPanel, addModuleCBack f);
 
   using lockReadSDataCBack = std::function<void()>;
-  void setLockReadSData(lockReadSDataCBack f);
+  void setLockReadSDataCBack(lockReadSDataCBack f);
 
   using unlockReadSDataCBack = std::function<void()>;
-  void setUnlockReadSData(unlockReadSDataCBack f);
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f);
   
   using changeSignColorCBack = std::function<void(const QString &module, const QString &sign, const QColor& color)>;
-  void setChangeSignColor(QDialog* stPanel, changeSignColorCBack f);
+  void setChangeSignColorCBack(QDialog* stPanel, changeSignColorCBack f);
 
   bool isActiveScript(QDialog* stPanel, const QString& fname);
 
@@ -87,7 +87,7 @@ namespace SV_Script {
   void refreshScript(QDialog* stPanel, const QString& fname);
 
   using isLoadSignalDataCBack = std::function<bool(const QString &sign)>;
-  void setLoadSignalData(QDialog* stPanel, isLoadSignalDataCBack f);
+  void setLoadSignalDataCBack(QDialog* stPanel, isLoadSignalDataCBack f);
 
   // обновление данных callBack
   using updateSignalsCBack = std::function<void()>;

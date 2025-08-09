@@ -207,7 +207,7 @@
      <x>0</x>
      <y>0</y>
      <width>879</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMain">
@@ -252,6 +252,7 @@
    <addaction name="actionExport"/>
    <addaction name="actionScript"/>
    <addaction name="actionNewWin"/>
+   <addaction name="actionNewDistWin"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -388,6 +389,18 @@
   <action name="actionManual">
    <property name="text">
     <string>Руководство пользователя</string>
+   </property>
+  </action>
+  <action name="actionNewDistWin">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVMonitor/images/addDist.png</normaloff>:/SVMonitor/images/addDist.png</iconset>
+   </property>
+   <property name="text">
+    <string>Новое окно</string>
+   </property>
+   <property name="toolTip">
+    <string>Окно с распределенными графиками</string>
    </property>
   </action>
  </widget>

@@ -45,7 +45,7 @@ MarkerWidget::~MarkerWidget() {}
 
 void MarkerWidget::mouseMoveEvent(QMouseEvent * event) {
 
-  if (IsSelect) {
+  if (isSelect_) {
 
     int cp = this->cursor().pos().x();
 
@@ -70,7 +70,7 @@ void MarkerWidget::mousePressEvent(QMouseEvent * event) {
 
   if (event->button() == Qt::LeftButton) {
     presPosX_ = this->cursor().pos().x();
-    IsSelect = true;
+    isSelect_ = true;
   }
 
   //QWidget::mousePressEvent(event);
@@ -78,7 +78,7 @@ void MarkerWidget::mousePressEvent(QMouseEvent * event) {
 
 void MarkerWidget::mouseReleaseEvent(QMouseEvent * event) {
 
-  IsSelect = false;
+  isSelect_ = false;
 
   //QWidget::mouseReleaseEvent(event);
 }
@@ -115,6 +115,4 @@ void MarkerWidget::setPos(QPoint pos) {
   QRect gm = this->geometry(); gm.setX(pos.x()); //gm.setY(pos.y());
 
   this->setGeometry(gm);
-
 }
-

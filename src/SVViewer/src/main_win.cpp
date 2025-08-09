@@ -46,10 +46,10 @@
 #include <QMessageBox>
 #include <QMenu>
 
-MainWin* mainWin = {};
+static MainWin* mainWin = {};
 
 namespace{
-const QString VERSION = QStringLiteral("1.2.2");
+const QString VERSION = QStringLiteral("1.2.3");
 }
 
 using namespace SV_Base;
@@ -192,7 +192,7 @@ bool MainWin::readSettings(const QString& initPath) {
             QObject* win = this;
             if (locate != "0") {
                 auto lt = locate.split(' ');
-                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()), false);
             }
 
             int sect = 0;
@@ -452,10 +452,10 @@ void MainWin::load() {
   ui.treeSignals->setIconSize(QSize(40, 20));
 
   auto gp = SV_Graph::createGraphPanel(this, SV_Graph::Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer));
-  SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
-  SV_Graph::setGetSignalData(gp, getSignalData);
-  SV_Graph::setLoadSignalData(gp, loadSignalDataMain);
-  SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
+  SV_Graph::setGetCopySignalRefCBack(gp, getCopySignalRef);
+  SV_Graph::setGetSignalDataCBack(gp, getSignalData);
+  SV_Graph::setLoadSignalDataCBack(gp, loadSignalDataMain);
+  SV_Graph::setGetSignalAttrCBack(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
 
     if (mainWin->signAttr_.contains(sname)) {
       out.color = mainWin->signAttr_[sname].color;
@@ -471,31 +471,19 @@ void MainWin::load() {
 
   exportPanel_ = SV_Exp::createExportDialog(this, SV_Exp::Config(cng.cycleRecMs, cng.packetSz));
   exportPanel_->setWindowFlags(Qt::Window);
-  SV_Exp::setLoadSignalData(exportPanel_, loadSignalDataMain);
-  SV_Exp::setGetCopySignalRef(exportPanel_, getCopySignalRef);
-  SV_Exp::setGetCopyModuleRef(exportPanel_, getCopyModuleRef);
-  SV_Exp::setGetSignalData(exportPanel_, getSignalData);
-
-  statPanel_ = SV_Stat::createStatDialog(this, SV_Stat::Config(cng.cycleRecMs, cng.packetSz));
-  statPanel_->setWindowFlags(Qt::Window);
-  SV_Stat::setGetCopySignalRef(statPanel_, getCopySignalRef);
-  SV_Stat::setGetSignalData(statPanel_, getSignalData);
-  SV_Stat::setLoadSignalData(statPanel_, loadSignalDataMain);
-  SV_Stat::setSetTimeInterval(statPanel_, [](qint64 st, qint64 en) {
-    SV_Graph::setTimeInterval(mainWin->graphPanels_[mainWin], st, en);
-  });
-  SV_Stat::setGetTimeInterval(statPanel_, []() {
-    return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
-  });
-
+  SV_Exp::setLoadSignalDataCBack(exportPanel_, loadSignalDataMain);
+  SV_Exp::setGetCopySignalRefCBack(exportPanel_, getCopySignalRef);
+  SV_Exp::setGetCopyModuleRefCBack(exportPanel_, getCopyModuleRef);
+  SV_Exp::setGetSignalDataCBack(exportPanel_, getSignalData);
+  
   scriptPanel_ = SV_Script::getScriptDialog(this, SV_Script::Config(cng.cycleRecMs, cng.packetSz), SV_Script::ModeGr::Viewer);
   scriptPanel_->setWindowFlags(Qt::Window);
-  SV_Script::setLoadSignalData(scriptPanel_, loadSignalDataMain);
-  SV_Script::setGetCopySignalRef(scriptPanel_, getCopySignalRef);
-  SV_Script::setGetSignalData(scriptPanel_, getSignalData);
-  SV_Script::setGetModuleData(scriptPanel_, getModuleData);
-  SV_Script::setAddSignal(scriptPanel_, addSignal);
-  SV_Script::setAddModule(scriptPanel_, addModule);
+  SV_Script::setLoadSignalDataCBack(scriptPanel_, loadSignalDataMain);
+  SV_Script::setGetCopySignalRefCBack(scriptPanel_, getCopySignalRef);
+  SV_Script::setGetSignalDataCBack(scriptPanel_, getSignalData);
+  SV_Script::setGetModuleDataCBack(scriptPanel_, getModuleData);
+  SV_Script::setAddSignalCBack(scriptPanel_, addSignal);
+  SV_Script::setAddModuleCBack(scriptPanel_, addModule);
   SV_Script::setAddSignalsCBack(scriptPanel_, []() {
     QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
   });
@@ -505,7 +493,7 @@ void MainWin::load() {
   SV_Script::setModuleConnectCBack(scriptPanel_, [](const QString& module) {
     QMetaObject::invokeMethod(mainWin, "updateTblSignal", Qt::AutoConnection);
   });
-  SV_Script::setChangeSignColor(scriptPanel_, [](const QString& module, const QString& name, const QColor& clr) {
+  SV_Script::setChangeSignColorCBack(scriptPanel_, [](const QString& module, const QString& name, const QColor& clr) {
     QMetaObject::invokeMethod(mainWin, "changeSignColor", Qt::AutoConnection, Q_ARG(QString, module), Q_ARG(QString, name), Q_ARG(QColor, clr));
   });
 
@@ -614,7 +602,10 @@ void MainWin::connects() {
     if (exportPanel_) exportPanel_->showNormal();
   });
   connect(ui.actionNewWin, &QAction::triggered, this, [this]() {
-    addNewWindow(QRect());
+    addNewWindow(QRect(), false);
+  });
+  connect(ui.actionNewDistWin, &QAction::triggered, this, [this]() {
+    addNewWindow(QRect(), true);
   });
   connect(ui.actionUpFont, &QAction::triggered, this, [this]() {
     QFont ft = QApplication::font();
@@ -749,15 +740,11 @@ void MainWin::connects() {
       QString locate = settings.value("locate").toString();
       QObject* win = this;
       if (locate != "0") {
-
         auto lt = locate.split(' ');
-
-        win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+        win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()), false);
       }
-
       int sect = 0;
       while (true) {
-
         QString str = settings.value("section" + QString::number(sect), "").toString();
         if (str.isEmpty()) break;
 
@@ -1011,7 +998,18 @@ bool MainWin::loadSDataRequest(QWidget* from, const QString& sname)
 
 void MainWin::actionOpenStat() {
 
-  statPanel_->showNormal();
+  auto statPanel = SV_Stat::createStatDialog(this, SV_Stat::Config(cng.cycleRecMs, cng.packetSz));
+  statPanel->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
+  SV_Stat::setGetCopySignalRefCBack(statPanel, getCopySignalRef);
+  SV_Stat::setGetSignalDataCBack(statPanel, getSignalData);
+  SV_Stat::setLoadSignalDataCBack(statPanel, loadSignalDataMain);
+  SV_Stat::setSetTimeIntervalCBack(statPanel, [](qint64 st, qint64 en) {
+    SV_Graph::setTimeInterval(mainWin->graphPanels_[mainWin], st, en);
+  });
+  SV_Stat::setGetTimeIntervalCBack(statPanel, []() {
+    return SV_Graph::getTimeInterval(mainWin->graphPanels_[mainWin]);
+  });
+  statPanel->showNormal();
 }
 
 void MainWin::contextMenuEvent(QContextMenuEvent * event) {
@@ -1104,7 +1102,7 @@ void MainWin::contextMenuClick(QAction* act) {
   }
 }
 
-QDialog* MainWin::addNewWindow(const QRect& pos) {
+QDialog* MainWin::addNewWindow(const QRect& pos, bool isDistribut) {
 
   QDialog* graphWin = new QDialog(this, Qt::Window | Qt::WindowStaysOnTopHint);
   graphWin->setObjectName("graphWin");
@@ -1114,17 +1112,18 @@ QDialog* MainWin::addNewWindow(const QRect& pos) {
   vertLayout->setSpacing(0);
   vertLayout->setContentsMargins(5, 5, 5, 5);
 
-  SV_Graph::Config Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer);
-  Config.isShowTable = false;
-
-  auto gp = SV_Graph::createGraphPanel(graphWin, Config);
-  SV_Graph::setGetCopySignalRef(gp, getCopySignalRef);
-  SV_Graph::setGetSignalData(gp, getSignalData);
-  SV_Graph::setLoadSignalData(gp, [this, graphWin](const QString& sname)->bool{
+  SV_Graph::Config grCng(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer);
+  grCng.isShowTable = false;
+  if (isDistribut){
+      grCng.mode = SV_Graph::ModeGr::Distr;
+  }
+  auto gp = SV_Graph::createGraphPanel(graphWin, grCng);
+  SV_Graph::setGetCopySignalRefCBack(gp, getCopySignalRef);
+  SV_Graph::setGetSignalDataCBack(gp, getSignalData);
+  SV_Graph::setLoadSignalDataCBack(gp, [this, graphWin](const QString& sname)->bool{
       return loadSignalData(graphWin, sname);
   });
-  SV_Graph::setGetSignalAttr(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
-
+  SV_Graph::setGetSignalAttrCBack(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
     if (mainWin->signAttr_.contains(sname)) {
       out.color = mainWin->signAttr_[sname].color;
       return true;

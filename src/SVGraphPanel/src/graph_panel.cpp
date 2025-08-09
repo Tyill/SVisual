@@ -32,8 +32,11 @@ namespace SV_Graph {
   unlockReadSDataCBack pfUnlockReadSData = nullptr;
 
   QWidget* createGraphPanel(QWidget* parent, const SV_Graph::Config& cng) {
-
-    return new GraphPanelWidget(parent, cng);
+    if (cng.mode == SV_Graph::ModeGr::Distr){
+        return new DistrGraphPanelWidget(parent, cng);
+    }else{
+        return new GraphPanelWidget(parent, cng);
+    }
   }
 
   void setGraphSetting(QWidget* gp, const GraphSetting& gs) {
@@ -62,45 +65,45 @@ namespace SV_Graph {
       }
   }
 
-  void setGetCopySignalRef(QWidget* gp, getCopySignalRefCBack f) {
+  void setGetCopySignalRefCBack(QWidget* gp, getCopySignalRefCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfGetCopySignalRef = f;
       }
   }
 
-  void setGetSignalData(QWidget* gp, getSignalDataCBack f) {
+  void setGetSignalDataCBack(QWidget* gp, getSignalDataCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfGetSignalData = f;
       }
   }
 
-  void setGetSignalAttr(QWidget* gp, getSignalAttrCBack f) {
+  void setGetSignalAttrCBack(QWidget* gp, getSignalAttrCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfGetSignalAttr = f;
       }
   }
 
-  void setLoadSignalData(QWidget* gp, isLoadSignalDataCBack f) {
+  void setLoadSignalDataCBack(QWidget* gp, isLoadSignalDataCBack f) {
       if (gp && f) {
           static_cast<GraphPanelWidget*>(gp)->pfLoadSignalData = f;
       }
   }
 
-  void setLockReadSData(lockReadSDataCBack f) {
+  void setLockReadSDataCBack(lockReadSDataCBack f) {
       if (f) {
           pfLockReadSData = f;
       }
   }
 
-  void setUnlockReadSData(unlockReadSDataCBack f) {
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f) {
       if (f) {
           pfUnlockReadSData = f;
       }
   }
 
-  void addSignal(QWidget* gp, QString sname, int section) {
+  void addSignal(QWidget* gp, const QString& sign, int section) {
       if (gp) {
-          static_cast<GraphPanelWidget*>(gp)->addSignalOnGraph(sname, section);
+          static_cast<GraphPanelWidget*>(gp)->addSignalOnGraph(sign, section);
       }
   }
 

@@ -514,4 +514,3 @@ void ExportDialog::exportToJSON(QString fileName) {
 }
 
 
-

@@ -82,22 +82,22 @@ namespace SV_Trigger {
   void startUpdateThread(QDialog* panel);
 
   using lockReadSDataCBack = std::function<void()>;
-  void setLockReadSData(lockReadSDataCBack f);
+  void setLockReadSDataCBack(lockReadSDataCBack f);
 
   using unlockReadSDataCBack = std::function<void()>;
-  void setUnlockReadSData(unlockReadSDataCBack f);
+  void setUnlockReadSDataCBack(unlockReadSDataCBack f);
 
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
-  void setGetCopySignalRef(QDialog* panel, getCopySignalRefCBack f);
+  void setGetCopySignalRefCBack(QDialog* panel, getCopySignalRefCBack f);
 
   using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
-  void setGetSignalData(QDialog* panel, getSignalDataCBack f);
+  void setGetSignalDataCBack(QDialog* panel, getSignalDataCBack f);
 
   using getCopyModuleRefCBack = std::function<QMap<QString, SV_Base::ModuleData*>()>;
-  void setGetCopyModuleRef(QDialog* panel, getCopyModuleRefCBack f);
+  void setGetCopyModuleRefCBack(QDialog* panel, getCopyModuleRefCBack f);
 
   using getModuleDataCBack = std::function<SV_Base::ModuleData*(const QString &module)>;
-  void setGetModuleData(QDialog* panel, getModuleDataCBack f);
+  void setGetModuleDataCBack(QDialog* panel, getModuleDataCBack f);
 
   using onTriggerCBack = std::function<void(const QString &name)>;
   void setOnTriggerCBack(QDialog* panel, onTriggerCBack f);

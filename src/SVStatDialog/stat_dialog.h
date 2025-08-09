@@ -29,6 +29,7 @@
 #include "SVBase/base.h"
 
 class QDialog;
+class QWidget;
 
 namespace SV_Stat {
 
@@ -45,18 +46,18 @@ namespace SV_Stat {
   QDialog* createStatDialog(QWidget* parent, Config);
 
   using getCopySignalRefCBack = std::function<QMap<QString, SV_Base::SignalData*>()>;
-  void setGetCopySignalRef(QDialog* stPanel, getCopySignalRefCBack f);
+  void setGetCopySignalRefCBack(QDialog* stPanel, getCopySignalRefCBack f);
 
   using getSignalDataCBack = std::function<SV_Base::SignalData*(const QString &sign)>;
-  void setGetSignalData(QDialog* stPanel, getSignalDataCBack f);
+  void setGetSignalDataCBack(QDialog* stPanel, getSignalDataCBack f);
 
   using isLoadSignalDataCBack = std::function<bool(const QString &sign)>;
-  void setLoadSignalData(QDialog* stPanel, isLoadSignalDataCBack f);
+  void setLoadSignalDataCBack(QDialog* stPanel, isLoadSignalDataCBack f);
 
   using getTimeIntervalCBack = std::function< QPair<qint64, qint64>()>;
-  void setGetTimeInterval(QDialog* stPanel, getTimeIntervalCBack f);
+  void setGetTimeIntervalCBack(QDialog* stPanel, getTimeIntervalCBack f);
 
   using setTimeIntervalCBack = std::function<void(qint64, qint64)>;
-  void setSetTimeInterval(QDialog* stPanel, setTimeIntervalCBack f);
+  void setSetTimeIntervalCBack(QDialog* stPanel, setTimeIntervalCBack f);
 
 }

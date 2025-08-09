@@ -151,7 +151,7 @@
            <string> мс</string>
           </property>
           <property name="minimum">
-           <number>10</number>
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>60000</number>
@@ -174,7 +174,7 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>1000</number>
+           <number>1000000</number>
           </property>
           <property name="Value" stdset="0">
            <number>10</number>

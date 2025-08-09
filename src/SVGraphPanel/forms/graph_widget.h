@@ -28,10 +28,12 @@
 #include "GeneratedFiles/ui_graph_widget.h"
 
 class QLabel;
+
+class AxisTimeProxy;
+class AxisValueWidget;
+
 class GraphPanelWidget;
 class AxisSettingDialog;
-class AxisTimeWidget;
-class AxisValueWidget;
 class MarkerWidget;
 
 class GraphWidget : public QWidget
@@ -57,10 +59,14 @@ public:
       vmean = 0.0;
   };
 
+  SV_Graph::getSignalDataCBack pfGetSignalData = nullptr;
+  SV_Graph::isLoadSignalDataCBack pfLoadSignalData = nullptr;
+  SV_Graph::getSignalAttrCBack pfGetSignalAttr = nullptr;
+
   GraphWidget(QWidget *parent, SV_Graph::Config cng_);
   ~GraphWidget();
 
-  void setAxisTime(AxisTimeWidget* axisTime);
+  void setAxisTime(AxisTimeProxy* axisTime);
 
   void setGraphSetting(const SV_Graph::GraphSetting&);
   void setSignalAttr(const QString& sign, const SV_Graph::SignalAttributes& att);
@@ -78,11 +84,13 @@ public:
 
   QVector<GraphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
 
-  void addSignal(QString sign);
-  void addAlterSignal(QString sign);
+  QPair<qint64, qint64> getTimeInterval();
 
-  QStringList getAllSignals();
-  QStringList getAllAlterSignals();
+  void addSignal(SV_Base::SignalData* sign);
+  void addAlterSignal(SV_Base::SignalData* sign);
+
+  QStringList getAllSignals()const;
+  QStringList getAllAlterSignals()const;
 
   QSize sizeHint();
   void scale(bool posNeg, const QPoint& mpos);
@@ -123,6 +131,7 @@ private:
   void paintObjects();
   void paintObjectsAlter();
   void lbSignBoolMove(bool isTop);
+  bool getSignalAttributes(const QString& sign, SV_Graph::SignalAttributes&)const;
 
 private:
   struct GraphSignData {
@@ -138,10 +147,10 @@ private:
     QVector<QVector<QPair<int, int>>> pnts;
   };
 
-  struct HistPos {
-    QPair<double, double> valIntl;
-    QPair<qint64, qint64> tmIntl;
-  };
+  QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Base::SignalData* sign, bool isAlter = false);
+  QPair<double, double > getSignPntsMaxMinValue(const GraphSignData& sign);
+  QPair<double, double> getSignMaxMinValue(SV_Base::SignalData* sign, QPair<qint64, qint64>& tmInterval);
+  void addPosToHistory();
 
   QImage imSign_;
 
@@ -155,20 +164,15 @@ private:
   QMap <QString, GraphSignData> signals_, signalsAlter_;
   QStringList signalList_, signalListAlter_;
 
-  QVector<QVector<QPair<int, int>>> getSignalPnts(SV_Base::SignalData* sign, bool isAlter = false);
-
-  QPair<double, double > getSignPntsMaxMinValue(const GraphSignData& sign);
-  QPair<double, double> getSignMaxMinValue(SV_Base::SignalData* sign, QPair<qint64, qint64>& tmInterval);
-  void addPosToHistory();
-
-  AxisTimeWidget* axisTime_ = nullptr;
-
+  AxisTimeProxy* axisTime_ = nullptr;
   MarkerWidget* leftMarker_ = nullptr;
   MarkerWidget* rightMarker_ = nullptr;
 
-
+  struct HistPos {
+    QPair<double, double> valIntl;
+    QPair<qint64, qint64> tmIntl;
+  };
   QVector<HistPos> historyPos_;
-  GraphPanelWidget* grPanel_ = nullptr;
   SV_Graph::Config cng;
 
   AxisSettingDialog* axisSettPanel_ = nullptr;

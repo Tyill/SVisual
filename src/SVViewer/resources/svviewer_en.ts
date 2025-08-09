@@ -28,7 +28,7 @@
         <source>Булевы сигналы сверху</source>
         <translation>Signal boolean on top </translation>
     </message>
-	<message>
+    <message>
         <location filename="../forms/graph_setting.ui" line="125"/>
         <source>Допустимый интервал между точками</source>
         <translation>Tolerance of gap between points</translation>
@@ -68,7 +68,7 @@
     </message>
     <message>
         <location filename="../forms/main_win.ui" line="114"/>
-        <location filename="../src/main_win.cpp" line="749"/>
+        <location filename="../src/main_win.cpp" line="858"/>
         <source>Группа</source>
         <translation>Group</translation>
     </message>
@@ -93,88 +93,94 @@
         <translation>View</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="290"/>
+        <location filename="../forms/main_win.ui" line="291"/>
         <source>Открыть</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="293"/>
+        <location filename="../forms/main_win.ui" line="294"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="298"/>
+        <location filename="../forms/main_win.ui" line="299"/>
         <source>Выход</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="321"/>
+        <location filename="../forms/main_win.ui" line="322"/>
         <source>Печать</source>
         <translation>Print</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="330"/>
+        <location filename="../forms/main_win.ui" line="331"/>
         <source>Экспорт</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="339"/>
+        <location filename="../forms/main_win.ui" line="340"/>
+        <location filename="../forms/main_win.ui" line="399"/>
         <source>Новое окно</source>
         <translation>New window</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="344"/>
+        <location filename="../forms/main_win.ui" line="345"/>
         <source>Сохранить состояние окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="389"/>
+        <location filename="../forms/main_win.ui" line="390"/>
         <source>Настройки</source>
         <translation>Settings</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_win.ui" line="402"/>
+        <source>Окно с распределенными сигналами</source>
+        <translation>Window with distributed signals</translation>
     </message>
     <message>
         <source>Сохранить текущее состояние</source>
         <translation type="vanished">Save current state</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="349"/>
+        <location filename="../forms/main_win.ui" line="350"/>
         <source>Загрузить состояние окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="354"/>
+        <location filename="../forms/main_win.ui" line="355"/>
         <source>Увеличить размер шрифта</source>
         <translation>Increase font size</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="357"/>
+        <location filename="../forms/main_win.ui" line="358"/>
         <source>Ctrl+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="362"/>
+        <location filename="../forms/main_win.ui" line="363"/>
         <source>Уменьшить размер шрифта</source>
         <translation>Decrease font size</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="365"/>
+        <location filename="../forms/main_win.ui" line="366"/>
         <source>Ctrl+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="374"/>
-        <location filename="../src/main_win.cpp" line="928"/>
-        <location filename="../src/main_win.cpp" line="970"/>
+        <location filename="../forms/main_win.ui" line="375"/>
+        <location filename="../src/main_win.cpp" line="1047"/>
+        <location filename="../src/main_win.cpp" line="1090"/>
         <source>Скрипт</source>
         <translation>Script</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="379"/>
+        <location filename="../forms/main_win.ui" line="380"/>
         <source>График</source>
         <translation>Graph</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="384"/>
+        <location filename="../forms/main_win.ui" line="385"/>
         <source>Руководство пользователя</source>
         <translation>User manual</translation>
     </message>
@@ -187,64 +193,64 @@
         <translation type="vanished">Add</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="307"/>
+        <location filename="../forms/main_win.ui" line="308"/>
         <source>Статистика</source>
         <translation>Stat</translation>
     </message>
     <message>
-        <location filename="../forms/main_win.ui" line="312"/>
+        <location filename="../forms/main_win.ui" line="313"/>
         <source>О программе</source>
         <translation>About the program</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="376"/>
+        <location filename="../src/main_win.cpp" line="517"/>
         <source>Ошибка импорта сигналов из ClickHouseDb</source>
         <translation>Error import signals from ClickHouse</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="412"/>
+        <location filename="../src/main_win.cpp" line="554"/>
         <source>Ошибка импорта данных из ClickHouseDb</source>
         <translation>Error import data from ClickHouse</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="521"/>
+        <location filename="../src/main_win.cpp" line="666"/>
         <source>Сохранение состояния окон</source>
         <translation>Save state windows</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="580"/>
+        <location filename="../src/main_win.cpp" line="725"/>
         <source>Загрузка состояния окон</source>
         <translation>Load state windows</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="651"/>
+        <location filename="../src/main_win.cpp" line="794"/>
         <source>About SVisual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="652"/>
+        <location filename="../src/main_win.cpp" line="795"/>
         <source>&lt;h2&gt;SVViewer &lt;/h2&gt;&lt;p&gt;Программное обеспечение предназначенное&lt;p&gt;для анализа сигналов с устройст.&lt;p&gt;2017</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="786"/>
+        <location filename="../src/main_win.cpp" line="895"/>
         <source>Модуль</source>
         <translation>Module</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="855"/>
+        <location filename="../src/main_win.cpp" line="963"/>
         <source>Файл не удалось прочитать</source>
         <translation>The file could not be read.</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="910"/>
-        <location filename="../src/main_win.cpp" line="949"/>
+        <location filename="../src/main_win.cpp" line="1029"/>
+        <location filename="../src/main_win.cpp" line="1068"/>
         <source>Показать все</source>
         <translation>Show all</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="930"/>
-        <location filename="../src/main_win.cpp" line="958"/>
+        <location filename="../src/main_win.cpp" line="1049"/>
+        <location filename="../src/main_win.cpp" line="1078"/>
         <source>Сбросить цвет</source>
         <translation>Reset color</translation>
     </message>
@@ -257,7 +263,7 @@
         <translation type="vanished">Open of file data</translation>
     </message>
     <message>
-        <location filename="../src/main_win.cpp" line="833"/>
+        <location filename="../src/main_win.cpp" line="942"/>
         <source>Добавление файлов данных</source>
         <translation>Add of file data</translation>
     </message>
@@ -417,8 +423,8 @@
     </message>
     <message>
         <location filename="../forms/subscript_dialog.ui" line="61"/>
-        <location filename="../src/subscript_dialog.cpp" line="58"/>
-        <location filename="../src/subscript_dialog.cpp" line="134"/>
+        <location filename="../src/subscript_dialog.cpp" line="59"/>
+        <location filename="../src/subscript_dialog.cpp" line="135"/>
         <source>Включить</source>
         <translation>Activate</translation>
     </message>
@@ -428,24 +434,24 @@
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../src/subscript_dialog.cpp" line="64"/>
-        <location filename="../src/subscript_dialog.cpp" line="132"/>
+        <location filename="../src/subscript_dialog.cpp" line="65"/>
+        <location filename="../src/subscript_dialog.cpp" line="133"/>
         <source>Отключить</source>
         <translation>Deactivate</translation>
     </message>
     <message>
-        <location filename="../src/subscript_dialog.cpp" line="78"/>
-        <location filename="../src/subscript_dialog.cpp" line="143"/>
+        <location filename="../src/subscript_dialog.cpp" line="79"/>
+        <location filename="../src/subscript_dialog.cpp" line="144"/>
         <source>Скрипт </source>
         <translation>Script </translation>
     </message>
     <message>
-        <location filename="../src/subscript_dialog.cpp" line="143"/>
+        <location filename="../src/subscript_dialog.cpp" line="144"/>
         <source> изменен.</source>
         <translation> is change.</translation>
     </message>
     <message>
-        <location filename="../src/subscript_dialog.cpp" line="144"/>
+        <location filename="../src/subscript_dialog.cpp" line="145"/>
         <source>Сохранить изменения?</source>
         <translation>Save changes?</translation>
     </message>

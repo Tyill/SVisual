@@ -42,7 +42,7 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
 {
 #ifdef SV_EN
   QTranslator translator;
-  translator.load(":/SVGp/svgraphpanel_en.qm");
+  translator.load(":/SVGp/graph_panel_en.qm");
   QCoreApplication::installTranslator(&translator);
 #endif
 
@@ -61,7 +61,6 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
 
   rightMarker_->setPos(QPoint(400, 0));
 
-  grPanel_ = (GraphPanelWidget*)parent;
   cng = cng_;
 
   connect(ui.axisValue, SIGNAL(req_axisChange()), this, SLOT(axisValueChange()));
@@ -94,9 +93,10 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
         axisValueChange();
       });
 
-      axisSettPanel_->setWindowFlags(Qt::Window);
+      axisSettPanel_->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     }
     axisSettPanel_->showNormal();
+    axisSettPanel_->activateWindow();
   });
 
   connect(ui.plot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
@@ -460,6 +460,16 @@ void GraphWidget::paintSignalsAlter() {
   painter.end();
 }
 
+QPoint getMarkPos(GraphWidget* graph, const GraphWidget::GraphSignPoint& s, QString& outVal){
+    outVal = QString::fromStdString(getSValue(s.type, s.val));
+    QFontMetrics fm = graph->fontMetrics();
+    int xp = s.xPix < graph->ui.plot->width() / 2 ? s.xPix + 2 : s.xPix - fm.boundingRect(outVal).width() - 2;
+    int yp = graph->ui.plot->height() - s.yPix;
+    yp = qMax(0, yp);
+    yp = qMin(graph->ui.plot->height() - fm.boundingRect(outVal).height() - 10, yp);
+    return QPoint(xp, yp);
+}
+
 void GraphWidget::paintObjects() {
 
   int h = ui.plot->height();
@@ -484,7 +494,7 @@ void GraphWidget::paintObjects() {
   QPair<qint64, qint64 > tmIntl = axisTime_->getTimeInterval();
   double tmScale = axisTime_->getTimeScale();
     
-  if (leftMarker_->IsSelect || selLeftMark_) {
+  if (leftMarker_->isSelect() || selLeftMark_) {
     selLeftMark_ = false;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);       
@@ -492,13 +502,15 @@ void GraphWidget::paintObjects() {
   auto sValuePnt = getSignalValueByMarkerPos(mLeftPosX);
   for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
-      signals_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
-      signals_[s.sign].lbLeftMarkVal->setText(getSValue(s.type, s.val).c_str());
+      QString sval;
+      auto p = getMarkPos(this, s, sval);
+      signals_[s.sign].lbLeftMarkVal->move(p);
+      signals_[s.sign].lbLeftMarkVal->setText(sval);
       signals_[s.sign].lbLeftMarkVal->show();
     }
   }
     
-  if (rightMarker_->IsSelect || selRigthMark_) {
+  if (rightMarker_->isSelect() || selRigthMark_) {
     selRigthMark_ = false;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);    
@@ -507,8 +519,10 @@ void GraphWidget::paintObjects() {
   sValuePnt = getSignalValueByMarkerPos(mRightPosX);
   for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
-      signals_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
-      signals_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());
+      QString sval;
+      auto p = getMarkPos(this, s, sval);
+      signals_[s.sign].lbRightMarkVal->move(p);
+      signals_[s.sign].lbRightMarkVal->setText(sval);
       signals_[s.sign].lbRightMarkVal->show();
     }
   }
@@ -525,7 +539,7 @@ void GraphWidget::paintObjectsAlter() {
   QPair<qint64, qint64 > tmIntl = axisTime_->getTimeInterval();
   double tmScale = axisTime_->getTimeScale();
 
-  if (leftMarker_->IsSelect || selLeftMark_) {
+  if (leftMarker_->isSelect() || selLeftMark_) {
     selLeftMark_ = false;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mLeftPosX*tmScale);
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
@@ -533,13 +547,15 @@ void GraphWidget::paintObjectsAlter() {
   auto sValuePnt = getSignalAlterValueByMarkerPos(mLeftPosX);
   for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
-      signalsAlter_[s.sign].lbLeftMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
-      signalsAlter_[s.sign].lbLeftMarkVal->setText(getSValue(s.type, s.val).c_str());
+      QString sval;
+      auto p = getMarkPos(this, s, sval);
+      signalsAlter_[s.sign].lbLeftMarkVal->move(p);
+      signalsAlter_[s.sign].lbLeftMarkVal->setText(sval);
       signalsAlter_[s.sign].lbLeftMarkVal->show();
     }
   }
 
-  if (rightMarker_->IsSelect || selRigthMark_) {
+  if (rightMarker_->isSelect() || selRigthMark_) {
     selRigthMark_ = false;
     QDateTime dtm = QDateTime::fromMSecsSinceEpoch(tmIntl.first + mRightPosX*tmScale);
     QToolTip::showText(this->cursor().pos(), dtm.toString("dd.MM.yy hh:mm:ss:zzz"), this);
@@ -548,8 +564,10 @@ void GraphWidget::paintObjectsAlter() {
   sValuePnt = getSignalAlterValueByMarkerPos(mRightPosX);
   for (const auto& s : qAsConst(sValuePnt)) {
     if (s.type != ValueType::BOOL) {
-      signalsAlter_[s.sign].lbRightMarkVal->move(QPoint(s.xPix + 2, ui.plot->height() - s.yPix - 22));
-      signalsAlter_[s.sign].lbRightMarkVal->setText(getSValue(s.type, s.val).c_str());
+      QString sval;
+      auto p = getMarkPos(this, s, sval);
+      signalsAlter_[s.sign].lbRightMarkVal->move(p);
+      signalsAlter_[s.sign].lbRightMarkVal->setText(sval);
       signalsAlter_[s.sign].lbRightMarkVal->show();
     }
   }
@@ -579,28 +597,26 @@ bool GraphWidget::eventFilter(QObject *target, QEvent *event) {
   return QWidget::eventFilter(target, event);
 }
 
-void GraphWidget::addSignal(QString sign) {
+void GraphWidget::addSignal(SV_Base::SignalData* sdata) {
 
-  SignalData* sdata = grPanel_->pfGetSignalData(sign);
+  const auto sign = QString::fromStdString(sdata->name + sdata->module);
   if (!sdata || signals_.contains(sign)){
     return;
   }
   
   int num = signals_.size() + 1;
-    
+
+  SV_Graph::SignalAttributes attr;
+  const auto hasAttr = getSignalAttributes(sign, attr);
   colorCnt_ += 30;
-
-  QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
-
+  QColor clr = hasAttr ? attr.color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+  
   DragLabel* lb = new DragLabel(ui.plot);
   QLabel* lbLeftVal = new QLabel(ui.plot);
   QLabel* lbRightVal = new QLabel(ui.plot);
-  
-  SV_Graph::SignalAttributes sAttr;
-  if (grPanel_->pfGetSignalAttr(sign, sAttr))
-    clr = sAttr.color;
     
-  signals_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
+  signals_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr,
+                                       lb, lbLeftVal, lbRightVal, sdata, {}});
   signalList_.push_front(sign);
 
   QPalette palette = lb->palette();
@@ -644,27 +660,25 @@ void GraphWidget::addSignal(QString sign) {
   addPosToHistory();
 }
 
-void GraphWidget::addAlterSignal(QString sign) {
+void GraphWidget::addAlterSignal(SV_Base::SignalData* sdata) {
 
-  SignalData* sdata = grPanel_->pfGetSignalData(sign);
+  const auto sign = QString::fromStdString(sdata->name + sdata->module);
   if (!sdata || (sdata->type == SV_Base::ValueType::BOOL) || signalsAlter_.contains(sign)){
     return;
   }
   
   int num = signalsAlter_.size() + 1;
-
+  SV_Graph::SignalAttributes attr;
+  const auto hasAttr = getSignalAttributes(sign, attr);
   colorCnt_ += 30;
-  QColor clr = QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
+  QColor clr = hasAttr ? attr.color : QColor((num * colorCnt_) % 255, (num * colorCnt_ * 2) % 255, (num * colorCnt_ * 3) % 255, 255);
 
   DragLabel* lb = new DragLabel(this);
   QLabel* lbLeftVal = new QLabel(ui.plot);
   QLabel* lbRightVal = new QLabel(ui.plot);
-    
-  SV_Graph::SignalAttributes sAttr;
-  if (grPanel_->pfGetSignalAttr(sign, sAttr))
-    clr = sAttr.color;    
-
-  signalsAlter_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr, lb, lbLeftVal, lbRightVal, sdata });
+  
+  signalsAlter_.insert(sign, GraphSignData{ sign, sdata->name.c_str(), sdata->type, num, clr,
+                                            lb, lbLeftVal, lbRightVal, sdata, {} });
   signalListAlter_.push_front(sign);
 
   QPalette palette = lb->palette();
@@ -684,22 +698,21 @@ void GraphWidget::addAlterSignal(QString sign) {
   addPosToHistory();
 }
 
-QStringList GraphWidget::getAllSignals() {
+QStringList GraphWidget::getAllSignals() const{
 
   return signalList_;
 }
 
-QStringList GraphWidget::getAllAlterSignals() {
+QStringList GraphWidget::getAllAlterSignals() const{
 
   return signalListAlter_;
 }
 
-void GraphWidget::setAxisTime(AxisTimeWidget* axisTime) {
+void GraphWidget::setAxisTime(AxisTimeProxy* axisTime) {
 
   axisTime_ = axisTime;
 
   ui.plot->setAxisTime(axisTime);
-
 }
 
 void GraphWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -730,27 +743,27 @@ void GraphWidget::dropEvent(QDropEvent *event){
 
     if (!sign.isEmpty()) {
 
-      auto sd = grPanel_->pfGetSignalData(sign);
-
-      if (sd && !sd->isBuffEnable && grPanel_->pfLoadSignalData)
-        grPanel_->pfLoadSignalData(sign);
+      auto sd = pfGetSignalData ? pfGetSignalData(sign) : nullptr;
+      if (!sd){
+        return;
+      }
+      if (!sd->isBuffEnable && pfLoadSignalData){
+        pfLoadSignalData(sign);
+      }
 
       if (lb) {
-        if (sd){
-          if (signals_.contains(sign)) {
-            if (sd->type != SV_Base::ValueType::BOOL){
-              delSignal(sign, false);
-              addAlterSignal(sign);
-            }
+        if (signals_.contains(sign)) {
+          if (sd->type != SV_Base::ValueType::BOOL){
+            delSignal(sign, false);
+            addAlterSignal(sd);
           }
-          else {
-            delSignalAlter(sign, false);
-            addSignal(sign);
-          }
+        } else {
+          delSignalAlter(sign, false);
+          addSignal(sd);
         }
+      }else{
+        addSignal(sd);
       }
-      else addSignal(sign);
-
       emit req_markerChange(this->objectName());
     }
 
@@ -816,7 +829,7 @@ constexpr int calcValuePnt<bool>(Value v, double valScale, double valPosMem) {
 }
 
 template<typename T>
-QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, const AxisTimeWidget* axisTime,
+QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, AxisTimeProxy* axisTime,
     const QPair<double, double>& valInterval, const double valScale, const int gapTolerance) {
 
   const QPair<qint64, qint64> tmInterval = axisTime->getTimeInterval();
@@ -973,11 +986,13 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   
   QString sname = QString::fromStdString(sign->name + sign->module);
 
-  if (!sign->isBuffEnable && grPanel_->pfLoadSignalData)
-    grPanel_->pfLoadSignalData(sname);
+  if (!sign->isBuffEnable && pfLoadSignalData){
+    pfLoadSignalData(sname);
+  }
 
-  if (sign->buffData.empty()) return QVector<QVector<QPair<int, int>>>();
-
+  if (sign->buffData.empty()){
+    return QVector<QVector<QPair<int, int>>>();
+  }
 
   //////////// Предварит поиск старт точки
   uint64_t tmZnBegin, tmZnEnd;
@@ -1262,8 +1277,8 @@ void GraphWidget::resizeByValue() {
 
 void GraphWidget::resizeByRect() {
 
-  QRect rct = ui.plot->SelRect;
-  ui.plot->SelRect = QRect(0, 0, 0, 0);
+  QRect rct = ui.plot->rect();
+  ui.plot->setRect(QRect(0, 0, 0, 0));
 
   if ((rct.width() < 30) || (rct.height() < 30)) {
     plotUpdate();
@@ -1272,10 +1287,10 @@ void GraphWidget::resizeByRect() {
 
   addPosToHistory();
 
-  QPair<qint64, qint64> tmIntl = axisTime_->getTimeInterval();
+  QPair<qint64, qint64> tmIntl = axisTime_->getTimeInterval(true);
 
   qint64 tmBegin = tmIntl.first + rct.x() * axisTime_->getTimeScale();
-  qint64 tmEnd = tmIntl.first + (rct.x() + rct.width()) *axisTime_->getTimeScale();
+  qint64 tmEnd = tmIntl.first + (rct.x() + rct.width()) * axisTime_->getTimeScale();
 
   axisTime_->setTimeInterval(tmBegin, tmEnd);
 
@@ -1540,20 +1555,19 @@ void GraphWidget::colorUpdate() {
     colorCnt_ += 30;
 
     int num = s.num;
-    QColor clr = QColor((num * (60 + colorCnt_)) % 255,
+    SV_Graph::SignalAttributes attr;
+    const auto hasAttr = getSignalAttributes(s.sign, attr);
+    if (!hasAttr){
+      s.color = QColor((num * (60 + colorCnt_)) % 255,
       (num * (120 + colorCnt_)) % 255,
       (num * (180 + colorCnt_)) % 255, 255);
+    }
 
-    SV_Graph::SignalAttributes sAttr;
-    if (grPanel_->pfGetSignalAttr(s.sign, sAttr))
-      clr = sAttr.color;
-
-    s.color = clr;
-
-    s.lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
-    s.lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
-    if (s.type != SV_Base::ValueType::BOOL)
-      s.lb->setStyleSheet("color : " + clr.name() + "; ");    
+    s.lbLeftMarkVal->setStyleSheet("color : " + s.color.name() + "; ");
+    s.lbRightMarkVal->setStyleSheet("color : " + s.color.name() + "; ");
+    if (s.type != SV_Base::ValueType::BOOL){
+      s.lb->setStyleSheet("color : " + s.color.name() + "; ");
+    }   
   }
 
   for (auto& s : signalsAlter_) {
@@ -1561,19 +1575,16 @@ void GraphWidget::colorUpdate() {
     colorCnt_ += 30;
 
     int num = s.num;
-    QColor clr = QColor((num * (60 + colorCnt_)) % 255,
+    SV_Graph::SignalAttributes attr;
+    if (!getSignalAttributes(s.sign, attr)){
+      s.color = QColor((num * (60 + colorCnt_)) % 255,
       (num * (120 + colorCnt_)) % 255,
       (num * (180 + colorCnt_)) % 255, 255);
+    }    
 
-    SV_Graph::SignalAttributes sAttr;
-    if (grPanel_->pfGetSignalAttr(s.sign, sAttr))
-      clr = sAttr.color;
-
-    s.color = clr;
-
-    s.lb->setStyleSheet("color : " + clr.name() + "; ");
-    s.lbLeftMarkVal->setStyleSheet("color : " + clr.name() + "; ");
-    s.lbRightMarkVal->setStyleSheet("color : " + clr.name() + "; ");
+    s.lb->setStyleSheet("color : " + s.color.name() + "; ");
+    s.lbLeftMarkVal->setStyleSheet("color : " + s.color.name() + "; ");
+    s.lbRightMarkVal->setStyleSheet("color : " + s.color.name() + "; ");
   }
   repaintEna_ = true;
   ui.plot->update();
@@ -1635,4 +1646,18 @@ void GraphWidget::lbSignBoolMove(bool isTop){
     }    
   }
   ui.vLayoutPlot->update();
+}
+
+bool GraphWidget::getSignalAttributes(const QString& sign, SV_Graph::SignalAttributes& attr)const
+{
+    bool hasAttr = false;
+    if (pfGetSignalAttr){
+      hasAttr = pfGetSignalAttr(sign, attr);
+    }
+    return hasAttr;
+}
+
+QPair<qint64, qint64> GraphWidget::getTimeInterval()
+{
+    return axisTime_->getTimeInterval();
 }

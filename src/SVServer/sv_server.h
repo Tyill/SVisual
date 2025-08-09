@@ -43,17 +43,18 @@ namespace SV_Srv {
   /// конфиг
   struct Config {
 
-    bool outArchiveEna{};          ///< запись архива активна
+    bool outArchiveEna{};        ///< запись архива активна
     std::string outArchivePath;  ///< запись архива путь
     std::string outArchiveName;  ///< запись архива имя файла
     int outArchiveHourCnt;       ///< запись архива размер файла, час
 
-    bool outDataBaseEna{};         ///< запись архива в БД активна
+    bool outDataBaseEna{};       ///< запись архива в БД активна
     std::string outDataBaseName;
     std::string outDataBaseAddr;
 
     int cycleRecMs;              ///< период записи - задает пользователь
     int packetSz;                ///< размер пакета - задает пользователь
+    int offsetMs;                ///< сдвиг вперед по времени, мс - задает пользователь для записи с частотой > 1кГц
 
     Config() :
       outArchiveEna(false),
@@ -63,7 +64,8 @@ namespace SV_Srv {
       outDataBaseName("svdb"),
       outDataBaseAddr("localhost:9000"),
       cycleRecMs(100),
-      packetSz(10) {}
+      packetSz(10),
+      offsetMs(0) {}
   };
 
   /// задать статус callback

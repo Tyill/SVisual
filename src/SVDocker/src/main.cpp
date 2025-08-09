@@ -149,11 +149,11 @@ int main(int argc, char* argv[]){
     return -1;
   }
 
-  SV_Web::setLockReadSData(lockReadSDataSrv);
-  SV_Web::setUnlockReadSData(unlockReadSDataSrv);
-  SV_Web::setGetCopySignalRef(getCopySignalRefSrv);
-  SV_Web::setGetSignalData(getSignalDataSrv);
-  SV_Web::setGetCopyModuleRef(getCopyModuleRefSrv);
+  SV_Web::setLockReadSDataCBack(lockReadSDataSrv);
+  SV_Web::setUnlockReadSDataCBack(unlockReadSDataSrv);
+  SV_Web::setGetCopySignalRefCBack(getCopySignalRefSrv);
+  SV_Web::setGetSignalDataCBack(getSignalDataSrv);
+  SV_Web::setGetCopyModuleRefCBack(getCopyModuleRefSrv);
 
   if (SV_Web::startServer(QString::fromStdString("0.0.0.0"), cng.web_port, SV_Web::Config(SV_CYCLEREC_MS, SV_PACKETSZ)))
     statusMess("WEB server run port: " + std::to_string(cng.web_port));

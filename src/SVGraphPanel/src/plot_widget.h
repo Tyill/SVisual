@@ -26,7 +26,7 @@
 
 #include <QWidget>
 
-class AxisTimeWidget;
+class AxisTimeProxy;
 class AxisValueWidget;
 
 class PlotWidget : public QWidget
@@ -36,9 +36,14 @@ class PlotWidget : public QWidget
 public:
   PlotWidget(QWidget *parent = 0);
 
-  QRect SelRect;
+  void setRect(const QRect& rect){
+    selRect_ = rect;
+  }
+  QRect rect()const{
+    return selRect_;
+  }
 
-  void setAxisTime(AxisTimeWidget* ax);
+  void setAxisTime(AxisTimeProxy* ax);
   void setAxisValue(AxisValueWidget* ax);
   void scale(int delta, const QPoint& mpos);
 
@@ -58,10 +63,11 @@ protected:
 
 private:
   QPoint presPnt_;
+  QRect selRect_;
 
   bool lpm_ = false, rpm_ = false, keyCntr_ = false;
   QTimer* tmrMarkerPos_ = NULL;
 
-  AxisTimeWidget* axisTime_ = NULL;
+  AxisTimeProxy* axisTime_ = NULL;
   AxisValueWidget* axisValue_ = NULL;
 };
