@@ -4,69 +4,73 @@
 <context>
     <name>StatDialog</name>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="20"/>
+        <location filename="../forms/stat_dialog.ui" line="20"/>
         <source>Статистика</source>
         <translation>Statistics</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="88"/>
+        <location filename="../forms/stat_dialog.ui" line="88"/>
         <source>Значение</source>
         <translation>Value</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="108"/>
+        <location filename="../forms/stat_dialog.ui" line="108"/>
         <source>Кол-во</source>
         <translation>Count</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="141"/>
+        <location filename="../forms/stat_dialog.ui" line="141"/>
         <source>Фронт</source>
         <translation>Front</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="148"/>
+        <location filename="../forms/stat_dialog.ui" line="148"/>
         <source>Окно</source>
         <translation>Window</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="178"/>
+        <location filename="../forms/stat_dialog.ui" line="178"/>
         <source>Площадь</source>
         <translation>Area</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="185"/>
+        <location filename="../forms/stat_dialog.ui" line="185"/>
         <source>Диапазон</source>
         <translation>Diap</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="208"/>
+        <location filename="../forms/stat_dialog.ui" line="208"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="221"/>
+        <location filename="../forms/stat_dialog.ui" line="221"/>
         <source>255</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="245"/>
+        <location filename="../forms/stat_dialog.ui" line="245"/>
         <source>Ср значение</source>
         <translation>Mean</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="262"/>
+        <location filename="../forms/stat_dialog.ui" line="262"/>
         <source>Ср длит, мс</source>
         <translation>Mean duration</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="279"/>
+        <location filename="../forms/stat_dialog.ui" line="279"/>
         <source>Полн длит, с</source>
         <translation>Full duration</translation>
     </message>
     <message>
-        <location filename="../../../src/SVStatDialog/forms/stat_dialog.ui" line="289"/>
+        <location filename="../forms/stat_dialog.ui" line="301"/>
+        <source>время изменения</source>
+        <translation>time of change</translation>
+    </message>
+    <message>
         <source>Время изменения</source>
-        <translation>Time change</translation>
+        <translation type="vanished">Time change</translation>
     </message>
 </context>
 </TS>
