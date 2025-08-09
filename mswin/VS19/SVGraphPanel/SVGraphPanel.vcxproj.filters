@@ -10,6 +10,9 @@
     <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\axis_value_widget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\distr_graph_panel_widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\cpp\SVisual\src\SVGraphPanel\src\drag_label.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

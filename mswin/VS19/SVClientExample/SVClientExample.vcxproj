@@ -317,6 +317,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="C:\cpp\SVisual\src\SVClientExample\src\1MHz_example.cpp" />
     <ClCompile Include="C:\cpp\SVisual\src\SVClientExample\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -53,17 +53,20 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
 
   ////// хак. не открывается на полную
   ui.spnPeriodMin->setVisible(false);
+  ui.btnPlay->setVisible(false);
+  ui.btnAScale->setVisible(false);
+  ui.btnAScale->setChecked(false);
 
   QTimer* tm = new QTimer(this);
   connect(tm, &QTimer::timeout, this, [this, tm]() {
-    if (cng.mode == SV_Graph::ModeGr::Viewer || cng.mode == SV_Graph::ModeGr::Distr) {
-      ui.btnPlay->setVisible(false);
-      ui.btnAScale->setVisible(false);
-      ui.btnAScale->setChecked(false);
-      if (cng.mode == SV_Graph::ModeGr::Distr) {
-        ui.spnPeriodMin->setVisible(true);
-      }
-    }    
+    if (cng.mode == SV_Graph::ModeGr::Player) {
+      ui.btnPlay->setVisible(true);
+      ui.btnAScale->setVisible(true);
+      ui.btnAScale->setChecked(true);
+    } 
+    else if (cng.mode == SV_Graph::ModeGr::Distr) {
+      ui.spnPeriodMin->setVisible(true);
+    }
     tm->stop();
     tm->deleteLater();
   });
