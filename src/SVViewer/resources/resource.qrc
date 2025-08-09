@@ -8,6 +8,7 @@
         <file>images/export.png</file>
         <file>images/add.png</file>
         <file>images/script.png</file>
+        <file>images/addDist.png</file>
     </qresource>
     <qresource prefix="/SVGp">
         <file>images/bw.png</file>
@@ -28,9 +29,9 @@
     <qresource prefix="/SVExp">
         <file>images/arrow-left.png</file>
         <file>images/arrow-right.png</file>
-        <file>export_dialog_en.qm</file> 
-    </qresource> 
-     <qresource prefix="/SVScript">
+        <file>export_dialog_en.qm</file>
+    </qresource>
+    <qresource prefix="/SVScript">
         <file>images/arrow-dn.png</file>
         <file>images/arrow-up.png</file>
         <file>images/add.png</file>

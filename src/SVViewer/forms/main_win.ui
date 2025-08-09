@@ -277,6 +277,7 @@
    <addaction name="actionExport"/>
    <addaction name="actionScript"/>
    <addaction name="actionNewWin"/>
+   <addaction name="actionNewDistWin"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -387,6 +388,18 @@
   <action name="actionSettings">
    <property name="text">
     <string>Настройки</string>
+   </property>
+  </action>
+  <action name="actionNewDistWin">
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/SVViewer/images/addDist.png</normaloff>:/SVViewer/images/addDist.png</iconset>
+   </property>
+   <property name="text">
+    <string>Новое окно</string>
+   </property>
+   <property name="toolTip">
+    <string>Окно с распределенными сигналами</string>
    </property>
   </action>
  </widget>

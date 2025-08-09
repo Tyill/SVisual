@@ -52,7 +52,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-const QString VERSION = QStringLiteral("1.2.2");
+const QString VERSION = QStringLiteral("1.2.3");
 
 using namespace SV_Base;
 
@@ -281,7 +281,7 @@ bool MainWin::readSettings(QString initPath){
             QObject* win = this;
             if (locate != "0"){
                 auto lt = locate.split(' ');
-                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()), false);
             }
 
             int sect = 0;
@@ -530,7 +530,10 @@ void MainWin::connects(){
         if (exportDialog_) exportDialog_->showNormal();
     });
     connect(ui.actionNewWin, &QAction::triggered, this, [this]() {
-        addNewWindow(QRect());
+        addNewWindow(QRect(), false);
+    });
+    connect(ui.actionNewDistWin, &QAction::triggered, this, [this]() {
+        addNewWindow(QRect(), true);
     });
     connect(ui.actionScript, &QAction::triggered, this, [this]() {
         SV_Script::startUpdateThread(scriptDialog_);
@@ -676,7 +679,7 @@ void MainWin::connects(){
 
                 auto lt = locate.split(' ');
 
-                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()), false);
             }
 
             int sect = 0;
@@ -713,9 +716,9 @@ void MainWin::connects(){
                 ++axisInx;
             }
 
-            if (!axisAttrs.empty())
+            if (!axisAttrs.empty()){
                 SV_Graph::setAxisAttr(graphPanels_[win], axisAttrs);
-
+            }
             QString tmDiap = settings.value("tmDiap", "10000").toString();
 
             auto ctmIntl = SV_Graph::getTimeInterval(graphPanels_[win]);
@@ -863,8 +866,9 @@ void MainWin::updateGraphSetting(const SV_Graph::GraphSetting& gs){
 
   cng.graphSett = gs;
 
-  for (auto o : qAsConst(graphPanels_))
+  for (auto o : qAsConst(graphPanels_)){
     SV_Graph::setGraphSetting(o, gs);
+  }
 }
 
 bool MainWin::eventFilter(QObject *target, QEvent *event){
@@ -1120,9 +1124,9 @@ void MainWin::updateTblSignal(){
 }
 
 void MainWin::updateSignals(){
-
-  for (auto gp : qAsConst(graphPanels_))
+  for (auto gp : qAsConst(graphPanels_)){
     SV_Graph::update(gp);
+  }
 }
 
 void MainWin::moduleConnect(QString module){
@@ -1283,7 +1287,7 @@ void MainWin::updateConfig(const MainWin::Config& newCng){
   cng = newCng;
 }
 
-QDialog* MainWin::addNewWindow(const QRect& pos){
+QDialog* MainWin::addNewWindow(const QRect& pos, bool isDistribut){
 
   QDialog* graphWin = new QDialog(this, Qt::Window | Qt::WindowStaysOnTopHint);
   graphWin->setObjectName("graphWin");
@@ -1293,10 +1297,12 @@ QDialog* MainWin::addNewWindow(const QRect& pos){
   vertLayout->setSpacing(0);
   vertLayout->setContentsMargins(5, 5, 5, 5);
 
-  SV_Graph::Config Config(cng.cycleRecMs, cng.packetSz);
-  Config.isShowTable = false;
-
-  auto gp = SV_Graph::createGraphPanel(graphWin, Config);
+  SV_Graph::Config grCng(cng.cycleRecMs, cng.packetSz);
+  grCng.isShowTable = false;
+  if (isDistribut){
+      grCng.mode = SV_Graph::ModeGr::Distr;
+  }
+  auto gp = SV_Graph::createGraphPanel(graphWin, grCng);
   SV_Graph::setLoadSignalDataCBack(gp, [](const QString& sign){
     return SV_Srv::signalBufferEna(sign.toUtf8().data());
   });

@@ -105,7 +105,7 @@ private:
 
   bool readSignals(const QString& path);
   bool writeSignals(const QString& path);
-  QDialog* addNewWindow(const QRect& pos);
+  QDialog* addNewWindow(const QRect& pos, bool isDistr);
 
   void updateGroup(const QString& group, const QString& sign);
   void sortSignalByGroupOrModule(bool byModule);

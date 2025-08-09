@@ -42,7 +42,7 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
 {
 #ifdef SV_EN
   QTranslator translator;
-  translator.load(":/SVGp/svgraphpanel_en.qm");
+  translator.load(":/SVGp/graph_panel_en.qm");
   QCoreApplication::installTranslator(&translator);
 #endif
 
@@ -93,9 +93,10 @@ GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
         axisValueChange();
       });
 
-      axisSettPanel_->setWindowFlags(Qt::Window);
+      axisSettPanel_->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
     }
     axisSettPanel_->showNormal();
+    axisSettPanel_->activateWindow();
   });
 
   connect(ui.plot, SIGNAL(req_rctChange()), this, SLOT(resizeByRect()));
@@ -1286,10 +1287,10 @@ void GraphWidget::resizeByRect() {
 
   addPosToHistory();
 
-  QPair<qint64, qint64> tmIntl = axisTime_->getTimeInterval();
+  QPair<qint64, qint64> tmIntl = axisTime_->getTimeInterval(true);
 
   qint64 tmBegin = tmIntl.first + rct.x() * axisTime_->getTimeScale();
-  qint64 tmEnd = tmIntl.first + (rct.x() + rct.width()) *axisTime_->getTimeScale();
+  qint64 tmEnd = tmIntl.first + (rct.x() + rct.width()) * axisTime_->getTimeScale();
 
   axisTime_->setTimeInterval(tmBegin, tmEnd);
 
@@ -1654,4 +1655,9 @@ bool GraphWidget::getSignalAttributes(const QString& sign, SV_Graph::SignalAttri
       hasAttr = pfGetSignalAttr(sign, attr);
     }
     return hasAttr;
+}
+
+QPair<qint64, qint64> GraphWidget::getTimeInterval()
+{
+    return axisTime_->getTimeInterval();
 }

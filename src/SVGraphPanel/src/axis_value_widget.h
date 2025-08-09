@@ -31,6 +31,36 @@
 class AxisValueWidget : public QWidget
 {
   Q_OBJECT
+public:
+  AxisValueWidget(QWidget *parent = 0);
+  ~AxisValueWidget();
+
+  void setValInterval(double min, double max);
+
+  QPair<double, double> getValInterval() const {
+    return valInterval_;
+  }
+
+  double getValScale() const {
+    return scale_;
+  }
+
+  QVector<int> getAxisMark();
+
+  void mouseMoveEvent(QMouseEvent * event)override;
+  void mousePressEvent(QMouseEvent * event)override;
+  void wheelEvent(QWheelEvent * event)override;
+  void scale(int delta, int mpos);
+
+  void setAxisAttr(const SV_Graph::AxisAttributes&);
+  SV_Graph::AxisAttributes getAxisAttr();
+
+signals:
+  void req_axisChange();
+
+protected:
+  void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+
 private:
 
   int cng_dashHeight_ = 3;
@@ -57,34 +87,4 @@ private:
 
   QString getValMark(double vl);
 
-
-public:
-  AxisValueWidget(QWidget *parent = 0);
-  ~AxisValueWidget();
-
-  void setValInterval(double min, double max);
-
-  QPair<double, double> getValInterval() const {
-    return valInterval_;
-  }
-
-  double getValScale() const {
-    return scale_;
-  }
-
-  QVector<int> getAxisMark();
-
-  void mouseMoveEvent(QMouseEvent * event)override;
-  void mousePressEvent(QMouseEvent * event)override;
-  void wheelEvent(QWheelEvent * event)override;
-  void scale(int delta, int mpos);
-
-  void setAxisAttr(const SV_Graph::AxisAttributes&);
-  SV_Graph::AxisAttributes getAxisAttr();
-
-protected:
-  void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-
-signals:
-  void req_axisChange();
 };

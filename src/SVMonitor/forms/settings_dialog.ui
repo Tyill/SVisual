@@ -630,23 +630,17 @@
         <item>
          <widget class="QLabel" name="label_9">
           <property name="text">
-           <string>Смещение по времени</string>
+           <string>Смещение по времени (для записи c частотой &gt; 1кГц)</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinTimeOffsetMs">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>1</height>
-           </size>
-          </property>
+         <widget class="QSpinBox" name="spinTimeOffsetSec">
           <property name="suffix">
-           <string>мс</string>
+           <string>с</string>
           </property>
           <property name="maximum">
-           <number>1000000</number>
+           <number>1000</number>
           </property>
          </widget>
         </item>

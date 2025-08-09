@@ -52,9 +52,6 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
   load();
 
   ////// хак. не открывается на полную
-  ui.dTimeBegin->setVisible(false);
-  ui.dTimeEnd->setVisible(false);
-  ui.lbDTime->setVisible(false);
   ui.spnPeriodMin->setVisible(false);
 
   QTimer* tm = new QTimer(this);
@@ -63,24 +60,14 @@ GraphPanelWidget::GraphPanelWidget(QWidget *parent, const SV_Graph::Config& cng_
       ui.btnPlay->setVisible(false);
       ui.btnAScale->setVisible(false);
       ui.btnAScale->setChecked(false);
-      ui.dTimeBegin->setVisible(true);
-      ui.dTimeEnd->setVisible(true);
-      ui.lbDTime->setVisible(true);
-      if (cng.mode == SV_Graph::ModeGr::Distr){
-          ui.spnPeriodMin->setVisible(true);
+      if (cng.mode == SV_Graph::ModeGr::Distr) {
+        ui.spnPeriodMin->setVisible(true);
       }
-    }
-    else if (cng.mode == SV_Graph::ModeGr::Player) {
-      ui.dTimeBegin->setVisible(false);
-      ui.dTimeEnd->setVisible(false);
-      ui.lbDTime->setVisible(false);
-    }
+    }    
     tm->stop();
     tm->deleteLater();
   });
   tm->start(100);
-  ////////////
-
 }
 
 GraphPanelWidget::~GraphPanelWidget() {}
@@ -114,11 +101,6 @@ void GraphPanelWidget::load() {
     else
       ui.btnPlay->setIcon(QIcon(":/SVGp/images/player_play.png"));
   });
-
-  ui.dTimeBegin->setDisplayFormat("dd.MM.yy hh:mm:ss");
-  ui.dTimeEnd->setDisplayFormat("dd.MM.yy hh:mm:ss");
-  ui.dTimeBegin->setDateTime(QDateTime::currentDateTime());
-  ui.dTimeEnd->setDateTime(QDateTime::currentDateTime());
 
   auto header = ui.tblValues->horizontalHeader();
   header->setSortIndicatorShown(true);
@@ -218,7 +200,7 @@ void GraphPanelWidget::addGraph(const QString& sign) {
       atp->pfMousePressEvent = [this](QMouseEvent* e){ ui.axisTime->mousePressEvent(e);};
       atp->pfWheelEvent = [this](QWheelEvent* e){ ui.axisTime->wheelEvent(e);};
       atp->pfSetTimeIntervalCBack = [this](qint64 l, qint64 r){ ui.axisTime->setTimeInterval(l, r);};
-      atp->pfGetTimeIntervalCBack = [this](){return ui.axisTime->getTimeInterval();};
+      atp->pfGetTimeIntervalCBack = [this](bool){return ui.axisTime->getTimeInterval();};
       atp->pfGetTimeScaleCBack = [this](){return ui.axisTime->getTimeScale();};
       atp->pfGetAxisMarkCBack = [this](){return ui.axisTime->getAxisMark();};
       atp->pfScaleCBack = [this](int delta, int mpos){ ui.axisTime->scale(delta, mpos);};
@@ -352,7 +334,7 @@ void GraphPanelWidget::tableUpdate() {
       int leftMarkP = leftMarkPos.x(),
         rightMarkP = rightMarkPos.x();
 
-      QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
+      QPair<qint64, qint64> tmInterv = graph->getTimeInterval();
       double tmScale = ui.axisTime->getTimeScale();
 
       QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalValueByMarkerPos(leftMarkP);
@@ -423,7 +405,7 @@ void GraphPanelWidget::tableUpdateAlter() {
 
       int leftMarkP = leftMarkPos.x(), rightMarkP = rightMarkPos.x();
 
-      QPair<qint64, qint64> tmInterv = ui.axisTime->getTimeInterval();
+      QPair<qint64, qint64> tmInterv = graph->getTimeInterval();
       double tmScale = ui.axisTime->getTimeScale();
 
       QVector<GraphWidget::GraphSignPoint> leftMarkVal = graph->getSignalAlterValueByMarkerPos(leftMarkP);
@@ -480,12 +462,6 @@ void GraphPanelWidget::tableUpdateAlter() {
 }
 
 void GraphPanelWidget::diapTimeUpdate() {
-
-  QPair<qint64, qint64> tIntl = ui.axisTime->getTimeInterval();
-
-  ui.dTimeBegin->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.first));
-  ui.dTimeEnd->setDateTime(QDateTime::fromMSecsSinceEpoch(tIntl.second));
-
   if (selGraph_) {
     tableUpdate();
     tableUpdateAlter();
@@ -515,7 +491,6 @@ void GraphPanelWidget::markerChange(const QString& obj) {
   graph->getMarkersPos(leftMarkPos, rightMarkPos);
 
   for (auto ob : qAsConst(graphObj_)) {
-
     if (ob->objectName() != obj) {
       ob->setMarkersPos(leftMarkPos, rightMarkPos);
       ob->ui.plot->update();
@@ -526,7 +501,6 @@ void GraphPanelWidget::markerChange(const QString& obj) {
 void GraphPanelWidget::selectGraph(const QString& obj) {
 
   for (auto ob : qAsConst(graphObj_)) {
-
     if (ob->objectName() == obj) {
       selGraph_ = ob;
       break;
@@ -544,13 +518,11 @@ void GraphPanelWidget::closeGraph() {
     int sz = graphObj_.size();
     for (int i = 0; i < sz; ++i) {
       if (graphObj_[i]->objectName() == obj->objectName()) {
-
         graphObj_.remove(i);
         sz--;
         break;
       }
     }
-
     if (obj == selGraph_) {
       if (sz > 1) selectGraph(graphObj_[0]->objectName());
       else selGraph_ = nullptr;

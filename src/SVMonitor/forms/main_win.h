@@ -139,7 +139,7 @@ private:
 
   void sortSignalByModule();
   void contextMenuEvent(QContextMenuEvent * event);
-  QDialog* addNewWindow(const QRect& pos);
+  QDialog* addNewWindow(const QRect& pos, bool isDistribut);
 
 public slots:
   void slowMode();

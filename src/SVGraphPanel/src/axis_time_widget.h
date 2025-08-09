@@ -32,7 +32,7 @@ class AxisTimeProxy: public QObject{
   Q_OBJECT
 public:
   using setTimeIntervalCBack = std::function<void(qint64, qint64)>;
-  using getTimeIntervalCBack = std::function<QPair<qint64, qint64>()>;
+  using getTimeIntervalCBack = std::function<QPair<qint64, qint64>(bool)>;
   using getTimeScaleCBack = std::function<double()>;
   using getAxisMarkCBack = std::function<QVector<int>()>;
   using scaleCBack = std::function<void(int delta, int mpos)>;
@@ -50,8 +50,8 @@ public:
       pfSetTimeIntervalCBack(l, r);
     }
   };
-  QPair<qint64, qint64> getTimeInterval(){
-    return pfGetTimeIntervalCBack ? pfGetTimeIntervalCBack() : QPair<qint64, qint64>{};
+  QPair<qint64, qint64> getTimeInterval(bool deft = false){
+    return pfGetTimeIntervalCBack ? pfGetTimeIntervalCBack(deft) : QPair<qint64, qint64>{};
   };
   double getTimeScale(){
     return pfGetTimeScaleCBack ? pfGetTimeScaleCBack() : 1.0;
@@ -104,29 +104,6 @@ public:
 class AxisTimeWidget : public QWidget
 {
   Q_OBJECT
-private:
-    
-  int cng_dashHeight_ = 3;
-  
-  int curDashStep_ = 100;
-  int curOffsPos_ = 0;
-  int fontMetr_ = 0;
-  int curIntervSec_ = 0;
-
-  QPair<qint64, qint64> tmInterval_;
-    
-  double tmScale_ = 1.0;
-
-  int mousePrevPosX_ = 0;
-  
-  void resizeEvent(QResizeEvent * event)override;
-
-  void drawDashLines(QPainter& painter);
-  void drawTimeMark(QPainter& painter);
-
-  QString getTimeMark(int offs);
-
-
 public:
   AxisTimeWidget(QWidget *parent = 0);
   ~AxisTimeWidget();
@@ -148,10 +125,32 @@ public:
   void wheelEvent(QWheelEvent * event)override;
   void scale(int delta, int mpos);
 
+signals:
+  void req_axisChange();
+
 protected:
   void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
-signals:
-  void req_axisChange();
+private:
+
+  int cng_dashHeight_ = 3;
+
+  int curDashStep_ = 100;
+  int curOffsPos_ = 0;
+  int fontMetr_ = 0;
+  int curIntervSec_ = 0;
+
+  QPair<qint64, qint64> tmInterval_;
+
+  double tmScale_ = 1.0;
+
+  int mousePrevPosX_ = 0;
+
+  void resizeEvent(QResizeEvent * event)override;
+
+  void drawDashLines(QPainter& painter);
+  void drawTimeMark(QPainter& painter);
+
+  QString getTimeMark(int offs);
 
 };

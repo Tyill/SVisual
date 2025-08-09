@@ -90,9 +90,9 @@ void DistrGraphPanelWidget::addSignalOnGraph(const QString& sign, int /*section*
 
 void DistrGraphPanelWidget::addGraph(const QString& sign) {
 
-  const auto tintlMax = ui.axisTime->getTimeInterval();
-  const auto count = qBound<int>(1, (tintlMax.second - tintlMax.first) / (ui.spnPeriodMin->value() * 60 * 1000), 1000);
-  for (int iGr = 0; iGr < count; ++iGr){
+  const auto tintlDefault = ui.axisTime->getTimeInterval();
+  const auto grCount = qBound<int>(1, (tintlDefault.second - tintlDefault.first) / (ui.spnPeriodMin->value() * 60 * 1000), 1000);
+  for (int iGr = 0; iGr < grCount; ++iGr){
       GraphWidget* graph = new GraphWidget(this, cng);
 
       graph->pfGetSignalData = pfGetSignalData;
@@ -116,20 +116,22 @@ void DistrGraphPanelWidget::addGraph(const QString& sign) {
           atp->pfMouseMoveEvent = [this](QMouseEvent* e){ ui.axisTime->mouseMoveEvent(e);};
           atp->pfMousePressEvent = [this](QMouseEvent* e){ ui.axisTime->mousePressEvent(e);};
           atp->pfWheelEvent = [this](QWheelEvent* e){ ui.axisTime->wheelEvent(e);};
-          atp->pfSetTimeIntervalCBack = [this, iGr](qint64 l, qint64 r){
-              auto offset = (r - l) * iGr;
-              ui.axisTime->setTimeInterval(l - offset, r - offset);
-          };
-          atp->pfGetTimeIntervalCBack = [this, iGr]()->QPair<qint64, qint64>{
+          atp->pfSetTimeIntervalCBack = [this](qint64 l, qint64 r){ ui.axisTime->setTimeInterval(l, r);};
+          atp->pfGetTimeIntervalCBack = [this, iGr, tintlDefault, grCount](bool deft)->QPair<qint64, qint64>{
               auto tintl = ui.axisTime->getTimeInterval();
-              auto offset = (tintl.second - tintl.first) * iGr;
-              return QPair(tintl.first - offset, tintl.second - offset);
+              auto width = tintl.second - tintl.first;
+              auto widthDef = (tintlDefault.second - tintlDefault.first) / grCount;
+              if (!deft){
+                  return QPair(tintl.first + widthDef * iGr, tintl.first + widthDef * iGr + width);
+              }else{
+                  return tintl;
+              }
           };
-          atp->pfGetTimeScaleCBack = [this](){return ui.axisTime->getTimeScale();};
-          atp->pfGetAxisMarkCBack = [this](){return ui.axisTime->getAxisMark();};
+          atp->pfGetTimeScaleCBack = [this](){ return ui.axisTime->getTimeScale();};
+          atp->pfGetAxisMarkCBack = [this](){ return ui.axisTime->getAxisMark();};
           atp->pfScaleCBack = [this](int delta, int mpos){ ui.axisTime->scale(delta, mpos);};
           atp->pfUpdate = [this](){ ui.axisTime->update();};
-          atp->pfWidthCBack = [this](){return ui.axisTime->width();};
+          atp->pfWidthCBack = [this](){ return ui.axisTime->width();};
       }
       graph->setAxisTime(atp);
 

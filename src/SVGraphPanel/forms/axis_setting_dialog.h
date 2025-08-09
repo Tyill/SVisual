@@ -40,7 +40,7 @@ public:
   {
 #ifdef SV_EN
     QTranslator translator;
-    translator.load(":/SVGp/svgraphpanel_en.qm");
+    translator.load(":/SVGp/graph_panel_en.qm");
     QCoreApplication::installTranslator(&translator);
 #endif
 

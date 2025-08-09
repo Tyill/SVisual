@@ -329,70 +329,10 @@
            </spacer>
           </item>
           <item>
-           <widget class="QDateTimeEdit" name="dTimeBegin">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>130</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="displayFormat">
-             <string>yy.MM.dd  HH:mm</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lbDTime">
-            <property name="text">
-             <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDateTimeEdit" name="dTimeEnd">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>130</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="displayFormat">
-             <string>yy.MM.dd  HH:mm</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QSpinBox" name="spnPeriodMin">
+            <property name="toolTip">
+             <string>Период времени для распределения сигнала, мин</string>
+            </property>
             <property name="suffix">
              <string>min</string>
             </property>

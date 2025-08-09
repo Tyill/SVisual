@@ -46,10 +46,10 @@
 #include <QMessageBox>
 #include <QMenu>
 
-MainWin* mainWin = {};
+static MainWin* mainWin = {};
 
 namespace{
-const QString VERSION = QStringLiteral("1.2.2");
+const QString VERSION = QStringLiteral("1.2.3");
 }
 
 using namespace SV_Base;
@@ -192,7 +192,7 @@ bool MainWin::readSettings(const QString& initPath) {
             QObject* win = this;
             if (locate != "0") {
                 auto lt = locate.split(' ');
-                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+                win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()), false);
             }
 
             int sect = 0;
@@ -602,7 +602,10 @@ void MainWin::connects() {
     if (exportPanel_) exportPanel_->showNormal();
   });
   connect(ui.actionNewWin, &QAction::triggered, this, [this]() {
-    addNewWindow(QRect());
+    addNewWindow(QRect(), false);
+  });
+  connect(ui.actionNewDistWin, &QAction::triggered, this, [this]() {
+    addNewWindow(QRect(), true);
   });
   connect(ui.actionUpFont, &QAction::triggered, this, [this]() {
     QFont ft = QApplication::font();
@@ -737,15 +740,11 @@ void MainWin::connects() {
       QString locate = settings.value("locate").toString();
       QObject* win = this;
       if (locate != "0") {
-
         auto lt = locate.split(' ');
-
-        win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()));
+        win = addNewWindow(QRect(lt[0].toInt(), lt[1].toInt(), lt[2].toInt(), lt[3].toInt()), false);
       }
-
       int sect = 0;
       while (true) {
-
         QString str = settings.value("section" + QString::number(sect), "").toString();
         if (str.isEmpty()) break;
 
@@ -1000,7 +999,7 @@ bool MainWin::loadSDataRequest(QWidget* from, const QString& sname)
 void MainWin::actionOpenStat() {
 
   auto statPanel = SV_Stat::createStatDialog(this, SV_Stat::Config(cng.cycleRecMs, cng.packetSz));
-  statPanel->setWindowFlags(Qt::Window);
+  statPanel->setWindowFlags(Qt::Window | Qt::WindowStaysOnTopHint);
   SV_Stat::setGetCopySignalRefCBack(statPanel, getCopySignalRef);
   SV_Stat::setGetSignalDataCBack(statPanel, getSignalData);
   SV_Stat::setLoadSignalDataCBack(statPanel, loadSignalDataMain);
@@ -1103,7 +1102,7 @@ void MainWin::contextMenuClick(QAction* act) {
   }
 }
 
-QDialog* MainWin::addNewWindow(const QRect& pos) {
+QDialog* MainWin::addNewWindow(const QRect& pos, bool isDistribut) {
 
   QDialog* graphWin = new QDialog(this, Qt::Window | Qt::WindowStaysOnTopHint);
   graphWin->setObjectName("graphWin");
@@ -1113,17 +1112,18 @@ QDialog* MainWin::addNewWindow(const QRect& pos) {
   vertLayout->setSpacing(0);
   vertLayout->setContentsMargins(5, 5, 5, 5);
 
-  SV_Graph::Config Config(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer);
-  Config.isShowTable = false;
-
-  auto gp = SV_Graph::createGraphPanel(graphWin, Config);
+  SV_Graph::Config grCng(cng.cycleRecMs, cng.packetSz, SV_Graph::ModeGr::Viewer);
+  grCng.isShowTable = false;
+  if (isDistribut){
+      grCng.mode = SV_Graph::ModeGr::Distr;
+  }
+  auto gp = SV_Graph::createGraphPanel(graphWin, grCng);
   SV_Graph::setGetCopySignalRefCBack(gp, getCopySignalRef);
   SV_Graph::setGetSignalDataCBack(gp, getSignalData);
   SV_Graph::setLoadSignalDataCBack(gp, [this, graphWin](const QString& sname)->bool{
       return loadSignalData(graphWin, sname);
   });
   SV_Graph::setGetSignalAttrCBack(gp, [](const QString& sname, SV_Graph::SignalAttributes& out) {
-
     if (mainWin->signAttr_.contains(sname)) {
       out.color = mainWin->signAttr_[sname].color;
       return true;

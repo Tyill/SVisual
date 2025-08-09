@@ -84,6 +84,8 @@ public:
 
   QVector<GraphSignStat> getStatAlterParams(int markPosBegin, int markPosEnd);
 
+  QPair<qint64, qint64> getTimeInterval();
+
   void addSignal(SV_Base::SignalData* sign);
   void addAlterSignal(SV_Base::SignalData* sign);
 
