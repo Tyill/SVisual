@@ -29,30 +29,23 @@
 #include "misc.h"
 
 namespace SV_Misc {
-
-  /// Таймер задержки однопоточный
-  class TimerDelay {
-
+/// Таймер задержки однопоточный
+class TimerDelay {
   public:
-
     TimerDelay() {
-
       _cycleTm = _prevCycTm = currDateTimeSinceEpochMs();
       time_t t = time(nullptr);
       _prevTm = *localtime(&t);
     }
-        
     void update() {
-
       uint64_t ct = currDateTimeSinceEpochMs();
       _cycleTm = ct - _prevCycTm;
       _prevCycTm = ct;
-            
+
       for (int i = 0; i < _tmrCount; ++i) {
         if (!_tmrs[i].active) _tmrs[i].count = 0;
         _tmrs[i].active = false;
       }
-
       // импульсы времени
       time_t t = time(nullptr);
       tm* lct = localtime(&t);
@@ -61,119 +54,65 @@ namespace SV_Misc {
       _secOnc = (lct->tm_sec != _prevTm.tm_sec);
       _prevTm = *lct;
     }
-
     uint64_t getCTime(){
-
       return currDateTimeSinceEpochMs() - _prevCycTm;
     }
-        
-    bool onDelaySec(bool start, int delay, int id) {
-
+    bool onDelaySec(bool start, int delaySec, int id) {
+      return onDelayMS(start, delaySec * 1000, id);
+    }
+    bool offDelaySec(bool start, int delaySec, int id) {
+      return offDelayMS(start, delaySec * 1000, id);
+    }
+    bool onDelayMS(bool start, int delayMs, int id) {
       if (id >= _tmrCount){
         _tmrs.resize(id + 1, TmBase{ 0, false });
         _tmrCount = id + 1;
       }
-
       bool res = false;
       if (start) {
         _tmrs[id].count += _cycleTm;
-        if (_tmrs[id].count >= delay * 1000) res = true;
+        res = _tmrs[id].count >= delayMs;
+      }else{
+        _tmrs[id].count = 0;
       }
-      else _tmrs[id].count = 0;
-
       _tmrs[id].active = true;
-
       return res;
     }
-        
-    bool offDelaySec(bool start, int delay, int id) {
-           
+    bool offDelayMS(bool start, int delayMs, int id) {
       if (id >= _tmrCount){
         _tmrs.resize(id + 1, TmBase{ 0, false });
         _tmrCount = id + 1;
       }
-
       bool res = false;
       if (start){
-        _tmrs[id].count = delay * 1000;
+        _tmrs[id].count = delayMs;
       } else {
         if (_tmrs[id].count > 0) {
           res = true;
-          if (_tmrs[id].count > _cycleTm) 
+          if (_tmrs[id].count > _cycleTm)
             _tmrs[id].count -= _cycleTm;
           else
             _tmrs[id].count = 0;
         }
       }
-
       _tmrs[id].active = true;
-
       return (start || res);
     }
-        
-    bool onDelayMS(bool start, int delay, int id) {
-            
-      if (id >= _tmrCount){
-        _tmrs.resize(id + 1, TmBase{ 0, false });
-        _tmrCount = id + 1;
-      }
-
-      bool res = false;
-      if (start) {
-        _tmrs[id].count += _cycleTm;
-        if (_tmrs[id].count >= delay) res = true;
-      }
-      else _tmrs[id].count = 0;
-
-      _tmrs[id].active = true;
-
-      return res;
-    }
-        
-    bool offDelayMS(bool start, int delay, int id) {
-           
-      if (id >= _tmrCount){
-        _tmrs.resize(id + 1, TmBase{ 0, false });
-        _tmrCount = id + 1;
-      }
-
-      bool res = false;
-      if (start){
-        _tmrs[id].count = delay;
-      } else {
-        if (_tmrs[id].count > 0) {
-          res = true;
-          if (_tmrs[id].count > _cycleTm) 
-            _tmrs[id].count -= _cycleTm;
-          else
-            _tmrs[id].count = 0;
-        }
-      }
-
-      _tmrs[id].active = true;
-
-      return (start || res);
-    }
-        
     bool secOnc() {
       return _secOnc;
     }
-
     bool minOnc() {
       return _minOnc;
     }
-
     bool hourOnc() {
       return _hourOnc;
     }
 
   private:
-
     struct TmBase{
       uint64_t count;         
       bool active;           
     };
-
     std::vector<TmBase> _tmrs;
     int _tmrCount = 0;
 
