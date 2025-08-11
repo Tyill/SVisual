@@ -1,3 +1,5 @@
+#ifdef USE_ClickHouseDB
+
 #include "clickhouse_db.h"
 #include "SVMisc/misc.h"
 #include "SVServer/sv_server.h"
@@ -187,3 +189,4 @@ std::unique_ptr<clickhouse::Block> ClickHouseDB::newSDataBlock()const
 
     return chBlock;
 }
+#endif

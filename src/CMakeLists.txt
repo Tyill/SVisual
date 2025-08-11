@@ -9,6 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Builds/$<CONFIG>/${CMAKE_VS_PLATFORM_NAME})
 
 option(USE_QtXlsxWriter "QtXlsxWriter library support" OFF)
+option(USE_ClickHouseDB "ClickHouse db support" OFF)
 
 include(cmake/qt.cmake)
 

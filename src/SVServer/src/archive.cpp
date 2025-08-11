@@ -45,9 +45,11 @@ void Archive::init(const SV_Srv::Config& cng_) {
   m_copyDateMem = SV_Misc::currDateS();
   m_copySz = std::max(10, 600000 / SV_CYCLESAVE_MS); // 10мин
 
+#ifdef USE_ClickHouseDB
   if(cng.outDataBaseEna && !cng.outDataBaseName.empty() && !cng.outDataBaseAddr.empty()){
       m_chdb = new ClickHouseDB(cng);
   }
+#endif
 }
 
 void Archive::setConfig(const SV_Srv::Config& cng_){
@@ -56,9 +58,11 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
   cng.outArchiveName = cng_.outArchiveName;
   cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
 
+#ifdef USE_ClickHouseDB
   if (!m_chdb && cng_.outDataBaseEna && !cng_.outDataBaseName.empty() && !cng_.outDataBaseAddr.empty()){
       m_chdb = new ClickHouseDB(cng);
   }
+#endif
 }
 
 void Archive::addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype) {
@@ -78,9 +82,11 @@ void Archive::addSignal(const std::string& sname, const std::string& module, SV_
     for (size_t i = 0; i < m_copySz; ++i){
       archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
     }
+#ifdef USE_ClickHouseDB
     if (m_chdb){
         m_chdb->addSignal(sname, module, stype);
     }
+#endif
   }
 }
 
@@ -188,10 +194,11 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
       }
       file.close();
   }
-
+#ifdef USE_ClickHouseDB
   if (m_chdb && cng.outDataBaseEna){
     m_chdb->saveSData(isStop, valPos, archiveData);
   }
+#endif
 
   for(auto& v : valPos){
     v.second = 0;

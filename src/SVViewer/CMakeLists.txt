@@ -22,9 +22,18 @@ target_link_libraries(SVViewer SVBase SVMisc SVGraphPanel SVStatDialog SVExportD
 
 # copy mswin dependent
 if(WIN32)
-   target_link_libraries(SVViewer zlib clickhouse-cpp-lib-static lz4-lib cityhash-lib absl-lib)
+   target_link_libraries(SVViewer zlib)
 else()
-   target_link_libraries(SVViewer z clickhouse-cpp-lib)
+   target_link_libraries(SVViewer z)
 endif(WIN32)
+
+if (USE_ClickHouseDB)
+   add_definitions(-DUSE_ClickHouseDB)
+   if(WIN32)
+      target_link_libraries(SVViewer clickhouse-cpp-lib-static lz4-lib cityhash-lib absl-lib)
+   else()
+      target_link_libraries(SVViewer clickhouse-cpp-lib)
+   endif(WIN32)
+endif()
 
 target_link_libraries(SVViewer Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport)

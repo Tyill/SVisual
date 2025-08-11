@@ -465,7 +465,10 @@ void MainWin::load() {
   });
   SV_Graph::setGraphSetting(gp, cng.graphSett);
   graphPanels_[this] = gp;
+
+#ifdef USE_ClickHouseDB
   m_chLoaders[this] = new DbClickHouseLoader(this, this);
+#endif
 
   graphSettPanel_ = new GraphSettingDialog(this, cng.graphSett); graphSettPanel_->setWindowFlags(Qt::Window);
 
@@ -508,15 +511,16 @@ void MainWin::load() {
   
   readSignals(QApplication::applicationDirPath() + "/svsignals.txt");
 
+#ifdef USE_ClickHouseDB
   if (cng.inputDataBaseEna){
     ui.actionOpen->setVisible(false);
-
     if (m_chLoaders[this]->loadSignalNames()){
       sortSignalByGroupOrModule(ui.btnSortByModule->isChecked());
     }else{
       showMessageDialog(tr("Ошибка импорта сигналов из ClickHouseDb"));
     }
   }
+#endif
 }
 
 void MainWin::connects() {
@@ -544,6 +548,7 @@ void MainWin::connects() {
     if (column == 0) {
         if (tmWinSetts_->isActive()) tmWinSetts_->stop();
         if (cng.inputDataBaseEna){
+#ifdef USE_ClickHouseDB
             TsDataBaseDialog dialog(this);
             dialog.setInterval(m_chLoaders[this]->getSignalInterval(sign));
             if (dialog.exec() == QDialog::Accepted){
@@ -554,6 +559,7 @@ void MainWin::connects() {
                     showMessageDialog(tr("Ошибка импорта данных из ClickHouseDb"));
                 }
             }
+#endif
         }else{
             SV_Graph::addSignal(graphPanels_[this], sign);
         }
@@ -822,7 +828,9 @@ bool MainWin::eventFilter(QObject *target, QEvent *event) {
   if ((event->type() == QEvent::Close) && (target->objectName() == "graphWin")) {
 
     graphPanels_.remove(target);
+#ifdef USE_ClickHouseDB
     m_chLoaders.remove(target);
+#endif
     target->deleteLater();
   }
 
@@ -975,6 +983,7 @@ void MainWin::actionOpenData() {
 bool MainWin::loadSDataRequest(QWidget* from, const QString& sname)
 {
     if (cng.inputDataBaseEna){
+#ifdef USE_ClickHouseDB
         if (!m_chLoaders.contains(from)){
             qWarning() << Q_FUNC_INFO << "!m_chLoaders.contains(from) sname" << sname;
             return false;
@@ -989,6 +998,7 @@ bool MainWin::loadSDataRequest(QWidget* from, const QString& sname)
                 return chLoader->loadSignalData(sname, intl.first, intl.second);
             }
         }
+#endif
     }else{
         FileLoader fileLoader(this);
         return fileLoader.loadSignalData(sname);
@@ -1133,7 +1143,9 @@ QDialog* MainWin::addNewWindow(const QRect& pos, bool isDistribut) {
   SV_Graph::setGraphSetting(gp, cng.graphSett);
 
   graphPanels_[graphWin] = gp;
+#ifdef USE_ClickHouseDB
   m_chLoaders[graphWin] = new DbClickHouseLoader(this, gp);
+#endif
   vertLayout->addWidget(gp);
 
   graphWin->show();

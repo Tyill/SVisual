@@ -22,6 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+#ifdef USE_ClickHouseDB
 
 #include "clickhouse_loader.h"
 #include "SVViewer/forms/main_win.h"
@@ -226,3 +227,4 @@ std::unique_ptr<clickhouse::Client> DbClickHouseLoader::newClient()const
     }
     return std::make_unique<ch::Client>(opts);
 }
+#endif
