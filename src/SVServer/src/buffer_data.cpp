@@ -70,8 +70,9 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
       bTm += m_timeOffsetMs[module];
     }
   }
-  size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
-  while (cPos < dsz){
+  size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ,
+         cvalCnt = 0;
+  while (cPos < dsz && cvalCnt < valCnt){
     m_buffer[wPos].module = indata.c_str();
     m_buffer[wPos].name = indata.data() + cPos;
     m_buffer[wPos].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
@@ -82,6 +83,7 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
       wPos = 0;
     }
     cPos += valSz;
+    ++cvalCnt;
   }
   {
     std::lock_guard<std::mutex> lck(m_mtxWrite);
