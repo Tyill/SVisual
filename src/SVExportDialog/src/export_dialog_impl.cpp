@@ -28,14 +28,14 @@
 #ifdef USE_QtXlsxWriter
 #include "xlsx/xlsxdocument.h"
 #endif
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/document.h"
 
 #include <QFileDialog>
 #include <QTextStream>
 #include <QTimer>
 #include <QTranslator>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 using namespace SV_Base;
 
@@ -72,20 +72,20 @@ ExportDialog::ExportDialog(QWidget *parent, SV_Exp::Config cng_):
     QString fileName = dialog.getSaveFileName(this,
       tr("Создание файла данных"), selDirMem_,
 #ifdef USE_QtXlsxWriter
-      tr("json file (*.jsn);; xlsx file (*.xlsx);; txt file (*.txt)"), &selectedFilter);
+      tr("json file (*.json);; xlsx file (*.xlsx);; csv file (*.csv)"), &selectedFilter);
 #else
-      tr("json file (*.jsn);; txt file (*.txt)"), &selectedFilter);
+      tr("json file (*.json);; csv file (*.csv)"), &selectedFilter);
 #endif
 
     if (!fileName.isEmpty()) {
-      if (selectedFilter == "json file (*.jsn)")
+      if (selectedFilter == "json file (*.json)")
         exportToJSON(fileName);
 #ifdef USE_QtXlsxWriter
       else if (selectedFilter == "xlsx file (*.xlsx)")
         exportToXLSX(fileName);
 #endif
       else
-        exportToTXT(fileName);
+        exportToCSV(fileName);
     }
   });
 
@@ -286,24 +286,24 @@ void ExportDialog::exportToXLSX(QString fileName) {
       if (cp >= bsz) cp = 0;
     }
   }
-
+  if (!fileName.endsWith(".xlsx")){
+    fileName += ".xlsx";
+  }
   if (xlsx.saveAs(fileName))
     ui.lbMessage->setText(tr("Успешно сохранен: ") + fileName);
-  else
+  else{
     ui.lbMessage->setText(tr("Не удалось сохранить: ") + fileName);
-
-  QTimer* tmr = new QTimer(this);
-  connect(tmr, &QTimer::timeout, [=]() {
-    ui.lbMessage->setText("");
-    tmr->stop();
-    tmr->deleteLater();
+  }
+  QTimer::singleShot(5000,[this]{
+      ui.lbMessage->setText("");
   });
-  tmr->setInterval(5000);
-  tmr->start();
 }
 #endif
-void ExportDialog::exportToTXT(QString fileName) {
+void ExportDialog::exportToCSV(QString fileName) {
 
+  if (!fileName.endsWith(".csv")){
+    fileName += ".csv";
+  }
   QFile data(fileName);
   QTextStream out(&data);
 
@@ -316,201 +316,138 @@ void ExportDialog::exportToTXT(QString fileName) {
 
       auto sd = pfGetSignalData(s);
 
-      out << "module = " << sd->module.c_str() << '\n';
-      out << "signal = " << sd->name.c_str() << '\n';
+      out << sd->module.c_str() << ';';
+      out << sd->name.c_str() << ';';
             
-      QString Value, time;
       size_t bsz, cp, vp;
       {LockerReadSDataExp lock;
           bsz = sd->buffData.size();
           cp = sd->buffBeginPos;
           vp = sd->buffValuePos;
       }
+      bool allTime = ui.chbAllTime->isChecked();
+      bool everyValues = ui.rbtnEveryVal->isChecked();
+      bool everyMin = ui.rbtnEveryMin->isChecked();
+      bool everySec = ui.rbtnEverySec->isChecked();
       while (cp != vp) {
-
         uint64_t dt = sd->buffData[cp].beginTime;
-        if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()) {
-
-          if (ui.rbtnEveryVal->isChecked()) {
-
-            time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
-
+        if (allTime || (beginTime < dt && dt < endTime)) {
+          if (everyValues) {
+            out << dt << ';';
             for (int j = 0; j < SV_PACKETSZ; ++j) {
               switch (sd->type) {
-              case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[j].vBool ? 1 : 0) + ' '; break;
-              case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[j].vInt) + ' '; break;
-              case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[j].vFloat) + ' '; break;
+              case ValueType::BOOL:  out << sd->buffData[cp].vals[j].vBool << ';'; break;
+              case ValueType::INT:   out << sd->buffData[cp].vals[j].vInt << ';'; break;
+              case ValueType::FLOAT: out << sd->buffData[cp].vals[j].vFloat << ';'; break;
               }
             }
           }
-          else if (ui.rbtnEveryMin->isChecked()) {
-            int evr = 60000 / SV_CYCLESAVE_MS;
-
-            if ((cp % evr) == 0) {
-
-              time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
-
+          else if ((everyMin && cp % (60000 / SV_CYCLESAVE_MS) == 0) ||
+                   (everySec && cp % (1000 / SV_CYCLESAVE_MS) == 0)){
+              out << dt << ';';
               switch (sd->type) {
-              case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].vBool ? 1 : 0) + ' '; break;
-              case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].vInt) + ' '; break;
-              case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].vFloat) + ' '; break;
+              case ValueType::BOOL:  out << sd->buffData[cp].vals[0].vBool << ';'; break;
+              case ValueType::INT:   out << sd->buffData[cp].vals[0].vInt << ';'; break;
+              case ValueType::FLOAT: out << sd->buffData[cp].vals[0].vFloat << ';'; break;
               }
-            }
-          }
-          else if (ui.rbtnEverySec->isChecked()) {
-            int evr = 1000 / SV_CYCLESAVE_MS;
-
-            if ((cp % evr) == 0) {
-
-              time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
-
-              switch (sd->type) {
-              case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].vBool ? 1 : 0) + ' '; break;
-              case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].vInt) + ' '; break;
-              case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].vFloat) + ' '; break;
-              }
-            }
           }
         }
-
         ++cp;
         if (cp >= bsz) cp = 0;
       }
-      out << "time = " << qPrintable(time) << '\n';
-      out << "Value = " << qPrintable(Value) << '\n';
+      out << '\n';
     }
-
     data.close();
     ui.lbMessage->setText(tr("Успешно сохранен: ") + fileName);
   }
-  else
+  else{
     ui.lbMessage->setText(tr("Не удалось создать файл: ") + fileName);
-
-  QTimer* tmr = new QTimer(this);
-  connect(tmr, &QTimer::timeout, [=]() {
-    ui.lbMessage->setText("");
-    tmr->stop();
-    tmr->deleteLater();
+  }
+  QTimer::singleShot(5000,[this]{
+      ui.lbMessage->setText("");
   });
-  tmr->setInterval(5000);
-  tmr->start();
 }
 
 void ExportDialog::exportToJSON(QString fileName) {
 
-  namespace rj = rapidjson;
-
-  rj::StringBuffer sb;
-  rj::Writer<rj::StringBuffer> writer(sb);
-
-  writer.StartObject();
-
-  writer.Key("Signals");
-  writer.StartArray();
-
   uint64_t beginTime = ui.dTimeBegin->dateTime().toMSecsSinceEpoch();
   uint64_t endTime = ui.dTimeEnd->dateTime().toMSecsSinceEpoch();
 
+  QJsonArray jsSignalsArray;
   for (auto& s : expSignals_) {
 
+    QJsonObject jsSignal;
     auto sd = pfGetSignalData(s);
 
-    writer.StartObject();
-
-    writer.Key("Module");
-    writer.String(sd->module.c_str());
-
-    writer.Key("Signal");
-    writer.String(sd->name.c_str());
+    jsSignal["module"] = sd->module.c_str();
+    jsSignal["signal"] = sd->name.c_str();
         
-    QString time, Value;
     size_t bsz, cp, vp;
     {LockerReadSDataExp lock;
         bsz = sd->buffData.size();
         cp = sd->buffBeginPos;
         vp = sd->buffValuePos;
     }
+    bool allTime = ui.chbAllTime->isChecked();
+    bool everyValues = ui.rbtnEveryVal->isChecked();
+    bool everyMin = ui.rbtnEveryMin->isChecked();
+    bool everySec = ui.rbtnEverySec->isChecked();
+    QJsonArray jsSignalVals;
     while (cp != vp) {
-
       uint64_t dt = sd->buffData[cp].beginTime;
-            
-      if (((beginTime < dt) && (dt < endTime)) || ui.chbAllTime->isChecked()) {
+      if (allTime || (beginTime < dt && dt < endTime)) {
+        if (everyValues) {
+          QJsonObject jsValue;
+          jsValue["time"] = double(dt);
 
-        if (ui.rbtnEveryVal->isChecked()) {
-
-          time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
-
+          QJsonArray jsValues;
           for (int j = 0; j < SV_PACKETSZ; ++j) {
             switch (sd->type) {
-            case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[j].vBool ? 1 : 0) + ' '; break;
-            case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[j].vInt) + ' '; break;
-            case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[j].vFloat) + ' '; break;
+            case ValueType::BOOL:  jsValues.append(sd->buffData[cp].vals[j].vBool); break;
+            case ValueType::INT:   jsValues.append(sd->buffData[cp].vals[j].vInt); break;
+            case ValueType::FLOAT: jsValues.append(sd->buffData[cp].vals[j].vFloat); break;
             }
           }
+          jsValue["values"] = jsValues;
+          jsSignalVals.append(jsValue);
         }
-        else if (ui.rbtnEveryMin->isChecked()) {
-          int evr = 60000 / SV_CYCLESAVE_MS;
+        else if ((everyMin && cp % (60000 / SV_CYCLESAVE_MS) == 0) ||
+                 (everySec && cp % (1000 / SV_CYCLESAVE_MS) == 0)){
+            QJsonObject jsValue;
+            jsValue["time"] = double(dt);
 
-          if ((cp % evr) == 0) {
-
-            time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
-
+            QJsonArray jsValues;
             switch (sd->type) {
-            case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].vBool ? 1 : 0) + ' '; break;
-            case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].vInt) + ' '; break;
-            case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].vFloat) + ' '; break;
+            case ValueType::BOOL:  jsValues.append(sd->buffData[cp].vals[0].vBool); break;
+            case ValueType::INT:   jsValues.append(sd->buffData[cp].vals[0].vInt); break;
+            case ValueType::FLOAT: jsValues.append(sd->buffData[cp].vals[0].vFloat); break;
             }
-          }
-        }
-        else if (ui.rbtnEverySec->isChecked()) {
-          int evr = 1000 / SV_CYCLESAVE_MS;
-
-          if ((cp % evr) == 0) {
-
-            time += QDateTime::fromMSecsSinceEpoch(dt).toString("HH:mm:ss") + ' ';
-
-            switch (sd->type) {
-            case ValueType::BOOL:  Value += QString::number(sd->buffData[cp].vals[0].vBool ? 1 : 0) + ' '; break;
-            case ValueType::INT:   Value += QString::number(sd->buffData[cp].vals[0].vInt) + ' '; break;
-            case ValueType::FLOAT: Value += QString::number(sd->buffData[cp].vals[0].vFloat) + ' '; break;
-            }
-          }
+            jsValue["values"] = jsValues;
+            jsSignalVals.append(jsValue);
         }
       }
-
+      jsSignal["values"] = jsSignalVals;
       ++cp;
       if (cp >= bsz) cp = 0;
     }
-    writer.Key("Time");
-    writer.String(qPrintable(time));
-
-    writer.Key("Value");
-    writer.String(qPrintable(Value));
-
-    writer.EndObject();
+    jsSignalsArray.append(jsSignal);
   }
 
-  writer.EndArray();
-  writer.EndObject();
-
+  if (!fileName.endsWith(".json")){
+    fileName += ".json";
+  }
   QFile data(fileName);
-
   if (data.open(QFile::WriteOnly)) {
-    data.write(sb.GetString());
+    data.write(QJsonDocument(jsSignalsArray).toJson(QJsonDocument::Compact));
     data.close();
     ui.lbMessage->setText(tr("Успешно сохранен: ") + fileName);
   }
-  else
+  else{
     ui.lbMessage->setText(tr("Не удалось сохранить: ") + fileName);
-
-  QTimer* tmr = new QTimer(this);
-  connect(tmr, &QTimer::timeout, [=]() {
-    ui.lbMessage->setText("");
-    tmr->stop();
-    tmr->deleteLater();
+  }
+  QTimer::singleShot(5000,[this]{
+      ui.lbMessage->setText("");
   });
-  tmr->setInterval(5000);
-  tmr->start();
 }
 
 
