@@ -32,7 +32,7 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 
 * adding a signal for viewing / recording only by the client, no additional movements are required
 
-* export data to xlsx, json or txt
+* export data to xlsx, json or csv
 
 * client UART+DMA for stm32f1 https://github.com/burrbull/svisual-stm32f1
 
