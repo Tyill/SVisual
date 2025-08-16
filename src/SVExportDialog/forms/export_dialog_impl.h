@@ -61,7 +61,7 @@ private:
 #ifdef USE_QtXlsxWriter
   void exportToXLSX(QString fileName);
 #endif
-  void exportToTXT(QString fileName);
+  void exportToCSV(QString fileName);
   void exportToJSON(QString fileName);
 
   private slots:
