@@ -99,11 +99,11 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="Debug";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR="Debug";SVServer_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"Debug\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR=\"Debug\";SVServer_EXPORTS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -141,13 +141,13 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="Release";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR="Release";SVServer_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"Release\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR=\"Release\";SVServer_EXPORTS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -185,13 +185,13 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="MinSizeRel";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR="MinSizeRel";SVServer_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"MinSizeRel\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR=\"MinSizeRel\";SVServer_EXPORTS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -230,11 +230,11 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR="RelWithDebInfo";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR="RelWithDebInfo";SVServer_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;CMAKE_INTDIR=\"RelWithDebInfo\";SVServer_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;SVSERVERDLL_EXPORTS;USE_ClickHouseDB;CMAKE_INTDIR=\"RelWithDebInfo\";SVServer_EXPORTS</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\cpp\SVisual\mswin\VS19\SVServer;C:\cpp\SVisual\src\SVServer;C:\cpp\SVisual\src;C:\cpp\SVisual\src\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
