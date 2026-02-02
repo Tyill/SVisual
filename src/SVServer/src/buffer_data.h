@@ -61,5 +61,5 @@ private:
 
   std::map<std::string, uint64_t> m_timeOffsetMs;
 
-  std::mutex m_mtxWrite;
+  std::mutex m_mtxRead, m_mtxWrite;
 };
