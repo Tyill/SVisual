@@ -44,7 +44,7 @@ public:
     SV_Base::RecData data;     
   };
 
-  void updateDataSignals(const std::string& in, uint64_t bTm);
+  void updateDataSignals(std::string_view in, uint64_t bTm);
 
   bool getDataByReadPos(std::vector<InputData>&);
 

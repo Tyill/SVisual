@@ -89,16 +89,16 @@ namespace SV_Srv {
 
   void receiveData(std::string& inout, std::string& out){
     vector<pair<size_t, size_t>> bePos;
-    const char* beginMess = "=begin=";
-    const char* endMess = "=end=";
-    const size_t mlen = 4, beginLen = strlen(beginMess), endLen = strlen(endMess);
+    const std::string_view beginMess = "=begin=";
+    const std::string_view endMess = "=end=";
+    const size_t mlen = 4, beginLen = beginMess.size(), endLen = endMess.size();
     size_t stPos = inout.find(beginMess), endPos = 0;
     while (stPos != std::string::npos && stPos + beginLen + mlen < inout.size()){
       int allSz = *(int*)(inout.c_str() + stPos + beginLen);
       if (allSz > 0){
         endPos = stPos + beginLen + mlen + allSz;
         if (endPos + endLen <= inout.size() && 
-            endMess == string(inout.data() + endPos, inout.data() + endPos + endLen)){
+            endMess == std::string_view(inout.data() + endPos, endLen)){
           bePos.push_back({stPos + beginLen + mlen, endPos});
           stPos = inout.find(beginMess, endPos + endLen);
           continue;
@@ -111,11 +111,11 @@ namespace SV_Srv {
     for (size_t i = 0; i < psz; ++i){
       stPos = bePos[i].first;
       endPos = bePos[i].second;
-      m_buffData.updateDataSignals(string(inout.data() + stPos, inout.data() + endPos),
+      m_buffData.updateDataSignals(std::string_view(inout.data() + stPos, endPos - stPos),
                                   bTm - (psz - i) * SV_CYCLESAVE_MS);
     }
     if (psz > 0){
-      inout = std::string(inout.data() + endPos + endLen);
+      inout = std::string(inout.begin() + endPos + endLen, inout.end());
     }
   }
 
