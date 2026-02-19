@@ -29,6 +29,8 @@
 
 #include <QDateTime>
 #include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 using namespace SV_Base;
 
@@ -77,6 +79,25 @@ bool FileLoader::loadFile(const QString& path) {
   }
   fileRef.insert(path, new FileData(path, utcOffs));
 
+  QByteArray header = file.peek(128); 
+  if (header.startsWith("{")){
+    int endOfLine = header.indexOf('\n');
+    if (endOfLine != -1) {
+      QJsonDocument jsDoc = QJsonDocument::fromJson(header.left(endOfLine));
+      if (jsDoc.isObject()){
+        auto packetSz = jsDoc.object()["packetSz"].toInt();
+        auto cycleRecMs = jsDoc.object()["cycleRecMs"].toInt();
+        if (packetSz != SV_PACKETSZ || cycleRecMs != SV_CYCLEREC_MS){
+          m_mainWin->showMessageDialog(QObject::tr("Параметры записи файла не совпадают с параметрами конфига"));
+          file.close();
+          return false;
+        }      
+      }
+      file.seek(endOfLine + 1);
+    }
+  }else{
+    file.seek(0);
+  }
   QDataStream dataStream(&file);
 
   int valSz = sizeof(uint64_t) + sizeof(Value) * SV_PACKETSZ,
@@ -188,6 +209,15 @@ bool FileLoader::loadSignalData(const QString& sign) {
       continue;
     }
 
+    QByteArray header = file.peek(128); 
+    if (header.startsWith("{")){
+      int endOfLine = header.indexOf('\n');
+      if (endOfLine != -1) {
+        file.seek(endOfLine + 1);
+      }
+    }else{
+      file.seek(0);
+    }
     QDataStream dataStream(&file);
 
     size_t csz = sref[sign]->buffData.size(),

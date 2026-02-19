@@ -149,8 +149,12 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
       const auto fpath = getOutPath(isStop);
       fstream file(fpath, std::fstream::binary | std::fstream::app);
       if (!file.good()){
-          statusMessage("Archive::copyToDisk file not open for write, fpath " + fpath);
-          return;
+        statusMessage("Archive::copyToDisk file not open for write, fpath " + fpath);
+        return;
+      }
+      if (file.tellp() == 0){
+        file << "{\"packetSz\":" << SV_PACKETSZ 
+             << ",\"cycleRecMs\":" << SV_CYCLEREC_MS << "}\n";
       }
 
       size_t sCnt = 0, csize = 0, ix = 0;
