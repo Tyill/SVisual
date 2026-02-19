@@ -46,7 +46,7 @@ void BufferData::init(const SV_Srv::Config& cng_) {
   }
 }
 
-void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
+void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
 
   size_t dsz = indata.size(),
          valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
@@ -61,7 +61,7 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
       m_buffWritePos -= m_buffSz;
     }
     if (cng.offsetMs > 0){
-      const std::string module = indata.c_str();
+      const std::string module = indata.data();
       if (m_timeOffsetMs.count(module)){
         m_timeOffsetMs[module] += cng.offsetMs;
       }else{
@@ -73,7 +73,7 @@ void BufferData::updateDataSignals(const std::string& indata, uint64_t bTm){
   size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ,
          cvalCnt = 0;
   while (cPos < dsz && cvalCnt < valCnt){
-    m_buffer[wPos].module = indata.c_str();
+    m_buffer[wPos].module = indata.data();
     m_buffer[wPos].name = indata.data() + cPos;
     m_buffer[wPos].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
     m_buffer[wPos].data.beginTime = bTm;
