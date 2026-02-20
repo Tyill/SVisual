@@ -127,58 +127,59 @@ bool FileLoader::loadFile(const QString& path) {
     int cPos = 0, itData = 0;
     while (itData < (int)dataSz) {
 
-      ValueData* vr = (ValueData*)(outArr.data() + itData);
+      ValueData vr;
+      memcpy(&vr, outArr.data() + itData, sizeof(ValueData));
 
-      QString sign = QString(vr->name) + vr->module;
+      QString sign = QString(vr.name) + vr.module;
 
       if (!fileRef[path]->signls.contains(sign)){
         fileRef[path]->signls.insert(sign, FileData::fsd{ false, 0 });
       }
       fileRef[path]->signls[sign].patchApos.append(QPair<int, int>(patchNum, cPos));
-      fileRef[path]->signls[sign].vlsCnt += vr->vlCnt;
+      fileRef[path]->signls[sign].vlsCnt += vr.vlCnt;
 
       if (signalRef.contains(sign)) {
         if (!signalRef[sign]->isActive) {
           signalRef[sign]->isActive = true;
-          moduleRef[vr->module]->isActive = true;
+          moduleRef[vr.module]->isActive = true;
           groupRef[signalRef[sign]->group.c_str()]->isActive = true;
-          signalRef[sign]->type = vr->type;
+          signalRef[sign]->type = vr.type;
         }
         if (signalRef[sign]->group.empty()){
-          signalRef[sign]->group = vr->group;
+          signalRef[sign]->group = vr.group;
         }
         if (signalRef[sign]->comment.empty()){
-          signalRef[sign]->comment = vr->comment;
+          signalRef[sign]->comment = vr.comment;
         }
-        int szVl = vheadSz + vr->vlCnt * valSz;
+        int szVl = vheadSz + vr.vlCnt * valSz;
         itData += szVl;
         cPos += szVl;
         continue;
       }
 
-      if (!moduleRef.contains(vr->module)) {
-        moduleRef.insert(vr->module, new ModuleData(vr->module));
-        moduleRef[vr->module]->isActive = true;
+      if (!moduleRef.contains(vr.module)) {
+        moduleRef.insert(vr.module, new ModuleData(vr.module));
+        moduleRef[vr.module]->isActive = true;
       }
-      moduleRef[vr->module]->signls.push_back(sign.toStdString());
+      moduleRef[vr.module]->signls.push_back(sign.toStdString());
 
-      if (!groupRef.contains(vr->group)) {
-        groupRef.insert(vr->group, new GroupData(vr->group));
-        groupRef[vr->group]->isActive = true;
+      if (!groupRef.contains(vr.group)) {
+        groupRef.insert(vr.group, new GroupData(vr.group));
+        groupRef[vr.group]->isActive = true;
       }
-      groupRef[vr->group]->signls.push_back(sign.toStdString());
+      groupRef[vr.group]->signls.push_back(sign.toStdString());
 
       auto sd = new SignalData();
-      sd->name = vr->name;
-      sd->module = vr->module;
-      sd->group = vr->group;
-      sd->comment = vr->comment;
-      sd->type = vr->type;
+      sd->name = vr.name;
+      sd->module = vr.module;
+      sd->group = vr.comment;
+      sd->comment = vr.comment;
+      sd->type = vr.type;
       sd->isActive = true;
 
       signalRef[sign] = sd;
 
-      int szVl = vheadSz + vr->vlCnt * valSz;
+      int szVl = vheadSz + vr.vlCnt * valSz;
       itData += szVl;
       cPos += szVl;
     }
@@ -271,7 +272,10 @@ bool FileLoader::loadSignalData(const QString& sign) {
 
         if (offs > (int)dataSz) break;
 
-        size_t vlCnt = (size_t)((ValueData*)(outArr.data() + offs))->vlCnt;
+        ValueData vr;
+        memcpy(&vr, outArr.data() + offs, sizeof(ValueData));
+
+        size_t vlCnt = vr.vlCnt;
 
         offs += vheadSz;
 
