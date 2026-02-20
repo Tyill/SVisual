@@ -75,9 +75,9 @@ void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
   while (cPos < dsz && cvalCnt < valCnt){
     m_buffer[wPos].module = indata.data();
     m_buffer[wPos].name = indata.data() + cPos;
-    m_buffer[wPos].type = SV_Base::ValueType(*(indata.data() + cPos + SV_NAMESZ));
-    m_buffer[wPos].data.beginTime = bTm;
+    memcpy(&m_buffer[wPos].type, indata.data() + cPos + SV_NAMESZ, sizeof(int32_t));
     memcpy(m_buffer[wPos].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
+    m_buffer[wPos].data.beginTime = bTm;
     ++wPos;
     if (wPos == m_buffSz){
       wPos = 0;

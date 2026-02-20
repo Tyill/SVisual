@@ -278,7 +278,8 @@ bool FileLoader::loadSignalData(const QString& sign) {
         Bytef* pData = outArr.data() + offs;
 
         for (size_t j = 0; j < vlCnt; ++j) {
-          sdata->buffData[csz + j].beginTime = *(uint64_t*)(pData + j * valSz) + path->utcOffsMs;
+          memcpy(&sdata->buffData[csz + j].beginTime, pData + j * valSz, sizeof(uint64_t));
+          sdata->buffData[csz + j].beginTime += path->utcOffsMs;
           memcpy(sdata->buffData[csz + j].vals, pData + j * valSz + tmSz, vlSz);
         }
 

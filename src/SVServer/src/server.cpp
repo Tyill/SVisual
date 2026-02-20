@@ -94,7 +94,8 @@ namespace SV_Srv {
     const size_t mlen = 4, beginLen = beginMess.size(), endLen = endMess.size();
     size_t stPos = inout.find(beginMess), endPos = 0;
     while (stPos != std::string::npos && stPos + beginLen + mlen < inout.size()){
-      int allSz = *(int*)(inout.c_str() + stPos + beginLen);
+      int32_t allSz;
+      std::memcpy(&allSz, inout.c_str() + stPos + beginLen, sizeof(int32_t));
       if (allSz > 0){
         endPos = stPos + beginLen + mlen + allSz;
         if (endPos + endLen <= inout.size() && 

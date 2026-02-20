@@ -31,7 +31,7 @@
 namespace SV_Base {
 
   /// тип польз переменной
-  enum class ValueType {
+  enum class ValueType : uint32_t {
     BOOL = 0,
     INT = 1,
     FLOAT = 2,
@@ -46,82 +46,55 @@ namespace SV_Base {
 
   /// пакет записи
   struct RecData {
-    uint64_t beginTime;  ///< нач время, мс
-    Value *vals;         ///< данные
-
-    RecData() : beginTime(0), vals(nullptr) {};
+    uint64_t beginTime{};  ///< нач время, мс
+    Value *vals{};         ///< данные
   };
 
   /// сигнал
   struct SignalData {
-    int id;
-    bool isActive;          ///< активен
-    bool isDelete;          ///< удален
-    bool isBuffEnable;      ///< буфер разрешен
+    int id{};
+    bool isActive{};       ///< активен
+    bool isDelete{};       ///< удален
+    bool isBuffEnable{};   ///< буфер разрешен
 
-    std::string name;       ///< имя
-    std::string module;     ///< модуль
-    std::string group;      ///< группа
-    std::string comment;    ///< комментарий
+    std::string name;      ///< имя
+    std::string module;    ///< модуль
+    std::string group;     ///< группа
+    std::string comment;   ///< комментарий
 
-    ValueType type;         ///< тип
+    ValueType type{};      ///< тип
 
-    RecData lastData;       ///< последняя запись
+    RecData lastData;      ///< последняя запись
 
     ///// буфер данных
     std::vector<RecData> buffData;
-    size_t buffBeginPos;
-    size_t buffValuePos;
-    uint64_t buffMinTime, buffMaxTime;
-    double buffMinValue, buffMaxValue;
+    size_t buffBeginPos{};
+    size_t buffValuePos{};
+    uint64_t buffMinTime{INT64_MAX}, buffMaxTime{};
+    double buffMinValue{}, buffMaxValue{};
     ///////
-
-    SignalData() {
-      id = 0;
-      isActive = false;
-      isDelete = false;
-      isBuffEnable = false;
-
-      type = ValueType::BOOL;
-
-      buffBeginPos = 0;
-      buffValuePos = 0;
-      buffMinTime = INT64_MAX;
-      buffMaxTime = 0;
-      buffMinValue = 0;
-      buffMaxValue = 0;
-    }
   };
 
   /// модуль
   struct ModuleData {
-
-    bool isActive;                   ///< активен
-    bool isEnable;                   ///< разрешен
-    bool isDelete;                   ///< удален
+    bool isActive{};                 ///< активен
+    bool isEnable{};                 ///< разрешен
+    bool isDelete{};                 ///< удален
     std::string module;              ///< название
     std::vector<std::string> signls; ///< список сигналов
 
-    /// модуль
-    /// \param modul название модуля
     ModuleData(const std::string& modul) {
-
-      isActive = false;
-      isEnable = false;
-      isDelete = false;
       module = modul;
     }
   };
 
   /// группа сигналов
   struct GroupData {
-
-    bool isActive;                     ///< активна
+    bool isActive{};                   ///< активна
     std::string group;                 ///< название
     std::vector<std::string> signls;   ///< список сигналов
 
     GroupData(const std::string& grp) {
-      isActive = true;
       group = grp;
     }
   };
