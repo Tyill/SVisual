@@ -52,10 +52,10 @@ void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
          valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
          cPos = SV_NAMESZ;
   size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, m_buffSz / 10));  // 10 сек - запас
-  size_t wPos;
+  size_t wPos, wPosMem;
   {
     std::lock_guard<std::mutex> lck(m_mtxWrite);
-    wPos = m_buffWritePos;
+    wPos = wPosMem = m_buffWritePos;
     m_buffWritePos += valCnt;
     if (m_buffWritePos >= m_buffSz){
       m_buffWritePos -= m_buffSz;
@@ -85,11 +85,14 @@ void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
     cPos += valSz;
     ++cvalCnt;
   }
-  {
+  while (true){ 
     std::lock_guard<std::mutex> lck(m_mtxRead);
-    m_buffWritePosForReader += valCnt;
-    if (m_buffWritePosForReader >= m_buffSz){
-      m_buffWritePosForReader -= m_buffSz;
+    if (wPosMem == m_buffWritePosForReader){ // для защиты от гонки, если из др потока сюда дойдут раньше
+      m_buffWritePosForReader += valCnt;
+      if (m_buffWritePosForReader >= m_buffSz){
+        m_buffWritePosForReader -= m_buffSz;
+      }
+      break;
     }
   }
 }
