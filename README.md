@@ -6,36 +6,14 @@
 |------------------|------------------|
 |[![Build Status](https://travis-ci.com/Tyill/SVisual.svg?branch=master)](https://travis-ci.com/Tyill/SVisual)|[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)|
 
+The SVisual software is designed to monitor the operation of the MK devices, debug the program, alert the user to the events that have occurred.
+
 <p float="left">
 <img src="docs/images/sv-video.gif" width="400" height="300"/>
  &emsp;
 <img src="docs/images/sv-web.gif" width="400" height="300"/>
 </p>
 
-# SVisual: Real-Time Industrial Telemetry & Monitoring System
-
-**SVisual** is a high-performance C++ application designed for real-time monitoring, data logging, and visualization of telemetry streams from industrial controllers (STM32, Arduino, and other embedded systems).
-
-### 🛠 Why SVisual?
-In critical infrastructure like **Data Centers**, monitoring power loads, temperature, and hardware status is vital. SVisual provides a lightweight and robust solution to capture these signals, visualize them in real-time, and store them for further predictive analysis.
-
-### 🚀 Key Features
-*   **Real-Time Data Streaming:** Low-latency visualization of incoming signals from hardware sensors.
-*   **High-Resolution Logging:** Efficient recording of telemetry data for post-event analysis (Sequence of Events).
-*   **Cross-Platform Performance:** Built with **C++ and Qt**, ensuring high throughput and stability on both Linux and Windows.
-*   **Hardware Agnostic:** Easily integrates with any controller via serial or network protocols.
-*   **Industrial-Grade UI:** Intuitive dashboard for monitoring multiple parameters simultaneously.
-
-### 💻 Tech Stack
-*   **Core:** C++11/17 (High-performance backend)
-*   **GUI:** Qt 5.15 (QtWidgets for stable industrial HMI)
-*   **Embedded Integration:** Optimized for STM32 and Arduino telemetry streams.
-*   **Build System:** QMake / CMake
-
-### 📂 Use Cases
-*   **Data Center Infrastructure Monitoring (DCIM):** Tracking power usage and cooling efficiency.
-*   **Industrial Automation:** Real-time feedback for electric drives and PLC-based systems.
-*   **Predictive Maintenance:** Collecting signal history to identify hardware degradation before failure.
 
 ## Features
 
