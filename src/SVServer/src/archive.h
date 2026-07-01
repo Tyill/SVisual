@@ -4,40 +4,24 @@
 //
 // This code is licensed under the MIT License.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
 #pragma once
 
 #include "SVMisc/front.h"
 #include "SVServer/sv_server.h"
 
 #include <map>
+#include <memory>
 #include <thread>
+#include <vector>
 
 class ClickHouseDB;
 
-// копирование архива на диск
 class Archive
 {
 public:
     
   Archive() = default;
+  ~Archive();
 
   void init(const SV_Srv::Config&);
 
@@ -46,9 +30,8 @@ public:
   void addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype);
   void addValue(const std::string& sign, const SV_Base::RecData& rd);
 
-  void setConfig(const SV_Srv::Config&);
-
 private:
+  void joinSaveThread();
   void copyToDiskImpl(bool isStop, int archiveIndex);
   bool isCopyTimeHour();
   std::string getOutPath(bool isStop);
@@ -69,6 +52,7 @@ private:
   SV_Misc::Front m_front;
 
   std::map<std::string, std::vector<SV_Base::RecData>> m_archiveData[2];
+  std::map<std::string, std::unique_ptr<SV_Base::Value[]>> m_archiveValueStorage[2];
 
   ClickHouseDB* m_chdb{};
   std::shared_ptr<std::thread> m_saveThread;

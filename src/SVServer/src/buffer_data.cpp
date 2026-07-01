@@ -4,24 +4,6 @@
 //
 // This code is licensed under the MIT License.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
 
 #include "buffer_data.h"
 
@@ -30,28 +12,52 @@
 
 using namespace std;
 
+namespace {
+  size_t calcBuffSz(int packetSz) {
+    size_t buffSz = SV_VALUE_MAX_CNT * 10;
+    if (packetSz > 100000) {
+      buffSz /= 100;
+    } else if (packetSz > 10000) {
+      buffSz /= 10;
+    }
+    return buffSz;
+  }
+
+  size_t boundedCStrLen(const char* s, size_t maxLen) {
+    const void* end = std::memchr(s, '\0', maxLen);
+    return end ? static_cast<const char*>(end) - s : maxLen;
+  }
+}
+
 void BufferData::init(const SV_Srv::Config& cng_) {
   
   cng = cng_;
-  if (SV_PACKETSZ > 100000){
-      m_buffSz /= 100;
-  }else if (SV_PACKETSZ > 10000){
-      m_buffSz /= 10;
-  }
+  m_buffSz = calcBuffSz(cng.packetSz);
+  m_buffReadPos = 0;
+  m_buffWritePos = 0;
+  m_buffWritePosForReader = 0;
+  m_timeOffsetMs.clear();
+
+  m_valueStorage = std::make_unique<SV_Base::Value[]>(SV_PACKETSZ * m_buffSz);
+  memset(m_valueStorage.get(), 0, SV_PACKETSZ * m_buffSz * sizeof(SV_Base::Value));
+
   m_buffer.resize(m_buffSz);
-  SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * m_buffSz];
-  memset(buff, 0, SV_PACKETSZ * m_buffSz * sizeof(SV_Base::Value));
   for (size_t i = 0; i < m_buffSz; ++i){
-    m_buffer[i].data.vals = &buff[i * SV_PACKETSZ];
+    m_buffer[i].data.vals = &m_valueStorage[i * SV_PACKETSZ];
   }
 }
 
 void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
 
-  size_t dsz = indata.size(),
-         valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ,
-         cPos = SV_NAMESZ;
-  size_t valCnt = std::max(size_t(0), std::min((dsz - cPos) / valSz, m_buffSz / 10));  // 10 сек - запас
+  const size_t dsz = indata.size();
+  if (dsz < SV_NAMESZ) return;
+
+  const size_t valSz = SV_NAMESZ + sizeof(SV_Base::ValueType) + sizeof(SV_Base::Value) * SV_PACKETSZ;
+  const size_t maxBySize = (dsz - SV_NAMESZ) / valSz;
+  const size_t valCnt = std::min(maxBySize, m_buffSz / 10);
+
+  if (valCnt == 0) return;
+
   size_t wPos, wPosMem;
   {
     std::lock_guard<std::mutex> lck(m_mtxWrite);
@@ -61,7 +67,8 @@ void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
       m_buffWritePos -= m_buffSz;
     }
     if (cng.offsetMs > 0){
-      const std::string module = indata.data();
+      const size_t modLen = boundedCStrLen(indata.data(), SV_NAMESZ);
+      const std::string module(indata.data(), modLen);
       if (m_timeOffsetMs.count(module)){
         m_timeOffsetMs[module] += cng.offsetMs;
       }else{
@@ -70,11 +77,17 @@ void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
       bTm += m_timeOffsetMs[module];
     }
   }
-  size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ,
-         cvalCnt = 0;
-  while (cPos < dsz && cvalCnt < valCnt){
-    m_buffer[wPos].module = indata.data();
-    m_buffer[wPos].name = indata.data() + cPos;
+
+  const size_t vlsz = sizeof(SV_Base::Value) * SV_PACKETSZ;
+  size_t cPos = SV_NAMESZ;
+  size_t cvalCnt = 0;
+
+  const size_t modLen = boundedCStrLen(indata.data(), SV_NAMESZ);
+  const std::string moduleStr(indata.data(), modLen);
+
+  while (cPos + valSz <= dsz && cvalCnt < valCnt){
+    m_buffer[wPos].module = moduleStr;
+    m_buffer[wPos].name = std::string(indata.data() + cPos, SV_NAMESZ);
     memcpy(&m_buffer[wPos].type, indata.data() + cPos + SV_NAMESZ, sizeof(int32_t));
     memcpy(m_buffer[wPos].data.vals, indata.data() + cPos + SV_NAMESZ + sizeof(SV_Base::ValueType), vlsz);
     m_buffer[wPos].data.beginTime = bTm;
@@ -85,10 +98,15 @@ void BufferData::updateDataSignals(std::string_view indata, uint64_t bTm){
     cPos += valSz;
     ++cvalCnt;
   }
+
+  if (cvalCnt == 0) {
+    return;
+  }
+
   while (true){ 
     std::lock_guard<std::mutex> lck(m_mtxRead);
-    if (wPosMem == m_buffWritePosForReader){ // для защиты от гонки, если из др потока сюда дойдут раньше
-      m_buffWritePosForReader += valCnt;
+    if (wPosMem == m_buffWritePosForReader){
+      m_buffWritePosForReader += cvalCnt;
       if (m_buffWritePosForReader >= m_buffSz){
         m_buffWritePosForReader -= m_buffSz;
       }

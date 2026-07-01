@@ -4,24 +4,6 @@
 //
 // This code is licensed under the MIT License.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
 
 #include "SVServer/sv_server.h"
 #include "SVMisc/timer_delay.h"
@@ -58,14 +40,6 @@ ThreadUpdate::~ThreadUpdate(){
 
   m_thrStop = true;
   if (m_thr.joinable()) m_thr.join();  
-}
-
-void ThreadUpdate::setArchiveConfig(const SV_Srv::Config& cng_){
-
-  cng.outArchiveEna = cng_.outArchiveEna;
-  cng.outDataBaseEna = cng_.outDataBaseEna;
-
-  m_archive.setConfig(cng_);
 }
 
 void ThreadUpdate::addSignal(const BufferData::InputData& bp){
@@ -106,16 +80,14 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
 void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sref, std::map<std::string, SV_Base::ModuleData*>& mref,
                                  std::map<std::string, bool>& signActive, std::map<std::string, bool>& moduleActive){
 
-    std::lock_guard lock(SV_Srv::m_mtxRW);
-
     bool isNewSign = false, isBuffActive = false;
 
-    size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
+    size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS;
     if (buffSz == 0){
         buffSz = 1;
     }
     const size_t packSz = SV_PACKETSZ * sizeof(Value);
-    
+
     std::vector<BufferData::InputData> bufData;
     while (m_buffData.getDataByReadPos(bufData)){
       for(const auto& bufPos : bufData){
@@ -132,25 +104,29 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
 
         auto sdata = sref[sign];
 
-        signActive[sign] = true;
-        moduleActive[bufPos.module] = true;
+        {
+          std::lock_guard lock(SV_Srv::m_mtxRW);
 
-        sdata->lastData.beginTime = bufPos.data.beginTime;
-        memcpy(sdata->lastData.vals, bufPos.data.vals, packSz);
-        if (sdata->isBuffEnable) {
-          size_t vp = sdata->buffValuePos;
-          sdata->buffData[vp].beginTime = bufPos.data.beginTime;
-          memcpy(sdata->buffData[vp].vals, bufPos.data.vals, packSz);
+          signActive[sign] = true;
+          moduleActive[bufPos.module] = true;
 
-          updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
+          sdata->lastData.beginTime = bufPos.data.beginTime;
+          memcpy(sdata->lastData.vals, bufPos.data.vals, packSz);
+          if (sdata->isBuffEnable) {
+            size_t vp = sdata->buffValuePos;
+            sdata->buffData[vp].beginTime = bufPos.data.beginTime;
+            memcpy(sdata->buffData[vp].vals, bufPos.data.vals, packSz);
 
-          ++vp;
-          if (vp == buffSz) vp = 0;
-          sdata->buffValuePos = vp;
+            updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
 
-          if (vp == sdata->buffBeginPos) {
-              ++sdata->buffBeginPos;
-              if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
+            ++vp;
+            if (vp == buffSz) vp = 0;
+            sdata->buffValuePos = vp;
+
+            if (vp == sdata->buffBeginPos) {
+                ++sdata->buffBeginPos;
+                if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
+            }
           }
         }
         if (cng.outArchiveEna || cng.outDataBaseEna){
@@ -231,32 +207,42 @@ void ThreadUpdate::updateCycle(){
        
     updateSignals(sref, mref, signActive, moduleActive);
        
-    // архив
     if (tmDelay.hourOnc() && (cng.outArchiveEna || cng.outDataBaseEna)){
       m_archive.copyToDisk(false);
     }
 
-    // проверка связи
     if (tmDelay.onDelayMS(true, checkConnectTout, 0)){
         tmDelay.onDelayMS(false, 0, 0);
 
-        std::lock_guard lock(SV_Srv::m_mtxRW);
+        std::vector<std::string> connectModules;
+        std::vector<std::string> disconnectModules;
 
-        for (auto& s : signActive){
-            sref[s.first]->isActive = s.second;
-            s.second = false;
+        {
+          std::lock_guard lock(SV_Srv::m_mtxRW);
+
+          for (auto& s : signActive){
+              sref[s.first]->isActive = s.second;
+              s.second = false;
+          }
+          for (auto& m : moduleActive){
+              if (m.first == "Virtual") continue;
+
+              if (!mref[m.first]->isActive && m.second){
+                  connectModules.push_back(m.first);
+              }
+              else if (mref[m.first]->isActive && !m.second){
+                  disconnectModules.push_back(m.first);
+              }
+              mref[m.first]->isActive = m.second;
+              m.second = false;
+          }
         }
-        for (auto& m : moduleActive){
-            if (m.first == "Virtual") continue;
 
-            if (!mref[m.first]->isActive && m.second){
-                moduleConnect(m.first);
-            }
-            else if (mref[m.first]->isActive && !m.second){
-                moduleDisconnect(m.first);
-            }
-            mref[m.first]->isActive = m.second;
-            m.second = false;
+        for (const auto& mod : connectModules) {
+          moduleConnect(mod);
+        }
+        for (const auto& mod : disconnectModules) {
+          moduleDisconnect(mod);
         }
     }
 
@@ -270,4 +256,3 @@ void ThreadUpdate::updateCycle(){
     m_archive.copyToDisk(true);
   }
 }
-

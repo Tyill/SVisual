@@ -4,30 +4,14 @@
 //
 // This code is licensed under the MIT License.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
 #include "archive.h"
 #include "clickhouse_db.h"
 #include "SVMisc/misc.h"
 #include "SVBase/sv_limits.h"
+#include "SVServer/sv_server.h"
 #include "zlib/zlib.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
 #include <fstream>
@@ -38,28 +22,39 @@ using namespace std;
 
 void statusMessage(const std::string& mess);
 
-void Archive::init(const SV_Srv::Config& cng_) {
-
-  cng = cng_;
-  m_copyStartTime = SV_Misc::currDateTimeEx();
-  m_copyDateMem = SV_Misc::currDateS();
-  m_copySz = std::max(10, 600000 / SV_CYCLESAVE_MS); // 10мин
-
-#ifdef USE_ClickHouseDB
-  if(cng.outDataBaseEna && !cng.outDataBaseName.empty() && !cng.outDataBaseAddr.empty()){
-      m_chdb = new ClickHouseDB(cng);
+namespace {
+  void writeFixedField(char* dst, size_t fieldSz, const std::string& s) {
+    memset(dst, 0, fieldSz);
+    if (!s.empty()) {
+      memcpy(dst, s.c_str(), std::min(s.size(), fieldSz - 1));
+    }
   }
+}
+
+Archive::~Archive() {
+  joinSaveThread();
+#ifdef USE_ClickHouseDB
+  delete m_chdb;
+  m_chdb = nullptr;
 #endif
 }
 
-void Archive::setConfig(const SV_Srv::Config& cng_){
-    
-  cng.outArchivePath = cng_.outArchivePath;
-  cng.outArchiveName = cng_.outArchiveName;
-  cng.outArchiveHourCnt = cng_.outArchiveHourCnt;
+void Archive::joinSaveThread() {
+  if (m_saveThread && m_saveThread->joinable()) {
+    m_saveThread->join();
+  }
+}
+
+void Archive::init(const SV_Srv::Config& cng_) {
+
+  cng = cng_;
+  cng.outArchiveHourCnt = std::max(1, cng.outArchiveHourCnt);
+  m_copyStartTime = SV_Misc::currDateTimeEx();
+  m_copyDateMem = SV_Misc::currDateS();
+  m_copySz = std::max(size_t(10), size_t(600000 / SV_CYCLESAVE_MS));
 
 #ifdef USE_ClickHouseDB
-  if (!m_chdb && cng_.outDataBaseEna && !cng_.outDataBaseName.empty() && !cng_.outDataBaseAddr.empty()){
+  if(cng.outDataBaseEna && !cng.outDataBaseName.empty() && !cng.outDataBaseAddr.empty()){
       m_chdb = new ClickHouseDB(cng);
   }
 #endif
@@ -77,11 +72,13 @@ void Archive::addSignal(const std::string& sname, const std::string& module, SV_
     auto& vpos = m_valPos[aIndex];
     vpos[sign] = 0;
 
-    SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * m_copySz];
-    memset(buff, 0, SV_PACKETSZ * m_copySz * sizeof(SV_Base::Value));
+    auto storage = std::make_unique<SV_Base::Value[]>(SV_PACKETSZ * m_copySz);
+    memset(storage.get(), 0, SV_PACKETSZ * m_copySz * sizeof(SV_Base::Value));
+    SV_Base::Value* buff = storage.get();
     for (size_t i = 0; i < m_copySz; ++i){
       archiveData[sign][i].vals = &buff[i * SV_PACKETSZ];
     }
+    m_archiveValueStorage[aIndex][sign] = std::move(storage);
 #ifdef USE_ClickHouseDB
     if (m_chdb){
         m_chdb->addSignal(sname, module, stype);
@@ -100,15 +97,13 @@ void Archive::addValue(const string& sign, const SV_Base::RecData& rd) {
 
   ++valPos[sign];
 
-  if (valPos[sign] == m_copySz) {   
+  if (valPos[sign] == static_cast<int>(m_copySz)) {   
     copyToDisk(false);
   }
 }
 
 void Archive::copyToDisk(bool isStop){
-  if (m_saveThread && m_saveThread->joinable()){
-    m_saveThread->join();
-  }
+  joinSaveThread();
   if (!isStop){    
     m_saveThread = std::make_shared<std::thread>([this, aIndex = m_archiveIndex]{
       copyToDiskImpl(false, aIndex);
@@ -129,7 +124,7 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
   }
 
   if (cng.outArchiveEna){
-      size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
+      size_t SMAXCNT = 100;
       if (SV_PACKETSZ > 100000){
           SMAXCNT = 1;
       }else if (SV_PACKETSZ > 10000){
@@ -140,7 +135,6 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
         tmSz = sizeof(uint64_t),
         vlSz = sizeof(SV_Base::Value) * SV_PACKETSZ;
 
-      //                     name        module      group       comment      type    vCnt
       const size_t headSz = SV_NAMESZ + SV_NAMESZ + SV_NAMESZ + SV_COMMENTSZ + intSz + intSz;
 
       vector<char> inArr((tmSz + vlSz) * m_copySz * SMAXCNT + headSz * SMAXCNT);
@@ -161,17 +155,21 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
       for (const auto& ad : archiveData) {
 
         const auto sign = SV_Srv::getSignalData(ad.first);
+        if (!sign) {
+          ++ix;
+          continue;
+        }
 
         char* pIn = inArr.data();       
         
         int vCnt = valPos[ad.first];
         if (vCnt > 0) {
-          memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
-          memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
-          memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
-          memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-          memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
-          memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
+          writeFixedField(pIn + csize, SV_NAMESZ, sign->name);       csize += SV_NAMESZ;
+          writeFixedField(pIn + csize, SV_NAMESZ, sign->module);     csize += SV_NAMESZ;
+          writeFixedField(pIn + csize, SV_NAMESZ, sign->group);      csize += SV_NAMESZ;
+          writeFixedField(pIn + csize, SV_COMMENTSZ, sign->comment); csize += SV_COMMENTSZ;
+          memcpy(pIn + csize, &sign->type, intSz);                   csize += intSz;
+          memcpy(pIn + csize, &vCnt, intSz);                         csize += intSz;
 
           for (int j = 0; j < vCnt; ++j) {
             memcpy(pIn + csize, &ad.second[j].beginTime, tmSz); csize += tmSz;
@@ -207,8 +205,6 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
   for(auto& v : valPos){
     v.second = 0;
   }
-
-  return;
 }
 
 bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
@@ -224,7 +220,7 @@ bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz
 
     return res == Z_OK;
   }
-  catch (exception e) {
+  catch (const exception& e) {
     statusMessage("Archive::compressData exception " + string(e.what()));
     return false;
   }
@@ -261,12 +257,19 @@ string Archive::getOutPath(bool isStop) {
 bool Archive::isCopyTimeHour() {
 
   time_t t = time(nullptr);
-  tm* lct = localtime(&t);
+  tm lctBuf{};
+#ifdef _WIN32
+  localtime_s(&lctBuf, &t);
+  tm* lct = &lctBuf;
+#else
+  tm* lct = localtime_r(&t, &lctBuf);
+  if (!lct) return false;
+#endif
 
   if (m_front.PosFront(lct->tm_min == 0, 0)) ++m_crtFileHour;
 
   bool req = false;
-  bool isCheck = cng.outArchiveHourCnt % 2 == 0;    // кратно 2м часам?
+  bool isCheck = cng.outArchiveHourCnt % 2 == 0;
   bool isHourCheck = lct->tm_hour % 2 == 0;
   bool isNDay = m_front.PosFront(lct->tm_hour == 0, 1);
   if (((int(m_crtFileHour) >= cng.outArchiveHourCnt) || isNDay) && (!isCheck || isHourCheck)) {
@@ -276,4 +279,3 @@ bool Archive::isCopyTimeHour() {
 
   return req;
 }
-

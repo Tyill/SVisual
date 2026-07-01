@@ -37,7 +37,6 @@ void statusMess(const string& mess){
 int main(int argc, char* argv[]){
 
   SV_Misc::TCPServer::setErrorCBack(statusMess);
-  SV_Srv::setStatusCBack(statusMess);
 
   SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
 
@@ -47,7 +46,7 @@ int main(int argc, char* argv[]){
   string addr = argc > 1 ? argv[1] : "127.0.0.1";
   int port = argc > 2 ? atoi(argv[2]) : 2144;
 
-  if (SV_Srv::startServer(scng) && SV_Misc::TCPServer::start(addr, port)){
+  if (SV_Srv::startServer(scng, statusMess) && SV_Misc::TCPServer::start(addr, port)){
     statusMess("Run " + addr + " " + to_string(port));
     while (true)
       SV_Misc::sleepMs(1000);

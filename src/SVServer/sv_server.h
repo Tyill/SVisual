@@ -68,19 +68,15 @@ namespace SV_Srv {
       offsetMs(0) {}
   };
 
-  /// задать статус callback
-  /// \param pfStatusMess
   using statusCBack = std::function<void(const std::string&)>;
-  SV_API void setStatusCBack(statusCBack stsCBack);
 
-  /// старт сервера
-  SV_API bool startServer(const Config&);
+  /// старт сервера (один раз за жизнь процесса; повторный вызов — false)
+  /// \param stsCBack опциональный callback статусных сообщений
+  /// startServer/stopServer сериализуются внутри; безопасно вызывать из разных потоков.
+  SV_API bool startServer(const Config&, statusCBack stsCBack = nullptr);
 
-  /// стоп сервера
+  /// стоп сервера (идемпотентен). Сериализуется с startServer.
   SV_API void stopServer();
-
-  /// задать конфиг
-  SV_API void setConfig(const Config&);
 
   // получение данных сервером
   SV_API void receiveData(std::string& inout, std::string& out);

@@ -4,31 +4,15 @@
 //
 // This code is licensed under the MIT License.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
 
 #include "sv_server.h"
 #include "buffer_data.h"
 #include "thread_update.h"
 #include "SVMisc/misc.h"
 
+#include <atomic>
 #include <cstring>
+#include <memory>
 #include <shared_mutex>
 
 using namespace std;
@@ -52,55 +36,68 @@ namespace SV_Srv {
 
   std::map <std::string, SV_Base::ModuleData*> m_moduleData;
   std::map <std::string, SV_Base::SignalData*> m_signalData;
+  std::map<std::string, std::unique_ptr<SV_Base::Value[]>> m_signalBuffStorage;
 
+  std::atomic_bool m_wasStarted{false};
+  std::atomic_bool m_isRunning{false};
+
+  std::mutex m_mtxLifecycle;
   std::mutex m_mtxCommon;
   std::shared_mutex m_mtxRW;
 
-    
-  void setStatusCBack(statusCBack cback){
-    pfStatusCBack = cback;
-  }
+  bool startServer(const Config& _cng, statusCBack stsCBack){
+    std::lock_guard<std::mutex> lifecycle(m_mtxLifecycle);
 
-  bool startServer(const Config& _cng){
-    std::lock_guard<std::mutex> lck(m_mtxCommon);
+    bool expected = false;
+    if (!m_wasStarted.compare_exchange_strong(expected, true))
+      return false;
 
-    if (m_pThrUpdSignal) return true;
-
+    pfStatusCBack = std::move(stsCBack);
     cng = _cng;
 
     m_buffData.init(cng);
 
-    m_pThrUpdSignal = new ThreadUpdate(cng, m_buffData);
+    auto thr = std::make_unique<ThreadUpdate>(cng, m_buffData);
 
+    {
+      std::lock_guard<std::mutex> lck(m_mtxCommon);
+      m_pThrUpdSignal = thr.release();
+    }
+    m_isRunning.store(true, std::memory_order_release);
     return true;
   }
 
   void stopServer(){
-    if (m_pThrUpdSignal){
-      delete m_pThrUpdSignal;
+    std::lock_guard<std::mutex> lifecycle(m_mtxLifecycle);
+
+    m_isRunning.store(false, std::memory_order_release);
+    ThreadUpdate* thr = nullptr;
+    {
+      std::lock_guard<std::mutex> lck(m_mtxCommon);
+      std::swap(thr, m_pThrUpdSignal);
     }
-  }
-    
-  void setConfig(const Config& cng){
-    if (m_pThrUpdSignal){
-      m_pThrUpdSignal->setArchiveConfig(cng);
-    }    
+    delete thr;
   }
 
   void receiveData(std::string& inout, std::string& out){
+    (void)out;
+    if (!m_isRunning.load(std::memory_order_acquire)) return;
+
     vector<pair<size_t, size_t>> bePos;
     const std::string_view beginMess = "=begin=";
     const std::string_view endMess = "=end=";
     const size_t mlen = 4, beginLen = beginMess.size(), endLen = endMess.size();
     size_t stPos = inout.find(beginMess), endPos = 0;
-    while (stPos != std::string::npos && stPos + beginLen + mlen < inout.size()){
+    while (stPos != std::string::npos && stPos + beginLen + mlen <= inout.size()){
       int32_t allSz;
       std::memcpy(&allSz, inout.c_str() + stPos + beginLen, sizeof(int32_t));
-      if (allSz > 0){
-        endPos = stPos + beginLen + mlen + allSz;
+      const size_t payloadStart = stPos + beginLen + mlen;
+      const size_t maxPayload = inout.size() - payloadStart;
+      if (allSz > 0 && static_cast<size_t>(allSz) <= maxPayload){
+        endPos = payloadStart + allSz;
         if (endPos + endLen <= inout.size() && 
             endMess == std::string_view(inout.data() + endPos, endLen)){
-          bePos.push_back({stPos + beginLen + mlen, endPos});
+          bePos.push_back({payloadStart, endPos});
           stPos = inout.find(beginMess, endPos + endLen);
           continue;
         }
@@ -209,21 +206,34 @@ namespace SV_Srv {
   }
 
   bool signalBufferEna(const std::string& sign){
-    std::lock_guard lck(m_mtxCommon);
+    SV_Base::SignalData* sd = nullptr;
+    {
+      std::lock_guard lck(m_mtxCommon);
+      auto it = m_signalData.find(sign);
+      if (it == m_signalData.end()) return false;
+      sd = it->second;
+    }
 
-    if (m_signalData.find(sign) == m_signalData.end()) return false;
+    {
+      std::lock_guard lck(m_mtxRW);
+      if (sd->isBuffEnable) return true;
+    }
 
-    if (!m_signalData[sign]->isBuffEnable){
-      int buffSz = std::max(10, (2 * 3600000) / SV_CYCLESAVE_MS);  // размер буфера 2 часа
-      m_signalData[sign]->buffData.resize(buffSz);
+    const int buffSz = std::max(10, static_cast<int>((2 * 3600000) / SV_CYCLESAVE_MS));
+    std::vector<SV_Base::RecData> preparedBuffData(buffSz);
+    auto preparedValueBlock = std::make_unique<SV_Base::Value[]>(SV_PACKETSZ * buffSz);
+    for (int i = 0; i < buffSz; ++i){
+      preparedBuffData[i].vals = &preparedValueBlock[i * SV_PACKETSZ];
+    }
 
-      SV_Base::Value* buff = new SV_Base::Value[SV_PACKETSZ * buffSz];
-      for (int i = 0; i < buffSz; ++i){
-        m_signalData[sign]->buffData[i].vals = &buff[i * SV_PACKETSZ];
-      }
-      {std::lock_guard lckw(m_mtxRW);
-         m_signalData[sign]->isBuffEnable = true;
-      }
+    {
+      std::lock_guard lckw(m_mtxRW);
+      if (sd->isBuffEnable) return true;
+      sd->buffData = std::move(preparedBuffData);
+      m_signalBuffStorage[sign] = std::move(preparedValueBlock);
+      sd->buffBeginPos = 0;
+      sd->buffValuePos = 0;
+      sd->isBuffEnable = true;
     }
     return true;
   }

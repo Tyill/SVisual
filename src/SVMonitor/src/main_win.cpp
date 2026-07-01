@@ -104,7 +104,12 @@ MainWin::MainWin(QWidget *parent)
     srvCng.outDataBaseName = cng.outDataBaseName.toStdString();
   }
 
+  auto statusCb = [this](const std::string& mess){
+    statusMess(QString::fromLocal8Bit(mess.c_str()));
+  };
+
   if (cng.com_ena){
+    const bool srvStarted = SV_Srv::startServer(srvCng, statusCb);
     for (auto& port : cng.com_ports){
 
       if (port.first.isEmpty() || port.second.isEmpty()) continue;
@@ -113,8 +118,9 @@ MainWin::MainWin(QWidget *parent)
       auto comReader = new SerialPortReader(ccng, this);
       if (comReader->start()) {
         statusMess(QString(tr("Прослушивание %1 порта запущено")).arg(port.first)); 
-        SV_Srv::startServer(srvCng);
-        comReader->setDataCBack(SV_Srv::receiveData);
+        if (srvStarted) {
+          comReader->setDataCBack(SV_Srv::receiveData);
+        }
       } else {
         statusMess(QString(tr("%1 порт недоступен")).arg(port.first));
       }
@@ -123,8 +129,9 @@ MainWin::MainWin(QWidget *parent)
   }else{
     if (SV_Misc::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
       statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
-      SV_Srv::startServer(srvCng);
-      SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
+      if (SV_Srv::startServer(srvCng, statusCb)) {
+        SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
+      }
     }
     else
       statusMess(QString(tr("Не удалось запустить TCP сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
@@ -819,9 +826,6 @@ void MainWin::load(){
     SV_Exp::setGetCopyModuleRefCBack(exportDialog_, getCopyModuleRefSrv);
     SV_Exp::setGetSignalDataCBack(exportDialog_, getSignalDataSrv);
 
-    SV_Srv::setStatusCBack([this](const std::string& mess){
-        statusMess(QString::fromLocal8Bit(mess.c_str()));
-    });
     SV_Srv::setOnUpdateSignalsCBack([this](){
         QMetaObject::invokeMethod(this, "updateSignals", Qt::AutoConnection);
     });
@@ -1270,19 +1274,6 @@ MainWin::Config MainWin::getConfig(){
 }
 
 void MainWin::updateConfig(const MainWin::Config& newCng){
-    
-  SV_Srv::Config srvCng; {
-    srvCng.cycleRecMs = cng.cycleRecMs;
-    srvCng.packetSz = cng.packetSz;
-    srvCng.outArchiveEna = newCng.outArchiveEna;
-    srvCng.outArchiveHourCnt = newCng.outArchiveHourCnt;
-    srvCng.outArchiveName = newCng.outArchiveName.toStdString();
-    srvCng.outArchivePath = newCng.outArchivePath.toStdString();
-    srvCng.outDataBaseEna = newCng.outDataBaseEna;
-    srvCng.outDataBaseName = newCng.outDataBaseName.toStdString();
-    srvCng.outDataBaseAddr = newCng.outDataBaseAddr.toStdString();
-  }
-  SV_Srv::setConfig(srvCng);
 
   cng = newCng;
 }

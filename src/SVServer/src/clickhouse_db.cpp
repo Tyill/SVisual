@@ -6,7 +6,9 @@
 #include "SVBase/sv_limits.h"
 
 #include <clickhouse/client.h>
-#include <thread>
+
+#include <algorithm>
+#include <chrono>
 
 namespace ch = clickhouse;
 
@@ -15,11 +17,11 @@ void statusMessage(const std::string&);
 ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
     cng(_cng)
 {
-    std::thread([this]() {
+    emplaceWorker([this]() {
         try {
-            std::lock_guard lk(m_mtx);
             if (auto clt = newClient(); clt) {
                 clt->Select("SELECT id, sname, module FROM tblSignal;", [this](const ch::Block& block) {
+                    std::lock_guard lk(m_mtx);
                     for (size_t i = 0; i < block.GetRowCount(); ++i) {
                         int sId = block[0]->As<ch::ColumnInt32>()->At(i);
                         std::string sname = std::string(block[1]->As<ch::ColumnString>()->At(i));
@@ -30,10 +32,45 @@ ClickHouseDB::ClickHouseDB(const SV_Srv::Config& _cng):
                     });
             }
         }
-        catch (std::exception& e) {
+        catch (const std::exception& e) {
             statusMessage("ClickHouseDB read signals error: " + std::string(e.what()));
         }
-        }).detach();
+        });
+}
+
+ClickHouseDB::~ClickHouseDB() {
+    m_stopping.store(true, std::memory_order_release);
+    joinWorkers();
+}
+
+void ClickHouseDB::reapWorkersLocked() {
+    m_workers.erase(
+        std::remove_if(m_workers.begin(), m_workers.end(),
+            [](std::future<void>& f) {
+                return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+            }),
+        m_workers.end());
+}
+
+void ClickHouseDB::emplaceWorker(std::function<void()> fn) {
+    if (m_stopping.load(std::memory_order_acquire)) return;
+    std::lock_guard lk(m_workersMtx);
+    if (m_stopping.load(std::memory_order_acquire)) return;
+    reapWorkersLocked();
+    m_workers.push_back(std::async(std::launch::async, std::move(fn)));
+}
+
+void ClickHouseDB::joinWorkers() {
+    std::vector<std::future<void>> workers;
+    {
+        std::lock_guard lk(m_workersMtx);
+        workers = std::move(m_workers);
+    }
+    for (auto& f : workers) {
+        if (f.valid()) {
+            f.wait();
+        }
+    }
 }
 
 bool ClickHouseDB::isConnect()const
@@ -43,7 +80,7 @@ bool ClickHouseDB::isConnect()const
             clt->Ping();
             return true;
         }
-    }catch(std::exception& e){
+    }catch(const std::exception& e){
         statusMessage("ClickHouseDB connect error: " + std::string(e.what()));
     }
     return false;
@@ -51,41 +88,43 @@ bool ClickHouseDB::isConnect()const
 
 void ClickHouseDB::addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype)
 {
-    if (!m_signals.count(sname + module)){
-        m_signals.insert({sname + module, m_signals.size()});
+    const std::string key = sname + module;
+    bool needWorker = false;
 
+    {
         std::lock_guard lk(m_mtx);
+        if (m_signals.count(key)) return;
+        m_signals.insert({key, static_cast<int>(m_signals.size())});
 
-        bool isNew = false;
         if (!m_signalBlock){
             m_signalBlock = newSignalBlock();
-            isNew = true;
+            needWorker = true;
         }
         auto cId = column(m_signalBlock, "id")->AsStrict<ch::ColumnInt32>();
         auto cSName = column(m_signalBlock, "sname")->AsStrict<ch::ColumnString>();
         auto cModule = column(m_signalBlock, "module")->AsStrict<ch::ColumnString>();
         auto cType = column(m_signalBlock, "stype")->AsStrict<ch::ColumnInt32>();
 
-        cId->Append(m_signals[sname + module]);
+        cId->Append(m_signals[key]);
         cSName->Append(sname);
         cModule->Append(module);
         cType->Append(int(stype));
+    }
 
-        if (isNew){
-            std::thread([this](){
-                SV_Misc::sleepMs(1000);
-                try{
-                    std::lock_guard lk(m_mtx);
-                    if (auto clt = newClient(); clt){
-                        m_signalBlock->RefreshRowCount();
-                        clt->Insert("tblSignal", *m_signalBlock);
-                    }
-                    m_signalBlock.reset();
-                }catch(std::exception& e){
-                    statusMessage("ClickHouseDB::addSignal save error: " + std::string(e.what()));
+    if (needWorker){
+        emplaceWorker([this](){
+            SV_Misc::sleepMs(1000);
+            try{
+                std::lock_guard lk(m_mtx);
+                if (auto clt = newClient(); clt && m_signalBlock){
+                    m_signalBlock->RefreshRowCount();
+                    clt->Insert("tblSignal", *m_signalBlock);
                 }
-            }).detach();
-        }
+                m_signalBlock.reset();
+            }catch(const std::exception& e){
+                statusMessage("ClickHouseDB::addSignal save error: " + std::string(e.what()));
+            }
+        });
     }
 }
 
@@ -99,12 +138,21 @@ void ClickHouseDB::saveSData(bool onClose, const std::map<std::string, int>& val
 
     for (const auto& sd : sdata){
 
-        if (!m_signals.count(sd.first) || valPos.at(sd.first) == 0) continue;
+        int sid = 0;
+        int vcnt = 0;
+        {
+            std::lock_guard lk(m_mtx);
+            auto it = m_signals.find(sd.first);
+            if (it == m_signals.end()) continue;
+            auto vpIt = valPos.find(sd.first);
+            if (vpIt == valPos.end() || vpIt->second == 0) continue;
+            sid = it->second;
+            vcnt = vpIt->second;
+        }
 
         auto sign = SV_Srv::getSignalData(sd.first);
-        
-        int sid = m_signals[sd.first];
-        int vcnt = valPos.at(sd.first);
+        if (!sign) continue;
+
         if (sign->type == SV_Base::ValueType::FLOAT){
             for(int i = 0; i < vcnt; ++i){
                 const auto& rd = sd.second[i];
@@ -132,14 +180,14 @@ void ClickHouseDB::saveSData(bool onClose, const std::map<std::string, int>& val
                     dblock->RefreshRowCount();
                     clt->Insert("tblSData", *dblock);
                 }
-            }catch(std::exception& e){
+            }catch(const std::exception& e){
                 statusMessage("ClickHouseDB::addSData save error: " +  std::string(e.what()));
             }
         };
         if (!onClose){
-            std::thread([this, sendToDb, dblock = std::move(dataBlock)](){
+            emplaceWorker([this, sendToDb, dblock = std::move(dataBlock)](){
                sendToDb(dblock);
-            }).detach();
+            });
         }else{
             sendToDb(dataBlock);
         }
@@ -160,10 +208,11 @@ std::unique_ptr<clickhouse::Client> ClickHouseDB::newClient()const
 {
     ch::ClientOptions opts;{
         opts.SetDefaultDatabase(cng.outDataBaseName);
-        auto sp = cng.outDataBaseAddr.find(':');
-        opts.SetHost(sp > 0 ? cng.outDataBaseAddr.substr(0, sp) : cng.outDataBaseAddr);
-        if (sp > 0){
-            opts.SetPort(stoi(cng.outDataBaseAddr.substr(sp + 1)));
+        const auto sp = cng.outDataBaseAddr.find(':');
+        opts.SetHost(sp == std::string::npos ? cng.outDataBaseAddr
+                                             : cng.outDataBaseAddr.substr(0, sp));
+        if (sp != std::string::npos && sp + 1 < cng.outDataBaseAddr.size()){
+            opts.SetPort(std::stoi(cng.outDataBaseAddr.substr(sp + 1)));
         }
     }
     return std::make_unique<ch::Client>(opts);

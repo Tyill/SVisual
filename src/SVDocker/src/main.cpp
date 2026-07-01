@@ -125,8 +125,6 @@ int main(int argc, char* argv[]){
   SV_Misc::TCPServer::setErrorCBack(statusMess);
   SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
 
-  SV_Srv::setStatusCBack(statusMess);
-
   config cng;
 
   std::string iniPath = argc > 1 ? argv[1] : a.applicationDirPath().toStdString() + "/svdocker.ini";
@@ -141,7 +139,7 @@ int main(int argc, char* argv[]){
   scng.outArchiveName = cng.outArchiveName;
   scng.outArchivePath = cng.outArchivePath;
     
-  if (SV_Srv::startServer(scng) && SV_Misc::TCPServer::start("0.0.0.0", cng.tcp_port)){
+  if (SV_Srv::startServer(scng, statusMess) && SV_Misc::TCPServer::start("0.0.0.0", cng.tcp_port)){
     statusMess("TCP server run port: " + std::to_string(cng.tcp_port));
   }
   else{
