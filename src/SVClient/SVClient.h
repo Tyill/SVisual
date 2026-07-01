@@ -43,26 +43,34 @@
 
 namespace SV{
 
-  // connect of server
-  // moduleName - module (leng max 24)
-  // ipAddrServ - ip
+  // Connect to server and start sender thread.
+  // moduleName - module name (non-null, length < 24, must not contain "=begin=" or "=end=")
+  // ipAddrServ - server IP address (non-null; on Linux dotted-decimal only)
+  // portServ   - server port
+  // Returns true if the initial TCP connect succeeded, false otherwise.
+  // false does not mean the session was not started: the sender thread is already
+  // running and automatic reconnect continues in the background.
+  // Safe to call again while session is active: returns current connection state,
+  // does not start a second sender thread.
   SV_API bool svConnect(const char *moduleName, const char *ipAddrServ, int portServ);
 
-  // disconnect of server
+  // Stop sender thread and disconnect. Must be called before DLL unload / process exit.
   SV_API void svDisconnect();
 
-  // add Value for rec
-  // name - Value name (leng max 24)
+  // Add bool signal value for current cycle.
+  // name - signal name (non-null, length < 24, must not contain "=begin=" or "=end=")
+  // onlyFront - if true, bool pulse is cleared on inactive cycles
   SV_API bool svAddBoolValue(const char *name, bool Value, bool onlyFront = false);
 
-  // add Value for rec
-  // name - Value name (leng max 24)
+  // Add int signal value for current cycle.
+  // name - signal name (non-null, length < 24, must not contain "=begin=" or "=end=")
   SV_API bool svAddIntValue(const char *name, int Value);
 
-  // add Value for rec
-  // name - Value name (leng max 24)
+  // Add float signal value for current cycle.
+  // name - signal name (non-null, length < 24, must not contain "=begin=" or "=end=")
   SV_API bool svAddFloatValue(const char *name, float Value);
 
-  // frecuence rec
+  // Set sampling period (cycleRecMs) and packet size (packetSz).
+  // Must be called before first svAdd*Value and before svConnect; returns false otherwise.
   SV_API bool svSetParam(int cycleRecMs, int packetSz);
 }
