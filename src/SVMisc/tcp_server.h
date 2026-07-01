@@ -34,14 +34,12 @@ namespace SV_Misc {
 
     using ErrorCBack = std::function<void(const std::string& err)>;
 
-    bool start(const std::string& addr, uint16_t port, bool intoOtherThread = true);
+    std::string start(const std::string& addr, uint16_t port,
+                      DataCBack dataCb = {},
+                      ErrorCBack errorCb = {},
+                      bool intoOtherThread = true);
 
+    // Safe from dataCBack/worker thread: initiates shutdown and detaches worker (no self-join).
     void stop();
-
-    bool setDataCBack(DataCBack);
-
-    bool setErrorCBack(ErrorCBack);
-
-    std::string errorStr();
   }
 }

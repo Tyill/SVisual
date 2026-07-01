@@ -23,133 +23,178 @@
 // THE SOFTWARE.
 //
 #include "SVMisc/misc.h"
-#include <fstream>
 #include <ctime>
 #include <thread>
 #include <chrono>
-#include <cmath>
 
 #ifdef WIN32
 #include <windows.h>
 #else
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 #endif
 
-using namespace std;
-
 namespace SV_Misc {
+namespace {
 
-  // тек дата %Y%m%d
-  string currDateS() {
+bool localTm(time_t t, tm& out) {
+#ifdef _WIN32
+  return localtime_s(&out, &t) == 0;
+#else
+  return localtime_r(&t, &out) != nullptr;
+#endif
+}
 
+bool gmTm(time_t t, tm& out) {
+#ifdef _WIN32
+  return gmtime_s(&out, &t) == 0;
+#else
+  return gmtime_r(&t, &out) != nullptr;
+#endif
+}
+
+bool isDirectory(const std::string& path) {
+#if defined(_WIN32)
+  const DWORD attr = GetFileAttributesA(path.c_str());
+  if (attr == INVALID_FILE_ATTRIBUTES)
+    return false;
+  return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+#else
+  struct stat st{};
+  if (stat(path.c_str(), &st) != 0)
+    return false;
+  return S_ISDIR(st.st_mode);
+#endif
+}
+
+bool mkdirSegment(const std::string& path) {
+  if (path.empty())
+    return true;
+#if defined(_WIN32)
+  if (CreateDirectoryA(path.c_str(), NULL))
+    return true;
+  if (GetLastError() == ERROR_ALREADY_EXISTS)
+    return isDirectory(path);
+  return false;
+#else
+  if (mkdir(path.c_str(), 0755) == 0)
+    return true;
+  if (errno == EEXIST)
+    return isDirectory(path);
+  return false;
+#endif
+}
+
+std::string parentDirectoryPath(const std::string& path) {
+  const auto pos = path.find_last_of("/\\");
+  if (pos == std::string::npos)
+    return {};
+  return path.substr(0, pos);
+}
+
+} // namespace
+
+  std::string currDateS() {
     time_t ct = time(nullptr);
-    tm* lct = localtime(&ct);
+    tm lct{};
+    if (!localTm(ct, lct))
+      return {};
 
     char curDate[32];
-    strftime(curDate, 32, "%Y%m%d", lct);
-
+    strftime(curDate, sizeof(curDate), "%Y%m%d", &lct);
     return curDate;
   }
 
-  // тек дата-время %Y%m%d_%H%M
-  string currDateTimeEx() {
-
+  std::string currDateTimeEx() {
     time_t ct = time(nullptr);
-    tm* lct = localtime(&ct);
+    tm lct{};
+    if (!localTm(ct, lct))
+      return {};
 
     char curDate[32];
-    strftime(curDate, 32, "%Y%m%d_%H%M", lct);
-
+    strftime(curDate, sizeof(curDate), "%Y%m%d_%H%M", &lct);
     return curDate;
   }
 
-  // тек дата-время %Y-%m-%d %H:%M:%S
-  string currDateTime() {
-
+  std::string currDateTime() {
     time_t ct = time(nullptr);
-    tm* lct = localtime(&ct);
+    tm lct{};
+    if (!localTm(ct, lct))
+      return {};
 
     char curDate[32];
-    strftime(curDate, 32, "%d-%m-%y %H:%M:%S", lct);
-
+    strftime(curDate, sizeof(curDate), "%d-%m-%y %H:%M:%S", &lct);
     return curDate;
   }
 
-  // тек дата-время %Y-%m-%d %H:%M:%S:%MS
-  string currDateTimeMs() {
-
+  std::string currDateTimeMs() {
     time_t ct = time(nullptr);
-    tm* lct = localtime(&ct);
+    tm lct{};
+    if (!localTm(ct, lct))
+      return {};
 
-    uint64_t ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()).time_since_epoch().count();
-    uint64_t mspr = ms / 1000;
-    ms -= mspr * 1000;
+    const uint64_t ms = std::chrono::time_point_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now()).time_since_epoch().count() % 1000;
 
     char curDate[32];
-    strftime(curDate, 32, "%Y-%m-%d %H:%M:%S:", lct);
-   
-    return string(curDate) + to_string(ms);
+    strftime(curDate, sizeof(curDate), "%Y-%m-%d %H:%M:%S:", &lct);
+    return std::string(curDate) + std::to_string(ms);
   }
 
-  // тек дата-время %Y-%m-%d %H:%M:%S
-  std::string currDateTimeSQL() {
-
-    time_t ct = time(nullptr);
-    tm* lct = localtime(&ct);
-
-    char curDate[32];
-    strftime(curDate, 32, "%Y-%m-%d %H:%M:%S", (const tm *)&lct);
-
-    return curDate;
-  }
-
-  uint64_t currDateTimeSinceEpochMs(){
-
-    auto now = std::chrono::system_clock::now();
-    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-
-    return now_ms.time_since_epoch().count();
+  uint64_t currDateTimeSinceEpochMs() {
+    const auto now = std::chrono::system_clock::now();
+    return std::chrono::time_point_cast<std::chrono::milliseconds>(now)
+        .time_since_epoch().count();
   }
 
   int hourOffsFromUTC() {
+    const time_t rawtime = time(nullptr);
+    tm gmt{};
+    tm local{};
+    if (!gmTm(rawtime, gmt) || !localTm(rawtime, local))
+      return 0;
 
-    time_t rawtime = time(NULL);
-    struct tm *ptm = gmtime(&rawtime);
-    time_t gmt = mktime(ptm);
-    ptm = localtime(&rawtime);
-
-    return int((rawtime - gmt + (ptm->tm_isdst ? 3600 : 0)) / 3600);
-  }
-  
-  bool isFileExist(const std::string &name) {
-    ifstream f(name.c_str());
-    return f.good();
+    const time_t gmtSec = mktime(&gmt);
+    return int((rawtime - gmtSec + (local.tm_isdst ? 3600 : 0)) / 3600);
   }
 
-  // автосоздание субдиректорий
-  bool createSubDirectory(string strDirs) {
-    if (isFileExist(strDirs)) return true;
+  bool createSubDirectory(std::string path) {
+    if (path.empty())
+      return true;
 
-    int sz = int(strDirs.size()), ret = 0;
-    string strTmp = "";
-    for (int i = 0; i < sz; ++i) {
-      char ch = strDirs[i];
-      if (ch != '\\' && ch != '/') strTmp += ch;
-      else {
-#if defined(_WIN32)
-        strTmp += "\\";
-        ret = CreateDirectoryA(strTmp.c_str(), NULL);
-#else
-        strTmp += "/";
-        ret = mkdir(strTmp.c_str(), 0733);
-#endif
+    const std::string dirPath = parentDirectoryPath(path);
+    if (dirPath.empty())
+      return true;
+
+    std::string accumulated;
+    accumulated.reserve(dirPath.size());
+
+    for (size_t i = 0; i < dirPath.size(); ++i) {
+      const char ch = dirPath[i];
+      if (ch != '\\' && ch != '/') {
+        accumulated += ch;
+        continue;
       }
+
+#if defined(_WIN32)
+      accumulated += '\\';
+#else
+      accumulated += '/';
+#endif
+      if (accumulated.size() <= 1)
+        continue;
+
+      if (!mkdirSegment(accumulated))
+        return false;
     }
-    return ret == 0;
+
+    if (!accumulated.empty() && !mkdirSegment(accumulated))
+      return false;
+
+    return true;
   }
 
-  void sleepMs(uint64_t ms){
+  void sleepMs(uint64_t ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
   }
 }

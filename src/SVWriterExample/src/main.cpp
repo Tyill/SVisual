@@ -36,20 +36,23 @@ void statusMess(const string& mess){
 
 int main(int argc, char* argv[]){
 
-  SV_Misc::TCPServer::setErrorCBack(statusMess);
-
-  SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
-
   SV_Srv::Config scng;
   scng.outArchiveEna = true;
 
   string addr = argc > 1 ? argv[1] : "127.0.0.1";
   int port = argc > 2 ? atoi(argv[2]) : 2144;
 
-  if (SV_Srv::startServer(scng, statusMess) && SV_Misc::TCPServer::start(addr, port)){
-    statusMess("Run " + addr + " " + to_string(port));
-    while (true)
-      SV_Misc::sleepMs(1000);
+  if (SV_Srv::startServer(scng, statusMess)) {
+    const auto tcpErr = SV_Misc::TCPServer::start(addr, port, SV_Srv::receiveData, statusMess);
+    if (tcpErr.empty()) {
+      statusMess("Run " + addr + " " + to_string(port));
+      while (true)
+        SV_Misc::sleepMs(1000);
+    }
+    else {
+      statusMess("No run " + addr + " " + to_string(port) + ": " + tcpErr);
+      cin.get();
+    }
   }
   else
   {

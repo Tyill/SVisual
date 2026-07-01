@@ -25,7 +25,6 @@
 #pragma once
         
 #include <string>
-#include <vector>
 #include <cstdint>
 
 namespace SV_Misc {
@@ -36,20 +35,15 @@ namespace SV_Misc {
     // тек дата-время %Y%m%d_%H%M
     std::string currDateTimeEx();
 
-    // тек дата-время %Y-%m-%d %H:%M:%S
+    // тек дата-время %d-%m-%y %H:%M:%S
     std::string currDateTime();
 
     // тек дата-время %Y-%m-%d %H:%M:%S:%MS
     std::string currDateTimeMs();
 
-    // тек дата-время %Y-%m-%d %H:%M:%S
-    std::string currDateTimeSQL();
-
     uint64_t currDateTimeSinceEpochMs();
 
     int hourOffsFromUTC();
-
-    std::vector<std::string> split(std::string str, const char *sep);
 
     // автосоздание субдиректорий
     bool createSubDirectory(std::string strDirs);

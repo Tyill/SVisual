@@ -127,14 +127,14 @@ MainWin::MainWin(QWidget *parent)
       comReaders_.push_back(comReader);
     }
   }else{
-    if (SV_Misc::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port)){
+    const auto tcpErr = SV_Misc::TCPServer::start(cng.tcp_addr.toStdString(), cng.tcp_port, SV_Srv::receiveData);
+    if (tcpErr.empty()) {
       statusMess(QString(tr("TCP cервер запущен: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
-      if (SV_Srv::startServer(srvCng, statusCb)) {
-        SV_Misc::TCPServer::setDataCBack(SV_Srv::receiveData);
-      }
+      SV_Srv::startServer(srvCng, statusCb);
     }
     else
-      statusMess(QString(tr("Не удалось запустить TCP сервер: адрес %1 порт %2").arg(cng.tcp_addr).arg(cng.tcp_port)));
+      statusMess(QString(tr("Не удалось запустить TCP сервер: адрес %1 порт %2 (%3)")
+        .arg(cng.tcp_addr).arg(cng.tcp_port).arg(QString::fromStdString(tcpErr))));
   }
 
   // web
