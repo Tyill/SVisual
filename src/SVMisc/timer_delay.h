@@ -35,7 +35,9 @@ class TimerDelay {
     TimerDelay() {
       _cycleTm = _prevCycTm = currDateTimeSinceEpochMs();
       time_t t = time(nullptr);
-      _prevTm = *localtime(&t);
+      tm lct{};
+      if (copyLocalTm(t, lct))
+        _prevTm = lct;
     }
     void update() {
       uint64_t ct = currDateTimeSinceEpochMs();
@@ -46,13 +48,14 @@ class TimerDelay {
         if (!_tmrs[i].active) _tmrs[i].count = 0;
         _tmrs[i].active = false;
       }
-      // импульсы времени
       time_t t = time(nullptr);
-      tm* lct = localtime(&t);
-      _hourOnc = (lct->tm_hour != _prevTm.tm_hour);
-      _minOnc = (lct->tm_min != _prevTm.tm_min);
-      _secOnc = (lct->tm_sec != _prevTm.tm_sec);
-      _prevTm = *lct;
+      tm lct{};
+      if (!copyLocalTm(t, lct))
+        return;
+      _hourOnc = (lct.tm_hour != _prevTm.tm_hour);
+      _minOnc = (lct.tm_min != _prevTm.tm_min);
+      _secOnc = (lct.tm_sec != _prevTm.tm_sec);
+      _prevTm = lct;
     }
     uint64_t getCTime(){
       return currDateTimeSinceEpochMs() - _prevCycTm;
@@ -109,6 +112,14 @@ class TimerDelay {
     }
 
   private:
+    static bool copyLocalTm(time_t t, tm& out) {
+#ifdef _WIN32
+      return localtime_s(&out, &t) == 0;
+#else
+      return localtime_r(&t, &out) != nullptr;
+#endif
+    }
+
     struct TmBase{
       uint64_t count;         
       bool active;           
@@ -119,7 +130,7 @@ class TimerDelay {
     uint64_t _prevCycTm;            
     uint64_t _cycleTm;            
 
-    tm _prevTm;
+    tm _prevTm{};
 
     bool _secOnc = false;
     bool _minOnc = false;
