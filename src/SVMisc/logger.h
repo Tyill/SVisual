@@ -32,102 +32,117 @@
 #include <thread>
 #include <condition_variable>
 #include <mutex>
-#include <atomic>
 
 namespace SV_Misc {
-  class Logger {  
+  class Logger {
   public:
-     
-    Logger(const std::string& pathFile = ""):
-      pathFile_(pathFile){
+    explicit Logger(const std::string& pathFile = "") :
+      pathFile_(pathFile) {
 
       createSubDirectory(pathFile);
-
       deqMess_.resize(MAX_CNT_MESS);
-      
       thrWriteMess_ = std::thread(&Logger::writeCycle, this);
     }
-    
+
     ~Logger() {
       {
-        std::lock_guard<std::mutex> lck (mtxRd_);
+        std::lock_guard<std::mutex> lck(mtx_);
         fStop_ = true;
         cval_.notify_one();
-      }      
-      if (thrWriteMess_.joinable()){
-        thrWriteMess_.join();
       }
+      if (thrWriteMess_.joinable())
+        thrWriteMess_.join();
     }
 
     void setPathFile(const std::string& pathFile) {
       createSubDirectory(pathFile);
-
-      std::lock_guard<std::mutex> lck(mtxRd_);
-      
+      std::lock_guard<std::mutex> lck(mtx_);
       pathFile_ = pathFile;
     }
-    
-    void writeLine(const std::string &mess) {
 
-      std::lock_guard<std::mutex> lck(mtxWr_);
+    void writeLine(const std::string& mess) {
+      std::lock_guard<std::mutex> lck(mtx_);
+
+      const int nextWrite = (writeMessCnt_ + 1) % MAX_CNT_MESS;
+      if (nextWrite == readMessCnt_)
+        readMessCnt_ = (readMessCnt_ + 1) % MAX_CNT_MESS;
 
       deqMess_[writeMessCnt_] = Message{ currDateTimeMs(), mess };
-      ++writeMessCnt_;
-      if (writeMessCnt_ >= MAX_CNT_MESS){
-        writeMessCnt_ = 0;
-      }
+      writeMessCnt_ = nextWrite;
       cval_.notify_one();
     }
 
   private:
+    static const int MAX_CNT_MESS = 100;
 
-    const int MAX_CNT_MESS = 100;
+    struct Message {
+      std::string cTime;
+      std::string mess;
+    };
 
     std::string pathFile_;
+    int readMessCnt_ = 0;
+    int writeMessCnt_ = 0;
 
-    int readMessCnt_ = 0, writeMessCnt_ = 0;
-
-    struct Message { 
-      std::string cTime;
-      std::string mess;        
-    };
     std::vector<Message> deqMess_;
 
-    std::mutex mtxWr_, mtxRd_;
+    std::mutex mtx_;
     std::thread thrWriteMess_;
     std::condition_variable cval_;
-    std::atomic_bool fStop_{};
-    
-    void writeCycle() {
+    bool fStop_ = false;
 
-      while (!fStop_) {
-
-        std::unique_lock<std::mutex> lck(mtxRd_);
-        cval_.wait(lck);
-
-        std::ofstream slg(pathFile_.c_str(), std::ios::app);
-        std::vector<Message> mess;
-        while (readMess(mess)) {
-          for (const auto& m : mess){
-            slg << "[" << m.cTime << "] " << m.mess << std::endl;
-          }
-        }
-        slg.close();
-      }
-    }
-    bool readMess(std::vector<Message>& mess){
-      std::lock_guard<std::mutex> lck(mtxWr_);
-      
-      mess.clear();
-      while (readMessCnt_ != writeMessCnt_){
+    std::vector<Message> drainLocked() {
+      std::vector<Message> mess;
+      while (readMessCnt_ != writeMessCnt_) {
         mess.push_back(deqMess_[readMessCnt_]);
-     
-        ++readMessCnt_;
-        if (readMessCnt_ >= MAX_CNT_MESS){
-          readMessCnt_ = 0;
-        } 
+        readMessCnt_ = (readMessCnt_ + 1) % MAX_CNT_MESS;
       }
-      return !mess.empty();
+      return mess;
+    }
+
+    static void writeBatch(const std::string& path, const std::vector<Message>& mess) {
+      if (mess.empty() || path.empty())
+        return;
+
+      std::ofstream slg(path.c_str(), std::ios::app);
+      if (!slg.good())
+        return;
+
+      for (const auto& m : mess)
+        slg << "[" << m.cTime << "] " << m.mess << std::endl;
+    }
+
+    void writeCycle() {
+      while (true) {
+        std::vector<Message> batch;
+        std::string path;
+        bool stop = false;
+
+        {
+          std::unique_lock<std::mutex> lck(mtx_);
+          cval_.wait(lck, [&] {
+            return fStop_ || readMessCnt_ != writeMessCnt_;
+          });
+
+          batch = drainLocked();
+          path = pathFile_;
+          stop = fStop_;
+        }
+
+        writeBatch(path, batch);
+
+        if (stop) {
+          std::vector<Message> tail;
+          std::string tailPath;
+          {
+            std::lock_guard<std::mutex> lck(mtx_);
+            tail = drainLocked();
+            tailPath = pathFile_;
+          }
+          writeBatch(tailPath, tail);
+          break;
+        }
+      }
     }
   };
 }

@@ -28,6 +28,7 @@
 #include "thread_update.h"
 #include "SVMisc/misc.h"
 
+#include <atomic>
 #include <cstring>
 #include <shared_mutex>
 
@@ -49,6 +50,7 @@ namespace SV_Srv {
 
   BufferData m_buffData;
   ThreadUpdate* m_pThrUpdSignal = nullptr;
+  std::atomic_bool m_isRunning{false};
 
   std::map <std::string, SV_Base::ModuleData*> m_moduleData;
   std::map <std::string, SV_Base::SignalData*> m_signalData;
@@ -71,14 +73,19 @@ namespace SV_Srv {
     m_buffData.init(cng);
 
     m_pThrUpdSignal = new ThreadUpdate(cng, m_buffData);
+    m_isRunning.store(true, std::memory_order_release);
 
     return true;
   }
 
   void stopServer(){
-    if (m_pThrUpdSignal){
-      delete m_pThrUpdSignal;
+    ThreadUpdate* thr = nullptr;
+    {
+      std::lock_guard<std::mutex> lck(m_mtxCommon);
+      m_isRunning.store(false, std::memory_order_release);
+      std::swap(thr, m_pThrUpdSignal);
     }
+    delete thr;
   }
     
   void setConfig(const Config& cng){
@@ -88,6 +95,8 @@ namespace SV_Srv {
   }
 
   void receiveData(std::string& inout, std::string& out){
+    if (!m_isRunning.load(std::memory_order_acquire)) return;
+
     vector<pair<size_t, size_t>> bePos;
     const std::string_view beginMess = "=begin=";
     const std::string_view endMess = "=end=";

@@ -28,86 +28,117 @@
 
 #include <cstring>
 
-namespace SV_Misc{
-  namespace TCPClient {
+#ifdef WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#endif
+
+namespace SV_Misc {
+namespace TCPClient {
 
 #ifdef WIN32
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
+namespace {
 
 SOCKET _socket = INVALID_SOCKET;
-         
-bool connect(const std::string& addr, int port, bool noBlock) {
+bool _wsaStarted = false;
 
+bool ensureWsa() {
+  if (_wsaStarted)
+    return true;
   WSADATA wsaData;
-  _socket = INVALID_SOCKET;
-  struct addrinfo *adInfo = NULL, hints;
-
-  // Initialize Winsock  
-  if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+  if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     return false;
-  }
+  _wsaStarted = true;
+  return true;
+}
 
-  ZeroMemory(&hints, sizeof(hints));
+void releaseWsa() {
+  if (!_wsaStarted)
+    return;
+  WSACleanup();
+  _wsaStarted = false;
+}
+
+void closeSocket() {
+  if (_socket == INVALID_SOCKET)
+    return;
+  shutdown(_socket, SD_BOTH);
+  closesocket(_socket);
+  _socket = INVALID_SOCKET;
+}
+
+} // namespace
+
+bool connect(const std::string& addr, int port, bool noBlock) {
+  closeSocket();
+
+  if (!ensureWsa())
+    return false;
+
+  addrinfo hints{};
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = IPPROTO_TCP;
 
-  // Resolve the server address and port
   char cport[11];
-  (sprintf)(cport, "%d", port); 
-  if (getaddrinfo(addr.c_str(), cport, &hints, &adInfo) != 0) {
-    WSACleanup();
+  (sprintf)(cport, "%d", port);
+
+  addrinfo* adInfo = nullptr;
+  if (getaddrinfo(addr.c_str(), cport, &hints, &adInfo) != 0)
     return false;
-  }
 
   _socket = socket(AF_INET, SOCK_STREAM, 0);
   if (_socket == INVALID_SOCKET) {
-    WSACleanup();
+    freeaddrinfo(adInfo);
     return false;
   }
 
-  // connects to server.
-  if (connect(_socket, adInfo->ai_addr, (int)adInfo->ai_addrlen) == SOCKET_ERROR) {
-    closesocket(_socket);
+  if (::connect(_socket, adInfo->ai_addr, (int)adInfo->ai_addrlen) == SOCKET_ERROR) {
+    freeaddrinfo(adInfo);
+    closeSocket();
     return false;
   }
+
+  freeaddrinfo(adInfo);
 
   if (noBlock) {
-    BOOL l = TRUE;
-    int er = ioctlsocket(_socket, FIONBIO, (unsigned long *)&l);
+    u_long mode = 1;
+    ioctlsocket(_socket, FIONBIO, &mode);
   }
 
   return true;
 }
 
 bool disconnect() {
-
-  if (_socket != INVALID_SOCKET){
-    shutdown(_socket, SD_BOTH);
-    closesocket(_socket);
-    WSACleanup();
-  }
+  closeSocket();
+  releaseWsa();
   return true;
 }
 
-int sendAll(const std::string& mess, int flags){
-
-  int total = 0,
-      len = int(mess.size());
-  while (total < len){
-    int n = send(_socket, mess.c_str() + total, len - total, flags);
-    if (n == SOCKET_ERROR){
-      total = SOCKET_ERROR;
-      break;
-    }
+int sendAll(const std::string& mess, int flags) {
+  int total = 0;
+  const int len = int(mess.size());
+  while (total < len) {
+    const int n = send(_socket, mess.c_str() + total, len - total, flags);
+    if (n == SOCKET_ERROR)
+      return SOCKET_ERROR;
     total += n;
   }
   return total;
 }
 
-bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySend) {
+bool sendData(const std::string& in, std::string& out, bool disconn, bool onlySend) {
+  if (_socket == INVALID_SOCKET)
+    return false;
 
   if (sendAll(in, 0) == SOCKET_ERROR) {
     disconnect();
@@ -115,59 +146,69 @@ bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySe
   }
 
   if (!onlySend) {
-
-    // Receive until the peer closes the connection
     const int recvbuflen = 2048;
     static char recvbuf[recvbuflen];
 
     out.clear();
     while (true) {
-      int rlen = recv(_socket, recvbuf, recvbuflen, 0);
+      const int rlen = recv(_socket, recvbuf, recvbuflen, 0);
       if (rlen > 0) {
-        size_t csz = out.size();
+        const size_t csz = out.size();
         out.resize(csz + size_t(rlen));
         memcpy((char*)out.data() + csz, recvbuf, rlen);
 
-        if (recvbuf[rlen - 1] == '\0') break;
+        if (recvbuf[rlen - 1] == '\0')
+          break;
+      } else if (rlen == 0) {
+        break;
+      } else if (rlen == SOCKET_ERROR && WSAGetLastError() == WSAEWOULDBLOCK) {
+        SV_Misc::sleepMs(1);
+      } else {
+        break;
       }
-      else if (WSAGetLastError() == WSAEWOULDBLOCK) {
-        SV_Misc::sleepMs(0);
-      }
-      else break;
     }
   }
 
-  if (disconn) disconnect();
+  if (disconn)
+    disconnect();
 
   return true;
 }
-    
+
 #else
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fcntl.h>
+namespace {
 
 int _socket = -1;
 
+void closeSocket() {
+  if (_socket < 0)
+    return;
+  ::close(_socket);
+  _socket = -1;
+}
+
+} // namespace
+
 bool connect(const std::string& addr, int port, bool noBlock) {
+  closeSocket();
 
-  sockaddr_in saddr;
-
-  _socket = socket(AF_INET, SOCK_STREAM, 0);
-  if(_socket < 0)
+  _socket = ::socket(AF_INET, SOCK_STREAM, 0);
+  if (_socket < 0)
     return false;
 
+  sockaddr_in saddr{};
   saddr.sin_family = AF_INET;
   saddr.sin_port = htons(port);
-  if (inet_aton(addr.c_str(), &saddr.sin_addr) == 0)
+  if (inet_aton(addr.c_str(), &saddr.sin_addr) == 0) {
+    closeSocket();
     return false;
+  }
 
-  if(connect(_socket, (struct sockaddr*)&saddr, sizeof(saddr)) < 0)
+  if (::connect(_socket, reinterpret_cast<sockaddr*>(&saddr), sizeof(saddr)) < 0) {
+    closeSocket();
     return false;
+  }
 
   if (noBlock)
     fcntl(_socket, F_SETFL, O_NONBLOCK);
@@ -176,69 +217,60 @@ bool connect(const std::string& addr, int port, bool noBlock) {
 }
 
 bool disconnect() {
-
-  if (_socket > 0) close(_socket);
-  _socket = -1;
+  closeSocket();
   return true;
 }
 
-int sendAll(const std::string& mess, int flags){
-
-  int total = 0,
-      len = int(mess.size());
+int sendAll(const std::string& mess, int flags) {
+  int total = 0;
+  const int len = int(mess.size());
   while (total < len) {
-    int n = send(_socket, mess.c_str() + total, len - total, flags);
-    if (n == -1) {
-      total = -1;
-      break;
-    }
+    const int n = send(_socket, mess.c_str() + total, len - total, flags);
+    if (n == -1)
+      return -1;
     total += n;
   }
   return total;
 }
 
-bool sendData(const std::string& in, std::string &out, bool disconn, bool onlySend) {
-
-  if (_socket < 0){
+bool sendData(const std::string& in, std::string& out, bool disconn, bool onlySend) {
+  if (_socket < 0)
     return false;
-  }
 
-  // Send an initial buffer
-  int ret = sendAll(in, 0);
+  const int ret = sendAll(in, 0);
   if (ret == -1) {
     disconnect();
     return false;
   }
 
   if (!onlySend) {
-
-    // Receive until the peer closes the connection
     const int recvbuflen = 2048;
     static char recvbuf[recvbuflen];
     out.clear();
     while (true) {
-      int rlen = recv(_socket, recvbuf, recvbuflen, 0);
+      const int rlen = recv(_socket, recvbuf, recvbuflen, 0);
       if (rlen > 0) {
-
-        size_t csz = out.size();
+        const size_t csz = out.size();
         out.resize(csz + rlen);
-        memcpy((char*) out.data() + csz, recvbuf, rlen);
+        memcpy((char*)out.data() + csz, recvbuf, rlen);
 
-        if (recvbuf[rlen - 1] == '\0') break;
-      } 
-      else if (rlen == -1) {
-        SV_Misc::sleepMs(0);
-      } 
-      else break;
+        if (recvbuf[rlen - 1] == '\0')
+          break;
+      } else if (rlen == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+        SV_Misc::sleepMs(1);
+      } else {
+        break;
+      }
     }
   }
 
-  if (disconn) disconnect();
+  if (disconn)
+    disconnect();
 
   return true;
 }
 
 #endif
-    
+
 }
 }

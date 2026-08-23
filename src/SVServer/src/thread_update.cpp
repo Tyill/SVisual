@@ -106,8 +106,6 @@ void ThreadUpdate::addSignal(const BufferData::InputData& bp){
 void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sref, std::map<std::string, SV_Base::ModuleData*>& mref,
                                  std::map<std::string, bool>& signActive, std::map<std::string, bool>& moduleActive){
 
-    std::lock_guard lock(SV_Srv::m_mtxRW);
-
     bool isNewSign = false, isBuffActive = false;
 
     size_t buffSz = 2 * 3600000 / SV_CYCLESAVE_MS; // 2 часа
@@ -131,26 +129,31 @@ void ThreadUpdate::updateSignals(std::map<std::string, SV_Base::SignalData*>& sr
         }
 
         auto sdata = sref[sign];
+        if (!sdata) continue;
 
-        signActive[sign] = true;
-        moduleActive[bufPos.module] = true;
+        {
+          std::lock_guard lock(SV_Srv::m_mtxRW);
 
-        sdata->lastData.beginTime = bufPos.data.beginTime;
-        memcpy(sdata->lastData.vals, bufPos.data.vals, packSz);
-        if (sdata->isBuffEnable) {
-          size_t vp = sdata->buffValuePos;
-          sdata->buffData[vp].beginTime = bufPos.data.beginTime;
-          memcpy(sdata->buffData[vp].vals, bufPos.data.vals, packSz);
+          signActive[sign] = true;
+          moduleActive[bufPos.module] = true;
 
-          updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
+          sdata->lastData.beginTime = bufPos.data.beginTime;
+          memcpy(sdata->lastData.vals, bufPos.data.vals, packSz);
+          if (sdata->isBuffEnable) {
+            size_t vp = sdata->buffValuePos;
+            sdata->buffData[vp].beginTime = bufPos.data.beginTime;
+            memcpy(sdata->buffData[vp].vals, bufPos.data.vals, packSz);
 
-          ++vp;
-          if (vp == buffSz) vp = 0;
-          sdata->buffValuePos = vp;
+            updateSignalsBuff(sdata, sdata->buffBeginPos, vp);
 
-          if (vp == sdata->buffBeginPos) {
-              ++sdata->buffBeginPos;
-              if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
+            ++vp;
+            if (vp == buffSz) vp = 0;
+            sdata->buffValuePos = vp;
+
+            if (vp == sdata->buffBeginPos) {
+                ++sdata->buffBeginPos;
+                if (sdata->buffBeginPos >= buffSz) sdata->buffBeginPos = 0;
+            }
           }
         }
         if (cng.outArchiveEna || cng.outDataBaseEna){

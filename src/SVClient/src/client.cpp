@@ -80,6 +80,8 @@ namespace SV {
            
       if (_isConnect) return true;
 
+      if (!moduleName || !ipAddr) return false;
+
       if ((strlen(moduleName) == 0) || (strlen(moduleName) >= SV_NAMESZ) ||
            strstr(moduleName, messEnd) || strstr(moduleName, messBegin)) {
         return false;
@@ -92,7 +94,10 @@ namespace SV {
       _isConnect = SV_Misc::TCPClient::connect(ipAddr, port);
 
       if (_isConnect) {
-        _thr = std::thread(sendCycle);
+        _thrStop = false;
+        if (!_thr.joinable()) {
+          _thr = std::thread(sendCycle);
+        }
       }
 
       return _isConnect;
@@ -136,35 +141,41 @@ namespace SV {
             
         std::lock_guard<std::mutex> lck(_mtx);
 
-        cng = Config(cycleRecMs, packetSz);
+        if (_values.empty()) {
+          cng = Config(cycleRecMs, packetSz);
+        } else {
+          cng.cycleRecMs = cycleRecMs;
+        }
 
         return true;
     }
            
     bool addValue(const char* name, SV_Base::ValueType type, SV_Base::Value val, bool onlyPosFront) {
-     
-      if (_values.find(name) == _values.end()) {
-        if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ) || 
+
+      if (!name) return false;
+
+      std::lock_guard<std::mutex> lck(_mtx);
+
+      auto it = _values.find(name);
+      if (it == _values.end()) {
+        if ((strlen(name) == 0) || (strlen(name) >= SV_NAMESZ) ||
              strstr(name, "=end=") || strstr(name, "=begin=")){
           return false;
         }
         ValueRec vr;
         vr.vals = new SV_Base::Value[SV_PACKETSZ];
         memset(vr.vals, 0, sizeof(SV_Base::Value) * SV_PACKETSZ);
-       
+
         strcpy(vr.name, name);
         vr.type = type;
         vr.isOnlyFront = onlyPosFront;
         vr.isActive = false;
-        {  std::lock_guard<std::mutex> lck(_mtx);
-            _values.insert({ name, vr });
-        }
+        it = _values.insert({ name, vr }).first;
       }
-      {  std::lock_guard<std::mutex> lck(_mtx);
-          ValueRec& vr = _values[name];
-          vr.vals[_curCycle] = val;
-          vr.isActive = true;
-      }
+
+      ValueRec& vr = it->second;
+      vr.vals[_curCycle] = val;
+      vr.isActive = true;
       return true;
     }
 
@@ -187,7 +198,11 @@ namespace SV {
       char* dptr = (char*)data.c_str();
       memcpy(dptr, messBegin, startSz);               offs += startSz;
       memcpy(dptr + offs, &dataSz, SINT);             offs += SINT;
-      memcpy(dptr + offs, _module.data(), SV_NAMESZ); offs += SV_NAMESZ;
+      {
+        char modName[SV_NAMESZ]{};
+        _module.copy(modName, SV_NAMESZ - 1);
+        memcpy(dptr + offs, modName, SV_NAMESZ);      offs += SV_NAMESZ;
+      }
 
       for (const auto& v : _values) {
         memcpy(dptr + offs, v.second.name, SV_NAMESZ);

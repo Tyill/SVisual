@@ -28,6 +28,7 @@
 #include "SVBase/sv_limits.h"
 #include "zlib/zlib.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
 #include <fstream>
@@ -37,6 +38,15 @@
 using namespace std;
 
 void statusMessage(const std::string& mess);
+
+namespace {
+  void writeFixedField(char* dst, size_t fieldSz, const std::string& s) {
+    memset(dst, 0, fieldSz);
+    if (!s.empty()) {
+      memcpy(dst, s.c_str(), std::min(s.size(), fieldSz - 1));
+    }
+  }
+}
 
 void Archive::init(const SV_Srv::Config& cng_) {
 
@@ -165,13 +175,13 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
         char* pIn = inArr.data();       
         
         int vCnt = valPos[ad.first];
-        if (vCnt > 0) {
-          memcpy(pIn + csize, sign->name.c_str(), SV_NAMESZ);       csize += SV_NAMESZ;
-          memcpy(pIn + csize, sign->module.c_str(), SV_NAMESZ);     csize += SV_NAMESZ;
-          memcpy(pIn + csize, sign->group.c_str(), SV_NAMESZ);      csize += SV_NAMESZ;
-          memcpy(pIn + csize, sign->comment.c_str(), SV_COMMENTSZ); csize += SV_COMMENTSZ;
-          memcpy(pIn + csize, &sign->type, intSz);                  csize += intSz;
-          memcpy(pIn + csize, &vCnt, intSz);                        csize += intSz;
+        if (sign && vCnt > 0) {
+          writeFixedField(pIn + csize, SV_NAMESZ, sign->name);       csize += SV_NAMESZ;
+          writeFixedField(pIn + csize, SV_NAMESZ, sign->module);     csize += SV_NAMESZ;
+          writeFixedField(pIn + csize, SV_NAMESZ, sign->group);      csize += SV_NAMESZ;
+          writeFixedField(pIn + csize, SV_COMMENTSZ, sign->comment); csize += SV_COMMENTSZ;
+          memcpy(pIn + csize, &sign->type, intSz);                   csize += intSz;
+          memcpy(pIn + csize, &vCnt, intSz);                         csize += intSz;
 
           for (int j = 0; j < vCnt; ++j) {
             memcpy(pIn + csize, &ad.second[j].beginTime, tmSz); csize += tmSz;
