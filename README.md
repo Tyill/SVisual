@@ -14,6 +14,7 @@ The SVisual software is designed to monitor the operation of the MK devices, deb
 <img src="docs/images/sv-web.gif" width="400" height="300"/>
 </p>
 
+**Documentation:** [English](docs/en/README.md) · [Русский](docs/ru/README.md)
 
 ## Features
 
@@ -105,7 +106,9 @@ mkdir build
 cmake -B build -S . -DCMAKE_BUILD_TYPE="Release" && cmake --build build --parallel  
 ```
 
-## [Manual](docs) 
+## [Manual](docs/en/README.md)
+
+Russian: [docs/ru/README.md](docs/ru/README.md) 
 
 ## License
 Licensed under an [MIT-2.0]-[license](LICENSE).
