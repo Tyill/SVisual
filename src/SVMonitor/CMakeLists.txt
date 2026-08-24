@@ -22,3 +22,14 @@ target_link_libraries(SVMonitor sqlite3 SVBase SVMisc SVGraphPanel SVTriggerDial
                       SVExportDialog SVScriptDialog SVServer SVWebServer SVZabbix)
 
 target_link_libraries(SVMonitor Qt5::Core Qt5::Widgets Qt5::Network Qt5::Gui Qt5::SerialPort Qt5::PrintSupport)
+
+set(WEB_UI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../SVWebServer/website/web)
+if(EXISTS ${WEB_UI_DIR}/index.html)
+  add_custom_command(TARGET SVMonitor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E remove_directory $<TARGET_FILE_DIR:SVMonitor>/web
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${WEB_UI_DIR}
+      $<TARGET_FILE_DIR:SVMonitor>/web
+    COMMENT "Deploying web UI to $<TARGET_FILE_DIR:SVMonitor>/web"
+  )
+endif()

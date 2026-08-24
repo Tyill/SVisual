@@ -36,6 +36,40 @@
 #include <QCoreApplication>
 
 
+static QString contentTypeForPath(const QString& page) {
+  const QString lower = page.toLower();
+
+  if (lower.endsWith(".html") || lower.endsWith(".htm"))
+    return "text/html; charset=utf-8";
+  if (lower.endsWith(".js") || lower.endsWith(".mjs"))
+    return "application/javascript; charset=utf-8";
+  if (lower.endsWith(".css"))
+    return "text/css; charset=utf-8";
+  if (lower.endsWith(".json"))
+    return "application/json; charset=utf-8";
+  if (lower.endsWith(".svg"))
+    return "image/svg+xml";
+  if (lower.endsWith(".png"))
+    return "image/png";
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg"))
+    return "image/jpeg";
+  if (lower.endsWith(".gif"))
+    return "image/gif";
+  if (lower.endsWith(".ico"))
+    return "image/x-icon";
+  if (lower.endsWith(".woff2"))
+    return "font/woff2";
+  if (lower.endsWith(".woff"))
+    return "font/woff";
+  if (lower.endsWith(".ttf"))
+    return "font/ttf";
+  if (lower.endsWith(".map"))
+    return "application/json; charset=utf-8";
+
+  return "application/octet-stream";
+}
+
+
 void WebServer::setConfig(const SV_Web::Config& cng_) {
 
   cng = cng_;
@@ -142,28 +176,22 @@ int response(http_parser* parser) {
     else if (page == "/api/allModules")
       json = socket->server_->jsonGetAllModules();
 
-    QString resp;
-    resp += QString("HTTP/1.1 200 OK\r\n")
-      + "Content-Type: application/json; charset=utf-8\r\n"
-      + "Content-Length: " + QString::number(json.size()) + "\r\n"
-      + "Connection: keep-alive\r\n"
-      + "\r\n";
+    const QByteArray body = json.toUtf8();
 
-    resp += json;
+    QByteArray resp;
+    resp += "HTTP/1.1 200 OK\r\n";
+    resp += "Content-Type: application/json; charset=utf-8\r\n";
+    resp += "Content-Length: " + QByteArray::number(body.size()) + "\r\n";
+    resp += "Connection: keep-alive\r\n";
+    resp += "\r\n";
+    resp += body;
 
-    socket->writeData(resp.toLocal8Bit(), resp.size());
+    socket->write(resp);
   }
   else {
 
     if (page == "/")
       page = "/index.html";
-
-    auto& fields = socket->reqFields_;
-
-    if (!fields.contains("Accept") || fields["Accept"].contains("text/html"))
-      fields["Accept"] = "text/html";
-    else if (fields["Accept"].contains("text/css"))
-      fields["Accept"] = "text/css";
 
     QByteArray html;
 
@@ -177,16 +205,17 @@ int response(http_parser* parser) {
       file.close();
     }
 
-    QString resp;
-    resp += QString("HTTP/1.1 200 OK\r\n")
-      + "Content-Type: " + fields["Accept"] + "\r\n"
-      + "Connection: keep-alive\r\n"
-      + "Content-Length: " + QString::number(html.size()) + "\r\n"
-      + "\r\n";
+    const QString contentType = contentTypeForPath(page);
 
+    QByteArray resp;
+    resp += "HTTP/1.1 200 OK\r\n";
+    resp += "Content-Type: " + contentType.toUtf8() + "\r\n";
+    resp += "Connection: keep-alive\r\n";
+    resp += "Content-Length: " + QByteArray::number(html.size()) + "\r\n";
+    resp += "\r\n";
     resp += html;
 
-    socket->writeData(resp.toLocal8Bit(), resp.size());
+    socket->write(resp);
   }
 
   return 0;
