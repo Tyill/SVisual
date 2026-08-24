@@ -1,0 +1,68 @@
+@font-face {
+  font-family: 'fontello';
+  src: url('/font/fontello.woff2?98938297') format('woff2'),
+    url('/font/fontello.woff?98938297') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^='icon-']:before,
+[class*=' icon-']:before {
+  font-family: 'fontello';
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: 0;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  margin-left: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-cog:before {
+  content: '\e800';
+}
+.icon-resize-vertical:before {
+  content: '\e801';
+}
+.icon-resize-horizontal:before {
+  content: '\e802';
+}
+.icon-cancel:before {
+  content: '\e803';
+}
+.icon-font:before {
+  content: '\e806';
+}
+.icon-doc:before {
+  content: '\e807';
+}
+.icon-play:before {
+  content: '\e808';
+}
+.icon-pause:before {
+  content: '\e809';
+}
+.icon-resize-full-alt:before {
+  content: '\f0b2';
+}
+.icon-brush:before {
+  content: '\f1fc';
+}
+
+.icon-left-dir:before {
+  content: '\e804';
+  float: right;
+  margin-top: 0.3em;
+}
+.icon-down-dir:before {
+  content: '\e805';
+  float: right;
+  margin-top: 0.3em;
+}
