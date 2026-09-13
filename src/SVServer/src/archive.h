@@ -29,6 +29,7 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
 #include <thread>
 
 class ClickHouseDB;
@@ -73,5 +74,6 @@ private:
 
   ClickHouseDB* m_chdb{};
   std::shared_ptr<std::thread> m_saveThread;
+  std::mutex m_mtx;
 
 };

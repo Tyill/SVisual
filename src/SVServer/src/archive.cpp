@@ -77,6 +77,7 @@ void Archive::setConfig(const SV_Srv::Config& cng_){
 
 void Archive::addSignal(const std::string& sname, const std::string& module, SV_Base::ValueType stype) {
 
+  std::lock_guard<std::mutex> lck(m_mtx);
   for (int aIndex = 0; aIndex < 2; ++aIndex){
     std::string sign = sname + module;
     auto& archiveData = m_archiveData[aIndex];
@@ -130,6 +131,8 @@ void Archive::copyToDisk(bool isStop){
 }
 
 void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
+
+  std::lock_guard<std::mutex> lck(m_mtx);
 
   auto& valPos = m_valPos[archiveIndex];
   auto& archiveData = m_archiveData[archiveIndex];
@@ -217,8 +220,6 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
   for(auto& v : valPos){
     v.second = 0;
   }
-
-  return;
 }
 
 bool Archive::compressData(size_t inSz, const vector<char>& inArr, size_t& outsz, vector<char>& outArr) {
