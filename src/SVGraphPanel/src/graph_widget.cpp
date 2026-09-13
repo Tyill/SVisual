@@ -1005,23 +1005,99 @@ size_t ringIndexBeforeTime(const std::vector<RecData>& buf, size_t start, size_t
   return static_cast<size_t>(it - buf.begin());
 }
 
+size_t selectBufStart(const std::vector<RecData>& buf, SV_Graph::ModeGr mode,
+    uint64_t tmZnBegin, uint64_t tmMinInterval,
+    size_t iBuf, size_t buffSz, size_t endPos) {
+  if ((mode == SV_Graph::ModeGr::Viewer) && (tmZnBegin < tmMinInterval)) {
+    auto bIt = std::lower_bound(buf.begin(), buf.end(), tmMinInterval,
+      [](const RecData& rd, uint64_t stm) {
+        return rd.beginTime < stm;
+      });
+    if (bIt != buf.begin()) {
+      --bIt;
+    }
+    return static_cast<size_t>(bIt - buf.begin());
+  }
+  if (mode == SV_Graph::ModeGr::Player) {
+    if (buffSz != 0 && ((endPos + 1) % buffSz) == iBuf) {
+      ++iBuf;
+      if (iBuf >= buffSz) iBuf = 0;
+    }
+    if (tmZnBegin < tmMinInterval) {
+      iBuf = ringIndexBeforeTime(buf, iBuf, endPos, buffSz, tmMinInterval);
+    }
+  }
+  return iBuf;
+}
+
+template<typename T>
+constexpr double sampleValue(Value v);
+
+template<>
+constexpr double sampleValue<int>(Value v) {
+  return v.vInt;
+}
+template<>
+constexpr double sampleValue<float>(Value v) {
+  return v.vFloat;
+}
+
+template<typename T>
+QPair<double, double> minMaxInWindow(SignalData* sign, size_t iBuf, size_t buffSz, size_t endPos,
+    uint64_t tmMinInterval, uint64_t tmMaxInterval, const SV_Graph::Config& cng) {
+  if (buffSz == 0 || iBuf == endPos) {
+    return {0, 1};
+  }
+
+  uint64_t tmZnBegin = sign->buffData[iBuf].beginTime;
+  uint64_t tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
+  double minVal = INT32_MAX,
+         maxVal = -INT32_MAX;
+
+  while (tmZnBegin < tmMaxInterval) {
+    if (tmZnEnd > tmMinInterval) {
+      const Value* vals = sign->buffData[iBuf].vals;
+      for (int i = 0; i < SV_PACKETSZ; ++i) {
+        const double v = sampleValue<T>(vals[i]);
+        if (v < minVal) minVal = v;
+        if (v > maxVal) maxVal = v;
+      }
+    }
+    ++iBuf;
+    if (iBuf >= buffSz) iBuf = 0;
+    if (iBuf != endPos) {
+      tmZnBegin = sign->buffData[iBuf].beginTime;
+      tmZnEnd = tmZnBegin + SV_CYCLESAVE_MS;
+    }
+    else break;
+  }
+
+  if (minVal == INT32_MAX) {
+    return {0, 1};
+  }
+  if (minVal == maxVal) {
+    minVal -= 0.1;
+    maxVal += 0.1;
+  }
+  return {minVal, maxVal};
+}
+
 QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, bool isAlter) {
 
   //////////// Получение данных для расчета 
   
   QPair<qint64, qint64> tmInterval = axisTime_->getTimeInterval();
   QPair<double, double> valInterval = ui.axisValue->getValInterval();
-     
   double vScale = ui.axisValue->getValScale();
-  if (isAlter) {
-    valInterval = getSignMaxMinValue(sign, tmInterval);   
-    vScale = (valInterval.second - valInterval.first) / ui.plot->height();
-  }
-  
-  QString sname = QString::fromStdString(sign->name + sign->module);
 
+  QString sname = QString::fromStdString(sign->name + sign->module);
   if (!sign->isBuffEnable && pfLoadSignalData){
     pfLoadSignalData(sname);
+  }
+
+  if (isAlter) {
+    valInterval = getSignMaxMinValue(sign, tmInterval);
+    vScale = (valInterval.second - valInterval.first) / ui.plot->height();
   }
 
   if (sign->buffData.empty()){
@@ -1047,24 +1123,7 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
       buffSz = sign->buffData.size();
       endPos = sign->buffValuePos;
   }
-  if ((cng.mode == SV_Graph::ModeGr::Viewer) && (tmZnBegin < tmMinInterval)) {
-    auto bIt = std::lower_bound(sign->buffData.begin(), sign->buffData.end(), tmMinInterval,
-      [](const RecData& rd, uint64_t stm) {
-      return rd.beginTime < stm;
-    });
-    if (bIt != sign->buffData.begin()){
-      --bIt;
-    }
-    iBuf = std::distance(sign->buffData.begin(), bIt);    
-  }else if (cng.mode == SV_Graph::ModeGr::Player){
-    if (buffSz != 0 && ((endPos + 1) % buffSz) == iBuf) {
-      ++iBuf;
-      if (iBuf >= buffSz) iBuf = 0;
-    }
-    if (tmZnBegin < tmMinInterval) {
-      iBuf = ringIndexBeforeTime(sign->buffData, iBuf, endPos, buffSz, tmMinInterval);
-    }
-  }
+  iBuf = selectBufStart(sign->buffData, cng.mode, tmZnBegin, tmMinInterval, iBuf, buffSz, endPos);
   
   //////////// Получаем точки
       
@@ -1103,79 +1162,35 @@ QPair<double, double> GraphWidget::getSignPntsMaxMinValue(const GraphSignData& s
 
 QPair<double, double> GraphWidget::getSignMaxMinValue(SignalData* sign, QPair<qint64, qint64>& tmInterval) {
 
-    uint64_t tmZnBegin, tmZnEnd;
-    {LockerReadSDataGraph lock;
-        tmZnBegin = sign->buffMinTime;
-        tmZnEnd = sign->buffMaxTime;
-    }
-    uint64_t tmMinInterval = tmInterval.first,
-            tmMaxInterval = tmInterval.second;
-
-  if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) return QPair<double, double >(0, 1);
-
-  auto rdata = sign->buffData;
-
-  size_t znSz = rdata.size(), 
-         z = 0;
-  double minVal = INT32_MAX,
-         maxVal = -INT32_MAX;
-
-  switch (sign->type)
-  {
-  case ValueType::INT:
-
-    while (tmZnBegin < tmMaxInterval) {
-
-      if (tmZnEnd > tmMinInterval) {
-
-        for (int i = 0; i < SV_PACKETSZ; ++i) {
-
-          if (rdata[z].vals[i].vInt < minVal) minVal = rdata[z].vals[i].vInt;
-          if (rdata[z].vals[i].vInt > maxVal) maxVal = rdata[z].vals[i].vInt;
-        }
-      }
-
-      ++z;
-
-      if (z < znSz) {
-        tmZnBegin = sign->buffData[z].beginTime,
-          tmZnEnd = sign->buffData[z].beginTime + SV_CYCLESAVE_MS;
-      }
-      else break;
-    }
-
-    break;
-  case ValueType::FLOAT:
-    while (tmZnBegin < tmMaxInterval) {
-
-      if (tmZnEnd > tmMinInterval) {
-
-        for (int i = 0; i < SV_PACKETSZ; ++i) {
-
-          if (rdata[z].vals[i].vFloat < minVal) minVal = rdata[z].vals[i].vFloat;
-          if (rdata[z].vals[i].vFloat > maxVal) maxVal = rdata[z].vals[i].vFloat;
-        }
-      }
-
-      ++z;
-
-      if (z < znSz) {
-        tmZnBegin = sign->buffData[z].beginTime,
-          tmZnEnd = sign->buffData[z].beginTime + SV_CYCLESAVE_MS;
-      }
-      else break;
-    }
-    break;
-  default:
-    break;
+  if (sign->buffData.empty()) {
+    return {0, 1};
   }
 
-  if (minVal == maxVal) {
-    minVal -= 0.1;
-    maxVal += 0.1;
+  uint64_t tmZnBegin, tmZnEnd;
+  {LockerReadSDataGraph lock;
+      tmZnBegin = sign->buffMinTime;
+      tmZnEnd = sign->buffMaxTime;
+  }
+  const uint64_t tmMinInterval = tmInterval.first,
+                 tmMaxInterval = tmInterval.second;
+
+  if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval)) {
+    return {0, 1};
   }
 
-  return QPair<double, double>(minVal, maxVal);
+  size_t iBuf, buffSz, endPos;
+  {LockerReadSDataGraph lock;
+      iBuf = sign->buffBeginPos;
+      buffSz = sign->buffData.size();
+      endPos = sign->buffValuePos;
+  }
+  iBuf = selectBufStart(sign->buffData, cng.mode, tmZnBegin, tmMinInterval, iBuf, buffSz, endPos);
+
+  switch (sign->type) {
+  case ValueType::INT:   return minMaxInWindow<int>(sign, iBuf, buffSz, endPos, tmMinInterval, tmMaxInterval, cng);
+  case ValueType::FLOAT: return minMaxInWindow<float>(sign, iBuf, buffSz, endPos, tmMinInterval, tmMaxInterval, cng);
+  default: return {0, 1};
+  }
 }
 
 void GraphWidget::plotUpdate() {
