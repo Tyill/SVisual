@@ -132,14 +132,21 @@ void Archive::copyToDisk(bool isStop){
 
 void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
 
-  std::lock_guard<std::mutex> lck(m_mtx);
-
   auto& valPos = m_valPos[archiveIndex];
   auto& archiveData = m_archiveData[archiveIndex];
-  const size_t dataSz = archiveData.size();
-  if (dataSz == 0){
-    return;
+
+  std::vector<std::string> keys;
+  {
+    std::lock_guard<std::mutex> lck(m_mtx);
+    if (archiveData.empty()) {
+      return;
+    }
+    keys.reserve(archiveData.size());
+    for (const auto& ad : archiveData) {
+      keys.push_back(ad.first);
+    }
   }
+  const size_t dataSz = keys.size();
 
   if (cng.outArchiveEna){
       size_t SMAXCNT = 100; // макс кол-во сигналов в посылке
@@ -171,26 +178,29 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
       }
 
       size_t sCnt = 0, csize = 0, ix = 0;
-      for (const auto& ad : archiveData) {
+      for (const auto& key : keys) {
 
-        const auto sign = SV_Srv::getSignalData(ad.first);
+        const auto sign = SV_Srv::getSignalData(key);
 
-        char* pIn = inArr.data();       
-        
-        int vCnt = valPos[ad.first];
-        if (sign && vCnt > 0) {
-          writeFixedField(pIn + csize, SV_NAMESZ, sign->name);       csize += SV_NAMESZ;
-          writeFixedField(pIn + csize, SV_NAMESZ, sign->module);     csize += SV_NAMESZ;
-          writeFixedField(pIn + csize, SV_NAMESZ, sign->group);      csize += SV_NAMESZ;
-          writeFixedField(pIn + csize, SV_COMMENTSZ, sign->comment); csize += SV_COMMENTSZ;
-          memcpy(pIn + csize, &sign->type, intSz);                   csize += intSz;
-          memcpy(pIn + csize, &vCnt, intSz);                         csize += intSz;
+        char* pIn = inArr.data();
+        {
+          std::lock_guard<std::mutex> lck(m_mtx);
+          auto it = archiveData.find(key);
+          const int vCnt = valPos[key];
+          if (sign && it != archiveData.end() && vCnt > 0) {
+            writeFixedField(pIn + csize, SV_NAMESZ, sign->name);       csize += SV_NAMESZ;
+            writeFixedField(pIn + csize, SV_NAMESZ, sign->module);     csize += SV_NAMESZ;
+            writeFixedField(pIn + csize, SV_NAMESZ, sign->group);      csize += SV_NAMESZ;
+            writeFixedField(pIn + csize, SV_COMMENTSZ, sign->comment); csize += SV_COMMENTSZ;
+            memcpy(pIn + csize, &sign->type, intSz);                   csize += intSz;
+            memcpy(pIn + csize, &vCnt, intSz);                         csize += intSz;
 
-          for (int j = 0; j < vCnt; ++j) {
-            memcpy(pIn + csize, &ad.second[j].beginTime, tmSz); csize += tmSz;
-            memcpy(pIn + csize, ad.second[j].vals, vlSz);       csize += vlSz;
+            for (int j = 0; j < vCnt; ++j) {
+              memcpy(pIn + csize, &it->second[j].beginTime, tmSz); csize += tmSz;
+              memcpy(pIn + csize, it->second[j].vals, vlSz);       csize += vlSz;
+            }
+            ++sCnt;
           }
-          ++sCnt;
         }
         if (sCnt > 0 && (sCnt == SMAXCNT || ix == dataSz - 1)) {
           sCnt = 0;
@@ -213,12 +223,16 @@ void Archive::copyToDiskImpl(bool isStop, int archiveIndex){
   }
 #ifdef USE_ClickHouseDB
   if (m_chdb && cng.outDataBaseEna){
+    std::lock_guard<std::mutex> lck(m_mtx);
     m_chdb->saveSData(isStop, valPos, archiveData);
   }
 #endif
 
-  for(auto& v : valPos){
-    v.second = 0;
+  {
+    std::lock_guard<std::mutex> lck(m_mtx);
+    for(auto& v : valPos){
+      v.second = 0;
+    }
   }
 }
 
