@@ -35,6 +35,8 @@
 #include <QToolTip>
 #include <QTreeWidget>
 
+#include <algorithm>
+
 using namespace SV_Base;
 
 GraphWidget::GraphWidget(QWidget *parent, SV_Graph::Config cng_):
@@ -829,7 +831,7 @@ constexpr int calcValuePnt<bool>(Value v, double valScale, double valPosMem) {
 }
 
 template<typename T>
-QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const SV_Graph::Config& cng, AxisTimeProxy* axisTime,
+QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, size_t buffSz, size_t endPos, const SV_Graph::Config& cng, AxisTimeProxy* axisTime,
     const QPair<double, double>& valInterval, const double valScale, const int gapTolerance) {
 
   const QPair<qint64, qint64> tmInterval = axisTime->getTimeInterval();
@@ -850,20 +852,14 @@ QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const
   uint64_t tmZnEndPrev = 0;
 
   QVector<double> tmPosMem;
-  for (int i = 0; i < SV_PACKETSZ; ++i)
+  for (int i = 0; i < SV_PACKETSZ; ++i){
     tmPosMem.push_back((i * SV_CYCLEREC_MS - double(tmMinInterval)) / tmScale);
-
+  }
   int prevPos = -1,
       valMem = 0,
       backVal = 0,
-      prevBackVal = 0;
-
-  size_t buffSz, endPos;
-  {LockerReadSDataGraph lock;
-    buffSz = sign->buffData.size(),
-    endPos = sign->buffValuePos;
-  }
-  int backValInd = 0,
+      prevBackVal = 0, 
+      backValInd = 0,
       prevBackValInd = 0;
 
   bool isChange = false;
@@ -971,6 +967,44 @@ QVector<QVector<QPair<int, int>>> getPoints(SignalData* sign, size_t iBuf, const
   return zonePnts;
 };
 
+size_t ringIndexBeforeTime(const std::vector<RecData>& buf, size_t start, size_t endPos, size_t sz, uint64_t t) {
+  if (sz == 0 || start == endPos) {
+    return start;
+  }
+  auto lb = [&](size_t lo, size_t hi) {
+    return std::lower_bound(buf.begin() + static_cast<std::ptrdiff_t>(lo),
+                            buf.begin() + static_cast<std::ptrdiff_t>(hi), t,
+                            [](const RecData& rd, uint64_t stm) {
+                              return rd.beginTime < stm;
+                            });
+  };
+
+  if (start < endPos) {
+    auto it = lb(start, endPos);
+    if (it != buf.begin() + static_cast<std::ptrdiff_t>(start)) {
+      --it;
+    }
+    return static_cast<size_t>(it - buf.begin());
+  }
+
+  if (endPos == 0 || t <= buf[sz - 1].beginTime) {
+    auto it = lb(start, sz);
+    if (it != buf.begin() + static_cast<std::ptrdiff_t>(start)) {
+      --it;
+    }
+    return static_cast<size_t>(it - buf.begin());
+  }
+
+  auto it = lb(0, endPos);
+  if (it != buf.begin()) {
+    --it;
+  }
+  else {
+    it = buf.begin() + static_cast<std::ptrdiff_t>(sz - 1);
+  }
+  return static_cast<size_t>(it - buf.begin());
+}
+
 QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, bool isAlter) {
 
   //////////// Получение данных для расчета 
@@ -1007,29 +1041,37 @@ QVector<QVector<QPair<int, int>>> GraphWidget::getSignalPnts(SignalData* sign, b
   if ((tmZnBegin >= tmMaxInterval) || (tmZnEnd <= tmMinInterval))
     return QVector<QVector<QPair<int, int>>>();
 
-  size_t iBuf;
+  size_t iBuf, buffSz, endPos;
   {LockerReadSDataGraph lock;
       iBuf = sign->buffBeginPos;
+      buffSz = sign->buffData.size();
+      endPos = sign->buffValuePos;
   }
   if ((cng.mode == SV_Graph::ModeGr::Viewer) && (tmZnBegin < tmMinInterval)) {
-
     auto bIt = std::lower_bound(sign->buffData.begin(), sign->buffData.end(), tmMinInterval,
       [](const RecData& rd, uint64_t stm) {
       return rd.beginTime < stm;
     });
-
-    if (bIt != sign->buffData.begin())
+    if (bIt != sign->buffData.begin()){
       --bIt;
-
-    iBuf = std::distance(sign->buffData.begin(), bIt);
+    }
+    iBuf = std::distance(sign->buffData.begin(), bIt);    
+  }else if (cng.mode == SV_Graph::ModeGr::Player){
+    if (buffSz != 0 && ((endPos + 1) % buffSz) == iBuf) {
+      ++iBuf;
+      if (iBuf >= buffSz) iBuf = 0;
+    }
+    if (tmZnBegin < tmMinInterval) {
+      iBuf = ringIndexBeforeTime(sign->buffData, iBuf, endPos, buffSz, tmMinInterval);
+    }
   }
   
   //////////// Получаем точки
       
   switch (sign->type) {
-  case ValueType::FLOAT: return getPoints<float>(sign, iBuf, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
-  case ValueType::INT:   return getPoints<int>(sign, iBuf, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
-  case ValueType::BOOL:  return getPoints<bool>(sign, iBuf, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
+  case ValueType::FLOAT: return getPoints<float>(sign, iBuf, buffSz, endPos, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
+  case ValueType::INT:   return getPoints<int>(sign, iBuf, buffSz, endPos, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
+  case ValueType::BOOL:  return getPoints<bool>(sign, iBuf, buffSz, endPos, cng, axisTime_, valInterval, vScale, graphSetting_.gapTolerance);
   default: Q_UNREACHABLE(); break;
   }  
   return {};

@@ -28,6 +28,7 @@
 #include "SVServer/sv_server.h"
 
 #include <map>
+#include <memory>
 #include <thread>
 
 class ClickHouseDB;

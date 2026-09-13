@@ -222,12 +222,19 @@ bool disconnect() {
 }
 
 int sendAll(const std::string& mess, int flags) {
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+  flags |= MSG_NOSIGNAL;
   int total = 0;
   const int len = int(mess.size());
   while (total < len) {
     const int n = send(_socket, mess.c_str() + total, len - total, flags);
-    if (n == -1)
+    if (n == -1) {
+      if (errno == EINTR)
+        continue;
       return -1;
+    }
     total += n;
   }
   return total;
